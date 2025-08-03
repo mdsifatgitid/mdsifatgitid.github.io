@@ -8,10 +8,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom font and basic styles */
-        /* Added @font-face rule to load the SUTONNYMJ font from a web source */
+        /* SUTONNYMJ ফন্টটি লোড করার জন্য @font-face ব্যবহার করা হয়েছে। */
+        /* মোবাইল ডিভাইসে দ্রুত এবং নির্ভরযোগ্য লোডিং নিশ্চিত করতে jsDelivr CDN ব্যবহার করা হয়েছে। */
         @font-face {
             font-family: 'SUTONNYMJ';
-            src: url('https://github.com/mdsifatgitid/mdsifatgitid.github.io/raw/refs/heads/main/SUTONNYMJ.TTF') format('truetype');
+            src: url('https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/SUTONNYMJ.TTF') format('truetype');
             font-weight: normal;
             font-style: normal;
         }
@@ -541,7 +542,7 @@
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
             color: #333; /* টেক্সটএরিয়া টেক্সট পঠনযোগ্য নিশ্চিত করুন */
         }
-        /* Style for the right textarea to use the loaded SutonnyMJ font */
+        /* ডানদিকের টেক্সটএরিয়ার জন্য লোড করা SutonnyMJ ফন্ট ব্যবহার করার স্টাইল */
         #textAreaRight {
             font-family: 'SUTONNYMJ', sans-serif;
             font-size: 1.5rem;
