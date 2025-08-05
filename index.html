@@ -1437,8 +1437,14 @@
         const bijoyToUnicodeMap = {
             // স্বরবর্ণ সেকশন
             "A": "অ",        "Av": "আ",       "B": "ই",        "C": "ঈ",        "D": "উ",        "E": "ঊ",        "F": "ঋ",        "G": "এ",        "H": "ঐ",        "I": "ও",
-            "J": "ঔ",        "†": "এ",        "ˆ": "ঐ",
+            "J": "ঔ",
 
+            // *** সংশোধিত অংশ শুরু ***
+            "†": "ে", // 'এ' এর পরিবর্তে 'ে' (e-kar)
+            "ˆ": "ৈ", // 'ঐ' এর পরিবর্তে 'ৈ' (oi-kar)
+            // *** সংশোধিত অংশ শেষ ***
+			"‡": "ে", // 'এ' এর পরিবর্তে 'ে' (e-kar)
+            "‰": "ৈ",
             // ব্যাঞ্জনবর্ণ সেকশন
             "K": "ক",        "L": "খ",        "M": "গ",        "N": "ঘ",        "O": "ঙ",        "P": "চ",        "Q": "ছ",        "R": "জ",        "S": "ঝ",        "T": "ঞ",
             "U": "ট",        "V": "ঠ",        "W": "ড",        "X": "ঢ",        "Y": "ণ",        "Z": "ত",        "_": "থ",        "`": "দ",        "a": "ধ",        "b": "ন",
@@ -1450,10 +1456,10 @@
             "৳": "৳",
 
             // কার চিহ্ন সেকশন
-            "v": "া",        "w": "ি",        "x": "ী",        "y": "ু",        "~": "ূ",        "„": "ৃ",		"†": "ে",		"ˆ": "ৈ",	"‡v": "ো", 	"z": "ু", 	"†v": "ো",		"†Š": "ৌ", 	"‡Š": "ৌ",
+            "v": "া",        "w": "ি",        "x": "ী",        "y": "ু",        "~": "ূ",        "„": "ৃ",		"‡v": "ো", 	"z": "ু", 	"†v": "ো",		"†Š": "ৌ", 	"‡Š": "ৌ",
 
             // ফলা সেকশন
-            "ª": "্র",        "¨": "্য",        "©": "র্",
+            "ª": "্র",        "¨": "্য",        "©": "র্", 	"Ö": "্র",
 
             // ওকার ঔকার সেকশন
             "‡": "ে",        "‰": "ৈ",        "Š": "ৗ",
@@ -2216,7 +2222,7 @@
             const unicodeEkar = '\u09C7'; // ে
             const unicodeOikar = '\u09C8'; // ৈ
             const unicodeOkar = '\u09CB'; // ো
-            const unicodeOukar = 'ৌ'; // \u09CC
+            const unicodeOukar = '\u09CC'; // ৌ
             const unicodeAkar = '\u09BE'; // া
             const unicodeOuKarPart2 = '\u09D7'; // ৗ
             const unicodeHasanta = '\u09CD'; // ্
@@ -2320,95 +2326,80 @@
             const textAreaRight = document.getElementById('textAreaRight');
             let bijoyInput = textAreaRight ? textAreaRight.value : '';
 
-            const bijoyRef = '©'; // বিজয়ে রেফ
-            const bijoyPrecedingVowels = ['w', '‡', '‰', 'Š', '†', 'ˆ']; // 'w' (ি), '‡' (ে), '‰' (ৈ), 'Š' (ৗ), '†' (এ), 'ˆ' (ঐ)
-
-            const isBijoyConsonantChar = (bijoyChar) => {
-                const unicodeEquivalent = bijoyToUnicodeMap[bijoyChar];
-                if (!unicodeEquivalent) return false;
-                const code = unicodeEquivalent.charCodeAt(0);
-                return (code >= 0x0995 && code <= 0x09B9) || // ক থেকে হ
-                       code === 0x09DC || // ড়
-                       code === 0x09DD || // ঢ়
-                       code === 0x09DF;   // য়
-            };
-
-            let reorderedBijoy = '';
+            // --- ধাপ ১: বিজয় থেকে ইউনিকোড ম্যাপিং ---
+            // প্রথমে, বিজয় স্ট্রিংটিকে ইউনিকোড ক্যারেক্টারে ম্যাপ করুন।
+            let unicodeOutput = '';
             let i = 0;
             while (i < bijoyInput.length) {
-                const char = bijoyInput[i];
-                const nextChar = bijoyInput[i + 1];
-                const thirdChar = bijoyInput[i + 2];
-
-                // Case: Preceding vowel + consonant + ref (e.g., ‡K©) -> Reorder to ref + consonant + preceding vowel (e.g., ©K‡)
-                if (bijoyPrecedingVowels.includes(char) && isBijoyConsonantChar(nextChar) && thirdChar === bijoyRef) {
-                    reorderedBijoy += bijoyRef + nextChar + char;
-                    i += 3;
-                }
-                // Existing Case 1: Consonant + ref (e.g., K©) -> Reorder to ref + consonant (e.g., ©K)
-                else if (isBijoyConsonantChar(char) && nextChar === bijoyRef) {
-                    reorderedBijoy += bijoyRef + char;
-                    i += 2;
-                }
-                // Existing Case 2: Preceding vowel + consonant (e.g., wK) -> Reorder to consonant + preceding vowel (e.g., Kw)
-                // This also handles the ‡v and ‡Š for o/ou kar decomposition
-                else if (bijoyPrecedingVowels.includes(char) && isBijoyConsonantChar(nextChar)) {
-                    if ((char === '‡' || char === '†') && thirdChar && (thirdChar === 'v' || thirdChar === 'Š')) {
-                        // This is for 'ো' or 'ৌ' patterns, keep them together for now
-                        reorderedBijoy += char + nextChar + thirdChar;
-                        i += 3;
-                    } else {
-                        reorderedBijoy += nextChar + char;
-                        i += 2;
+                let foundMatch = false;
+                for (const key of sortedBijoyKeys) {
+                    if (bijoyInput.substring(i, i + key.length) === key) {
+                        unicodeOutput += bijoyToUnicodeMap[key];
+                        i += key.length;
+                        foundMatch = true;
+                        break;
                     }
                 }
-                // General case
-                else {
-                    reorderedBijoy += char;
+                if (!foundMatch) {
+                    unicodeOutput += bijoyInput[i];
                     i++;
                 }
             }
 
-            // ধাপ 2: সম্পূর্ণ বিজয় থেকে ইউনিকোড ম্যাপিং প্রয়োগ করুন
-            let finalUnicodeText = reorderedBijoy;
-            for (const key of sortedBijoyKeys) {
-                if (key === '‡v' || key === '‡Š' || key === '†v' || key === '†Š') continue;
+            // --- ধাপ ২: ইউনিকোড ডোমেইনে পুনঃক্রম এবং সংমিশ্রণ ---
 
-                const regex = new RegExp(key.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
-                finalUnicodeText = finalUnicodeText.replace(regex, bijoyToUnicodeMap[key]);
-            }
+            // ধাপ ২.১: রেফ (র্) সঠিক স্থানে আনুন (ব্যঞ্জনবর্ণের আগে)
+            // এই ধাপে ব্যঞ্জনবর্ণের পরে আসা 'র্' কে আগে আনা হয়। যেমন: 'কর্' -> 'র্ক'
+            const unicodeConsonants = '\u0995-\u09B9\u09DC-\u09DF'; // ক-হ, ড়-য়
+            const unicodeHasanta = '\u09CD';
+            const unicodeRef = '\u09B0' + unicodeHasanta; // র্
+            // *** সংশোধন শুরু ***
+            // consonantClusterWithoutRef এর শেষে থাকা '+' চিহ্নটি সরানো হয়েছে।
+            // এটি একাধিক ব্যঞ্জনবর্ণকে একসাথে ধরা থেকে বিরত রাখবে।
+            const consonantClusterWithoutRef = `(?:[${unicodeConsonants}](?:${unicodeHasanta}[${unicodeConsonants}])*)`;
+            const rephReorderRegex = new RegExp(`(${consonantClusterWithoutRef})(${unicodeRef})`, 'g');
+            unicodeOutput = unicodeOutput.replace(rephReorderRegex, '$2$1');
 
-            // ধাপ 3: ইউনিকোডে 'ো' এবং 'ৌ' রিকম্বিনেশনের জন্য পোস্ট-প্রসেসিং
-            const unicodeConsonants = 'কখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহড়ঢ়য়'; // ইউনিকোডের সমস্ত বাংলা ব্যঞ্জনবর্ণ
+            // ধাপ ২.২: প্রি-সিডিং ভাওয়েল (ি, ে, ৈ) সঠিক স্থানে আনুন
+            // এই রেজেক্সটি একটি প্রি-সিডিং কার-চিহ্ন এবং তার পরের ব্যঞ্জনবর্ণ বা রেফ-যুক্ত যুক্তবর্ণ খুঁজে বের করে এবং তাদের স্থান পরিবর্তন করে।
+            const unicodeIkar = '\u09BF'; // ি
             const unicodeEkar = '\u09C7'; // ে
+            const unicodeOikar = '\u09C8'; // ৈ
+            // *** সংশোধন শুরু ***
+            // consonantClusterPattern এর শেষে থাকা '+' চিহ্নটি সরানো হয়েছে।
+            // এটি 'এদকি' এর মতো ভুল প্রতিরোধ করবে।
+            const consonantClusterPattern = `(?:${unicodeRef})?(?:[${unicodeConsonants}](?:${unicodeHasanta}[${unicodeConsonants}])*)`;
+            const reorderRegex = new RegExp(`([${unicodeIkar}${unicodeEkar}${unicodeOikar}])(${consonantClusterPattern})`, 'g');
+            unicodeOutput = unicodeOutput.replace(reorderRegex, '$2$1');
+            // *** সংশোধন শেষ ***
+
+            // ধাপ ২.৩: ও-কার এবং ঔ-কার গঠন করুন (আপনার দেওয়া নিয়ম অনুযায়ী)
+            // এখন যেহেতু 'ে' সঠিক স্থানে আছে (ব্যঞ্জনবর্ণের পরে), আমরা 'ো' এবং 'ৌ' গঠন করতে পারি।
+            // ব্যঞ্জনবর্ণ + ে + া -> ব্যঞ্জনবর্ণ + ো
             const unicodeAkar = '\u09BE'; // া
             const unicodeOkar = '\u09CB'; // ো
-            const unicodeOuKarPart2 = '\u09D7'; // ৗ (Bengali Vowel Sign AU AU)
-            const unicodeOukar = '\u09CC'; // ৌ 
+            unicodeOutput = unicodeOutput.replace(new RegExp(`(${unicodeEkar})(${unicodeAkar})`, 'g'), unicodeOkar);
 
-            // 'ে' + ব্যঞ্জনবর্ণ + 'া' কে ব্যঞ্জনবর্ণ + 'ো' তে পুনরায় একত্রিত করুন
-            const o_kar_recombine_regex = new RegExp(`${unicodeEkar}([${unicodeConsonants}])${unicodeAkar}`, 'g');
-            finalUnicodeText = finalUnicodeText.replace(o_kar_recombine_regex, (match, consonant) => {
-                return consonant + unicodeOkar;
-            });
+            // ব্যঞ্জনবর্ণ + ে + ৗ -> ব্যঞ্জনবর্ণ + ৌ
+            const unicodeOuKarPart2 = '\u09D7'; // ৗ
+            const unicodeOukar = '\u09CC'; // ৌ
+            unicodeOutput = unicodeOutput.replace(new RegExp(`(${unicodeEkar})(${unicodeOuKarPart2})`, 'g'), unicodeOukar);
 
-            // 'ে' + ব্যঞ্জনবর্ণ + 'ৗ' কে ব্যঞ্জনবর্ণ + 'ৌ' তে পুনরায় একত্রিত করুন
-            const ou_kar_recombine_regex = new RegExp(`${unicodeEkar}([${unicodeConsonants}])${unicodeOuKarPart2}`, 'g');
-            finalUnicodeText = finalUnicodeText.replace(ou_kar_recombine_regex, (match, consonant) => {
-                return consonant + unicodeOukar;
-            });
-            
-            // ম্যানুয়াল ইউনিকোড রিপ্লেসমেন্ট প্রয়োগ
+
+            // ধাপ ৩: ম্যানুয়াল ইউনিকোড রিপ্লেসমেন্ট প্রয়োগ (যদি প্রয়োজন হয়)
             for (const [wrong, correct] of Object.entries(manualUnicodeReplacements)) {
-                const regex = new RegExp(wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                finalUnicodeText = finalUnicodeText.replace(regex, correct);
+                if (wrong) { // খালি কী এড়িয়ে চলুন
+                    const regex = new RegExp(wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                    unicodeOutput = unicodeOutput.replace(regex, correct);
+                }
             }
 
             if (textAreaLeft) {
-                textAreaLeft.value = finalUnicodeText;
+                textAreaLeft.value = unicodeOutput;
                 addState('textAreaLeft');
             }
         }
+
 
         function copyToClipboard(elementId) {
             const element = document.getElementById(elementId);
