@@ -707,97 +707,113 @@
         }
 
 
-        /* টেক্সট অ্যাসিস্ট্যান্ট বিভাগের স্টাইল */
-        .text-assistant-content {
-            padding: 20px; /* বর্ধিত প্যাডিং */
-            border-radius: 16px;
-            margin: 0 auto;
-            max-width: 480px; /* বর্ধিত প্রস্থ */
-            background-color: #f8f9fa; /* হালকা ধূসর ব্যাকগ্রাউন্ড */
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
-        .text-assistant-content textarea {
-            width: 100%;
-            height: 140px; /* বর্ধিত উচ্চতা */
-            padding: 10px; /* বর্ধিত প্যাডিং */
-            margin-bottom: 15px; /* বর্ধিত মার্জিন */
-            border: 1px solid #cce7ff; /* হালকা নীল বর্ডার */
-            border-radius: 10px;
-            font-size: 1.05rem; /* বর্ধিত ফন্ট সাইজ */
-            box-sizing: border-box;
-            resize: vertical;
-            background-color: #eaf6ff; /* হালকা নীল ইনপুট ব্যাকগ্রাউন্ড */
-            color: #333;
-        }
-        .text-assistant-content .ask-button {
-            background-color: #8A2BE2; /* বেগুনি */
-            color: white;
-            padding: 14px 25px; /* বর্ধিত প্যাডিং */
-            border: none;
-            border-radius: 10px;
-            font-size: 1.15rem; /* বর্ধিত ফন্ট সাইজ */
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            width: 100%;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px; /* বর্ধিত মার্জিন */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px; /* বর্ধিত ফাঁক */
-        }
-        .text-assistant-content .ask-button:hover {
-            background-color: #6A1BA0;
-            transform: translateY(-1px);
-        }
-        .text-assistant-content .response-area {
-            margin-top: 20px; /* বর্ধিত মার্জিন */
-            padding: 20px; /* বর্ধিত প্যাডিং */
-            background-color: #e6f7ff; /* হালকা নীল ব্যাকগ্রাউন্ড */
-            border-radius: 16px;
-            border: 1px solid #b3e0ff;
-            min-height: 100px; /* বর্ধিত উচ্চতা */
-            text-align: left;
-            white-space: pre-wrap; /* নতুন লাইন এবং স্পেস সংরক্ষণ করতে */
-            word-wrap: break-word; /* দীর্ঘ শব্দ ভাঙতে */
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-        .text-assistant-content .loading-indicator {
-            display: none;
-            text-align: center;
-            margin-top: 15px; /* বর্ধিত মার্জিন */
-            font-size: 1.05rem; /* বর্ধিত ফন্ট সাইজ */
-            color: #555;
-        }
-        .text-assistant-content .loading-indicator::after {
-            content: ' .';
-            animation: dots 1s steps(5, end) infinite;
-        }
-        @keyframes dots {
-            0%, 20% {
-                color: rgba(0,0,0,0);
-                text-shadow:
-                    .25em 0 0 rgba(0,0,0,0),
-                    .5em 0 0 rgba(0,0,0,0);
-            }
-            40% {
-                color: #555;
-                text-shadow:
-                    .25em 0 0 #555,
-                    .5em 0 0 rgba(0,0,0,0);
-            }
-            60% {
-                text-shadow:
-                    .25em 0 0 #555,
-                    .5em 0 0 rgba(0,0,0,0);
-            }
-            80%, 100% {
-                text-shadow:
-                    .25em 0 0 #555,
-                    .5em 0 0 #555;
-            }
-        }
-
+ /* টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগের নতুন স্টাইল */
+.text-assistant-content {
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 600px; /* চ্যাটের জন্য প্রস্থ বাড়ানো হয়েছে */
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.chat-header h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #333;
+}
+.clear-chat-button {
+    background-color: #ef5350;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.clear-chat-button:hover {
+    background-color: #d32f2f;
+}
+.chat-window {
+    height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 15px;
+    background-color: #e6f7ff;
+    border-radius: 16px;
+    border: 1px solid #b3e0ff;
+    margin-bottom: 15px;
+}
+.message {
+    padding: 10px 15px;
+    border-radius: 12px;
+    max-width: 85%;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+.user-message {
+    background-color: #3f51b5;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+}
+.gemini-message {
+    background-color: #ffffff;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.gemini-error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+}
+.input-container {
+    display: flex;
+    gap: 10px;
+    align-items: stretch; /* বোতাম এবং টেক্সটএরিয়া একই উচ্চতায় রাখুন */
+}
+.text-assistant-content textarea {
+    flex-grow: 1;
+    height: auto;
+    min-height: 50px;
+    padding: 12px;
+    margin-bottom: 0;
+    border: 1px solid #cce7ff;
+    border-radius: 10px;
+    font-size: 1rem;
+    resize: vertical;
+}
+.text-assistant-content .ask-button {
+    width: auto;
+    margin-bottom: 0;
+    flex-shrink: 0;
+    background-color: #8A2BE2;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.text-assistant-content .loading-indicator {
+    display: none;
+    text-align: center;
+    padding: 10px;
+    font-size: 1rem;
+    color: #555;
+}
 
         /* কন্টেন্ট প্রাথমিকভাবে লুকানো */
         .calculator-content {
@@ -1248,7 +1264,7 @@
                     <h3>বাংলাদেশের প্রধান দৈনিক পত্রিকা</h3>
                     <ul id="newsHeadlinesList">
                         <li><a href="https://www.bd-pratidin.com/" target="_blank">বাংলাদেশ প্রতিদিন</a></li>
-                        <li><a href="https="www.dhakapost.com/" target="_blank">ঢাকাপোস্ট</a></li>
+                        <li><a href="https://www.dhakapost.com/" target="_blank">ঢাকাপোস্ট</a></li>
                         <li><a href="https://www.kalerkantho.com/" target="_blank">কালের কণ্ঠ</a></li>
                         <li><a href="https://www.ittefaq.com.bd/" target="_blank">দৈনিক ইত্তেফাক</a></li>
                         <li><a href="https://www.dailyamardesh.com/" target="_blank">আমার দেশ</a></li>
@@ -1301,15 +1317,23 @@
             </div>
         </div>
 
-        <!-- টেক্সট অ্যাসিস্ট্যান্ট বিভাগ -->
-        <div id="textAssistantContent" class="calculator-content">
-            <div class="text-assistant-content">
-                <textarea id="assistantInput" placeholder="জেমিনিকে কিছু জিজ্ঞাসা করুন... উদাহরণস্বরূপ: 'বাংলাদেশের ইতিহাস সম্পর্কে ৫টি মজার তথ্য দিন' অথবা 'এই লেখাটি সারসংক্ষেপ করুন: [আপনার লেখা]'"></textarea>
-                <button id="askGeminiBtn" class="ask-button rounded-xl">জেমিনিকে জিজ্ঞাসা করুন ✨</button>
-                <div id="assistantLoading" class="loading-indicator">জেমিনি চিন্তা করছে</div>
-                <div id="assistantResponse" class="response-area rounded-lg"></div>
-            </div>
+<!-- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগ -->
+<div id="textAssistantContent" class="calculator-content">
+    <div class="text-assistant-content">
+        <div class="chat-header">
+            <h3>জেমিনির সাথে চ্যাট করুন</h3>
+            <button id="clearChatBtn" class="clear-chat-button">চ্যাট মুছুন</button>
         </div>
+        <div id="chatWindow" class="chat-window">
+            <!-- চ্যাট বার্তা এখানে যুক্ত করা হবে -->
+        </div>
+        <div id="assistantLoading" class="loading-indicator">জেমিনি চিন্তা করছে...</div>
+        <div class="input-container">
+            <textarea id="assistantInput" placeholder="এখানে আপনার প্রশ্ন লিখুন..."></textarea>
+            <button id="askGeminiBtn" class="ask-button">পাঠান</button>
+        </div>
+    </div>
+</div>
 
         <!-- সকল ফিচার বিভাগ -->
         <div id="allFeaturesContent" class="calculator-content">
@@ -1537,7 +1561,7 @@
 			"e&e": "eŸ",       "Ë&e": "Ë¡",      "e&h": "e¨",       "e&i": "eª",       "E&i": "Eª",       "e&j": "eø",       "e&R": "â",       "é~": "é‚",       "É~": "É‚",
 			"È~": "È‚",        "ë~": "ë‚",      "Ë~": "Ë‚",       "é„": "é…",       "É„": "É…",       "È„": "È…",       "ë„": "ë…",       "Ë„": "Ë…",       "eª": "eª",
 			"eª~": "eªƒ",      "eªy": "eªæ",      "éy": "éz",       "Éy": "Éz",       "Èy": "Èz",       "ëy": "ëz",       "Ëy": "Ëz",       "f&h": "f¨",       "F&h": "F¨",
-			"f&i": "å",        "F&i": "Fª",       "f&j": "fø",      "f~": "f‚",       "f„": "f…",       "fª": "å",        "Fª": "Fª",       "fª~": "åƒ",       "fªy": "åæ",
+			"f&i": "å",        "F&i": "Fª",       "f&j": "fø",      "f~": "f‚",       "f„": "f…",       "fª": "å",        "Fª": "Fª",       "fª~": "åƒ",      "fªy": "åæ",
 			"fy": "fz",        "g&b": "¤œ",       "g&c": "¤ú",      "g&d": "ç",       "g&e": "¤^",       "g&f": "¤¢",       "g&f&i": "¤£",    "g&fª": "¤£",      "g&g": "¤§",
 			"g&h": "g¨",       "G&h": "G¨",       "g&i": "¤ª",      "G&i": "Î",       "g&j": "¤ø",       "gª": "¤ª",       "Gª": "Gª",       "h&h": "h¨",       "H&h": "H¨",
 			"h&i": "hª",       "H&i": "Hª",       "hª": "hª",       "Hª": "Hª",       "i&&I": "I©",     "i&_": "_©",       "i&`": "`©",      "i&a": "a©",       "i&A": "A©",
@@ -2850,70 +2874,118 @@
                     textAreaRight.addEventListener('input', () => addState('textAreaRight'));
                 }
 
-                // --- টেক্সট অ্যাসিস্ট্যান্ট লজিক ---
-                const assistantInput = document.getElementById('assistantInput');
-                const askGeminiBtn = document.getElementById('askGeminiBtn');
-                const assistantResponse = document.getElementById('assistantResponse');
-                const assistantLoading = document.getElementById('assistantLoading');
+// --- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) লজিক ---
+const assistantInput = document.getElementById('assistantInput');
+const askGeminiBtn = document.getElementById('askGeminiBtn');
+const chatWindow = document.getElementById('chatWindow');
+const assistantLoading = document.getElementById('assistantLoading');
+const clearChatBtn = document.getElementById('clearChatBtn');
 
+let chatHistory = []; // কথোপকথনের ইতিহাস সংরক্ষণ করে
 
-                if (askGeminiBtn) {
-                    askGeminiBtn.addEventListener('click', async () => {
-                        console.log('জেমিনিকে জিজ্ঞাসা করুন বোতামে ক্লিক করা হয়েছে।');
-                        const prompt = assistantInput ? assistantInput.value.trim() : '';
-                        if (!prompt) {
-                            if (assistantResponse) assistantResponse.innerText = 'অনুগ্রহ করে কিছু লিখুন।';
-                            return;
-                        }
+// চ্যাট উইন্ডোতে বার্তা যোগ করার জন্য হেল্পার ফাংশন
+function addMessageToChat(text, sender) {
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message', `${sender}-message`);
+    // XSS প্রতিরোধ করতে innerText ব্যবহার করা হচ্ছে
+    messageElement.innerText = text; 
+    if(chatWindow) {
+        chatWindow.appendChild(messageElement);
+        // স্বয়ংক্রিয়ভাবে নতুন বার্তায় স্ক্রোল করুন
+        chatWindow.scrollTop = chatWindow.scrollHeight; 
+    }
+}
 
-                        if (assistantResponse) assistantResponse.innerText = '';
-                        if (assistantLoading) assistantLoading.style.display = 'block';
-                        if (askGeminiBtn) askGeminiBtn.disabled = true;
+// চ্যাট মুছুন বোতামের কার্যকারিতা
+if(clearChatBtn) {
+    clearChatBtn.addEventListener('click', () => {
+        if(chatWindow) chatWindow.innerHTML = '';
+        chatHistory = []; // ইতিহাস রিসেট করুন
+        addMessageToChat('হ্যালো! আমি আপনার টেক্সট অ্যাসিস্ট্যান্ট। আমি আপনাকে কীভাবে সাহায্য করতে পারি?', 'gemini');
+    });
+}
 
-                        try {
-                            const apiKey = localStorage.getItem('geminiApiKey');
-                            if (!apiKey) {
-                                if (assistantResponse) assistantResponse.innerText = 'জেমিনি API কী সেট করা হয়নি। অনুগ্রহ করে "API কী সেট করুন" বাটনে ক্লিক করে কী সেট করুন।';
-                                if (assistantLoading) assistantLoading.style.display = 'none';
-                                if (askGeminiBtn) askGeminiBtn.disabled = false;
-                                return;
-                            }
+// জেমিনিকে জিজ্ঞাসা করার বোতামের কার্যকারিতা
+if (askGeminiBtn) {
+    askGeminiBtn.addEventListener('click', handleAskGemini);
+}
 
-                            let chatHistory = [];
-                            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-                            const payload = { contents: chatHistory };
-                            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+// Enter চেপে বার্তা পাঠানোর সুবিধা
+if(assistantInput) {
+    assistantInput.addEventListener('keydown', (e) => {
+        // Shift+Enter চাপলে নতুন লাইন তৈরি হবে, শুধু Enter চাপলে বার্তা যাবে
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault(); // ডিফল্ট Enter আচরণ (নতুন লাইন) বন্ধ করুন
+            handleAskGemini();
+        }
+    });
+}
 
-                            const response = await fetch(apiUrl, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(payload)
-                            });
+async function handleAskGemini() {
+    const prompt = assistantInput.value.trim();
+    if (!prompt || !chatWindow) return;
 
-                            const result = await response.json();
+    // ব্যবহারকারীর বার্তা প্রদর্শন করুন
+    addMessageToChat(prompt, 'user');
+    assistantInput.value = ''; // ইনপুট বক্স পরিষ্কার করুন
 
-                            if (result.candidates && result.candidates.length > 0 &&
-                                result.candidates[0].content && result.candidates[0].content.parts &&
-                                result.candidates[0].content.parts.length > 0) {
-                                const text = result.candidates[0].content.parts[0].text;
-                                if (assistantResponse) assistantResponse.innerText = text;
-                            } else {
-                                if (assistantResponse) assistantResponse.innerText = 'জেমিনি থেকে কোনো প্রতিক্রিয়া পাওয়া যায়নি।';
-                                console.error('জেমিনি API প্রতিক্রিয়া অপ্রত্যাশিত:', result);
-                            }
-                        } catch (error) {
-                            if (assistantResponse) assistantResponse.innerText = 'জেমিনি API কল করার সময় একটি ত্রুটি হয়েছে: ' + error.message;
-                            console.error('জেমিনি API ত্রুটি:', error);
-                        } finally {
-                            if (assistantLoading) assistantLoading.style.display = 'none';
-                            if (askGeminiBtn) askGeminiBtn.disabled = false;
-                        }
-                    });
+    // ব্যবহারকারীর বার্তা ইতিহাসে যোগ করুন
+    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+    // লোডিং ইন্ডিকেটর দেখান
+    if(assistantLoading) assistantLoading.style.display = 'block';
+    if(askGeminiBtn) askGeminiBtn.disabled = true;
+
+    try {
+        const apiKey = localStorage.getItem('geminiApiKey');
+        if (!apiKey) {
+            addMessageToChat('জেমিনি API কী সেট করা হয়নি। অনুগ্রহ করে "API কী সেট করুন" বাটনে ক্লিক করে কী সেট করুন।', 'gemini-error');
+            return;
+        }
+
+        // কথোপকথনের ধারাবাহিকতা বজায় রাখতে সম্পূর্ণ chatHistory পাঠানো হচ্ছে
+        const payload = { contents: chatHistory };
+        // লেটেস্ট ফ্ল্যাশ মডেল ব্যবহার করা হচ্ছে
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        let geminiText;
+
+        if (result.candidates && result.candidates.length > 0 &&
+            result.candidates[0].content && result.candidates[0].content.parts &&
+            result.candidates[0].content.parts.length > 0) {
+            geminiText = result.candidates[0].content.parts[0].text;
+            // জেমিনির উত্তর ইতিহাসে যোগ করুন
+            chatHistory.push({ role: "model", parts: [{ text: geminiText }] });
+        } else {
+            geminiText = 'দুঃখিত, আমি কোনো উত্তর খুঁজে পাইনি। অনুগ্রহ করে আবার চেষ্টা করুন।';
+            console.error('API Response Error:', result);
+        }
+        addMessageToChat(geminiText, 'gemini');
+
+    } catch (error) {
+        const errorMessage = 'একটি ত্রুটি ঘটেছে: ' + error.message;
+        addMessageToChat(errorMessage, 'gemini-error');
+        console.error('API Call Error:', error);
+    } finally {
+        if(assistantLoading) assistantLoading.style.display = 'none';
+        if(askGeminiBtn) askGeminiBtn.disabled = false;
+    }
+}
+
+ // *** সংশোধিত: প্রাথমিক বার্তাটি এখানে যোগ করা হয়েছে ***
+                if(chatWindow) {
+                    addMessageToChat('হ্যালো! আমি আপনার টেক্সট অ্যাসিস্ট্যান্ট। আমি আপনাকে কীভাবে সাহায্য করতে পারি?', 'gemini');
                 }
 
             } catch (e) {
                 console.error('DOMContentLoaded এক্সিকিউশনের সময় একটি ত্রুটি ঘটেছে:', e);
-                // ঐচ্ছিকভাবে, পৃষ্ঠায় একটি ব্যবহারকারী-বান্ধব ত্রুটি বার্তা প্রদর্শন করুন
                 const mainContainer = document.querySelector('.main-container');
                 if (mainContainer) {
                     const errorMessageDiv = document.createElement('div');
