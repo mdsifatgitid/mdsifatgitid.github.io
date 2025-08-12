@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1624,8 +1622,6 @@
             // উদাহরণ: "উদাহরণ": "উদাহরণ" 
 			"": "",
 			"মধে্য": "মধ্যে",
-			"ুর্":  "র্ু",
-			"ূর্":  "র্ূ",
 			"র্নিভূল": "নির্ভূল",
 			"র্নিভুল": "নির্ভুল",
         };
@@ -1748,12 +1744,25 @@
         }
 
         // ====================================================================
-        // START: CORRECTED FUNCTION
+        // START: CORRECTED FUNCTION (WITH USER'S REQUESTED LOGIC)
         // ====================================================================
         function convertRightToLeft() {
             const textAreaLeft = document.getElementById('textAreaLeft');
             const textAreaRight = document.getElementById('textAreaRight');
             let bijoyInput = textAreaRight ? textAreaRight.value : '';
+
+            // --- ধাপ ০: ব্যবহারকারীর অনুরোধ অনুযায়ী ভুল রেফ পুনঃক্রম করুন ---
+            // এই ধাপটি ভুলভাবে স্থাপন করা রেফগুলিকে সংশোধন করে (যেমন, ব্যঞ্জনবর্ণ+কার+রেফ -> রেফ+ব্যঞ্জনবর্ণ+কার)
+            // এটি শুধুমাত্র পোস্ট-পজিশনাল কার-এর পরে আসা রেফ-এর জন্য প্রযোজ্য।
+            const ansiConsonantsAndConjuncts = "KLMNOPQRSTUVWXYZ_`abcdefghijklmnopqrst°±³´µ¶·¹»¼½¾ÀÁÂÃÄÅÆÇÈÉÐËÌÏ×ØÙÚÜÞßàáâãäåæçèéêëìíîðñòóôõö÷øùúûüýþÿ";
+            const postpositionalKars = "z‚vxŠy~";
+            
+            // রেগুলার এক্সপ্রেশনটি একটি ব্যঞ্জনবর্ণ/যুক্তাক্ষর খোঁজে, যার পরে একটি পোস্ট-পজিশনাল কার এবং তারপর একটি রেফ চিহ্ন থাকে।
+            const reorderRefRegex = new RegExp(`([${ansiConsonantsAndConjuncts}])([${postpositionalKars}])(©)`, 'g');
+            
+            // এটি প্যাটার্নটিকে রেফ+ব্যঞ্জনবর্ণ/যুক্তাক্ষর+কার হিসাবে পুনঃক্রম করে, যা প্রক্রিয়াকরণের জন্য সঠিক ক্রম।
+            bijoyInput = bijoyInput.replace(reorderRefRegex, '©$1$2');
+
 
             // --- ধাপ ১: বিজয় থেকে ইউনিকোড ম্যাপিং ---
             // প্রথমে, বিজয় স্ট্রিংটিকে ইউনিকোড ক্যারেক্টারে ম্যাপ করুন।
@@ -1785,21 +1794,21 @@
             const unicodeHasanta = '\u09CD';
             const unicodeRef = '\u09B0' + unicodeHasanta;
 
-            // ধাপ ২.১: রেফ (র্) পুনঃক্রম করুন (আগে সরানো হয়েছে)
+            // ধাপ ২.১: রেফ (র্) পুনঃক্রম করুন 
             // এই ধাপটি রেফকে তার যৌক্তিক অবস্থানে (ব্যঞ্জনবর্ণের আগে) নিয়ে আসে।
             // উদাহরণ: ক + র্ -> র্ + ক
             const consonantClusterWithoutRef = `(?:[${unicodeConsonants}](?:${unicodeHasanta}[${unicodeConsonants}])*)`;
             const rephReorderRegex = new RegExp(`(${consonantClusterWithoutRef})(${unicodeRef})`, 'g');
             unicodeOutput = unicodeOutput.replace(rephReorderRegex, '$2$1');
 
-            // ধাপ ২.২: প্রি-সিডিং কার-চিহ্ন (ি, ে, ৈ) সঠিক স্থানে আনুন (পরে সরানো হয়েছে)
+            // ধাপ ২.২: প্রি-সিডিং কার-চিহ্ন (ি, ে, ৈ) সঠিক স্থানে আনুন 
             // এই ধাপটি প্রি-ভাওয়েলগুলিকে তাদের যৌক্তিক অবস্থানে (ব্যঞ্জনবর্ণ/ক্লাস্টারের পরে) নিয়ে আসে।
             // ক্লাস্টার প্যাটার্নটি সঠিকভাবে এমন ক্লাস্টারগুলি পরিচালনা করে যা এখন একটি রেফ দিয়ে শুরু হতে পারে।
             const consonantClusterPattern = `(?:${unicodeRef})?(?:[${unicodeConsonants}](?:${unicodeHasanta}[${unicodeConsonants}])*)`;
             const reorderRegex = new RegExp(`([${unicodeIkar}${unicodeEkar}${unicodeOikar}])(${consonantClusterPattern})`, 'g');
             unicodeOutput = unicodeOutput.replace(reorderRegex, '$2$1');
 
-            // ধাপ ২.৩: ও-কার এবং ঔ-কার গঠন করুন (আপনার দেওয়া নিয়ম অনুযায়ী)
+            // ধাপ ২.৩: ও-কার এবং ঔ-কার গঠন করুন
             // এখন যেহেতু 'ে' সঠিক স্থানে আছে (ব্যঞ্জনবর্ণের পরে), আমরা 'ো' এবং 'ৌ' গঠন করতে পারি।
             // ব্যঞ্জনবর্ণ + ে + া -> ব্যঞ্জনবর্ণ + ো
             const unicodeAkar = '\u09BE'; // া
