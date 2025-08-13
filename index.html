@@ -1744,28 +1744,17 @@
         }
 
         // ====================================================================
-        // START: CORRECTED FUNCTION (WITH USER'S REQUESTED LOGIC)
+        // START: UPDATED FUNCTION (বিজয় থেকে ইউনিকোড)
         // ====================================================================
         function convertRightToLeft() {
             const textAreaLeft = document.getElementById('textAreaLeft');
             const textAreaRight = document.getElementById('textAreaRight');
             let bijoyInput = textAreaRight ? textAreaRight.value : '';
 
-            // --- ধাপ ০: ব্যবহারকারীর অনুরোধ অনুযায়ী ভুল রেফ পুনঃক্রম করুন ---
-            // এই ধাপটি ভুলভাবে স্থাপন করা রেফগুলিকে সংশোধন করে (যেমন, ব্যঞ্জনবর্ণ+কার+রেফ -> রেফ+ব্যঞ্জনবর্ণ+কার)
-            // এটি শুধুমাত্র পোস্ট-পজিশনাল কার-এর পরে আসা রেফ-এর জন্য প্রযোজ্য।
-            const ansiConsonantsAndConjuncts = "KLMNOPQRSTUVWXYZ_`abcdefghijklmnopqrst°±³´µ¶·¹»¼½¾ÀÁÂÃÄÅÆÇÈÉÐËÌÏ×ØÙÚÜÞßàáâãäåæçèéêëìíîðñòóôõö÷øùúûüýþÿ";
-            const postpositionalKars = "z‚vxŠy~";
-            
-            // রেগুলার এক্সপ্রেশনটি একটি ব্যঞ্জনবর্ণ/যুক্তাক্ষর খোঁজে, যার পরে একটি পোস্ট-পজিশনাল কার এবং তারপর একটি রেফ চিহ্ন থাকে।
-            const reorderRefRegex = new RegExp(`([${ansiConsonantsAndConjuncts}])([${postpositionalKars}])(©)`, 'g');
-            
-            // এটি প্যাটার্নটিকে রেফ+ব্যঞ্জনবর্ণ/যুক্তাক্ষর+কার হিসাবে পুনঃক্রম করে, যা প্রক্রিয়াকরণের জন্য সঠিক ক্রম।
-            bijoyInput = bijoyInput.replace(reorderRefRegex, '©$1$2');
-
+            // [ধাপ ০ সরানো হয়েছে কারণ এটি ত্রুটিপূর্ণ এবং নতুন ইউনিকোড-ভিত্তিক যুক্তি দ্বারা প্রতিস্থাপিত হয়েছে]
 
             // --- ধাপ ১: বিজয় থেকে ইউনিকোড ম্যাপিং ---
-            // প্রথমে, বিজয় স্ট্রিংটিকে ইউনিকোড ক্যারেক্টারে ম্যাপ করুন।
+            // এই অংশটি অপরিবর্তিত রয়েছে। এটি একটি "কাঁচা" ইউনিকোড স্ট্রিং তৈরি করে।
             let unicodeOutput = '';
             let i = 0;
             while (i < bijoyInput.length) {
@@ -1790,20 +1779,22 @@
             const unicodeIkar = '\u09BF'; // ি
             const unicodeEkar = '\u09C7'; // ে
             const unicodeOikar = '\u09C8'; // ৈ
-            const unicodeConsonants = '\u0995-\u09B9\u09DC-\u09DF';
-            const unicodeHasanta = '\u09CD';
-            const unicodeRef = '\u09B0' + unicodeHasanta;
+            const unicodeConsonants = '\\u0995-\\u09B9\\u09DC-\\u09DF';
+            const unicodeHasanta = '\\u09CD';
+            const unicodeRef = '\\u09B0' + unicodeHasanta;
 
-            // ধাপ ২.১: রেফ (র্) পুনঃক্রম করুন 
-            // এই ধাপটি রেফকে তার যৌক্তিক অবস্থানে (ব্যঞ্জনবর্ণের আগে) নিয়ে আসে।
-            // উদাহরণ: ক + র্ -> র্ + ক
-            const consonantClusterWithoutRef = `(?:[${unicodeConsonants}](?:${unicodeHasanta}[${unicodeConsonants}])*)`;
-            const rephReorderRegex = new RegExp(`(${consonantClusterWithoutRef})(${unicodeRef})`, 'g');
-            unicodeOutput = unicodeOutput.replace(rephReorderRegex, '$2$1');
+            // ধাপ ২.১: রেফ (র্) পুনঃক্রম করুন (উন্নত এবং সমন্বিত যুক্তি)
+            // এই একক ধাপটি সমস্ত রেফ পুনঃক্রম পরিচালনা করে। এটি একটি ব্যঞ্জনবর্ণ ক্লাস্টার (ঐচ্ছিক কার-চিহ্ন সহ) খুঁজে বের করে
+            // যার পরে একটি রেফ থাকে এবং তাদের স্থান পরিবর্তন করে। এটি ব্যবহারকারীর অনুরোধটি সঠিকভাবে সমাধান করে।
+            // উদাহরণ: ক্তা + র্ -> র্ক্তা এবং ক + র্ -> র্ক উভয়ই সঠিকভাবে কাজ করে।
+            const unicodeVowelSigns = '[\\u09BE-\\u09C4\\u09C7-\\u09C8\\u09CB-\\u09CC\\u09D7]'; // সকল কার-চিহ্ন
+            const consonantCluster = `(?:[${unicodeConsonants}](?:${unicodeHasanta}[${unicodeConsonants}])*)`;
+            const fullClusterWithVowel = `(${consonantCluster}(?:${unicodeVowelSigns})?)`;
+            const robustRephReorder = new RegExp(`${fullClusterWithVowel}(${unicodeRef})`, 'g');
+            unicodeOutput = unicodeOutput.replace(robustRephReorder, '$2$1');
 
             // ধাপ ২.২: প্রি-সিডিং কার-চিহ্ন (ি, ে, ৈ) সঠিক স্থানে আনুন 
-            // এই ধাপটি প্রি-ভাওয়েলগুলিকে তাদের যৌক্তিক অবস্থানে (ব্যঞ্জনবর্ণ/ক্লাস্টারের পরে) নিয়ে আসে।
-            // ক্লাস্টার প্যাটার্নটি সঠিকভাবে এমন ক্লাস্টারগুলি পরিচালনা করে যা এখন একটি রেফ দিয়ে শুরু হতে পারে।
+            // এই ধাপটি এখন রেফ পুনঃক্রমের পরে চলে, যা সঠিক ক্রমানুসারে নিশ্চিত করে।
             const consonantClusterPattern = `(?:${unicodeRef})?(?:[${unicodeConsonants}](?:${unicodeHasanta}[${unicodeConsonants}])*)`;
             const reorderRegex = new RegExp(`([${unicodeIkar}${unicodeEkar}${unicodeOikar}])(${consonantClusterPattern})`, 'g');
             unicodeOutput = unicodeOutput.replace(reorderRegex, '$2$1');
@@ -1835,7 +1826,7 @@
             }
         }
         // ====================================================================
-        // END: CORRECTED FUNCTION
+        // END: UPDATED FUNCTION
         // ====================================================================
 
 
