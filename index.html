@@ -1302,7 +1302,10 @@
                     <div class="font-converter-section">
                         <div class="font-section-header">
                             <h2>বিজয় টেক্সট</h2>
-                            <button class="font-copy-button rounded-lg" onclick="copyToClipboard('textAreaRight')">কপি করুন</button>
+                            <div class="flex gap-2">
+                                <button id="fixAnsiButton" class="font-copy-button rounded-lg" style="background-image: linear-gradient(to right, #60a5fa 0%, #3b82f6 100%);">ফিক্স করুন</button>
+                                <button class="font-copy-button rounded-lg" onclick="copyToClipboard('textAreaRight')">কপি করুন</button>
+                            </div>
                         </div>
                         <textarea id="textAreaRight" placeholder="এখানে বিজয় টেক্সট লিখুন"></textarea>
                         <div class="font-button-group">
@@ -1610,7 +1613,7 @@
 			"Yª": "Yª",        "ÿè~": "ÿè‚",      "ÿè„": "ÿè…",      "ÿèy": "ÿèz",      "ÿy": "ÿz",       "Z&_": "Ì",       "Z&b": "Zœ",       "Z&e": "Z¡",          "Z&g": "Z¥",
 			"Z&h": "Z¨",       "Z&i": "Î",        "Z&Z": "Ë",       "Z~": "Z‚",        "Z„": "Z…",       "Zª": "Î",        "Zª~": "Îƒ",          "Zªy": "Îæ",           "Zy": "Zz",
 			"|‡": "|†",			",‡": ",†",			".‡": ".†",			"-‡": "-†",			"?‡": "?†",		":‡": ":†",			"=‡": "=†",			"|‰": "|ˆ",	     "K©~": "K‚©",		",‰": ",ˆ",		"f¨~": "f‚¨",	"f©~": "f‚©",
-			".‰": ".ˆ",			"-‰": "-ˆ",			"?‰": "?ˆ",			":‰": ":ˆ",			"=‰": "=ˆ",   "wwK¬": "wK¬w",	"e©…": "e„©",	   "e¨~": "e~¨",      "P©~": "P‚©Ó",    "P©y": "Pz©",     "K©y" :"Kz©", "f©y": "fz©",
+			".‰": ".ˆ",			"-‰": "-ˆ",			"?‰": "?ˆ",			":‰": ":ˆ",			"=‰": "=ˆ",   "wwK¬": "wK¬w",	"e©…": "e„©",	   "e¨~": "e~¨",      "P©~": "P‚©Ó",    "P©y": "Pz©",     "K©y" :"Kz©", "f©y": "fz©", "Ky": "Kz",
 
         };
 
@@ -1829,6 +1832,37 @@
         // END: UPDATED FUNCTION
         // ====================================================================
 
+        // ====================================================================
+        // START: ANSI TEXT FIX FUNCTION
+        // ====================================================================
+        function fixAnsiText() {
+            const textAreaRight = document.getElementById('textAreaRight');
+            if (!textAreaRight) return;
+
+            let textToFix = textAreaRight.value;
+
+            // ম্যানুয়াল আনসি রিপ্লেসমেন্ট ম্যাপ প্রয়োগ করুন
+            for (const [wrong, correct] of Object.entries(manualAnsiReplacements)) {
+                if (wrong) { // খালি কী এড়িয়ে চলুন
+                    const regex = new RegExp(wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                    textToFix = textToFix.replace(regex, correct);
+                }
+            }
+            
+            // ব্যবহারকারীর অনুরোধ অনুযায়ী নতুন নিয়ম যোগ করা হয়েছে
+            // শব্দের শুরুতে বা বাক্যের শুরুতে ‡ থাকলে † হবে
+            textToFix = textToFix.replace(/(^|\s|\|)‡/gm, '$1†');
+            // শব্দের শুরুতে বা বাক্যের শুরুতে ‰ থাকলে ˆ হবে
+            textToFix = textToFix.replace(/(^|\s|\|)‰/gm, '$1ˆ');
+
+
+            textAreaRight.value = textToFix;
+            addState('textAreaRight'); // আনডু/রিডু এর জন্য স্টেট যোগ করুন
+            showCustomAlert('লেখা ফিক্স করা হয়েছে!'); // ব্যবহারকারীকে জানান
+        }
+        // ====================================================================
+        // END: ANSI TEXT FIX FUNCTION
+        // ====================================================================
 
         function copyToClipboard(elementId) {
             const element = document.getElementById(elementId);
@@ -2992,6 +3026,12 @@ async function handleAskGemini() {
         if(askGeminiBtn) askGeminiBtn.disabled = false;
     }
 }
+
+   // --- ফন্ট কনভার্টার লিসেনার যোগ করুন ---
+                const fixAnsiButton = document.getElementById('fixAnsiButton');
+                if (fixAnsiButton) {
+                    fixAnsiButton.addEventListener('click', fixAnsiText);
+                }
 
  // *** সংশোধিত: প্রাথমিক বার্তাটি এখানে যোগ করা হয়েছে ***
                 if(chatWindow) {
