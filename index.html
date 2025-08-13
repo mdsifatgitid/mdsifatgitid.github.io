@@ -1833,7 +1833,7 @@
         // ====================================================================
 
         // ====================================================================
-        // START: ANSI TEXT FIX FUNCTION
+        // START: ANSI TEXT FIX FUNCTION (UPDATED)
         // ====================================================================
         function fixAnsiText() {
             const textAreaRight = document.getElementById('textAreaRight');
@@ -1841,7 +1841,18 @@
 
             let textToFix = textAreaRight.value;
 
-            // ম্যানুয়াল আনসি রিপ্লেসমেন্ট ম্যাপ প্রয়োগ করুন
+            // ধাপ ১: ব্যবহারকারীর অনুরোধ অনুযায়ী, বিজয় টেক্সটবক্সে ভুলবশত থাকা ইউনিকোড অক্ষরগুলিকে তাদের আনসি সমতুল্য দিয়ে প্রতিস্থাপন করুন।
+            // এটি unicodeToBijoyMap ব্যবহার করে করা হয়।
+            for (const key of sortedUnicodeKeys) { // sortedUnicodeKeys বিশ্বব্যাপী সংজ্ঞায়িত এবং দৈর্ঘ্য অনুসারে সাজানো
+                if (key.length > 0 && textToFix.includes(key)) {
+                    // সমস্ত ocorrances প্রতিস্থাপন করতে একটি RegExp ব্যবহার করুন
+                    const regex = new RegExp(key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                    textToFix = textToFix.replace(regex, unicodeToBijoyMap[key]);
+                }
+            }
+
+            // ধাপ ২: ম্যানুয়াল আনসি রিপ্লেসমেন্ট ম্যাপ প্রয়োগ করুন (বিদ্যমান যুক্তি)
+            // এটি সাধারণ আনসি-টু-আনসি ভুলগুলি সংশোধন করে।
             for (const [wrong, correct] of Object.entries(manualAnsiReplacements)) {
                 if (wrong) { // খালি কী এড়িয়ে চলুন
                     const regex = new RegExp(wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
@@ -1849,7 +1860,7 @@
                 }
             }
             
-            // ব্যবহারকারীর অনুরোধ অনুযায়ী নতুন নিয়ম যোগ করা হয়েছে
+            // ধাপ ৩: বিশেষ কেস হ্যান্ডলিং (বিদ্যমান যুক্তি)
             // শব্দের শুরুতে বা বাক্যের শুরুতে ‡ থাকলে † হবে
             textToFix = textToFix.replace(/(^|\s|\|)‡/gm, '$1†');
             // শব্দের শুরুতে বা বাক্যের শুরুতে ‰ থাকলে ˆ হবে
