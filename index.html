@@ -19,7 +19,7 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', 'Hind Siliguri', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -197,18 +197,21 @@
             color: #333;
             font-weight: 600;
         }
-        .age-calculator-content .input-group input[type="date"] {
+        .age-calculator-content .input-group input[type="date"],
+        .age-calculator-content .input-group input[type="number"] {
             width: 100%;
             padding: 12px; /* বর্ধিত প্যাডিং */
             border: 1px solid #cce7ff; /* হালকা নীল বর্ডার */
             border-radius: 10px;
             font-size: 1rem; /* বর্ধিত ফন্ট সাইজ */
             box-sizing: border-box; /* প্রস্থে প্যাডিং অন্তর্ভুক্ত করুন */
-            appearance: none; /* ডিফল্ট তারিখ ইনপুট স্টাইলিং সরান */
-            -webkit-appearance: none;
             cursor: pointer;
             background-color: #eaf6ff; /* হালকা নীল ইনপুট ব্যাকগ্রাউন্ড */
             color: #333;
+        }
+        .age-calculator-content .input-group input[type="date"] {
+             appearance: none; /* ডিফল্ট তারিখ ইনপুট স্টাইলিং সরান */
+            -webkit-appearance: none;
         }
         .age-calculator-content .calculate-button {
             background-color: #007bff; /* নীল বোতাম */
@@ -249,6 +252,39 @@
             color: #d9534f; /* ত্রুটি বার্তার জন্য লাল */
             font-size: 1rem; /* বর্ধিত ফন্ট সাইজ */
             font-weight: 500;
+        }
+        
+        /* বছর ক্যালকুলেটরের ফলাফলের জন্য স্টাইল */
+        #yearCalcResult {
+            align-items: stretch;
+            text-align: center;
+            padding: 10px;
+        }
+        #yearCalcResult .result-item {
+            padding: 15px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #cce7ff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        #yearCalcResult .result-item:first-child {
+            margin-bottom: 15px;
+        }
+        #yearCalcResult h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        #yearCalcResult p {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        #yearCalcResult .past-date {
+            color: #c62828; /* লাল */
+        }
+        #yearCalcResult .future-date {
+            color: #28a745; /* সবুজ */
         }
 
         /* তারিখ ও সময় ক্যালকুলেটর স্টাইল */
@@ -1136,24 +1172,43 @@
         <!-- বয়স ক্যালকুলেটর বিভাগ -->
         <div id="ageCalculatorContent" class="calculator-content">
             <div class="age-calculator-content">
+                <!-- Existing Age Calculator -->
+                <h3 class="text-xl font-bold text-gray-700 mb-4">বয়স গণনা করুন</h3>
                 <div class="input-group">
                     <label for="birthDate">জন্ম তারিখ:</label>
                     <input type="date" id="birthDate" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
-
                 <div class="input-group">
                     <label for="currentDate">বর্তমান তারিখ:</label>
                     <input type="date" id="currentDate" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
-
                 <button id="calculateAgeBtn" class="calculate-button rounded-xl">বয়স গণনা করুন</button>
-
                 <div id="ageResultArea" class="result-area">
                     <p id="ageResult" class="text-xl"></p>
                     <p id="ageErrorMessage" class="error-message"></p>
                 </div>
+                
+                <!-- Divider -->
+                <hr class="my-8 border-gray-300">
+
+                <!-- New Year Calculator Feature -->
+                <h3 class="text-xl font-bold text-gray-700 mb-4">বছর ক্যালকুলেটর</h3>
+                <p class="text-gray-600 mb-4">যেকোনো তারিখ থেকে নির্দিষ্ট বছর আগে ও পরের তারিখ খুঁজুন।</p>
+                <div class="input-group">
+                    <label for="yearCalcDateInput">একটি তারিখ নির্বাচন করুন (খালি রাখলে আজকের তারিখ ব্যবহৃত হবে)</label>
+                    <input type="date" id="yearCalcDateInput" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div class="input-group">
+                    <label for="yearCalcYearsInput">বছরের সংখ্যা লিখুন</label>
+                    <input type="number" id="yearCalcYearsInput" value="10" placeholder="যেমন: ১০" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <button id="calculateYearsBtn" class="calculate-button rounded-xl">হিসাব করুন</button>
+                <div id="yearCalcResult" class="result-area">
+                    <!-- Results will be injected here -->
+                </div>
             </div>
         </div>
+
 
         <!-- তারিখ ও সময় ক্যালকুলেটর বিভাগ -->
         <div id="dateCalculatorContent" class="calculator-content">
@@ -2055,7 +2110,7 @@
                 console.log('apiKeyModal:', apiKeyModal);
 
                 // প্রাথমিক ট্যাব প্রদর্শন
-                showTab('converter'); // লোডে মৌলিক ক্যালকুলেটরকে সক্রিয় হিসাবে সেট করুন
+                showTab('basic'); // লোডে মৌলিক ক্যালকুলেটরকে সক্রিয় হিসাবে সেট করুন
 
                 // API কী বোতামের স্টাইল আপডেট করার ফাংশন
                 function updateApiKeyButton() {
@@ -2473,6 +2528,69 @@
                     }
 
                     if (ageResult) ageResult.innerText = `আপনার বয়স: ${years} বছর, ${months} মাস, ${days} দিন।`;
+                }
+ // --- বছর ক্যালকুলেটর লজিক ---
+                const yearCalcDateInput = document.getElementById('yearCalcDateInput');
+                const yearCalcYearsInput = document.getElementById('yearCalcYearsInput');
+                const calculateYearsBtn = document.getElementById('calculateYearsBtn');
+                const yearCalcResult = document.getElementById('yearCalcResult');
+
+                if (calculateYearsBtn) {
+                    calculateYearsBtn.addEventListener('click', () => {
+                        console.log('বছর ক্যালকুলেটর বোতামে ক্লিক করা হয়েছে।');
+                        calculateAndDisplayYears();
+                    });
+                }
+
+                function calculateAndDisplayYears() {
+                    const startDateValue = yearCalcDateInput.value;
+                    const yearsToCalc = parseInt(yearCalcYearsInput.value, 10);
+
+                    // আগের ফলাফল মুছে ফেলুন
+                    yearCalcResult.innerHTML = '';
+
+                    if (isNaN(yearsToCalc) || yearsToCalc <= 0) {
+                        yearCalcResult.innerHTML = '<p class="error-message">অনুগ্রহ করে বছরের একটি সঠিক সংখ্যা লিখুন।</p>';
+                        return;
+                    }
+
+                    // যদি কোনো তারিখ নির্বাচন করা না থাকে, তাহলে আজকের তারিখ ব্যবহার করুন
+                    const startDate = startDateValue ? new Date(startDateValue) : new Date();
+                    
+                    // তারিখ অবৈধ হলে ত্রুটি দেখান
+                    if (isNaN(startDate.getTime())) {
+                        yearCalcResult.innerHTML = '<p class="error-message">অনুগ্রহ করে একটি সঠিক তারিখ নির্বাচন করুন।</p>';
+                        return;
+                    }
+
+
+                    // ভবিষ্যতের তারিখ গণনা
+                    const futureDate = new Date(startDate);
+                    futureDate.setFullYear(startDate.getFullYear() + yearsToCalc);
+
+                    // অতীতের তারিখ গণনা
+                    const pastDate = new Date(startDate);
+                    pastDate.setFullYear(startDate.getFullYear() - yearsToCalc);
+
+                    // ফলাফল প্রদর্শনের জন্য তারিখ ফরম্যাট করুন
+                    const dateFormatter = new Intl.DateTimeFormat('bn-BD', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                        weekday: 'long'
+                    });
+
+                    // ফলাফল প্রদর্শনের জন্য HTML তৈরি করুন
+                    yearCalcResult.innerHTML = `
+                        <div class="result-item">
+                            <h3>${yearsToCalc} বছর আগে ছিল:</h3>
+                            <p class="past-date">${dateFormatter.format(pastDate)}</p>
+                        </div>
+                        <div class="result-item">
+                            <h3>${yearsToCalc} বছর পরে হবে:</h3>
+                            <p class="future-date">${dateFormatter.format(futureDate)}</p>
+                        </div>
+                    `;
                 }
 
                 // --- তারিখ ও সময় ক্যালকুলেটর লজিক ---
