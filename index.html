@@ -989,6 +989,36 @@
             white-space: pre-wrap; /* ফরম্যাটিং বজায় রাখতে */
         }
 
+        /* বানান পরীক্ষা করুন বোতামের জন্য নতুন সুন্দর স্টাইল */
+        .spell-check-button {
+            background-image: linear-gradient(to right, #8A2BE2 0%, #4A00E0 100%); /* বেগুনি গ্রেডিয়েন্ট */
+            color: white;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 12px; /* আরও গোলাকার */
+            font-size: 1.15rem;
+            font-weight: 700; /* বোল্ড */
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(74, 0, 224, 0.3); /* রঙের সাথে মানানসই ছায়া */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px; /* আইকন এবং টেক্সটের মধ্যে ফাঁক */
+        }
+
+        .spell-check-button:hover {
+            background-image: linear-gradient(to right, #9932CC 0%, #5D00EE 100%); /* হোভারে ভিন্ন গ্রেডিয়েন্ট */
+            transform: translateY(-2px); /* উপরে ওঠার প্রভাব */
+            box-shadow: 0 8px 20px rgba(74, 0, 224, 0.4); /* গভীর ছায়া */
+        }
+
+        .spell-check-button:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 15px rgba(74, 0, 224, 0.3);
+        }
+
 
         /* কন্টেন্ট প্রাথমিকভাবে লুকানো */
         .calculator-content {
@@ -1546,7 +1576,10 @@
             <div class="spell-checker-content">
                 <h3 class="text-xl font-bold text-gray-700 mb-4">বাংলা বানান সংশোধন করুন</h3>
                 <textarea id="spellCheckInput" rows="8" placeholder="এখানে আপনার বাংলা লেখাটি পেস্ট করুন..."></textarea>
-                <button id="checkSpellingBtn" class="calculate-button rounded-xl mt-4">বানান পরীক্ষা করুন</button>
+                <button id="checkSpellingBtn" class="spell-check-button mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+                    <span>বানান পরীক্ষা করুন</span>
+                </button>
                 <div id="spellCheckLoading" class="loading-indicator mt-4" style="display: none;">পরীক্ষা করা হচ্ছে...</div>
                 <div class="result-area mt-4">
                     <p class="result-section-title">সংশোধিত লেখা</p>
