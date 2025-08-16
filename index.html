@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -853,113 +852,143 @@
         }
 
 
- /* টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগের নতুন স্টাইল */
-.text-assistant-content {
-    padding: 20px;
-    border-radius: 16px;
-    margin: 0 auto;
-    max-width: 600px; /* চ্যাটের জন্য প্রস্থ বাড়ানো হয়েছে */
-    background-color: #f8f9fa;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-}
-.chat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-.chat-header h3 {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #333;
-}
-.clear-chat-button {
-    background-color: #ef5350;
-    color: white;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-.clear-chat-button:hover {
-    background-color: #d32f2f;
-}
-.chat-window {
-    height: 400px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 15px;
-    background-color: #e6f7ff;
-    border-radius: 16px;
-    border: 1px solid #b3e0ff;
-    margin-bottom: 15px;
-}
-.message {
-    padding: 10px 15px;
-    border-radius: 12px;
-    max-width: 85%;
-    word-wrap: break-word;
-    white-space: pre-wrap;
-    line-height: 1.6;
-}
-.user-message {
-    background-color: #3f51b5;
-    color: white;
-    align-self: flex-end;
-    border-bottom-right-radius: 2px;
-}
-.gemini-message {
-    background-color: #ffffff;
-    color: #333;
-    align-self: flex-start;
-    border-bottom-left-radius: 2px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-.gemini-error-message {
-    background-color: #ffebee;
-    color: #c62828;
-    align-self: flex-start;
-    border-bottom-left-radius: 2px;
-}
-.input-container {
-    display: flex;
-    gap: 10px;
-    align-items: stretch; /* বোতাম এবং টেক্সটএরিয়া একই উচ্চতায় রাখুন */
-}
-.text-assistant-content textarea {
-    flex-grow: 1;
-    height: auto;
-    min-height: 50px;
-    padding: 12px;
-    margin-bottom: 0;
-    border: 1px solid #cce7ff;
-    border-radius: 10px;
-    font-size: 1rem;
-    resize: vertical;
-}
-.text-assistant-content .ask-button {
-    width: auto;
-    margin-bottom: 0;
-    flex-shrink: 0;
-    background-color: #8A2BE2;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 10px;
-    font-size: 1rem;
-    cursor: pointer;
-}
-.text-assistant-content .loading-indicator {
-    display: none;
-    text-align: center;
-    padding: 10px;
-    font-size: 1rem;
-    color: #555;
-}
+        /* টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগের নতুন স্টাইল */
+        .text-assistant-content {
+            padding: 20px;
+            border-radius: 16px;
+            margin: 0 auto;
+            max-width: 600px; /* চ্যাটের জন্য প্রস্থ বাড়ানো হয়েছে */
+            background-color: #f8f9fa;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .chat-header h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #333;
+        }
+        .clear-chat-button {
+            background-color: #ef5350;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .clear-chat-button:hover {
+            background-color: #d32f2f;
+        }
+        .chat-window {
+            height: 400px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 15px;
+            background-color: #e6f7ff;
+            border-radius: 16px;
+            border: 1px solid #b3e0ff;
+            margin-bottom: 15px;
+        }
+        .message {
+            padding: 10px 15px;
+            border-radius: 12px;
+            max-width: 85%;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        .user-message {
+            background-color: #3f51b5;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+        .gemini-message {
+            background-color: #ffffff;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .gemini-error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: stretch; /* বোতাম এবং টেক্সটএরিয়া একই উচ্চতায় রাখুন */
+        }
+        .text-assistant-content textarea {
+            flex-grow: 1;
+            height: auto;
+            min-height: 50px;
+            padding: 12px;
+            margin-bottom: 0;
+            border: 1px solid #cce7ff;
+            border-radius: 10px;
+            font-size: 1rem;
+            resize: vertical;
+        }
+        .text-assistant-content .ask-button {
+            width: auto;
+            margin-bottom: 0;
+            flex-shrink: 0;
+            background-color: #8A2BE2;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .text-assistant-content .loading-indicator {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            font-size: 1rem;
+            color: #555;
+        }
+        
+        /* নতুন: বাংলা বানান সংশোধন স্টাইল */
+        .spell-checker-content {
+            padding: 20px;
+            border-radius: 16px;
+            margin: 0 auto;
+            max-width: 600px;
+            background-color: #f8f9fa;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .spell-checker-content textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cce7ff;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            resize: vertical;
+            box-sizing: border-box;
+            background-color: #eaf6ff;
+            color: #333;
+        }
+        .spell-checker-content .result-area #spellCheckResult {
+            min-height: 150px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 12px;
+            white-space: pre-wrap; /* ফরম্যাটিং বজায় রাখতে */
+        }
+
 
         /* কন্টেন্ট প্রাথমিকভাবে লুকানো */
         .calculator-content {
@@ -1125,7 +1154,8 @@
             .scientific-calculator-content,
             .news-content,
             .font-converter-content,
-            .text-assistant-content {
+            .text-assistant-content,
+            .spell-checker-content { /* বানান সংশোধকের জন্য প্রতিক্রিয়াশীলতা */
                 padding: 15px;
                 border-radius: 12px;
             }
@@ -1265,6 +1295,7 @@
             <button id="dateCalcTab" class="tab-button rounded-xl">তারিখ ও সময়</button>
             <button id="newsTab" class="tab-button rounded-xl">সাম্প্রতিক খবর</button>
             <button id="converterTab" class="tab-button rounded-xl">কনভার্টার</button>
+            <button id="spellCheckTab" class="tab-button rounded-xl">বানান সংশোধন</button>
             <button id="textAssistantTab" class="tab-button rounded-xl">টেক্সট অ্যাসিস্ট্যান্ট</button>
             <button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
             <button id="setApiKeyBtn" class="tab-button rounded-xl" style="background-color: #ef5350; color: white;">API কী সেট করুন</button>
@@ -1510,23 +1541,37 @@
             </div>
         </div>
 
-<!-- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগ -->
-<div id="textAssistantContent" class="calculator-content">
-    <div class="text-assistant-content">
-        <div class="chat-header">
-            <h3>জেমিনির সাথে চ্যাট করুন</h3>
-            <button id="clearChatBtn" class="clear-chat-button">চ্যাট মুছুন</button>
+        <!-- নতুন: বাংলা বানান সংশোধন বিভাগ -->
+        <div id="spellCheckerContent" class="calculator-content">
+            <div class="spell-checker-content">
+                <h3 class="text-xl font-bold text-gray-700 mb-4">বাংলা বানান সংশোধন করুন</h3>
+                <textarea id="spellCheckInput" rows="8" placeholder="এখানে আপনার বাংলা লেখাটি পেস্ট করুন..."></textarea>
+                <button id="checkSpellingBtn" class="calculate-button rounded-xl mt-4">বানান পরীক্ষা করুন</button>
+                <div id="spellCheckLoading" class="loading-indicator mt-4" style="display: none;">পরীক্ষা করা হচ্ছে...</div>
+                <div class="result-area mt-4">
+                    <p class="result-section-title">সংশোধিত লেখা</p>
+                    <div id="spellCheckResult" class="text-left p-2"></div>
+                </div>
+            </div>
         </div>
-        <div id="chatWindow" class="chat-window">
-            <!-- চ্যাট বার্তা এখানে যুক্ত করা হবে -->
+
+        <!-- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগ -->
+        <div id="textAssistantContent" class="calculator-content">
+            <div class="text-assistant-content">
+                <div class="chat-header">
+                    <h3>জেমিনির সাথে চ্যাট করুন</h3>
+                    <button id="clearChatBtn" class="clear-chat-button">চ্যাট মুছুন</button>
+                </div>
+                <div id="chatWindow" class="chat-window">
+                    <!-- চ্যাট বার্তা এখানে যুক্ত করা হবে -->
+                </div>
+                <div id="assistantLoading" class="loading-indicator">জেমিনি চিন্তা করছে...</div>
+                <div class="input-container">
+                    <textarea id="assistantInput" placeholder="এখানে আপনার প্রশ্ন লিখুন..."></textarea>
+                    <button id="askGeminiBtn" class="ask-button">পাঠান</button>
+                </div>
+            </div>
         </div>
-        <div id="assistantLoading" class="loading-indicator">জেমিনি চিন্তা করছে...</div>
-        <div class="input-container">
-            <textarea id="assistantInput" placeholder="এখানে আপনার প্রশ্ন লিখুন..."></textarea>
-            <button id="askGeminiBtn" class="ask-button">পাঠান</button>
-        </div>
-    </div>
-</div>
 
         <!-- সকল ফিচার বিভাগ -->
         <div id="allFeaturesContent" class="calculator-content">
@@ -1573,6 +1618,9 @@
                                 <li><strong class="text-purple-700">আনডু/রিডু ফিচার:</strong> টেক্সট ইনপুটের ইতিহাস সংরক্ষণ এবং পূর্বাবস্থায় ফিরিয়ে আনা বা পুনরায় করার সুবিধা।</li>
                                 <li>বাহিরের কনভার্টার লিংকের জন্য: <a href="https://bangla.plus/bijoy-unicode-converter" target="_blank" class="text-blue-600 hover:underline">bangla.plus/bijoy-unicode-converter</a>।</li>
                             </ul>
+                        </li>
+                        <li class="mb-2">
+                            <strong class="text-blue-700">বানান সংশোধন (নতুন):</strong> জেমিনি এপিআই ব্যবহার করে বাংলা লেখার বানান ও ব্যাকরণগত ভুল সংশোধন করুন।
                         </li>
                         <li class="mb-2">
                             <strong class="text-blue-700">টেক্সট অ্যাসিস্ট্যান্ট (জেমিনি চালিত):</strong> জেমিনি এপিআই ব্যবহার করে যেকোনো প্রশ্নের উত্তর পান, লেখা সারসংক্ষেপ করুন, বা অন্যান্য টেক্সট-ভিত্তিক সহায়তা নিন।
@@ -2257,7 +2305,9 @@
                 const newsContent = document.getElementById('newsContent');
                 const converterContent = document.getElementById('converterContent');
                 const textAssistantContent = document.getElementById('textAssistantContent');
-                const allFeaturesContent = document.getElementById('allFeaturesContent');
+const allFeaturesContent = document.getElementById('allFeaturesContent');
+const spellCheckerContent = document.getElementById('spellCheckerContent'); // এই লাইনটি যোগ করা হয়েছে
+const spellCheckTab = document.getElementById('spellCheckTab');
 
                 // API কী মডেল উপাদান
                 const apiKeyModal = document.getElementById('apiKeyModal');
@@ -2294,43 +2344,50 @@
                 updateApiKeyButton();
 
 
-                function showTab(tabId) {
-                    // সমস্ত ট্যাব নিষ্ক্রিয় করুন এবং সমস্ত কন্টেন্ট লুকান
-                    [basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, textAssistantTab, allFeaturesTab].forEach(tab => {
-                        if (tab) tab.classList.remove('active');
-                    });
-                    [basicCalculatorContent, ageCalculatorContent, dateCalculatorContent, scientificCalculatorContent, newsContent, converterContent, textAssistantContent, allFeaturesContent].forEach(content => {
-                        if (content) content.classList.remove('active');
-                    });
+               function showTab(tabId) {
+    // সমস্ত ট্যাব বোতাম থেকে 'active' ক্লাস সরিয়ে দিন
+    [basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, spellCheckTab, textAssistantTab, allFeaturesTab].forEach(tab => {
+        if (tab) tab.classList.remove('active');
+    });
 
-                    // নির্বাচিত ট্যাব সক্রিয় করুন এবং এর কন্টেন্ট দেখান
-                    if (tabId === 'basic' && basicCalcTab && basicCalculatorContent) {
-                        basicCalcTab.classList.add('active');
-                        basicCalculatorContent.classList.add('active');
-                    } else if (tabId === 'age' && ageCalcTab && ageCalculatorContent) {
-                        ageCalcTab.classList.add('active');
-                        ageCalculatorContent.classList.add('active');
-                    } else if (tabId === 'date' && dateCalcTab && dateCalculatorContent) {
-                        dateCalcTab.classList.add('active');
-                        dateCalculatorContent.classList.add('active');
-                    } else if (tabId === 'scientific' && scientificCalcTab && scientificCalculatorContent) {
-                        scientificCalcTab.classList.add('active');
-                        scientificCalculatorContent.classList.add('active');
-                    } else if (tabId === 'news' && newsTab && newsContent) {
-                        newsTab.classList.add('active');
-                        newsContent.classList.add('active');
-                    } else if (tabId === 'converter' && converterTab && converterContent) {
-                        converterTab.classList.add('active');
-                        converterContent.classList.add('active');
-                    } else if (tabId === 'textAssistant' && textAssistantTab && textAssistantContent) {
-                        textAssistantTab.classList.add('active');
-                        textAssistantContent.classList.add('active');
-                    } else if (tabId === 'allFeatures' && allFeaturesTab && allFeaturesContent) {
-                        allFeaturesTab.classList.add('active');
-                        allFeaturesContent.classList.add('active');
-                    }
-                    console.log(`ট্যাব পরিবর্তন করা হয়েছে: ${tabId}`);
-                }
+    // সমস্ত কন্টেন্ট বিভাগ লুকান
+    [basicCalculatorContent, ageCalculatorContent, dateCalculatorContent, scientificCalculatorContent, newsContent, converterContent, spellCheckerContent, textAssistantContent, allFeaturesContent].forEach(content => {
+        if (content) content.classList.remove('active');
+    });
+
+    // নির্বাচিত ট্যাব সক্রিয় করুন এবং এর কন্টেন্ট দেখান
+    if (tabId === 'basic' && basicCalcTab && basicCalculatorContent) {
+        basicCalcTab.classList.add('active');
+        basicCalculatorContent.classList.add('active');
+    } else if (tabId === 'age' && ageCalcTab && ageCalculatorContent) {
+        ageCalcTab.classList.add('active');
+        ageCalculatorContent.classList.add('active');
+    } else if (tabId === 'date' && dateCalcTab && dateCalculatorContent) {
+        dateCalcTab.classList.add('active');
+        dateCalculatorContent.classList.add('active');
+    } else if (tabId === 'scientific' && scientificCalcTab && scientificCalculatorContent) {
+        scientificCalcTab.classList.add('active');
+        scientificCalculatorContent.classList.add('active');
+    } else if (tabId === 'news' && newsTab && newsContent) {
+        newsTab.classList.add('active');
+        newsContent.classList.add('active');
+    } else if (tabId === 'converter' && converterTab && converterContent) {
+        converterTab.classList.add('active');
+        converterContent.classList.add('active');
+    } else if (tabId === 'textAssistant' && textAssistantTab && textAssistantContent) {
+        textAssistantTab.classList.add('active');
+        textAssistantContent.classList.add('active');
+    } else if (tabId === 'allFeatures' && allFeaturesTab && allFeaturesContent) {
+        allFeaturesTab.classList.add('active');
+        allFeaturesContent.classList.add('active');
+    } else if (tabId === 'spellCheck' && spellCheckTab && spellCheckerContent) {
+        spellCheckTab.classList.add('active');
+        spellCheckerContent.classList.add('active');
+    }
+    console.log(`ট্যাব পরিবর্তন করা হয়েছে: ${tabId}`);
+}
+
+
 
                 if (basicCalcTab) basicCalcTab.addEventListener('click', () => showTab('basic'));
                 if (ageCalcTab) ageCalcTab.addEventListener('click', () => showTab('age'));
@@ -2338,6 +2395,9 @@
                 if (scientificCalcTab) scientificCalcTab.addEventListener('click', () => showTab('scientific'));
                 if (newsTab) newsTab.addEventListener('click', () => showTab('news'));
                 if (converterTab) converterTab.addEventListener('click', () => showTab('converter'));
+
+if (spellCheckTab) spellCheckTab.addEventListener('click', () => showTab('spellCheck')); 
+
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
                 if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
 
@@ -3217,6 +3277,66 @@
                     addState('textAreaRight');
                     textAreaRight.addEventListener('input', () => addState('textAreaRight'));
                 }
+
+// --- নতুন: বাংলা বানান সংশোধন লজিক ---
+const checkSpellingBtn = document.getElementById('checkSpellingBtn');
+const spellCheckInput = document.getElementById('spellCheckInput');
+const spellCheckResult = document.getElementById('spellCheckResult');
+const spellCheckLoading = document.getElementById('spellCheckLoading');
+if (checkSpellingBtn) {
+    checkSpellingBtn.addEventListener('click', async () => {
+        const textToCorrect = spellCheckInput.value.trim();
+        if (!textToCorrect) {
+            spellCheckResult.innerText = 'অনুগ্রহ করে পরীক্ষা করার জন্য কিছু লেখা দিন।';
+            return;
+        }
+
+        // আগের ফলাফল মুছে ফেলুন এবং লোডিং শুরু করুন
+        spellCheckResult.innerText = '';
+        spellCheckLoading.style.display = 'block';
+        checkSpellingBtn.disabled = true;
+
+        try {
+            const apiKey = localStorage.getItem('geminiApiKey');
+            if (!apiKey) {
+                spellCheckResult.innerText = 'জেমিনি API কী সেট করা হয়নি। অনুগ্রহ করে "API কী সেট করুন" বাটনে ক্লিক করে কী সেট করুন।';
+                return;
+            }
+
+            // জেমিনির জন্য প্রম্পট তৈরি
+            const prompt = `নিচের বাংলা লেখাটির বানান এবং ব্যাকরণগত ভুল সংশোধন করে শুধুমাত্র সঠিক লেখাটি দাও। কোনো অতিরিক্ত ব্যাখ্যা বা ভূমিকা দেবে না।\n\n"${textToCorrect}"`;
+            
+            let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = { contents: chatHistory };
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            // API কল করা হচ্ছে
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            // ফলাফল প্রদর্শন
+            if (result.candidates && result.candidates[0]?.content?.parts?.[0]?.text) {
+                const correctedText = result.candidates[0].content.parts[0].text;
+                spellCheckResult.innerText = correctedText;
+            } else {
+                spellCheckResult.innerText = 'দুঃখিত, কোনো উত্তর পাওয়া যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।';
+                console.error('API Response Error:', result);
+            }
+        } catch (error) {
+            spellCheckResult.innerText = 'একটি ত্রুটি ঘটেছে: ' + error.message;
+            console.error('API Call Error:', error);
+        } finally {
+            // লোডিং শেষ করুন
+            spellCheckLoading.style.display = 'none';
+            checkSpellingBtn.disabled = false;
+        }
+    });
+}
 
 // --- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) লজিক ---
 const assistantInput = document.getElementById('assistantInput');
