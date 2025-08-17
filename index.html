@@ -125,8 +125,8 @@
         body {
             font-family: 'Inter', 'Hind Siliguri', sans-serif;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: center; /* horizontally center */
+            align-items: center;     /* vertically center */
             min-height: 100vh;
             background-color: transparent; /* Made transparent for animated background */
             padding: 10px; /* ছোট স্ক্রিনের জন্য প্যাডিং যোগ করুন */
@@ -183,6 +183,7 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
+            align-items: stretcht; 
             gap: 20px;
         }
 
@@ -195,7 +196,7 @@
             border-radius: 20px; /* গোলাকার কোণ */
             background-color: #263238; /* গাঢ় ধূসর/নীল ক্যালকুলেটর ব্যাকগ্রাউন্ড */
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* ছায়া */
-            margin: 0 auto; /* গ্রিডকে কেন্দ্র করুন */
+            /* margin: 0 auto; Removed as parent flex handles centering */
             max-width: 380px; /* মৌলিক ক্যালকুলেটরের জন্য বর্ধিত প্রস্থ */
         }
         .output {
@@ -373,7 +374,7 @@
             border: 1px solid #cce7ff; /* হালকা নীল বর্ডার */
             border-radius: 10px;
             font-size: 1rem; /* বর্ধিত ফন্ট সাইজ */
-            box-sizing: border-box; /* প্রস্থে প্যাডিং অন্তর্ভুক্ত করুন */
+            box-sizing: border-box; /* প্রস্থে প্যাডিং এবং বর্ডার অন্তর্ভুক্ত করুন */
             cursor: pointer;
             background-color: #eaf6ff; /* হালকা নীল ইনপুট ব্যাকগ্রাউন্ড */
             color: #333;
