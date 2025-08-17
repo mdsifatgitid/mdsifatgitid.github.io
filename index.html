@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Combined Calculator</title>
+    <title>কম্বাইন্ড ক্যালকুলেটর</title>
 	<link rel="icon" type="image/png" href="https://mdsifatgitid.github.io/converticon.png">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -179,6 +179,13 @@
         }
 
         /* মৌলিক ক্যালকুলেটর স্টাইল */
+        .basic-calculator-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
         .calculator-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr); /* 4 কলাম, সমান প্রস্থ */
@@ -216,7 +223,7 @@
         }
         .output .current-operand {
             color: white; /* বর্তমান অপারেশনের রঙ */
-            font-size: 3.2rem; /* বর্ধিত ফন্ট সাইজ */
+            font-size: 2.8rem; /* ফন্ট সাইজ কমানো হয়েছে */
             word-wrap: break-word; /* দীর্ঘ সংখ্যা ভাঙুন */
             word-break: break-all; /* দীর্ঘ সংখ্যা ভাঙুন */
             align-self: flex-end; /* ডানদিকে সারিবদ্ধ করুন */
@@ -263,6 +270,60 @@
         .zero {
             grid-column: span 2; /* জিরো বোতাম দুটি কলাম জুড়ে বিস্তৃত */
         }
+        
+        /* নতুন: হিস্টোরি প্যানেল স্টাইল */
+        .history-panel {
+            background-color: #263238;
+            color: white;
+            padding: 20px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #455a64;
+            padding-bottom: 10px;
+        }
+        .history-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        #clearHistoryBtn {
+            background-color: #ef5350;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.2s ease;
+        }
+        #clearHistoryBtn:hover {
+            background-color: #d32f2f;
+        }
+        #history-list {
+            height: 350px;
+            overflow-y: auto;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: right;
+        }
+        #history-list li {
+            padding: 8px 5px;
+            border-bottom: 1px solid #37474f;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        #history-list li:last-child {
+            border-bottom: none;
+        }
+
         /* ব্যাখ্যা বোতামের জন্য নতুন স্টাইল */
         .explain-button {
             background-color: #28a745; /* সবুজ */
@@ -1286,7 +1347,7 @@
                 border-radius: 10px;
             }
             .output .current-operand {
-                font-size: 2.8rem;
+                font-size: 2.4rem; /* ছোট স্ক্রিনের জন্য ফন্ট সাইজ কমানো হয়েছে */
             }
             .output .previous-operand {
                 font-size: 1.3rem;
@@ -1454,29 +1515,41 @@
 
         <!-- মৌলিক ক্যালকুলেটর বিভাগ -->
         <div id="basicCalculatorContent" class="calculator-content active">
-            <div class="calculator-grid">
-                <div class="output">
-                    <div data-previous-operand class="previous-operand"></div>
-                    <div data-current-operand class="current-operand"></div>
+            <div class="basic-calculator-wrapper">
+                <div class="calculator-grid">
+                    <div class="output">
+                        <div data-previous-operand class="previous-operand"></div>
+                        <div data-current-operand class="current-operand"></div>
+                    </div>
+                    <button data-all-clear class="clear calculator-button rounded-xl" style="grid-column: span 2;">AC</button>
+                    <button data-delete class="calculator-button rounded-xl">DEL</button>
+                    <button data-operator class="operator calculator-button rounded-xl">÷</button> <!-- ভাগ -->
+                    <button data-number class="calculator-button rounded-xl">7</button>
+                    <button data-number class="calculator-button rounded-xl">8</button>
+                    <button data-number class="calculator-button rounded-xl">9</button>
+                    <button data-operator class="operator calculator-button rounded-xl">×</button> <!-- গুণ -->
+                    <button data-number class="calculator-button rounded-xl">4</button>
+                    <button data-number class="calculator-button rounded-xl">5</button>
+                    <button data-number class="calculator-button rounded-xl">6</button>
+                    <button data-operator class="operator calculator-button rounded-xl">-</button> <!-- বিয়োগ -->
+                    <button data-number class="calculator-button rounded-xl">1</button>
+                    <button data-number class="calculator-button rounded-xl">2</button>
+                    <button data-number class="calculator-button rounded-xl">3</button>
+                    <button data-operator class="operator calculator-button rounded-xl">+</button> <!-- যোগ -->
+                    <button data-number class="zero calculator-button rounded-xl" style="grid-column: span 2;">0</button>
+                    <button data-number class="calculator-button rounded-xl">.</button>
+                    <button data-equals class="equals calculator-button rounded-xl">=</button> <!-- সমান -->
                 </div>
-                <button data-all-clear class="clear calculator-button rounded-xl" style="grid-column: span 2;">AC</button>
-                <button data-delete class="calculator-button rounded-xl">DEL</button>
-                <button data-operator class="operator calculator-button rounded-xl">÷</button> <!-- ভাগ -->
-                <button data-number class="calculator-button rounded-xl">7</button>
-                <button data-number class="calculator-button rounded-xl">8</button>
-                <button data-number class="calculator-button rounded-xl">9</button>
-                <button data-operator class="operator calculator-button rounded-xl">×</button> <!-- গুণ -->
-                <button data-number class="calculator-button rounded-xl">4</button>
-                <button data-number class="calculator-button rounded-xl">5</button>
-                <button data-number class="calculator-button rounded-xl">6</button>
-                <button data-operator class="operator calculator-button rounded-xl">-</button> <!-- বিয়োগ -->
-                <button data-number class="calculator-button rounded-xl">1</button>
-                <button data-number class="calculator-button rounded-xl">2</button>
-                <button data-number class="calculator-button rounded-xl">3</button>
-                <button data-operator class="operator calculator-button rounded-xl">+</button> <!-- যোগ -->
-                <button data-number class="zero calculator-button rounded-xl" style="grid-column: span 2;">0</button>
-                <button data-number class="calculator-button rounded-xl">.</button>
-                <button data-equals class="equals calculator-button rounded-xl">=</button> <!-- সমান -->
+                <!-- নতুন: হিস্টোরি প্যানেল -->
+                <div class="history-panel">
+                    <div class="history-header">
+                        <h3>হিস্টোরি</h3>
+                        <button id="clearHistoryBtn">মুছুন</button>
+                    </div>
+                    <ul id="history-list">
+                        <!-- হিস্টোরি আইটেম এখানে যুক্ত হবে -->
+                    </ul>
+                </div>
             </div>
             <!-- LLM-চালিত ব্যাখ্যা বৈশিষ্ট্য -->
             <button id="explainBasicBtn" class="explain-button rounded-xl">ব্যাখ্যা করুন ✨</button>
@@ -1697,10 +1770,14 @@
             <div class="spell-checker-content">
                 <h3 class="text-xl font-bold text-gray-700 mb-4">বাংলা বানান সংশোধন করুন</h3>
                 <textarea id="spellCheckInput" rows="8" placeholder="এখানে আপনার বাংলা লেখাটি পেস্ট করুন..."></textarea>
-                <button id="checkSpellingBtn" class="spell-check-button mt-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
-                    <span>বানান পরীক্ষা করুন</span>
-                </button>
+                <div class="flex gap-4 mt-4">
+                    <button id="checkSpellingBtn" class="spell-check-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+                        <span>বানান পরীক্ষা করুন</span>
+                    </button>
+                    <!-- নতুন 'মুছুন' বাটন -->
+                    <button id="clearSpellCheckBtn" class="font-clear-button rounded-lg" style="width: auto; padding: 14px 25px;">মুছুন</button>
+                </div>
                 <div id="spellCheckLoading" class="loading-indicator mt-4" style="display: none;">পরীক্ষা করা হচ্ছে...</div>
                 <div class="result-area mt-4">
                     <p class="result-section-title">সংশোধিত লেখা</p>
@@ -1735,10 +1812,14 @@
             <div class="word-meaning-content">
                 <h3 class="text-xl font-bold text-gray-700 mb-4">শব্দের অর্থ ও ব্যাখ্যা খুঁজুন</h3>
                 <input type="text" id="wordMeaningInput" placeholder="এখানে বাংলা বা ইংরেজি শব্দ লিখুন..." class="mb-4">
-                <button id="findMeaningBtn" class="find-meaning-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <span>অর্থ খুঁজুন</span>
-                </button>
+                <div class="flex gap-4">
+                    <button id="findMeaningBtn" class="find-meaning-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <span>অর্থ খুঁজুন</span>
+                    </button>
+                     <!-- নতুন 'মুছুন' বাটন -->
+                    <button id="clearWordMeaningBtn" class="font-clear-button rounded-lg" style="width: auto; padding: 14px 25px;">মুছুন</button>
+                </div>
                 <div id="wordMeaningLoading" class="loading-indicator mt-4" style="display: none;">অর্থ খোঁজা হচ্ছে...</div>
                 <div class="result-area mt-4">
                     <p class="result-section-title">ফলাফল</p>
@@ -1776,6 +1857,7 @@
                             <ul class="list-circle pl-4 mt-1 text-gray-700">
                                 <li>সংখ্যা এবং অপারেটর ব্যবহার করে গণনা।</li>
                                 <li>কীবোর্ড ইনপুট সমর্থন।</li>
+                                <li><strong class="text-green-700">হিস্টোরি ফিচার:</strong> আপনার পূর্ববর্তী সকল গণনা দেখুন এবং প্রয়োজনে মুছে ফেলুন।</li>
                                 <li><strong class="text-purple-700">জেমিনি চালিত ব্যাখ্যা:</strong> আপনার ইনপুট করা গাণিতিক এক্সপ্রেশন বা ফাংশনের সহজ ব্যাখ্যা পান।</li>
                             </ul>
                         </li>
@@ -2675,6 +2757,7 @@
                         this.previousOperand = '';
                         this.operation = undefined;
                         this.updateDisplay();
+                        // Clearing history is handled by the clearHistoryBtn
                     }
 
                     delete() {
@@ -2724,6 +2807,12 @@
                             default:
                                 return;
                         }
+
+                        // Add to history ONLY if computation is valid
+                        if (computation !== 'Error') {
+                            this.addHistoryEntry(`${this.getDisplayNumber(prev)} ${this.operation} ${this.getDisplayNumber(current)} = ${this.getDisplayNumber(computation)}`);
+                        }
+
                         this.currentOperand = computation;
                         this.operation = undefined;
                         this.previousOperand = '';
@@ -2762,6 +2851,20 @@
                             }
                         }
                     }
+
+                    // Basic Calculator History function
+                    addHistoryEntry(entry) {
+                        const historyList = document.getElementById('history-list');
+                        if (historyList) {
+                            const listItem = document.createElement('li');
+                            listItem.innerText = entry;
+                            historyList.prepend(listItem); // Add to top of list
+                            // Keep history clean, maybe limit items
+                            while (historyList.children.length > 20) { // Keep last 20 entries
+                                historyList.removeChild(historyList.lastChild);
+                            }
+                        }
+                    }
                 }
 
                 // মৌলিক ক্যালকুলেটর DOM উপাদান এবং ইনিশিয়ালাইজেশন
@@ -2772,6 +2875,9 @@
                 const allClearButton = document.querySelector('[data-all-clear]');
                 const previousOperandTextElement = document.querySelector('[data-previous-operand]');
                 const currentOperandTextElement = document.querySelector('[data-current-operand]');
+                // Basic Calculator History elements
+                const historyList = document.getElementById('history-list');
+                const clearHistoryBtn = document.getElementById('clearHistoryBtn');
 
                 if (previousOperandTextElement && currentOperandTextElement) {
                     const basicCalculator = new Calculator(previousOperandTextElement, currentOperandTextElement);
@@ -2809,6 +2915,16 @@
                         deleteButton.addEventListener('click', () => {
                             console.log('মুছুন বোতামে ক্লিক করা হয়েছে।');
                             basicCalculator.delete();
+                        });
+                    }
+
+                    // Basic Calculator History Clear Button
+                    if (clearHistoryBtn) {
+                        clearHistoryBtn.addEventListener('click', () => {
+                            if (historyList) {
+                                historyList.innerHTML = '';
+                                showCustomAlert('হিস্টোরি পরিষ্কার করা হয়েছে!');
+                            }
                         });
                     }
 
@@ -3517,6 +3633,7 @@
                 const spellCheckInput = document.getElementById('spellCheckInput');
                 const spellCheckResult = document.getElementById('spellCheckResult');
                 const spellCheckLoading = document.getElementById('spellCheckLoading');
+                const clearSpellCheckBtn = document.getElementById('clearSpellCheckBtn'); // Get the clear button
 
                 if (checkSpellingBtn) {
                     checkSpellingBtn.addEventListener('click', async () => {
@@ -3583,6 +3700,15 @@
                             spellCheckLoading.style.display = 'none';
                             checkSpellingBtn.disabled = false;
                         }
+                    });
+                }
+
+                // Add event listener for Clear button in Spell Checker
+                if (clearSpellCheckBtn) {
+                    clearSpellCheckBtn.addEventListener('click', () => {
+                        if (spellCheckInput) spellCheckInput.value = '';
+                        if (spellCheckResult) spellCheckResult.innerText = '';
+                        showCustomAlert('বানান সংশোধনের লেখা পরিষ্কার করা হয়েছে!');
                     });
                 }
 
@@ -3678,6 +3804,7 @@
                     clearBeautifyTextBtn.addEventListener('click', () => {
                         beautifyInput.value = '';
                         beautifyResult.innerText = '';
+                        showCustomAlert('লেখা সাজানোর ইনপুট পরিষ্কার করা হয়েছে!');
                     });
                 }
 
@@ -3686,6 +3813,7 @@
                 const wordMeaningInput = document.getElementById('wordMeaningInput');
                 const wordMeaningResult = document.getElementById('wordMeaningResult');
                 const wordMeaningLoading = document.getElementById('wordMeaningLoading');
+                const clearWordMeaningBtn = document.getElementById('clearWordMeaningBtn'); // Get the clear button
 
                 if (findMeaningBtn) {
                     findMeaningBtn.addEventListener('click', handleFindMeaning);
@@ -3754,6 +3882,15 @@
                         wordMeaningLoading.style.display = 'none';
                         findMeaningBtn.disabled = false;
                     }
+                }
+
+                // Add event listener for Clear button in Word Meaning
+                if (clearWordMeaningBtn) {
+                    clearWordMeaningBtn.addEventListener('click', () => {
+                        if (wordMeaningInput) wordMeaningInput.value = '';
+                        if (wordMeaningResult) wordMeaningResult.innerHTML = '';
+                        showCustomAlert('শব্দের অর্থ পরিষ্কার করা হয়েছে!');
+                    });
                 }
 
 
