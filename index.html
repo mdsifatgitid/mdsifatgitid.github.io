@@ -3460,50 +3460,63 @@
 
                 // এক্সপ্রেশন ইনপুটে বোতামের মান যোগ করুন
                 scientificButtons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        console.log('বৈজ্ঞানিক বোতামে ক্লিক করা হয়েছে:', button.dataset.sciInput);
-                        const value = button.dataset.sciInput;
-                        const inputElement = scientificExpressionInput;
-
-                        if (value === 'C' || value === 'DEL') { // ক্লিয়ার হ্যান্ডেল করুন
-						if (inputElement) inputElement.value = '';
-						if (scientificResultDisplay) scientificResultDisplay.innerText = '';
-						if (scientificErrorMessage) scientificErrorMessage.innerText = '';
-						if (scientificExplanation) scientificExplanation.innerText = '';
-						} else if (button.dataset.sciEquals !== undefined) { // সমান হ্যান্ডেল করুন
-                            evaluateScientificExpression();
-                        } else if (functionsWithParentheses.includes(value)) { // () প্রয়োজন এমন ফাংশন হ্যান্ডেল করুন
-                            if (inputElement) {
-                                const start = inputElement.selectionStart;
-                                const end = inputElement.selectionEnd;
-                                const text = inputElement.value;
-                                const newValue = text.substring(0, start) + value + '()' + text.substring(end);
-                                inputElement.value = newValue;
-                                // বন্ধনীর ভিতরে কার্সার অবস্থান করুন
-                                inputElement.selectionStart = start + value.length + 1;
-                                inputElement.selectionEnd = start + value.length + 1;
-                                inputElement.focus();
-                            }
-                        } else if (value) { // অন্যান্য মান যোগ করুন
-                            if (inputElement) inputElement.value += value;
-                        }
-                    });
-                });
+    button.addEventListener('click', () => {
+        console.log('বৈজ্ঞানিক বোতামে ক্লিক করা হয়েছে:', button.dataset.sciInput);
+        const value = button.dataset.sciInput;
+        const inputElement = scientificExpressionInput;
+        // C বাটন চাপলে পুরো ইনপুট ক্ষেত্র পরিষ্কার হবে
+        if (value === 'C') {
+            if (inputElement) inputElement.value = '';
+            if (scientificResultDisplay) scientificResultDisplay.innerText = '';
+            if (scientificErrorMessage) scientificErrorMessage.innerText = '';
+            if (scientificExplanation) scientificExplanation.innerText = '';
+        // DEL বাটন চাপলে একটি অক্ষর মুছে যাবে
+        } else if (value === 'DEL') {
+            if (inputElement) {
+                inputElement.value = inputElement.value.slice(0, -1);
+            }
+        } else if (button.dataset.sciEquals !== undefined) {
+            // সমান হ্যান্ডেল করুন
+            evaluateScientificExpression();
+        } else if (functionsWithParentheses.includes(value)) {
+            // () প্রয়োজন এমন ফাংশন হ্যান্ডেল করুন
+            if (inputElement) {
+                const start = inputElement.selectionStart;
+                const end = inputElement.selectionEnd;
+                const text = inputElement.value;
+                const newValue = text.substring(0, start) + value + '()' + text.substring(end);
+                inputElement.value = newValue;
+                // বন্ধনীর ভিতরে কার্সার অবস্থান করুন
+                inputElement.selectionStart = start + value.length + 1;
+                inputElement.selectionEnd = start + value.length + 1;
+                inputElement.focus();
+            }
+        } else if (value) {
+            // অন্যান্য মান যোগ করুন
+            if (inputElement) inputElement.value += value;
+        }
+    });
+});
 
                 // কীবোর্ড ইনপুট সমর্থন
-                if (scientificExpressionInput) {
-                    scientificExpressionInput.addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            evaluateScientificExpression();
-                        } else if (e.key === 'Escape') {
-                            if (scientificExpressionInput) scientificExpressionInput.value = '';
-                            if (scientificResultDisplay) scientificResultDisplay.innerText = '';
-                            if (scientificErrorMessage) scientificErrorMessage.innerText = '';
-                            if (scientificExplanation) scientificExplanation.innerText = '';
-                        }
-                    });
-                }
+if (scientificExpressionInput) {
+    scientificExpressionInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            evaluateScientificExpression();
+        } else if (e.key === 'Escape') {
+            if (scientificExpressionInput) scientificExpressionInput.value = '';
+            if (scientificResultDisplay) scientificResultDisplay.innerText = '';
+            if (scientificErrorMessage) scientificErrorMessage.innerText = '';
+            if (scientificExplanation) scientificExplanation.innerText = '';
+        } else if (e.key === 'Backspace' || e.key === 'Delete') {
+            // ব্যাকস্পেস বা ডিলিট বাটন চাপলে শেষ অক্ষরটি মুছে যাবে
+            if (scientificExpressionInput) {
+                scientificExpressionInput.value = scientificExpressionInput.value.slice(0, -1);
+            }
+        }
+    });
+}
 
                 function evaluateScientificExpression() {
                     const expression = scientificExpressionInput ? scientificExpressionInput.value : '';
