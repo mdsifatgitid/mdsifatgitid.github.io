@@ -2945,10 +2945,21 @@
                             basicCalculator.compute();
                         } else if (e.key === 'Backspace') {
                             basicCalculator.delete();
-                        } else if (e.key === 'Escape') {
+                        } else if (e.key === 'Escape' || e.key === 'Delete') { // <-- এই লাইনটি পরিবর্তন করুন
                             basicCalculator.clear();
                         }
                     });
+					
+		// বৈজ্ঞানিক ক্যালকুলেটরের জন্য কীবোর্ড ডিলিট বাটনের ইভেন্ট লিসেনার
+        document.addEventListener('keydown', (e) => {
+            // "C" (ক্লিয়ার) বাটনের কাজ অনুকরণ করুন
+            if (e.key === 'Delete') {
+                if (scientificExpressionInput) scientificExpressionInput.value = '';
+                if (scientificResultDisplay) scientificResultDisplay.innerText = '';
+                if (scientificErrorMessage) scientificErrorMessage.innerText = '';
+                if (scientificExplanation) scientificExplanation.innerText = '';
+            }
+        });
                 } else {
                     console.error('মৌলিক ক্যালকুলেটর ডিসপ্লে উপাদান পাওয়া যায়নি।');
                 }
@@ -3454,14 +3465,12 @@
                         const value = button.dataset.sciInput;
                         const inputElement = scientificExpressionInput;
 
-                        if (value === 'C') { // ক্লিয়ার হ্যান্ডেল করুন
-                            if (inputElement) inputElement.value = '';
-                            if (scientificResultDisplay) scientificResultDisplay.innerText = '';
-                            if (scientificErrorMessage) scientificErrorMessage.innerText = '';
-                            if (scientificExplanation) scientificExplanation.innerText = '';
-                        } else if (value === 'DEL') { // মুছুন হ্যান্ডেল করুন
-                            if (inputElement) inputElement.value = inputElement.value.slice(0, -1);
-                        } else if (button.dataset.sciEquals !== undefined) { // সমান হ্যান্ডেল করুন
+                        if (value === 'C' || value === 'DEL') { // ক্লিয়ার হ্যান্ডেল করুন
+						if (inputElement) inputElement.value = '';
+						if (scientificResultDisplay) scientificResultDisplay.innerText = '';
+						if (scientificErrorMessage) scientificErrorMessage.innerText = '';
+						if (scientificExplanation) scientificExplanation.innerText = '';
+						} else if (button.dataset.sciEquals !== undefined) { // সমান হ্যান্ডেল করুন
                             evaluateScientificExpression();
                         } else if (functionsWithParentheses.includes(value)) { // () প্রয়োজন এমন ফাংশন হ্যান্ডেল করুন
                             if (inputElement) {
