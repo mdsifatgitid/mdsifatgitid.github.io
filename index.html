@@ -1197,6 +1197,100 @@
             transform: translateY(0);
             box-shadow: 0 5px 15px rgba(253, 126, 20, 0.3);
         }
+        
+        /* নতুন: টেক্সট টু স্পিচ (TTS) স্টাইল */
+        .tts-content {
+            padding: 20px;
+            border-radius: 16px;
+            margin: 0 auto;
+            max-width: 600px;
+            background-color: #f8f9fa;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .tts-content textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cce7ff;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            resize: vertical;
+            box-sizing: border-box;
+            background-color: #eaf6ff;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .tts-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+        }
+        .control-group label {
+            font-weight: 600;
+            color: #333;
+            min-width: 120px;
+        }
+        .control-group select, .control-group input[type="range"] {
+            flex-grow: 1;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #cce7ff;
+            background-color: #eaf6ff;
+        }
+        .control-group input[type="range"] {
+            cursor: pointer;
+        }
+        .control-group span {
+            font-weight: 500;
+            min-width: 25px;
+            text-align: center;
+        }
+        .tts-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .tts-button {
+            color: white;
+            padding: 12px 22px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tts-button.speak {
+            background-color: #28a745; /* Green */
+        }
+        .tts-button.speak:hover {
+            background-color: #218838;
+        }
+        .tts-button.pause {
+            background-color: #ffc107; /* Yellow */
+        }
+        .tts-button.pause:hover {
+            background-color: #e0a800;
+        }
+        .tts-button.resume {
+            background-color: #17a2b8; /* Cyan */
+        }
+        .tts-button.resume:hover {
+            background-color: #138496;
+        }
+        .tts-button.stop {
+            background-color: #dc3545; /* Red */
+        }
+        .tts-button.stop:hover {
+            background-color: #c82333;
+        }
 
 
         /* কন্টেন্ট প্রাথমিকভাবে লুকানো */
@@ -1366,7 +1460,8 @@
             .text-assistant-content,
             .spell-checker-content,
             .text-beautifier-content,
-            .word-meaning-content { /* শব্দের অর্থের জন্য প্রতিক্রিয়াশীলতা */
+            .word-meaning-content,
+            .tts-content { /* TTS এর জন্য প্রতিক্রিয়াশীলতা */
                 padding: 15px;
                 border-radius: 12px;
             }
@@ -1509,6 +1604,7 @@
             <button id="spellCheckTab" class="tab-button rounded-xl">বানান সংশোধন</button>
             <button id="textBeautifierTab" class="tab-button rounded-xl">লেখা সাজানো</button>
             <button id="wordMeaningTab" class="tab-button rounded-xl">শব্দের অর্থ</button>
+            <button id="ttsTab" class="tab-button rounded-xl">টেক্সট টু স্পিচ</button>
             <button id="textAssistantTab" class="tab-button rounded-xl">টেক্সট অ্যাসিস্ট্যান্ট</button>
             <button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
             <button id="setApiKeyBtn" class="tab-button rounded-xl" style="background-color: #ef5350; color: white;">API কী সেট করুন</button>
@@ -1828,6 +1924,36 @@
                 </div>
             </div>
         </div>
+        
+        <!-- নতুন: টেক্সট টু স্পিচ বিভাগ -->
+        <div id="textToSpeechContent" class="calculator-content">
+            <div class="tts-content">
+                <h3 class="text-xl font-bold text-gray-700 mb-4">বাংলা টেক্সট টু স্পিচ</h3>
+                <textarea id="ttsInput" rows="8" placeholder="এখানে আপনার বাংলা লেখাটি পেস্ট করুন..."></textarea>
+                <div class="tts-controls">
+                    <div class="control-group">
+                        <label for="voiceSelect">ভয়েস নির্বাচন করুন:</label>
+                        <select id="voiceSelect" class="rounded-lg"></select>
+                    </div>
+                    <div class="control-group">
+                        <label for="rate">গতি:</label>
+                        <input type="range" min="0.5" max="2" value="1" step="0.1" id="rate">
+                        <span id="rate-value">1</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="pitch">পিচ:</label>
+                        <input type="range" min="0" max="2" value="1" step="0.1" id="pitch">
+                        <span id="pitch-value">1</span>
+                    </div>
+                </div>
+                <div class="tts-buttons">
+                    <button id="speakBtn" class="tts-button speak rounded-lg">শুনুন</button>
+                    <button id="pauseBtn" class="tts-button pause rounded-lg">পজ</button>
+                    <button id="resumeBtn" class="tts-button resume rounded-lg">পুনরায় শুরু</button>
+                    <button id="stopBtn" class="tts-button stop rounded-lg">থামান</button>
+                </div>
+            </div>
+        </div>
 
         <!-- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগ -->
         <div id="textAssistantContent" class="calculator-content">
@@ -1902,6 +2028,9 @@
                         </li>
                         <li class="mb-2">
                             <strong class="text-blue-700">শব্দের অর্থ (নতুন):</strong> জেমিনি এপিআই ব্যবহার করে যেকোনো বাংলা বা ইংরেজি শব্দের অর্থ, প্রতিশব্দ, এবং বিস্তারিত ব্যাখ্যা জানুন।
+                        </li>
+                        <li class="mb-2">
+                            <strong class="text-blue-700">টেক্সট টু স্পিচ (নতুন):</strong> আপনার লেখা টেক্সটকে বাংলা কণ্ঠে শুনুন। বিভিন্ন ভয়েস, গতি এবং পিচ পরিবর্তনের সুবিধা রয়েছে।
                         </li>
                         <li class="mb-2">
                             <strong class="text-blue-700">টেক্সট অ্যাসিস্ট্যান্ট (জেমিনি চালিত):</strong> জেমিনি এপিআই ব্যবহার করে যেকোনো প্রশ্নের উত্তর পান, লেখা সারসংক্ষেপ করুন, বা অন্যান্য টেক্সট-ভিত্তিক সহায়তা নিন।
@@ -2130,7 +2259,7 @@
 			"Z&h": "Z¨",       "Z&i": "Î",        "Z&Z": "Ë",       "Z~": "Z‚",        "Z„": "Z…",       "Zª": "Î",        "Zª~": "Îƒ",          "Zªy": "Îæ",           "Zy": "Zz",
 			"|‡": "|†",			",‡": ",†",			".‡": ".†",			"-‡": "-†",			"?‡": "?†",		":‡": ":†",			"=‡": "=†",			"|‰": "|ˆ",	     "K©~": "K‚©",	
 			",‰": ",ˆ",		"f¨~": "f‚¨",				"f©~": "f‚©",			".‰": ".ˆ",		"-‰": "-ˆ",			"?‰": "?ˆ",			":‰": ":ˆ",		"=‰": "=ˆ",   "wwK¬": "wK¬w",
-			"e©…": "e„©",	   "e¨~": "e~¨",    	  "P©~": "P‚©Ó",   		 "P©y": "Pz©",     "K©y" :"Kz©", 			"f©y": "fz©",		 "Ky": "Kz",	"v©": "©v",	"gœ": "¤œ",	"x©": "©x",
+			"e©…": "e„©",	   "e¨~": "e~¨",    	  "P©~": "P‚©Ó",   		 "P©y": "Pz©",     "K©y" :"Kz©", 			"f©y": "fz©",		 "Ky": "Kz",	"v©": "©v",		"x©": "©x",
 			"Š©": "©Š", 		"¯Õ": "¯’",		"ÓQ": "”Q", 	"ÒQ": "”Q",	"wwó": "wów",	"šÔ": "š‘",	"dÖ": "d«",  "f’": "f‚",	"šÕ": "š’", "¯Ô": "¯‘",	"ÓP": "”P", "ÓT": "”T",
 
 
@@ -2581,6 +2710,7 @@
                 const spellCheckTab = document.getElementById('spellCheckTab');
                 const textBeautifierTab = document.getElementById('textBeautifierTab');
                 const wordMeaningTab = document.getElementById('wordMeaningTab');
+                const ttsTab = document.getElementById('ttsTab'); // TTS ট্যাব
 
                 const basicCalculatorContent = document.getElementById('basicCalculatorContent');
                 const ageCalculatorContent = document.getElementById('ageCalculatorContent');
@@ -2593,6 +2723,7 @@
                 const spellCheckerContent = document.getElementById('spellCheckerContent');
                 const textBeautifierContent = document.getElementById('textBeautifierContent');
                 const wordMeaningContent = document.getElementById('wordMeaningContent');
+                const textToSpeechContent = document.getElementById('textToSpeechContent'); // TTS কন্টেন্ট
 
 
                 // API কী মডেল উপাদান
@@ -2608,7 +2739,7 @@
                 console.log('apiKeyModal:', apiKeyModal);
 
                 // প্রাথমিক ট্যাব প্রদর্শন
-                showTab('converter'); // লোডে মৌলিক ক্যালকুলেটরকে সক্রিয় হিসাবে সেট করুন
+                showTab('basic'); // লোডে মৌলিক ক্যালকুলেটরকে সক্রিয় হিসাবে সেট করুন
 
                 // API কী বোতামের স্টাইল আপডেট করার ফাংশন
                 function updateApiKeyButton() {
@@ -2632,14 +2763,14 @@
 
                 function showTab(tabId) {
                     // সমস্ত ট্যাব বোতাম থেকে 'active' ক্লাস সরিয়ে দিন
-                    [basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, spellCheckTab, textBeautifierTab, wordMeaningTab, textAssistantTab, allFeaturesTab].forEach(tab => {
+                    [basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, textAssistantTab, allFeaturesTab].forEach(tab => {
                         if (tab) tab.classList.remove('active');
                     });
 
                     // সমস্ত কন্টেন্ট বিভাগ লুকান
-                    [basicCalculatorContent, ageCalculatorContent, dateCalculatorContent, scientificCalculatorContent, newsContent, converterContent, spellCheckerContent, textBeautifierContent, wordMeaningContent, textAssistantContent, allFeaturesContent].forEach(content => {
+                    [basicCalculatorContent, ageCalculatorContent, dateCalculatorContent, scientificCalculatorContent, newsContent, converterContent, spellCheckerContent, textBeautifierContent, wordMeaningContent, textToSpeechContent, textAssistantContent, allFeaturesContent].forEach(content => {
                         if (content) content.classList.remove('active');
-    });
+                    });
 
                     // নির্বাচিত ট্যাব সক্রিয় করুন এবং এর কন্টেন্ট দেখান
                     if (tabId === 'basic' && basicCalcTab && basicCalculatorContent) {
@@ -2675,6 +2806,9 @@
                     } else if (tabId === 'meaning' && wordMeaningTab && wordMeaningContent) {
                         wordMeaningTab.classList.add('active');
                         wordMeaningContent.classList.add('active');
+                    } else if (tabId === 'tts' && ttsTab && textToSpeechContent) { // TTS ট্যাব লজিক
+                        ttsTab.classList.add('active');
+                        textToSpeechContent.classList.add('active');
                     }
                     console.log(`ট্যাব পরিবর্তন করা হয়েছে: ${tabId}`);
                 }
@@ -2690,6 +2824,7 @@
                 if (spellCheckTab) spellCheckTab.addEventListener('click', () => showTab('spellCheck'));
                 if (textBeautifierTab) textBeautifierTab.addEventListener('click', () => showTab('beautify'));
                 if (wordMeaningTab) wordMeaningTab.addEventListener('click', () => showTab('meaning'));
+                if (ttsTab) ttsTab.addEventListener('click', () => showTab('tts')); // TTS ট্যাব ইভেন্ট
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
                 if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
 
@@ -3915,6 +4050,206 @@ if (scientificExpressionInput) {
                         showCustomAlert('শব্দের অর্থ পরিষ্কার করা হয়েছে!');
                     });
                 }
+
+                // ====================================================================
+                // START: GEMINI API TEXT-TO-SPEECH (TTS) SCRIPT
+                // ====================================================================
+                const ttsInput = document.getElementById('ttsInput');
+                const voiceSelect = document.getElementById('voiceSelect');
+                const speakBtn = document.getElementById('speakBtn');
+                const pauseBtn = document.getElementById('pauseBtn');
+                const resumeBtn = document.getElementById('resumeBtn');
+                const stopBtn = document.getElementById('stopBtn');
+
+                // রেট এবং পিচ কন্ট্রোল এখন আর ব্যবহৃত হবে না, তাই এগুলোকে লুকিয়ে রাখা যেতে পারে বা সরানো যেতে পারে।
+                // আপাতত, আমরা এগুলোকে নিষ্ক্রিয় রাখছি।
+                const rateControlGroup = document.getElementById('rate')?.parentElement;
+                const pitchControlGroup = document.getElementById('pitch')?.parentElement;
+                if (rateControlGroup) rateControlGroup.style.display = 'none';
+                if (pitchControlGroup) pitchControlGroup.style.display = 'none';
+
+                let audioPlayer = new Audio();
+                let audioBlobUrl = null;
+
+                // Gemini API দ্বারা সমর্থিত ভয়েসগুলির তালিকা
+                const geminiVoices = {
+                    "বাংলা (বাংলাদেশ)": "bn-BD",
+                    "ইংরেজি (ভারত)": "en-IN",
+                    "ইংরেজি (মার্কিন যুক্তরাষ্ট্র)": "en-US",
+                    "হিন্দি (ভারত)": "hi-IN",
+                    "আরবি (মিশর)": "ar-EG",
+                    "জার্মান (জার্মানি)": "de-DE",
+                    "স্প্যানিশ (মার্কিন যুক্তরাষ্ট্র)": "es-US",
+                    "ফরাসি (ফ্রান্স)": "fr-FR",
+                    "ইন্দোনেশিয়ান (ইন্দোনেশিয়া)": "id-ID",
+                    "ইতালীয় (ইতালি)": "it-IT",
+                    "জাপানি (জাপান)": "ja-JP",
+                    "কোরিয়ান (দক্ষিণ কোরিয়া)": "ko-KR",
+                    "পর্তুগিজ (ব্রাজিল)": "pt-BR",
+                    "রাশিয়ান (রাশিয়া)": "ru-RU"
+                };
+
+                // ভয়েস সিলেকশন ড্রপডাউন পপুলেট করুন
+                function populateGeminiVoiceList() {
+                    if (!voiceSelect) return;
+                    voiceSelect.innerHTML = ''; // আগের তালিকা পরিষ্কার করুন
+                    for (const [name, code] of Object.entries(geminiVoices)) {
+                        const option = document.createElement('option');
+                        option.textContent = name;
+                        option.value = code;
+                        voiceSelect.appendChild(option);
+                    }
+                }
+
+                populateGeminiVoiceList();
+
+                // Base64 থেকে ArrayBuffer-এ রূপান্তর করার জন্য হেল্পার ফাংশন
+                function base64ToArrayBuffer(base64) {
+                    const binaryString = window.atob(base64);
+                    const len = binaryString.length;
+                    const bytes = new Uint8Array(len);
+                    for (let i = 0; i < len; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    return bytes.buffer;
+                }
+
+                // PCM ডেটাকে WAV ফরম্যাটে রূপান্তর করার ফাংশন
+                function pcmToWav(pcmData, sampleRate) {
+                    const header = new ArrayBuffer(44);
+                    const view = new DataView(header);
+                    const numChannels = 1;
+                    const bitsPerSample = 16;
+                    const blockAlign = (numChannels * bitsPerSample) / 8;
+                    const byteRate = sampleRate * blockAlign;
+                    const dataSize = pcmData.length * 2;
+
+                    // RIFF chunk descriptor
+                    writeString(view, 0, 'RIFF');
+                    view.setUint32(4, 36 + dataSize, true);
+                    writeString(view, 8, 'WAVE');
+                    // "fmt " sub-chunk
+                    writeString(view, 12, 'fmt ');
+                    view.setUint32(16, 16, true);
+                    view.setUint16(20, 1, true); // Audio format (1 is PCM)
+                    view.setUint16(22, numChannels, true);
+                    view.setUint32(24, sampleRate, true);
+                    view.setUint32(28, byteRate, true);
+                    view.setUint16(32, blockAlign, true);
+                    view.setUint16(34, bitsPerSample, true);
+                    // "data" sub-chunk
+                    writeString(view, 36, 'data');
+                    view.setUint32(40, dataSize, true);
+
+                    function writeString(view, offset, string) {
+                        for (let i = 0; i < string.length; i++) {
+                            view.setUint8(offset + i, string.charCodeAt(i));
+                        }
+                    }
+
+                    const wavBytes = new Uint8Array(44 + dataSize);
+                    wavBytes.set(new Uint8Array(header), 0);
+                    wavBytes.set(new Uint8Array(pcmData.buffer), 44);
+
+                    return new Blob([wavBytes], { type: 'audio/wav' });
+                }
+
+                // 'শুনুন' বাটনের জন্য অ্যাসিঙ্ক্রোনাস ফাংশন
+                async function handleSpeak() {
+                    const text = ttsInput.value.trim();
+                    if (!text) {
+                        showCustomAlert('অনুগ্রহ করে কিছু টেক্সট লিখুন।');
+                        return;
+                    }
+
+                    const apiKey = localStorage.getItem('geminiApiKey');
+                    if (!apiKey) {
+                        showCustomAlert('API কী সেট করা হয়নি। অনুগ্রহ করে API কী সেট করুন।');
+                        return;
+                    }
+                    
+                    speakBtn.disabled = true;
+                    speakBtn.textContent = 'লোড হচ্ছে...';
+
+                    try {
+                        const payload = {
+                            contents: [{
+                                parts: [{ text: text }]
+                            }],
+                            generationConfig: {
+                                responseModalities: ["AUDIO"],
+                            },
+                            model: "gemini-2.5-flash-preview-tts",
+                            // এখানে languageCode যোগ করা হয়েছে
+                        };
+
+                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+                        
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(`API Error: ${errorData.error.message}`);
+                        }
+
+                        const result = await response.json();
+                        const part = result?.candidates?.[0]?.content?.parts?.[0];
+                        const audioData = part?.inlineData?.data;
+                        const mimeType = part?.inlineData?.mimeType;
+
+                        if (audioData && mimeType && mimeType.startsWith("audio/")) {
+                            const sampleRateMatch = mimeType.match(/rate=(\d+)/);
+                            if (!sampleRateMatch) {
+                                throw new Error("স্যাম্পল রেট পাওয়া যায়নি।");
+                            }
+                            const sampleRate = parseInt(sampleRateMatch[1], 10);
+                            const pcmData = base64ToArrayBuffer(audioData);
+                            const pcm16 = new Int16Array(pcmData);
+                            const wavBlob = pcmToWav(pcm16, sampleRate);
+
+                            // আগের অডিও URL বাতিল করুন
+                            if (audioBlobUrl) {
+                                URL.revokeObjectURL(audioBlobUrl);
+                            }
+                            audioBlobUrl = URL.createObjectURL(wavBlob);
+                            
+                            audioPlayer.src = audioBlobUrl;
+                            audioPlayer.play();
+                        } else {
+                            throw new Error('API থেকে কোনো অডিও ডেটা পাওয়া যায়নি।');
+                        }
+
+                    } catch (error) {
+                        console.error('TTS Error:', error);
+                        showCustomAlert(`একটি ত্রুটি ঘটেছে: ${error.message}`);
+                    } finally {
+                        speakBtn.disabled = false;
+                        speakBtn.textContent = 'শুনুন';
+                    }
+                }
+
+                if (speakBtn) speakBtn.addEventListener('click', handleSpeak);
+                if (pauseBtn) pauseBtn.addEventListener('click', () => audioPlayer.pause());
+                if (resumeBtn) resumeBtn.addEventListener('click', () => audioPlayer.play());
+                if (stopBtn) stopBtn.addEventListener('click', () => {
+                    audioPlayer.pause();
+                    audioPlayer.currentTime = 0;
+                });
+                
+                // অডিও শেষ হলে URL বাতিল করুন
+                audioPlayer.onended = () => {
+                    if (audioBlobUrl) {
+                        URL.revokeObjectURL(audioBlobUrl);
+                        audioBlobUrl = null;
+                    }
+                };
+                // ====================================================================
+                // END: GEMINI API TEXT-TO-SPEECH (TTS) SCRIPT
+                // ====================================================================
 
 
                 // --- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) লজিক ---
