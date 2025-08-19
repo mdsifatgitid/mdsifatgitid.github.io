@@ -1292,6 +1292,75 @@
             background-color: #c82333;
         }
 
+        /* নতুন: স্পিচ টু টেক্সট (STT) স্টাইল */
+        .stt-content {
+            padding: 20px;
+            border-radius: 16px;
+            margin: 0 auto;
+            max-width: 600px;
+            background-color: #f8f9fa;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .stt-content textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cce7ff;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            resize: vertical;
+            box-sizing: border-box;
+            background-color: #eaf6ff;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .stt-status {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            padding: 10px;
+            background-color: #e6f7ff;
+            border-radius: 8px;
+            border: 1px solid #b3e0ff;
+        }
+        .stt-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .stt-button {
+            color: white;
+            padding: 12px 22px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .stt-button.start {
+            background-color: #28a745; /* Green */
+        }
+        .stt-button.start:hover {
+            background-color: #218838;
+        }
+        .stt-button.stop {
+            background-color: #dc3545; /* Red */
+        }
+        .stt-button.stop:hover {
+            background-color: #c82333;
+        }
+        .stt-button.copy {
+            background-color: #007bff; /* Blue */
+        }
+        .stt-button.copy:hover {
+            background-color: #0056b3;
+        }
+        .stt-button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
 
         /* কন্টেন্ট প্রাথমিকভাবে লুকানো */
         .calculator-content {
@@ -1461,7 +1530,8 @@
             .spell-checker-content,
             .text-beautifier-content,
             .word-meaning-content,
-            .tts-content { /* TTS এর জন্য প্রতিক্রিয়াশীলতা */
+            .tts-content,
+            .stt-content { /* STT এর জন্য প্রতিক্রিয়াশীলতা */
                 padding: 15px;
                 border-radius: 12px;
             }
@@ -1605,6 +1675,7 @@
             <button id="textBeautifierTab" class="tab-button rounded-xl">লেখা সাজানো</button>
             <button id="wordMeaningTab" class="tab-button rounded-xl">শব্দের অর্থ</button>
             <button id="ttsTab" class="tab-button rounded-xl">টেক্সট টু স্পিচ</button>
+            <button id="sttTab" class="tab-button rounded-xl">স্পিচ টু টেক্সট</button>
             <button id="textAssistantTab" class="tab-button rounded-xl">টেক্সট অ্যাসিস্ট্যান্ট</button>
             <button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
             <button id="setApiKeyBtn" class="tab-button rounded-xl" style="background-color: #ef5350; color: white;">API কী সেট করুন</button>
@@ -1955,6 +2026,20 @@
             </div>
         </div>
 
+        <!-- নতুন: স্পিচ টু টেক্সট বিভাগ -->
+        <div id="speechToTextContent" class="calculator-content">
+            <div class="stt-content">
+                <h3 class="text-xl font-bold text-gray-700 mb-4">বাংলা স্পিচ টু টেক্সট</h3>
+                <div id="sttStatus" class="stt-status mb-4">অবস্থা: নিষ্ক্রিয়</div>
+                <textarea id="sttOutput" rows="8" class="rounded-lg" placeholder="আপনি কথা বলা শুরু করলে আপনার কথা এখানে লেখা হবে..."></textarea>
+                <div class="stt-buttons mt-4">
+                    <button id="startSttBtn" class="stt-button start rounded-lg">শুনুন</button>
+                    <button id="stopSttBtn" class="stt-button stop rounded-lg">থামান</button>
+                    <button id="copySttBtn" class="stt-button copy rounded-lg">কপি করুন</button>
+                </div>
+            </div>
+        </div>
+
         <!-- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগ -->
         <div id="textAssistantContent" class="calculator-content">
             <div class="text-assistant-content">
@@ -2031,6 +2116,9 @@
                         </li>
                         <li class="mb-2">
                             <strong class="text-blue-700">টেক্সট টু স্পিচ (নতুন):</strong> আপনার লেখা টেক্সটকে বাংলা কণ্ঠে শুনুন। বিভিন্ন ভয়েস, গতি এবং পিচ পরিবর্তনের সুবিধা রয়েছে।
+                        </li>
+                        <li class="mb-2">
+                            <strong class="text-blue-700">স্পিচ টু টেক্সট (নতুন):</strong> আপনার কথাকে রিয়েল-টাইমে বাংলা টেক্সটে রূপান্তর করুন।
                         </li>
                         <li class="mb-2">
                             <strong class="text-blue-700">টেক্সট অ্যাসিস্ট্যান্ট (জেমিনি চালিত):</strong> জেমিনি এপিআই ব্যবহার করে যেকোনো প্রশ্নের উত্তর পান, লেখা সারসংক্ষেপ করুন, বা অন্যান্য টেক্সট-ভিত্তিক সহায়তা নিন।
@@ -2572,7 +2660,7 @@
             }
         }
 
-        // কাস্টম অ্যালার্ট বক্স বাস্তবায়ন
+		// কাস্টম অ্যালার্ট বক্স বাস্তবায়ন
         function showCustomAlert(message) {
             const alertBox = document.createElement('div');
             alertBox.style.cssText = `
@@ -2711,6 +2799,7 @@
                 const textBeautifierTab = document.getElementById('textBeautifierTab');
                 const wordMeaningTab = document.getElementById('wordMeaningTab');
                 const ttsTab = document.getElementById('ttsTab'); // TTS ট্যাব
+                const sttTab = document.getElementById('sttTab'); // STT ট্যাব
 
                 const basicCalculatorContent = document.getElementById('basicCalculatorContent');
                 const ageCalculatorContent = document.getElementById('ageCalculatorContent');
@@ -2724,6 +2813,7 @@
                 const textBeautifierContent = document.getElementById('textBeautifierContent');
                 const wordMeaningContent = document.getElementById('wordMeaningContent');
                 const textToSpeechContent = document.getElementById('textToSpeechContent'); // TTS কন্টেন্ট
+                const speechToTextContent = document.getElementById('speechToTextContent'); // STT কন্টেন্ট
 
 
                 // API কী মডেল উপাদান
@@ -2763,12 +2853,12 @@
 
                 function showTab(tabId) {
                     // সমস্ত ট্যাব বোতাম থেকে 'active' ক্লাস সরিয়ে দিন
-                    [basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, textAssistantTab, allFeaturesTab].forEach(tab => {
+                    [basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, textAssistantTab, allFeaturesTab].forEach(tab => {
                         if (tab) tab.classList.remove('active');
                     });
 
                     // সমস্ত কন্টেন্ট বিভাগ লুকান
-                    [basicCalculatorContent, ageCalculatorContent, dateCalculatorContent, scientificCalculatorContent, newsContent, converterContent, spellCheckerContent, textBeautifierContent, wordMeaningContent, textToSpeechContent, textAssistantContent, allFeaturesContent].forEach(content => {
+                    [basicCalculatorContent, ageCalculatorContent, dateCalculatorContent, scientificCalculatorContent, newsContent, converterContent, spellCheckerContent, textBeautifierContent, wordMeaningContent, textToSpeechContent, speechToTextContent, textAssistantContent, allFeaturesContent].forEach(content => {
                         if (content) content.classList.remove('active');
                     });
 
@@ -2809,6 +2899,9 @@
                     } else if (tabId === 'tts' && ttsTab && textToSpeechContent) { // TTS ট্যাব লজিক
                         ttsTab.classList.add('active');
                         textToSpeechContent.classList.add('active');
+                    } else if (tabId === 'stt' && sttTab && speechToTextContent) { // STT ট্যাব লজিক
+                        sttTab.classList.add('active');
+                        speechToTextContent.classList.add('active');
                     }
                     console.log(`ট্যাব পরিবর্তন করা হয়েছে: ${tabId}`);
                 }
@@ -2825,6 +2918,7 @@
                 if (textBeautifierTab) textBeautifierTab.addEventListener('click', () => showTab('beautify'));
                 if (wordMeaningTab) wordMeaningTab.addEventListener('click', () => showTab('meaning'));
                 if (ttsTab) ttsTab.addEventListener('click', () => showTab('tts')); // TTS ট্যাব ইভেন্ট
+                if (sttTab) sttTab.addEventListener('click', () => showTab('stt')); // STT ট্যাব ইভেন্ট
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
                 if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
 
@@ -4250,6 +4344,107 @@ if (scientificExpressionInput) {
                 // ====================================================================
                 // END: GEMINI API TEXT-TO-SPEECH (TTS) SCRIPT
                 // ====================================================================
+
+
+                // --- নতুন: স্পিচ টু টেক্সট (STT) লজিক ---
+                const sttOutput = document.getElementById('sttOutput');
+                const sttStatus = document.getElementById('sttStatus');
+                const startSttBtn = document.getElementById('startSttBtn');
+                const stopSttBtn = document.getElementById('stopSttBtn');
+                const copySttBtn = document.getElementById('copySttBtn');
+
+                let recognition;
+                let isListening = false;
+
+                // Web Speech API ব্রাউজার সমর্থন পরীক্ষা করুন
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+                if (SpeechRecognition) {
+                    recognition = new SpeechRecognition();
+                    recognition.continuous = true; // একটানা শোনার জন্য
+                    recognition.interimResults = true; // অন্তর্বর্তী ফলাফল পান
+                    recognition.lang = 'bn-BD'; // ভাষা বাংলাতে সেট করুন
+
+                    recognition.onstart = () => {
+                        isListening = true;
+                        sttStatus.innerText = 'অবস্থা: শুনছে... 🎙️';
+                        startSttBtn.disabled = true;
+                        stopSttBtn.disabled = false;
+                        copySttBtn.disabled = true; // শোনার সময় কপি অক্ষম করুন
+                    };
+
+                    recognition.onresult = (event) => {
+                        let interimTranscript = '';
+                        let finalTranscript = '';
+                        for (let i = event.resultIndex; i < event.results.length; ++i) {
+                            if (event.results[i].isFinal) {
+                                finalTranscript += event.results[i][0].transcript;
+                            } else {
+                                interimTranscript += event.results[i][0].transcript;
+                            }
+                        }
+                        sttOutput.value = finalTranscript + interimTranscript;
+                        // টেক্সটএরিয়ার নিচে স্ক্রোল করুন
+                        sttOutput.scrollTop = sttOutput.scrollHeight;
+                    };
+
+                    recognition.onerror = (event) => {
+                        console.error('Speech Recognition Error:', event.error);
+                        let errorMessage = 'একটি স্পিচ টু টেক্সট ত্রুটি হয়েছে।';
+                        if (event.error === 'not-allowed') {
+                            errorMessage = 'মাইক্রোফোন ব্যবহারের অনুমতি নেই। অনুগ্রহ করে আপনার ব্রাউজার সেটিংসে মাইক্রোফোন অ্যাক্সেস দিন।';
+                        } else if (event.error === 'no-speech') {
+                            errorMessage = 'কোনো কথা সনাক্ত করা যায়নি। অনুগ্রহ করে কথা বলুন।';
+                        } else if (event.error === 'audio-capture') {
+                            errorMessage = 'মাইক্রোফোন অ্যাক্সেস করতে সমস্যা হচ্ছে।';
+                        }
+                        sttStatus.innerText = `অবস্থা: ত্রুটি - ${errorMessage} ❌`;
+                        isListening = false;
+                        startSttBtn.disabled = false;
+                        stopSttBtn.disabled = true;
+                        copySttBtn.disabled = false; // ত্রুটির পর কপি সক্ষম করুন
+                        showCustomAlert(`স্পিচ টু টেক্সট ত্রুটি: ${errorMessage}`);
+                    };
+
+                    recognition.onend = () => {
+                        isListening = false;
+                        sttStatus.innerText = 'অবস্থা: নিষ্ক্রিয় ✅';
+                        startSttBtn.disabled = false;
+                        stopSttBtn.disabled = true;
+                        copySttBtn.disabled = false; // থামার পর কপি সক্ষম করুন
+                        showCustomAlert('স্পিচ টু টেক্সট শেষ হয়েছে।');
+                    };
+
+                    // বোতামগুলির জন্য ইভেন্ট লিসেনার
+                    if (startSttBtn) {
+                        startSttBtn.addEventListener('click', () => {
+                            if (!isListening) {
+                                sttOutput.value = ''; // আগের লেখা পরিষ্কার করুন
+                                recognition.start();
+                            }
+                        });
+                    }
+
+                    if (stopSttBtn) {
+                        stopSttBtn.addEventListener('click', () => {
+                            if (isListening) {
+                                recognition.stop();
+                            }
+                        });
+                    }
+
+                    if (copySttBtn) {
+                        copySttBtn.addEventListener('click', () => {
+                            copyToClipboard('sttOutput');
+                        });
+                    }
+
+                } else {
+                    sttStatus.innerText = 'দুঃখিত, আপনার ব্রাউজার স্পিচ রিকগনিশন সমর্থন করে না। 😔';
+                    if (startSttBtn) startSttBtn.disabled = true;
+                    if (stopSttBtn) stopSttBtn.disabled = true;
+                    if (copySttBtn) copySttBtn.disabled = true;
+                }
 
 
                 // --- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) লজিক ---
