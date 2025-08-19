@@ -1291,6 +1291,32 @@
         .tts-button.stop:hover {
             background-color: #c82333;
         }
+        /* New clear button style for TTS/STT */
+        .tts-button.clear-input,
+        .stt-button.clear-input {
+            background-image: linear-gradient(to right, #ef5350 0%, #d32f2f 100%); /* Red gradient */
+            color: white;
+            padding: 12px 22px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tts-button.clear-input:hover,
+        .stt-button.clear-input:hover {
+            background-image: linear-gradient(to right, #d32f2f 0%, #c62828 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        .tts-button.clear-input:active,
+        .stt-button.clear-input:active {
+            background-image: linear-gradient(to right, #c62828 0%, #b71c1c 100%);
+            transform: translateY(0);
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
 
         /* নতুন: স্পিচ টু টেক্সট (STT) স্টাইল */
         .stt-content {
@@ -2022,6 +2048,7 @@
                     <button id="pauseBtn" class="tts-button pause rounded-lg">পজ</button>
                     <button id="resumeBtn" class="tts-button resume rounded-lg">পুনরায় শুরু</button>
                     <button id="stopBtn" class="tts-button stop rounded-lg">থামান</button>
+                    <button id="clearTtsBtn" class="tts-button clear-input rounded-lg">মুছুন</button> <!-- Added Clear button -->
                 </div>
             </div>
         </div>
@@ -2036,6 +2063,7 @@
                     <button id="startSttBtn" class="stt-button start rounded-lg">শুনুন</button>
                     <button id="stopSttBtn" class="stt-button stop rounded-lg">থামান</button>
                     <button id="copySttBtn" class="stt-button copy rounded-lg">কপি করুন</button>
+                    <button id="clearSttBtn" class="stt-button clear-input rounded-lg">মুছুন</button> <!-- Added Clear button -->
                 </div>
             </div>
         </div>
@@ -2829,7 +2857,7 @@
                 console.log('apiKeyModal:', apiKeyModal);
 
                 // প্রাথমিক ট্যাব প্রদর্শন
-                showTab('converter'); // লোডে মৌলিক ক্যালকুলেটরকে সক্রিয় হিসাবে সেট করুন
+                showTab('basic'); // লোডে মৌলিক ক্যালকুলেটরকে সক্রিয় হিসাবে সেট করুন
 
                 // API কী বোতামের স্টাইল আপডেট করার ফাংশন
                 function updateApiKeyButton() {
@@ -4146,203 +4174,110 @@ if (scientificExpressionInput) {
                 }
 
                 // ====================================================================
-                // START: GEMINI API TEXT-TO-SPEECH (TTS) SCRIPT
+                // START: REAL-TIME BROWSER TEXT-TO-SPEECH (TTS) SCRIPT
                 // ====================================================================
                 const ttsInput = document.getElementById('ttsInput');
                 const voiceSelect = document.getElementById('voiceSelect');
+                const rate = document.getElementById('rate');
+                const rateValue = document.getElementById('rate-value');
+                const pitch = document.getElementById('pitch');
+                const pitchValue = document.getElementById('pitch-value');
                 const speakBtn = document.getElementById('speakBtn');
                 const pauseBtn = document.getElementById('pauseBtn');
                 const resumeBtn = document.getElementById('resumeBtn');
                 const stopBtn = document.getElementById('stopBtn');
+                const clearTtsBtn = document.getElementById('clearTtsBtn');
 
-                // রেট এবং পিচ কন্ট্রোল এখন আর ব্যবহৃত হবে না, তাই এগুলোকে লুকিয়ে রাখা যেতে পারে বা সরানো যেতে পারে।
-                // আপাতত, আমরা এগুলোকে নিষ্ক্রিয় রাখছি।
-                const rateControlGroup = document.getElementById('rate')?.parentElement;
-                const pitchControlGroup = document.getElementById('pitch')?.parentElement;
-                if (rateControlGroup) rateControlGroup.style.display = 'none';
-                if (pitchControlGroup) pitchControlGroup.style.display = 'none';
+                let synth = window.speechSynthesis;
+                let voices = [];
+                let utterance = new SpeechSynthesisUtterance();
 
-                let audioPlayer = new Audio();
-                let audioBlobUrl = null;
-
-                // Gemini API দ্বারা সমর্থিত ভয়েসগুলির তালিকা
-                const geminiVoices = {
-                    "বাংলা (বাংলাদেশ)": "bn-BD",
-                    "ইংরেজি (ভারত)": "en-IN",
-                    "ইংরেজি (মার্কিন যুক্তরাষ্ট্র)": "en-US",
-                    "হিন্দি (ভারত)": "hi-IN",
-                    "আরবি (মিশর)": "ar-EG",
-                    "জার্মান (জার্মানি)": "de-DE",
-                    "স্প্যানিশ (মার্কিন যুক্তরাষ্ট্র)": "es-US",
-                    "ফরাসি (ফ্রান্স)": "fr-FR",
-                    "ইন্দোনেশিয়ান (ইন্দোনেশিয়া)": "id-ID",
-                    "ইতালীয় (ইতালি)": "it-IT",
-                    "জাপানি (জাপান)": "ja-JP",
-                    "কোরিয়ান (দক্ষিণ কোরিয়া)": "ko-KR",
-                    "পর্তুগিজ (ব্রাজিল)": "pt-BR",
-                    "রাশিয়ান (রাশিয়া)": "ru-RU"
-                };
-
-                // ভয়েস সিলেকশন ড্রপডাউন পপুলেট করুন
-                function populateGeminiVoiceList() {
-                    if (!voiceSelect) return;
-                    voiceSelect.innerHTML = ''; // আগের তালিকা পরিষ্কার করুন
-                    for (const [name, code] of Object.entries(geminiVoices)) {
+                function populateVoiceList() {
+                    voices = synth.getVoices().filter(voice => voice.lang.startsWith('bn') || voice.lang.startsWith('en') || voice.lang.startsWith('hi'));
+                    voiceSelect.innerHTML = '';
+                    voices.forEach(voice => {
                         const option = document.createElement('option');
-                        option.textContent = name;
-                        option.value = code;
+                        option.textContent = `${voice.name} (${voice.lang})`;
+                        option.setAttribute('data-lang', voice.lang);
+                        option.setAttribute('data-name', voice.name);
                         voiceSelect.appendChild(option);
-                    }
+                    });
                 }
 
-                populateGeminiVoiceList();
-
-                // Base64 থেকে ArrayBuffer-এ রূপান্তর করার জন্য হেল্পার ফাংশন
-                function base64ToArrayBuffer(base64) {
-                    const binaryString = window.atob(base64);
-                    const len = binaryString.length;
-                    const bytes = new Uint8Array(len);
-                    for (let i = 0; i < len; i++) {
-                        bytes[i] = binaryString.charCodeAt(i);
-                    }
-                    return bytes.buffer;
+                populateVoiceList();
+                if (synth.onvoiceschanged !== undefined) {
+                    synth.onvoiceschanged = populateVoiceList;
                 }
 
-                // PCM ডেটাকে WAV ফরম্যাটে রূপান্তর করার ফাংশন
-                function pcmToWav(pcmData, sampleRate) {
-                    const header = new ArrayBuffer(44);
-                    const view = new DataView(header);
-                    const numChannels = 1;
-                    const bitsPerSample = 16;
-                    const blockAlign = (numChannels * bitsPerSample) / 8;
-                    const byteRate = sampleRate * blockAlign;
-                    const dataSize = pcmData.length * 2;
-
-                    // RIFF chunk descriptor
-                    writeString(view, 0, 'RIFF');
-                    view.setUint32(4, 36 + dataSize, true);
-                    writeString(view, 8, 'WAVE');
-                    // "fmt " sub-chunk
-                    writeString(view, 12, 'fmt ');
-                    view.setUint32(16, 16, true);
-                    view.setUint16(20, 1, true); // Audio format (1 is PCM)
-                    view.setUint16(22, numChannels, true);
-                    view.setUint32(24, sampleRate, true);
-                    view.setUint32(28, byteRate, true);
-                    view.setUint16(32, blockAlign, true);
-                    view.setUint16(34, bitsPerSample, true);
-                    // "data" sub-chunk
-                    writeString(view, 36, 'data');
-                    view.setUint32(40, dataSize, true);
-
-                    function writeString(view, offset, string) {
-                        for (let i = 0; i < string.length; i++) {
-                            view.setUint8(offset + i, string.charCodeAt(i));
+                function handleTTSSpeak() {
+                    if (synth.speaking) {
+                        synth.cancel();
+                    }
+                    if (ttsInput.value !== '') {
+                        utterance.text = ttsInput.value;
+                        const selectedOption = voiceSelect.selectedOptions[0];
+                        const selectedVoiceName = selectedOption.getAttribute('data-name');
+                        const selectedVoice = voices.find(voice => voice.name === selectedVoiceName);
+                        if (selectedVoice) {
+                            utterance.voice = selectedVoice;
                         }
-                    }
-
-                    const wavBytes = new Uint8Array(44 + dataSize);
-                    wavBytes.set(new Uint8Array(header), 0);
-                    wavBytes.set(new Uint8Array(pcmData.buffer), 44);
-
-                    return new Blob([wavBytes], { type: 'audio/wav' });
-                }
-
-                // 'শুনুন' বাটনের জন্য অ্যাসিঙ্ক্রোনাস ফাংশন
-                async function handleSpeak() {
-                    const text = ttsInput.value.trim();
-                    if (!text) {
-                        showCustomAlert('অনুগ্রহ করে কিছু টেক্সট লিখুন।');
-                        return;
-                    }
-
-                    const apiKey = localStorage.getItem('geminiApiKey');
-                    if (!apiKey) {
-                        showCustomAlert('API কী সেট করা হয়নি। অনুগ্রহ করে API কী সেট করুন।');
-                        return;
-                    }
-                    
-                    speakBtn.disabled = true;
-                    speakBtn.textContent = 'লোড হচ্ছে...';
-
-                    try {
-                        const payload = {
-                            contents: [{
-                                parts: [{ text: text }]
-                            }],
-                            generationConfig: {
-                                responseModalities: ["AUDIO"],
-                            },
-                            model: "gemini-2.5-flash-preview-tts",
-                            // এখানে languageCode যোগ করা হয়েছে
-                        };
-
-                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-                        
-                        const response = await fetch(apiUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
-                        });
-
-                        if (!response.ok) {
-                            const errorData = await response.json();
-                            throw new Error(`API Error: ${errorData.error.message}`);
-                        }
-
-                        const result = await response.json();
-                        const part = result?.candidates?.[0]?.content?.parts?.[0];
-                        const audioData = part?.inlineData?.data;
-                        const mimeType = part?.inlineData?.mimeType;
-
-                        if (audioData && mimeType && mimeType.startsWith("audio/")) {
-                            const sampleRateMatch = mimeType.match(/rate=(\d+)/);
-                            if (!sampleRateMatch) {
-                                throw new Error("স্যাম্পল রেট পাওয়া যায়নি।");
-                            }
-                            const sampleRate = parseInt(sampleRateMatch[1], 10);
-                            const pcmData = base64ToArrayBuffer(audioData);
-                            const pcm16 = new Int16Array(pcmData);
-                            const wavBlob = pcmToWav(pcm16, sampleRate);
-
-                            // আগের অডিও URL বাতিল করুন
-                            if (audioBlobUrl) {
-                                URL.revokeObjectURL(audioBlobUrl);
-                            }
-                            audioBlobUrl = URL.createObjectURL(wavBlob);
-                            
-                            audioPlayer.src = audioBlobUrl;
-                            audioPlayer.play();
-                        } else {
-                            throw new Error('API থেকে কোনো অডিও ডেটা পাওয়া যায়নি।');
-                        }
-
-                    } catch (error) {
-                        console.error('TTS Error:', error);
-                        showCustomAlert(`একটি ত্রুটি ঘটেছে: ${error.message}`);
-                    } finally {
-                        speakBtn.disabled = false;
-                        speakBtn.textContent = 'শুনুন';
+                        utterance.rate = rate.value;
+                        utterance.pitch = pitch.value;
+                        synth.speak(utterance);
                     }
                 }
 
-                if (speakBtn) speakBtn.addEventListener('click', handleSpeak);
-                if (pauseBtn) pauseBtn.addEventListener('click', () => audioPlayer.pause());
-                if (resumeBtn) resumeBtn.addEventListener('click', () => audioPlayer.play());
-                if (stopBtn) stopBtn.addEventListener('click', () => {
-                    audioPlayer.pause();
-                    audioPlayer.currentTime = 0;
-                });
+                if (speakBtn) {
+                    speakBtn.addEventListener('click', e => {
+                        e.preventDefault();
+                        handleTTSSpeak();
+                    });
+                }
+
+                if (pauseBtn) {
+                    pauseBtn.addEventListener('click', () => {
+                        synth.pause();
+                    });
+                }
+
+                if (resumeBtn) {
+                    resumeBtn.addEventListener('click', () => {
+                        synth.resume();
+                    });
+                }
+
+                if (stopBtn) {
+                    stopBtn.addEventListener('click', () => {
+                        synth.cancel();
+                    });
+                }
                 
-                // অডিও শেষ হলে URL বাতিল করুন
-                audioPlayer.onended = () => {
-                    if (audioBlobUrl) {
-                        URL.revokeObjectURL(audioBlobUrl);
-                        audioBlobUrl = null;
-                    }
+                if (clearTtsBtn) {
+                    clearTtsBtn.addEventListener('click', () => {
+                        ttsInput.value = '';
+                        synth.cancel(); // কথা বলা বন্ধ করুন
+                        showCustomAlert('টেক্সট টু স্পিচের লেখা মুছে ফেলা হয়েছে!');
+                    });
+                }
+
+                if (rate) {
+                    rate.addEventListener('change', () => {
+                        if (rateValue) rateValue.textContent = rate.value;
+                    });
+                }
+
+                if (pitch) {
+                    pitch.addEventListener('change', () => {
+                        if (pitchValue) pitchValue.textContent = pitch.value;
+                    });
+                }
+                
+                utterance.onerror = e => {
+                    console.error('An error occurred during speech synthesis:', e);
+                    showCustomAlert(`স্পিচ সিন্থেসিসে একটি ত্রুটি ঘটেছে: ${e.error}`);
                 };
                 // ====================================================================
-                // END: GEMINI API TEXT-TO-SPEECH (TTS) SCRIPT
+                // END: REAL-TIME BROWSER TEXT-TO-SPEECH (TTS) SCRIPT
                 // ====================================================================
 
 
@@ -4352,6 +4287,7 @@ if (scientificExpressionInput) {
                 const startSttBtn = document.getElementById('startSttBtn');
                 const stopSttBtn = document.getElementById('stopSttBtn');
                 const copySttBtn = document.getElementById('copySttBtn');
+                const clearSttBtn = document.getElementById('clearSttBtn');
 
                 let recognition;
                 let isListening = false;
@@ -4412,7 +4348,6 @@ if (scientificExpressionInput) {
                         startSttBtn.disabled = false;
                         stopSttBtn.disabled = true;
                         copySttBtn.disabled = false; // থামার পর কপি সক্ষম করুন
-                        showCustomAlert('স্পিচ টু টেক্সট শেষ হয়েছে।');
                     };
 
                     // বোতামগুলির জন্য ইভেন্ট লিসেনার
@@ -4438,12 +4373,24 @@ if (scientificExpressionInput) {
                             copyToClipboard('sttOutput');
                         });
                     }
+                    
+                    if (clearSttBtn) {
+                        clearSttBtn.addEventListener('click', () => {
+                            sttOutput.value = '';
+                            if (isListening) {
+                                recognition.stop();
+                            }
+                            showCustomAlert('স্পিচ টু টেক্সটের লেখা মুছে ফেলা হয়েছে!');
+                        });
+                    }
+
 
                 } else {
                     sttStatus.innerText = 'দুঃখিত, আপনার ব্রাউজার স্পিচ রিকগনিশন সমর্থন করে না। 😔';
                     if (startSttBtn) startSttBtn.disabled = true;
                     if (stopSttBtn) stopSttBtn.disabled = true;
                     if (copySttBtn) copySttBtn.disabled = true;
+                    if (clearSttBtn) clearSttBtn.disabled = true;
                 }
 
 
