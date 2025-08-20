@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Combined Calculator</title>
+    <title>কম্বাইন্ড ক্যালকুলেটর</title>
 	<link rel="icon" type="image/png" href="https://mdsifatgitid.github.io/converticon.png">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -77,6 +77,12 @@
             left: 0;
             z-index: -1;
         }
+        /* ডার্ক মোডে অ্যানিমেটেড ব্যাকগ্রাউন্ড পরিবর্তন */
+        .dark .area {
+             background: #1a202c; /* গাঢ় নীল-ধূসর */
+             background: -webkit-linear-gradient(to left, #2d3748, #1a202c);
+        }
+
 
         .circles {
             position: absolute;
@@ -97,6 +103,11 @@
             animation: animate-bg 25s linear infinite;
             bottom: -150px;
         }
+        /* ডার্ক মোডে বৃত্তের রঙ পরিবর্তন */
+        .dark .circles li {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
 
         .circles li:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: 0s; }
         .circles li:nth-child(2) { left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s; }
@@ -145,6 +156,47 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             visibility: hidden; /* Initially hidden */
         }
+        .dark .main-container {
+            background-color: rgba(26, 32, 44, 0.85); /* গাঢ় ব্যাকগ্রাউন্ড */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* নতুন: থিম টগল বাটন */
+        .theme-toggle-container {
+            display: flex;
+            justify-content: flex-end; /* ডানদিকে সারিবদ্ধ করুন */
+            margin-bottom: 15px;
+        }
+        .theme-toggle-button {
+            background-color: #e0e7ff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .dark .theme-toggle-button {
+            background-color: #4a5568;
+        }
+        .theme-toggle-button:hover {
+            transform: scale(1.1);
+        }
+        .theme-toggle-button svg {
+            width: 24px;
+            height: 24px;
+            color: #3f51b5;
+        }
+        .dark .theme-toggle-button svg {
+            color: #f7fafc;
+        }
+        #moon-icon { display: none; }
+        .dark #sun-icon { display: none; }
+        .dark #moon-icon { display: block; }
+
 
         .tab-buttons {
             display: flex;
@@ -165,6 +217,10 @@
             color: #3f51b5; /* গাঢ় নীল টেক্সট */
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
+        .dark .tab-button {
+            background-color: #2d3748;
+            color: #cbd5e0;
+        }
 
         .tab-button.active {
             background-color: #3f51b5; /* সক্রিয় ট্যাবের রঙ (গভীর নীল) */
@@ -172,10 +228,17 @@
             box-shadow: 0 4px 8px rgba(63, 81, 181, 0.3);
             transform: translateY(-2px);
         }
+        .dark .tab-button.active {
+            background-color: #4c51bf;
+            color: #f7fafc;
+        }
 
         .tab-button:hover:not(.active) {
             background-color: #c5cae9; /* হোভারে হালকা নীল */
             transform: translateY(-1px);
+        }
+        .dark .tab-button:hover:not(.active) {
+            background-color: #4a5568;
         }
 
         /* মৌলিক ক্যালকুলেটর স্টাইল */
@@ -344,7 +407,6 @@
         }
         .explain-button:hover {
             background-color: #218838;
-            transform: translateY(-1px);
         }
 
         /* বয়স ক্যালকুলেটর স্টাইল */
@@ -355,6 +417,10 @@
             max-width: 400px; /* বয়স ক্যালকুলেটরের জন্য বর্ধিত প্রস্থ */
             background-color: #f8f9fa; /* হালকা ধূসর ব্যাকগ্রাউন্ড */
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .dark .age-calculator-content {
+            background-color: #2d3748;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
         }
         .age-calculator-content .input-group {
             margin-bottom: 20px; /* বর্ধিত মার্জিন */
@@ -367,6 +433,10 @@
             color: #333;
             font-weight: 600;
         }
+        .dark .age-calculator-content .input-group label {
+            color: #e2e8f0;
+        }
+
         .age-calculator-content .input-group input[type="date"],
         .age-calculator-content .input-group input[type="number"] {
             width: 100%;
@@ -378,6 +448,12 @@
             cursor: pointer;
             background-color: #eaf6ff; /* হালকা নীল ইনপুট ব্যাকগ্রাউন্ড */
             color: #333;
+        }
+        .dark .age-calculator-content .input-group input[type="date"],
+        .dark .age-calculator-content .input-group input[type="number"] {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
         }
         .age-calculator-content .input-group input[type="date"] {
              appearance: none; /* ডিফল্ট তারিখ ইনপুট স্টাইলিং সরান */
@@ -412,12 +488,21 @@
             align-items: center;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
         }
+        .dark .age-calculator-content .result-area {
+            background-color: #1a202c;
+            border-color: #4a5568;
+        }
+
         .age-calculator-content .result-area p {
             font-size: 1.3rem; /* বর্ধিত ফন্ট সাইজ */
             color: #0056b3;
             font-weight: 700;
             margin: 5px 0; /* সামঞ্জস্যপূর্ণ মার্জিন */
         }
+        .dark .age-calculator-content .result-area p {
+            color: #90cdf4;
+        }
+
         .age-calculator-content .result-area .error-message {
             color: #d9534f; /* ত্রুটি বার্তার জন্য লাল */
             font-size: 1rem; /* বর্ধিত ফন্ট সাইজ */
@@ -437,6 +522,10 @@
             border: 1px solid #cce7ff;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+        .dark #yearCalcResult .result-item {
+            background-color: #4a5568;
+            border-color: #718096;
+        }
         #yearCalcResult .result-item:first-child {
             margin-bottom: 15px;
         }
@@ -446,6 +535,9 @@
             color: #333;
             margin-bottom: 8px;
         }
+        .dark #yearCalcResult h3 {
+            color: #e2e8f0;
+        }
         #yearCalcResult p {
             font-size: 1.2rem;
             font-weight: 600;
@@ -453,8 +545,14 @@
         #yearCalcResult .past-date {
             color: #c62828; /* লাল */
         }
+        .dark #yearCalcResult .past-date {
+            color: #feb2b2;
+        }
         #yearCalcResult .future-date {
             color: #28a745; /* সবুজ */
+        }
+        .dark #yearCalcResult .future-date {
+            color: #9ae6b4;
         }
 
         /* তারিখ ও সময় ক্যালকুলেটর স্টাইল */
@@ -465,6 +563,9 @@
             max-width: 450px; /* বর্ধিত প্রস্থ */
             background-color: #f8f9fa; /* হালকা ধূসর ব্যাকগ্রাউন্ড */
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .dark .date-time-content {
+            background-color: #2d3748;
         }
         .date-time-content .button-group {
             display: flex;
@@ -504,15 +605,26 @@
             text-align: left; /* টেক্সট বামদিকে সারিবদ্ধ করুন */
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
         }
+        .dark .date-time-content .result-area {
+            background-color: #1a202c;
+            border-color: #4a5568;
+        }
+
         .date-time-content .result-area p {
             font-size: 1.05rem; /* বর্ধিত ফন্ট সাইজ */
             color: #333;
             font-weight: 500;
             margin: 5px 0; /* সামঞ্জস্যপূর্ণ মার্জিন */
         }
+        .dark .date-time-content .result-area p {
+            color: #e2e8f0;
+        }
         .date-time-content .result-area strong {
             font-weight: 700;
             color: #0056b3;
+        }
+        .dark .date-time-content .result-area strong {
+            color: #90cdf4;
         }
         .date-time-content .result-section-title {
             font-size: 1.3rem; /* বর্ধিত ফন্ট সাইজ */
@@ -522,6 +634,9 @@
             margin-bottom: 10px; /* বর্ধিত মার্জিন */
             width: 100%;
             text-align: center;
+        }
+        .dark .date-time-content .result-section-title {
+            color: #90cdf4;
         }
         .date-time-content .result-section-title:first-child {
             margin-top: 0;
@@ -533,6 +648,14 @@
             font-size: 1rem; /* বর্ধিত ফন্ট সাইজ */
             background-color: #eaf6ff; /* হালকা নীল ইনপুট ব্যাকগ্রাউন্ড */
             color: #333;
+        }
+        .dark .date-time-content .input-group input[type="date"] {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
+        }
+        .dark .text-gray-700 {
+            color: #cbd5e0;
         }
 
         /* বৈজ্ঞানিক ক্যালকুলেটর স্টাইল */
@@ -623,6 +746,11 @@
             margin-right: auto;
             max-width: 500px; /* scientific-calculator-content এর সর্বোচ্চ প্রস্থের সাথে সারিবদ্ধ করুন */
         }
+        .dark .scientific-result {
+            background-color: #1a202c;
+            border-color: #4a5568;
+            color: #90cdf4;
+        }
         .error-message { /* স্টাইলিংয়ের জন্য scientific-calculator-content এর বাইরে সরানো হয়েছে */
             color: #d9534f;
             font-size: 1rem;
@@ -631,6 +759,12 @@
             margin-left: auto;
             margin-right: auto;
             max-width: 500px; /* scientific-calculator-content এর সর্বোচ্চ প্রস্থের সাথে সারিবদ্ধ করুন */
+        }
+        .dark .error-message {
+            color: #fc8181;
+        }
+        .dark .text-gray-800 {
+            color: #f7fafc;
         }
 
 
@@ -643,6 +777,9 @@
             background-color: #f8f9fa; /* হালকা ধূসর ব্যাকগ্রাউন্ড */
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
+        .dark .news-content {
+            background-color: #2d3748;
+        }
         .news-content .news-display-area {
             margin-top: 20px; /* বর্ধিত মার্জিন */
             padding: 20px; /* বর্ধিত প্যাডিং */
@@ -653,11 +790,18 @@
             text-align: left;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
         }
+        .dark .news-content .news-display-area {
+            background-color: #1a202c;
+            border-color: #4a5568;
+        }
         .news-content .news-display-area h3 {
             font-size: 1.4rem; /* বর্ধিত ফন্ট সাইজ */
             font-weight: 700;
             color: #0056b3;
             margin-bottom: 12px; /* বর্ধিত মার্জিন */
+        }
+        .dark .news-content .news-display-area h3 {
+            color: #90cdf4;
         }
         .news-content .news-display-area ul {
             list-style: none;
@@ -672,9 +816,15 @@
             font-size: 1.05rem; /* বর্ধিত ফন্ট সাইজ */
             transition: color 0.2s ease;
         }
+        .dark .news-content .news-display-area a {
+            color: #63b3ed;
+        }
         .news-content .news-display-area a:hover {
             color: #0056b3;
             text-decoration: underline;
+        }
+        .dark .news-content .news-display-area a:hover {
+            color: #90cdf4;
         }
         .news-content .news-display-area .error-message {
             color: #d9534f;
@@ -688,12 +838,18 @@
             padding-top: 15px; /* বর্ধিত প্যাডিং */
             border-top: 1px solid #e0e0e0;
         }
+        .dark .bio-link-section {
+            border-top-color: #4a5568;
+        }
 
         .bio-link-section p {
             font-size: 1.05rem; /* বর্ধিত ফন্ট সাইজ */
             font-weight: 600;
             color: #333;
             margin-bottom: 10px; /* বর্ধিত মার্জিন */
+        }
+        .dark .bio-link-section p {
+            color: #e2e8f0;
         }
 
 
@@ -708,6 +864,10 @@
             flex-direction: column;
             gap: 20px;
             background-color: #ffffff; /* কনভার্টার বিভাগের জন্য সাদা ব্যাকগ্রাউন্ড */
+        }
+        .dark .font-converter-content {
+            background-color: #2d3748;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
         }
         .font-converter-sections-wrapper {
             display: flex;
@@ -737,6 +897,9 @@
             color: #333;
             margin: 0;
         }
+        .dark .font-section-header h2 {
+            color: #e2e8f0;
+        }
         .font-converter-content textarea {
             width: 100%;
             min-height: 200px;
@@ -748,6 +911,11 @@
             box-sizing: border-box;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
             color: #333; /* টেক্সটএরিয়া টেক্সট পঠনযোগ্য নিশ্চিত করুন */
+        }
+        .dark .font-converter-content textarea {
+            background-color: #1a202c;
+            border-color: #4a5568;
+            color: #f7fafc;
         }
         /* ডানদিকের টেক্সটএরিয়ার জন্য লোড করা SutonnyMJ ফন্ট ব্যবহার করার স্টাইল */
         #textAreaRight {
@@ -912,6 +1080,18 @@
             background-color: #0056b3;
             transform: translateY(-1px);
         }
+        .dark .text-green-700 {
+            color: #68d391;
+        }
+        .dark .text-purple-700 {
+            color: #b794f4;
+        }
+        .dark .text-blue-700 {
+            color: #63b3ed;
+        }
+        .dark .list-disc, .dark .list-circle {
+            color: #a0aec0;
+        }
 
 
         /* টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগের নতুন স্টাইল */
@@ -923,6 +1103,9 @@
             background-color: #f8f9fa;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
+        .dark .text-assistant-content {
+            background-color: #2d3748;
+        }
         .chat-header {
             display: flex;
             justify-content: space-between;
@@ -933,6 +1116,9 @@
             font-size: 1.4rem;
             font-weight: 700;
             color: #333;
+        }
+        .dark .chat-header h3 {
+            color: #e2e8f0;
         }
         .clear-chat-button {
             background-color: #ef5350;
@@ -959,6 +1145,10 @@
             border: 1px solid #b3e0ff;
             margin-bottom: 15px;
         }
+        .dark .chat-window {
+            background-color: #1a202c;
+            border-color: #4a5568;
+        }
         .message {
             padding: 10px 15px;
             border-radius: 12px;
@@ -979,6 +1169,10 @@
             align-self: flex-start;
             border-bottom-left-radius: 2px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .dark .gemini-message {
+            background-color: #4a5568;
+            color: #f7fafc;
         }
         .gemini-error-message {
             background-color: #ffebee;
@@ -1002,6 +1196,11 @@
             font-size: 1rem;
             resize: vertical;
         }
+        .dark .text-assistant-content textarea {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
+        }
         .text-assistant-content .ask-button {
             width: auto;
             margin-bottom: 0;
@@ -1021,6 +1220,9 @@
             font-size: 1rem;
             color: #555;
         }
+        .dark .text-assistant-content .loading-indicator {
+            color: #a0aec0;
+        }
         
         /* নতুন: বাংলা বানান সংশোধন স্টাইল */
         .spell-checker-content {
@@ -1030,6 +1232,9 @@
             max-width: 600px;
             background-color: #f8f9fa;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .dark .spell-checker-content {
+            background-color: #2d3748;
         }
         .spell-checker-content textarea {
             width: 100%;
@@ -1042,6 +1247,11 @@
             background-color: #eaf6ff;
             color: #333;
         }
+        .dark .spell-checker-content textarea {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
+        }
         .spell-checker-content .result-area #spellCheckResult {
             min-height: 150px;
             background-color: #ffffff;
@@ -1049,6 +1259,11 @@
             border: 1px solid #ddd;
             padding: 12px;
             white-space: pre-wrap; /* ফরম্যাটিং বজায় রাখতে */
+        }
+        .dark .spell-checker-content .result-area #spellCheckResult {
+            background-color: #1a202c;
+            border-color: #4a5568;
+            color: #e2e8f0;
         }
 
         /* বানান পরীক্ষা করুন বোতামের জন্য নতুন সুন্দর স্টাইল */
@@ -1090,6 +1305,9 @@
             background-color: #f8f9fa;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
+        .dark .text-beautifier-content {
+            background-color: #2d3748;
+        }
         .text-beautifier-content textarea {
             width: 100%;
             padding: 12px;
@@ -1101,6 +1319,11 @@
             background-color: #eaf6ff;
             color: #333;
         }
+        .dark .text-beautifier-content textarea {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
+        }
         .text-beautifier-content .result-area #beautifyResult {
             min-height: 150px;
             background-color: #ffffff;
@@ -1108,6 +1331,11 @@
             border: 1px solid #ddd;
             padding: 12px;
             white-space: pre-wrap; /* ফরম্যাটিং বজায় রাখতে */
+        }
+        .dark .text-beautifier-content .result-area #beautifyResult {
+            background-color: #1a202c;
+            border-color: #4a5568;
+            color: #e2e8f0;
         }
 
         /* লেখা সাজানো বোতামের জন্য নতুন সুন্দর স্টাইল */
@@ -1149,6 +1377,9 @@
             background-color: #f8f9fa;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
+        .dark .word-meaning-content {
+            background-color: #2d3748;
+        }
         .word-meaning-content input[type="text"] {
             width: 100%;
             padding: 12px;
@@ -1159,6 +1390,11 @@
             background-color: #eaf6ff;
             color: #333;
         }
+        .dark .word-meaning-content input[type="text"] {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
+        }
         .word-meaning-content .result-area #wordMeaningResult {
             min-height: 150px;
             background-color: #ffffff;
@@ -1167,6 +1403,11 @@
             padding: 12px;
             white-space: pre-wrap; /* ফরম্যাটিং বজায় রাখতে */
             text-align: left;
+        }
+        .dark .word-meaning-content .result-area #wordMeaningResult {
+            background-color: #1a202c;
+            border-color: #4a5568;
+            color: #e2e8f0;
         }
 
         .find-meaning-button {
@@ -1207,6 +1448,9 @@
             background-color: #f8f9fa;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
+        .dark .tts-content {
+            background-color: #2d3748;
+        }
         .tts-content textarea {
             width: 100%;
             padding: 12px;
@@ -1218,6 +1462,11 @@
             background-color: #eaf6ff;
             color: #333;
             margin-bottom: 20px;
+        }
+        .dark .tts-content textarea {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
         }
         .tts-controls {
             display: flex;
@@ -1236,12 +1485,20 @@
             color: #333;
             min-width: 120px;
         }
+        .dark .control-group label {
+            color: #e2e8f0;
+        }
         .control-group select, .control-group input[type="range"] {
             flex-grow: 1;
             padding: 8px;
             border-radius: 8px;
             border: 1px solid #cce7ff;
             background-color: #eaf6ff;
+        }
+        .dark .control-group select, .dark .control-group input[type="range"] {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
         }
         .control-group input[type="range"] {
             cursor: pointer;
@@ -1250,6 +1507,9 @@
             font-weight: 500;
             min-width: 25px;
             text-align: center;
+        }
+        .dark .control-group span {
+            color: #e2e8f0;
         }
         .tts-buttons {
             display: flex;
@@ -1327,6 +1587,9 @@
             background-color: #f8f9fa;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
+        .dark .stt-content {
+            background-color: #2d3748;
+        }
         .stt-content textarea {
             width: 100%;
             padding: 12px;
@@ -1339,6 +1602,11 @@
             color: #333;
             margin-bottom: 20px;
         }
+        .dark .stt-content textarea {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
+        }
         .stt-status {
             font-size: 1rem;
             font-weight: 600;
@@ -1347,6 +1615,11 @@
             background-color: #e6f7ff;
             border-radius: 8px;
             border: 1px solid #b3e0ff;
+        }
+        .dark .stt-status {
+            background-color: #1a202c;
+            border-color: #4a5568;
+            color: #e2e8f0;
         }
         .stt-buttons {
             display: flex;
@@ -1422,6 +1695,9 @@
             transform: translateY(-30px); /* সামান্য উপর থেকে আসবে */
             animation: fadeInScale 0.4s ease-out forwards;
         }
+        .dark .api-key-modal-content {
+            background-color: #2d3748;
+        }
 
         @keyframes fadeInScale {
             from {
@@ -1440,6 +1716,9 @@
             color: #333;
             margin-bottom: 25px; /* বর্ধিত মার্জিন */
         }
+        .dark .api-key-modal-content h3 {
+            color: #e2e8f0;
+        }
 
         .api-key-modal-content input[type="text"] {
             width: 100%;
@@ -1451,6 +1730,11 @@
             box-sizing: border-box;
             background-color: #eaf6ff; /* হালকা নীল ইনপুট ব্যাকগ্রাউন্ড */
             color: #333;
+        }
+        .dark .api-key-modal-content input[type="text"] {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
         }
 
         .api-key-modal-content .modal-buttons {
@@ -1497,8 +1781,19 @@
         .api-key-modal-content .message-area.success {
             color: #28a745; /* সবুজ */
         }
+        .dark .api-key-modal-content .message-area.success {
+            color: #68d391;
+        }
         .api-key-modal-content .message-area.error {
             color: #d9534f; /* লাল */
+        }
+        .dark .api-key-modal-content .message-area.error {
+            color: #fc8181;
+        }
+        .dark .response-area {
+            background-color: #1a202c !important;
+            border-color: #4a5568 !important;
+            color: #e2e8f0;
         }
 
 
@@ -1688,7 +1983,16 @@
     </div>
 
     <div class="main-container">
-        <h2 class="text-3xl font-bold text-gray-800 mb-8">কম্বাইন্ড ক্যালকুলেটর</h2>
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">কম্বাইন্ড ক্যালকুলেটর</h2>
+
+        <!-- নতুন: থিম টগল বাটন -->
+        <div class="theme-toggle-container">
+            <button id="theme-toggle" type="button" class="theme-toggle-button">
+                <svg id="sun-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                <svg id="moon-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            </button>
+        </div>
+
 
         <div class="tab-buttons">
             <button id="basicCalcTab" class="tab-button active rounded-xl">সাধারণ ক্যালকুলেটর</button>
@@ -2172,6 +2476,35 @@
     </div>
 
     <script>
+        // ====================================================================
+        // START: DARK MODE / LIGHT MODE TOGGLE SCRIPT
+        // ====================================================================
+        const themeToggleBtn = document.getElementById('theme-toggle');
+
+        // পৃষ্ঠা লোড হওয়ার সাথে সাথে থিম পরীক্ষা করুন
+        if (localStorage.getItem('color-theme') === 'dark' || 
+           (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            // 'dark' ক্লাস টগল করুন
+            document.documentElement.classList.toggle('dark');
+
+            // লোকাল স্টোরেজে পছন্দ সেভ করুন
+            if (document.documentElement.classList.contains('dark')) {
+                localStorage.setItem('color-theme', 'dark');
+            } else {
+                localStorage.setItem('color-theme', 'light');
+            }
+        });
+        // ====================================================================
+        // END: DARK MODE / LIGHT MODE TOGGLE SCRIPT
+        // ====================================================================
+
+
         // ইউনিকোড থেকে বিজয় রূপান্তরের জন্য ম্যাপিং
         const unicodeToBijoyMap = {
             // স্বরবর্ণ সেকশন
