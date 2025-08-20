@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Combined Calculator</title>
+    <title>কম্বাইন্ড ক্যালকুলেটর</title>
 	<link rel="icon" type="image/png" href="https://mdsifatgitid.github.io/converticon.png">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Custom font and basic styles */
         /* SUTONNYMJ ফন্টটি লোড করার জন্য @font-face ব্যবহার করা হয়েছে। */
+        /* মোবাইল ডিভাইসে দ্রুত এবং নির্ভরযোগ্য লোডিং নিশ্চিত করতে jsDelivr CDN ব্যবহার করা হয়েছে। */
         @font-face {
             font-family: 'SUTONNYMJ';
             src: url('https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/SUTONNYMJ.TTF') format('truetype');
@@ -16,347 +18,6 @@
             font-style: normal;
         }
 
-        /* --- Theme Variables --- */
-        :root {
-            --bg-main: #e0f2f7;
-            --bg-main-gradient: -webkit-linear-gradient(to left, #e0f2f7, #d2eaf1);
-            --bg-container: rgba(255, 255, 255, 0.85);
-            --text-primary: #1f2937;
-            --text-secondary: #4b5563;
-            --tab-bg: #e0e7ff;
-            --tab-text: #3f51b5;
-            --tab-active-bg: #3f51b5;
-            --tab-active-text: #ffffff;
-            --tab-hover-bg: #c5cae9;
-            --preloader-bg: #000000;
-            --preloader-text: #ffffff;
-            --component-bg: #f8f9fa;
-            --component-border: #b3e0ff;
-            --result-area-bg: #e6f7ff;
-            --input-bg: #eaf6ff;
-            --input-border: #cce7ff;
-            --input-text: #333;
-            --button-primary-bg: #007bff;
-            --button-primary-hover: #0056b3;
-            --button-text: #ffffff;
-            --calc-bg: #263238;
-            --calc-display-bg: #1c262b;
-            --calc-btn-bg: #455a64;
-            --calc-btn-hover: #546e7a;
-            --calc-text: #ffffff;
-            --shadow-color: rgba(0, 0, 0, 0.15);
-        }
-
-        html.dark {
-            --bg-main: #111827;
-            --bg-main-gradient: -webkit-linear-gradient(to left, #111827, #1f2937);
-            --bg-container: rgba(31, 41, 55, 0.85);
-            --text-primary: #f9fafb;
-            --text-secondary: #d1d5db;
-            --tab-bg: #374151;
-            --tab-text: #d1d5db;
-            --tab-active-bg: #4f46e5;
-            --tab-active-text: #ffffff;
-            --tab-hover-bg: #4b5563;
-            --preloader-bg: #000000;
-            --preloader-text: #ffffff;
-            --component-bg: #1f2937;
-            --component-border: #374151;
-            --result-area-bg: #374151;
-            --input-bg: #4b5563;
-            --input-border: #6b7280;
-            --input-text: #f9fafb;
-            --button-primary-bg: #4f46e5;
-            --button-primary-hover: #4338ca;
-            --button-text: #ffffff;
-            --calc-bg: #111827;
-            --calc-display-bg: #000000;
-            --calc-btn-bg: #374151;
-            --calc-btn-hover: #4b5563;
-            --calc-text: #ffffff;
-            --shadow-color: rgba(0, 0, 0, 0.5);
-        }
-
-        /* Preloader Styles */
-        #preloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--preloader-bg);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 1.5s ease, visibility 1.5s ease;
-        }
-
-        #preloader.preloader-hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        #preloader-name {
-            color: var(--preloader-text);
-            font-size: 2.5rem;
-            font-weight: bold;
-            opacity: 0;
-            animation: animate-name 3.5s ease-out forwards;
-            text-align: center;
-        }
-
-        @keyframes animate-name {
-            0% { opacity: 0; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        
-        @keyframes fadeInContent {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* Animated Background Styles */
-        .area {
-            background: var(--bg-main);
-            background: var(--bg-main-gradient);
-            width: 100%;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: -1;
-        }
-
-        .circles li {
-            background: rgba(255, 255, 255, 0.2); /* Kept light for contrast */
-        }
-        
-        html, body {
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        body {
-            font-family: 'Inter', 'Hind Siliguri', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: transparent;
-            padding: 10px;
-        }
-
-        .main-container {
-            background-color: var(--bg-container);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 15px 30px var(--shadow-color);
-            max-width: 1000px;
-            width: 100%;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            visibility: hidden;
-        }
-        
-        .main-container h2 {
-            color: var(--text-primary);
-        }
-
-        .tab-buttons {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .tab-button {
-            padding: 10px 16px;
-            background-color: var(--tab-bg);
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--tab-text);
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        .tab-button.active {
-            background-color: var(--tab-active-bg);
-            color: var(--tab-active-text);
-            box-shadow: 0 4px 8px rgba(63, 81, 181, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .tab-button:hover:not(.active) {
-            background-color: var(--tab-hover-bg);
-            transform: translateY(-1px);
-        }
-        
-        /* Theme Toggle Button */
-        #theme-toggle-button {
-            background-color: var(--tab-bg);
-            color: var(--tab-text);
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        #theme-toggle-button:hover {
-            background-color: var(--tab-hover-bg);
-            transform: scale(1.1);
-        }
-
-        /* মৌলিক ক্যালকুলেটর স্টাইল */
-        .calculator-grid {
-            background-color: var(--calc-bg);
-        }
-        .output {
-            background-color: var(--calc-display-bg);
-        }
-        .output .previous-operand {
-            color: rgba(255, 255, 255, 0.6);
-        }
-        .output .current-operand {
-            color: var(--calc-text);
-        }
-        .calculator-button {
-            background-color: var(--calc-btn-bg);
-            color: var(--calc-text);
-        }
-        .calculator-button:hover {
-            background-color: var(--calc-btn-hover);
-        }
-        .operator, .equals {
-            background-color: var(--button-primary-bg);
-        }
-        .operator:hover, .equals:hover {
-            background-color: var(--button-primary-hover);
-        }
-        .clear {
-            background-color: #ef5350;
-        }
-        .clear:hover {
-            background-color: #d32f2f;
-        }
-        .history-panel {
-            background-color: var(--calc-bg);
-            color: var(--calc-text);
-        }
-
-        /* বয়স, তারিখ, সংবাদ, ইত্যাদি ক্যালকুলেটর স্টাইল */
-        .age-calculator-content, .date-time-content, .news-content, .spell-checker-content, .text-beautifier-content, .word-meaning-content, .tts-content, .stt-content, .text-assistant-content {
-            background-color: var(--component-bg);
-        }
-        .age-calculator-content h3, .date-time-content h3, .news-content h3, .spell-checker-content h3, .text-beautifier-content h3, .word-meaning-content h3, .tts-content h3, .stt-content h3, .text-assistant-content h3, .all-features-content h3 {
-            color: var(--text-primary);
-        }
-        .age-calculator-content label, .date-time-content label, .tts-content label {
-            color: var(--text-primary);
-        }
-        .age-calculator-content input, .date-time-content input, .word-meaning-content input, .spell-checker-content textarea, .text-beautifier-content textarea, .tts-content textarea, .stt-content textarea, .text-assistant-content textarea, .tts-content select {
-            background-color: var(--input-bg);
-            border-color: var(--input-border);
-            color: var(--input-text);
-        }
-        .age-calculator-content .calculate-button, .date-time-content .show-date-button {
-            background-color: var(--button-primary-bg);
-            color: var(--button-text);
-        }
-        .age-calculator-content .calculate-button:hover, .date-time-content .show-date-button:hover {
-            background-color: var(--button-primary-hover);
-        }
-        .age-calculator-content .result-area, .date-time-content .result-area, .news-content .news-display-area, .spell-checker-content .result-area, .text-beautifier-content .result-area, .word-meaning-content .result-area {
-            background-color: var(--result-area-bg);
-            border-color: var(--component-border);
-        }
-        .age-calculator-content .result-area p, .date-time-content .result-area p {
-            color: var(--tab-text);
-        }
-        #yearCalcResult .result-item {
-            background-color: var(--bg-container);
-        }
-        #yearCalcResult h3, .date-time-content .result-area strong {
-            color: var(--text-primary);
-        }
-        
-        /* বৈজ্ঞানিক ক্যালকুলেটর স্টাইল */
-        .scientific-calculator-content {
-            background-color: var(--calc-bg);
-        }
-        .scientific-calculator-content .expression-input {
-            background-color: var(--calc-display-bg);
-            color: var(--calc-text);
-        }
-        .scientific-calculator-content .scientific-button {
-            background-color: var(--calc-btn-bg);
-            color: var(--calc-text);
-        }
-        .scientific-calculator-content .scientific-button:hover {
-            background-color: var(--calc-btn-hover);
-        }
-        .scientific-calculator-content .scientific-button.operator-btn, .scientific-calculator-content .scientific-button.equals-btn {
-            background-color: var(--button-primary-bg);
-        }
-         .scientific-calculator-content .scientific-button.operator-btn:hover, .scientific-calculator-content .scientific-button.equals-btn:hover {
-            background-color: var(--button-primary-hover);
-        }
-        .scientific-result {
-            background-color: var(--result-area-bg);
-            color: var(--tab-text);
-        }
-
-        /* ফন্ট কনভার্টার স্টাইল */
-        .font-converter-content {
-            background-color: var(--component-bg);
-        }
-        .font-converter-content h2 {
-            color: var(--text-primary);
-        }
-        .font-converter-content textarea {
-            background-color: var(--input-bg);
-            border-color: var(--input-border);
-            color: var(--input-text);
-        }
-        #textAreaRight {
-            font-family: 'SUTONNYMJ', sans-serif;
-            font-size: 1.5rem;
-        }
-
-        /* চ্যাট স্টাইল */
-        .chat-window {
-            background-color: var(--result-area-bg);
-            border-color: var(--component-border);
-        }
-        .gemini-message {
-            background-color: var(--bg-container);
-            color: var(--text-primary);
-        }
-        
-        /* API কী মডেল স্টাইল */
-        .api-key-modal-content {
-            background-color: var(--component-bg);
-        }
-        .api-key-modal-content h3 {
-            color: var(--text-primary);
-        }
-        .api-key-modal-content input[type="text"] {
-            background-color: var(--input-bg);
-            border-color: var(--input-border);
-            color: var(--input-text);
-        }
-
-        /* বাকি স্টাইলগুলো এখানে যুক্ত করুন */
-        /* ... পূর্ববর্তী সকল স্টাইল এখানে থাকবে ... */
         /* Preloader Styles */
         #preloader {
             position: fixed;
@@ -416,6 +77,12 @@
             left: 0;
             z-index: -1;
         }
+        /* ডার্ক মোডে অ্যানিমেটেড ব্যাকগ্রাউন্ড পরিবর্তন */
+        .dark .area {
+             background: #1a202c; /* গাঢ় নীল-ধূসর */
+             background: -webkit-linear-gradient(to left, #2d3748, #1a202c);
+        }
+
 
         .circles {
             position: absolute;
@@ -436,6 +103,11 @@
             animation: animate-bg 25s linear infinite;
             bottom: -150px;
         }
+        /* ডার্ক মোডে বৃত্তের রঙ পরিবর্তন */
+        .dark .circles li {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
 
         .circles li:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: 0s; }
         .circles li:nth-child(2) { left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s; }
@@ -461,8 +133,112 @@
             }
         }
 
+        body {
+            font-family: 'Inter', 'Hind Siliguri', sans-serif;
+            display: flex;
+            justify-content: center; /* horizontally center */
+            align-items: center;     /* vertically center */
+            min-height: 100vh;
+            background-color: transparent; /* Made transparent for animated background */
+            padding: 10px; /* ছোট স্ক্রিনের জন্য প্যাডিং যোগ করুন */
+        }
+
         .main-container {
+            background-color: rgba(255, 255, 255, 0.85); /* Slightly transparent white */
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            -webkit-backdrop-filter: blur(10px);
+            padding: 20px; /* বর্ধিত প্যাডিং */
+            border-radius: 20px; /* গোলাকার কোণ */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); /* গভীর ছায়া */
+            max-width: 1000px; /* সমস্ত কন্টেন্টের জন্য বর্ধিত সর্বোচ্চ প্রস্থ */
+            width: 100%; /* প্রতিক্রিয়াশীল প্রস্থ */
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             visibility: hidden; /* Initially hidden */
+        }
+        .dark .main-container {
+            background-color: rgba(26, 32, 44, 0.85); /* গাঢ় ব্যাকগ্রাউন্ড */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* নতুন: থিম টগল বাটন */
+        .theme-toggle-container {
+            display: flex;
+            justify-content: flex-end; /* ডানদিকে সারিবদ্ধ করুন */
+            margin-bottom: 15px;
+        }
+        .theme-toggle-button {
+            background-color: #e0e7ff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .dark .theme-toggle-button {
+            background-color: #4a5568;
+        }
+        .theme-toggle-button:hover {
+            transform: scale(1.1);
+        }
+        .theme-toggle-button svg {
+            width: 24px;
+            height: 24px;
+            color: #3f51b5;
+        }
+        .dark .theme-toggle-button svg {
+            color: #f7fafc;
+        }
+        #moon-icon { display: none; }
+        .dark #sun-icon { display: none; }
+        .dark #moon-icon { display: block; }
+
+
+        .tab-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px; /* বর্ধিত মার্জিন */
+            gap: 10px; /* বর্ধিত ফাঁক */
+            flex-wrap: wrap; /* ছোট স্ক্রিনে ট্যাবগুলি মোড়ানো */
+        }
+
+        .tab-button {
+            padding: 10px 16px; /* বর্ধিত প্যাডিং */
+            background-color: #e0e7ff; /* হালকা নীল */
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem; /* সামঞ্জস্যপূর্ণ ফন্ট সাইজ */
+            font-weight: 600;
+            color: #3f51b5; /* গাঢ় নীল টেক্সট */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .dark .tab-button {
+            background-color: #2d3748;
+            color: #cbd5e0;
+        }
+
+        .tab-button.active {
+            background-color: #3f51b5; /* সক্রিয় ট্যাবের রঙ (গভীর নীল) */
+            color: white;
+            box-shadow: 0 4px 8px rgba(63, 81, 181, 0.3);
+            transform: translateY(-2px);
+        }
+        .dark .tab-button.active {
+            background-color: #4c51bf;
+            color: #f7fafc;
+        }
+
+        .tab-button:hover:not(.active) {
+            background-color: #c5cae9; /* হোভারে হালকা নীল */
+            transform: translateY(-1px);
+        }
+        .dark .tab-button:hover:not(.active) {
+            background-color: #4a5568;
         }
 
         /* মৌলিক ক্যালকুলেটর স্টাইল */
@@ -481,11 +257,14 @@
             gap: 10px; /* বোতামগুলির মধ্যে ফাঁক */
             padding: 20px; /* বর্ধিত প্যাডিং */
             border-radius: 20px; /* গোলাকার কোণ */
+            background-color: #263238; /* গাঢ় ধূসর/নীল ক্যালকুলেটর ব্যাকগ্রাউন্ড */
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* ছায়া */
+            /* margin: 0 auto; Removed as parent flex handles centering */
             max-width: 380px; /* মৌলিক ক্যালকুলেটরের জন্য বর্ধিত প্রস্থ */
         }
         .output {
             grid-column: 1 / -1; /* ডিসপ্লে পূর্ণ প্রস্থ জুড়ে বিস্তৃত */
+            background-color: #1c262b; /* ডিসপ্লে ব্যাকগ্রাউন্ড */
             display: flex;
             flex-direction: column;
             align-items: flex-end;
@@ -498,8 +277,16 @@
             word-break: break-all; /* দীর্ঘ সংখ্যা ভাঙুন */
             box-sizing: border-box; /* উচ্চতায় প্যাডিং এবং বর্ডার অন্তর্ভুক্ত করুন */
         }
-        
+        .output .previous-operand {
+            color: rgba(255, 255, 255, 0.6); /* পূর্ববর্তী অপারেশনের রঙ */
+            font-size: 1.5rem; /* বর্ধিত ফন্ট সাইজ */
+            word-wrap: break-word; /* দীর্ঘ সংখ্যা ভাঙুন */
+            word-break: break-all; /* দীর্ঘ সংখ্যা ভাঙুন */
+            align-self: flex-end; /* ডানদিকে সারিবদ্ধ করুন */
+            max-width: 100%; /* নিশ্চিত করুন যে এটি তার কন্টেইনারের বাইরে না যায় */
+        }
         .output .current-operand {
+            color: white; /* বর্তমান অপারেশনের রঙ */
             font-size: 2.8rem; /* ফন্ট সাইজ কমানো হয়েছে */
             word-wrap: break-word; /* দীর্ঘ সংখ্যা ভাঙুন */
             word-break: break-all; /* দীর্ঘ সংখ্যা ভাঙুন */
@@ -511,6 +298,8 @@
             font-size: 1.6rem; /* বর্ধিত ফন্ট সাইজ */
             border: none;
             outline: none;
+            background-color: #455a64; /* বোতামের ব্যাকগ্রাউন্ড (নীল-ধূসর) */
+            color: white; /* বোতামের টেক্সট রঙ */
             border-radius: 10px; /* বোতামগুলির জন্য গোলাকার কোণ */
             transition: background-color 0.2s ease-in-out, transform 0.1s ease; /* হোভার প্রভাব */
             display: flex;
@@ -518,18 +307,38 @@
             align-items: center;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
-        
+        .calculator-button:hover {
+            background-color: #546e7a; /* হোভারে ব্যাকগ্রাউন্ড */
+            transform: translateY(-1px);
+        }
+        .operator {
+            background-color: #007bff; /* নীল অপারেটর বোতামের রঙ */
+        }
+        .operator:hover {
+            background-color: #0056b3; /* নীল অপারেটর হোভার রঙ */
+        }
+        .equals {
+            background-color: #007bff; /* ইকুয়ালস বোতামের রঙ (নীল) */
+        }
+        .equals:hover {
+            background-color: #0056b3; /* ইকুয়ালস বোতাম হোভার রঙ (গাঢ় নীল) */
+        }
         .clear {
             grid-column: span 2; /* ক্লিয়ার বোতাম দুটি কলাম জুড়ে বিস্তৃত */
+            background-color: #ef5350; /* লাল ক্লিয়ার বোতামের রঙ */
             color: white; /* ক্লিয়ার বোতামের টেক্সট রঙ */
         }
-        
+        .clear:hover {
+            background-color: #d32f2f; /* লাল ক্লিয়ার বোতাম হোভার রঙ */
+        }
         .zero {
             grid-column: span 2; /* জিরো বোতাম দুটি কলাম জুড়ে বিস্তৃত */
         }
         
         /* নতুন: হিস্টোরি প্যানেল স্টাইল */
         .history-panel {
+            background-color: #263238;
+            color: white;
             padding: 20px;
             border-radius: 20px;
             width: 100%;
@@ -573,6 +382,7 @@
             padding: 8px 5px;
             border-bottom: 1px solid #37474f;
             font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
         }
         #history-list li:last-child {
             border-bottom: none;
@@ -597,7 +407,6 @@
         }
         .explain-button:hover {
             background-color: #218838;
-            transform: translateY(-1px);
         }
 
         /* বয়স ক্যালকুলেটর স্টাইল */
@@ -606,7 +415,12 @@
             border-radius: 16px;
             margin: 0 auto;
             max-width: 400px; /* বয়স ক্যালকুলেটরের জন্য বর্ধিত প্রস্থ */
+            background-color: #f8f9fa; /* হালকা ধূসর ব্যাকগ্রাউন্ড */
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .dark .age-calculator-content {
+            background-color: #2d3748;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
         }
         .age-calculator-content .input-group {
             margin-bottom: 20px; /* বর্ধিত মার্জিন */
@@ -616,19 +430,79 @@
             display: block;
             margin-bottom: 8px; /* বর্ধিত মার্জিন */
             font-size: 1.05rem; /* বর্ধিত ফন্ট সাইজ */
+            color: #333;
             font-weight: 600;
         }
+        .dark .age-calculator-content .input-group label {
+            color: #e2e8f0;
+        }
+
         .age-calculator-content .input-group input[type="date"],
         .age-calculator-content .input-group input[type="number"] {
             width: 100%;
             padding: 12px; /* বর্ধিত প্যাডিং */
-            border: 1px solid;
+            border: 1px solid #cce7ff; /* হালকা নীল বর্ডার */
             border-radius: 10px;
             font-size: 1rem; /* বর্ধিত ফন্ট সাইজ */
             box-sizing: border-box; /* প্রস্থে প্যাডিং এবং বর্ডার অন্তর্ভুক্ত করুন */
             cursor: pointer;
+            background-color: #eaf6ff; /* হালকা নীল ইনপুট ব্যাকগ্রাউন্ড */
+            color: #333;
         }
-        
+        .dark .age-calculator-content .input-group input[type="date"],
+        .dark .age-calculator-content .input-group input[type="number"] {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
+        }
+        .age-calculator-content .input-group input[type="date"] {
+             appearance: none; /* ডিফল্ট তারিখ ইনপুট স্টাইলিং সরান */
+            -webkit-appearance: none;
+        }
+        .age-calculator-content .calculate-button {
+            background-color: #007bff; /* নীল বোতাম */
+            color: white;
+            padding: 14px 25px; /* বর্ধিত প্যাডিং */
+            border: none;
+            border-radius: 10px;
+            font-size: 1.15rem; /* বর্ধিত ফন্ট সাইজ */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .age-calculator-content .calculate-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+        .age-calculator-content .result-area {
+            margin-top: 25px; /* বর্ধিত মার্জিন */
+            padding: 20px; /* বর্ধিত প্যাডিং */
+            background-color: #e6f7ff; /* ফলাফলের জন্য হালকা নীল ব্যাকগ্রাউন্ড */
+            border-radius: 16px;
+            border: 1px solid #b3e0ff;
+            min-height: 80px; /* বর্ধিত উচ্চতা */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .dark .age-calculator-content .result-area {
+            background-color: #1a202c;
+            border-color: #4a5568;
+        }
+
+        .age-calculator-content .result-area p {
+            font-size: 1.3rem; /* বর্ধিত ফন্ট সাইজ */
+            color: #0056b3;
+            font-weight: 700;
+            margin: 5px 0; /* সামঞ্জস্যপূর্ণ মার্জিন */
+        }
+        .dark .age-calculator-content .result-area p {
+            color: #90cdf4;
+        }
+
         .age-calculator-content .result-area .error-message {
             color: #d9534f; /* ত্রুটি বার্তার জন্য লাল */
             font-size: 1rem; /* বর্ধিত ফন্ট সাইজ */
@@ -643,14 +517,27 @@
         }
         #yearCalcResult .result-item {
             padding: 15px;
+            background-color: #ffffff;
             border-radius: 12px;
-            border: 1px solid;
+            border: 1px solid #cce7ff;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .dark #yearCalcResult .result-item {
+            background-color: #4a5568;
+            border-color: #718096;
         }
         #yearCalcResult .result-item:first-child {
             margin-bottom: 15px;
         }
-        
+        #yearCalcResult h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .dark #yearCalcResult h3 {
+            color: #e2e8f0;
+        }
         #yearCalcResult p {
             font-size: 1.2rem;
             font-weight: 600;
@@ -658,8 +545,14 @@
         #yearCalcResult .past-date {
             color: #c62828; /* লাল */
         }
+        .dark #yearCalcResult .past-date {
+            color: #feb2b2;
+        }
         #yearCalcResult .future-date {
             color: #28a745; /* সবুজ */
+        }
+        .dark #yearCalcResult .future-date {
+            color: #9ae6b4;
         }
 
         /* তারিখ ও সময় ক্যালকুলেটর স্টাইল */
@@ -668,7 +561,11 @@
             border-radius: 16px;
             margin: 0 auto;
             max-width: 450px; /* বর্ধিত প্রস্থ */
+            background-color: #f8f9fa; /* হালকা ধূসর ব্যাকগ্রাউন্ড */
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .dark .date-time-content {
+            background-color: #2d3748;
         }
         .date-time-content .button-group {
             display: flex;
@@ -677,12 +574,29 @@
             margin-bottom: 20px; /* বর্ধিত মার্জিন */
             flex-wrap: wrap;
         }
-        
+        .date-time-content .show-date-button {
+            background-color: #007bff; /* নীল বোতাম */
+            color: white;
+            padding: 14px 25px; /* বর্ধিত প্যাডিং */
+            border: none;
+            border-radius: 10px;
+            font-size: 1.15rem; /* বর্ধিত ফন্ট সাইজ */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            flex: 1; /* বোতামগুলি সমান প্রস্থ নেবে */
+            min-width: 160px; /* ছোট স্ক্রিনে মোড়ানোর জন্য */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .date-time-content .show-date-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
         .date-time-content .result-area {
             margin-top: 25px; /* বর্ধিত মার্জিন */
             padding: 20px; /* বর্ধিত প্যাডিং */
+            background-color: #e6f7ff; /* ফলাফলের জন্য হালকা নীল ব্যাকগ্রাউন্ড */
             border-radius: 16px;
-            border: 1px solid;
+            border: 1px solid #b3e0ff;
             min-height: 80px; /* বর্ধিত উচ্চতা */
             display: flex;
             flex-direction: column;
@@ -691,34 +605,64 @@
             text-align: left; /* টেক্সট বামদিকে সারিবদ্ধ করুন */
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
         }
+        .dark .date-time-content .result-area {
+            background-color: #1a202c;
+            border-color: #4a5568;
+        }
+
         .date-time-content .result-area p {
             font-size: 1.05rem; /* বর্ধিত ফন্ট সাইজ */
+            color: #333;
             font-weight: 500;
             margin: 5px 0; /* সামঞ্জস্যপূর্ণ মার্জিন */
         }
-        
+        .dark .date-time-content .result-area p {
+            color: #e2e8f0;
+        }
+        .date-time-content .result-area strong {
+            font-weight: 700;
+            color: #0056b3;
+        }
+        .dark .date-time-content .result-area strong {
+            color: #90cdf4;
+        }
         .date-time-content .result-section-title {
             font-size: 1.3rem; /* বর্ধিত ফন্ট সাইজ */
             font-weight: 700;
+            color: #0056b3;
             margin-top: 15px; /* বর্ধিত মার্জিন */
             margin-bottom: 10px; /* বর্ধিত মার্জিন */
             width: 100%;
             text-align: center;
+        }
+        .dark .date-time-content .result-section-title {
+            color: #90cdf4;
         }
         .date-time-content .result-section-title:first-child {
             margin-top: 0;
         }
         .date-time-content .input-group input[type="date"] {
             padding: 12px; /* বর্ধিত প্যাডিং */
-            border: 1px solid;
+            border: 1px solid #cce7ff; /* হালকা নীল বর্ডার */
             border-radius: 10px;
             font-size: 1rem; /* বর্ধিত ফন্ট সাইজ */
+            background-color: #eaf6ff; /* হালকা নীল ইনপুট ব্যাকগ্রাউন্ড */
+            color: #333;
+        }
+        .dark .date-time-content .input-group input[type="date"] {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
+        }
+        .dark .text-gray-700 {
+            color: #cbd5e0;
         }
 
         /* বৈজ্ঞানিক ক্যালকুলেটর স্টাইল */
         .scientific-calculator-content {
             padding: 20px; /* বর্ধিত প্যাডিং */
             border-radius: 20px; /* গোলাকার কোণ */
+            background-color: #263238; /* গাঢ় ধূসর/নীল ক্যালকুলেটর ব্যাকগ্রাউন্ড */
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* ছায়া */
             margin: 0 auto;
             max-width: 500px; /* বর্ধিত প্রস্থ */
@@ -735,6 +679,8 @@
             box-sizing: border-box;
             margin-bottom: 10px; /* বর্ধিত মার্জিন */
             text-align: right;
+            background-color: #1c262b;
+            color: white;
             height: 55px; /* উচ্চতা কমানো হয়েছে */
             word-wrap: break-word; /* দীর্ঘ সংখ্যা ভাঙুন */
             word-break: break-all; /* দীর্ঘ সংখ্যা ভাঙুন */
@@ -745,7 +691,28 @@
             gap: 10px; /* বর্ধিত ফাঁক */
             margin-bottom: 15px; /* বর্ধিত মার্জিন */
         }
-        
+        .scientific-calculator-content .scientific-button {
+            padding: 14px; /* বর্ধিত প্যাডিং */
+            font-size: 1.1rem; /* বর্ধিত ফন্ট সাইজ */
+            border: none;
+            outline: none;
+            background-color: #455a64; /* বোতামের ব্যাকগ্রাউন্ড (নীল-ধূসর) */
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .scientific-calculator-content .scientific-button:hover {
+            background-color: #546e7a;
+            transform: translateY(-1px);
+        }
+        .scientific-calculator-content .scientific-button.operator-btn {
+            background-color: #007bff; /* নীল অপারেটর */
+        }
+        .scientific-calculator-content .scientific-button.operator-btn:hover {
+            background-color: #0056b3;
+        }
         .scientific-calculator-content .scientific-button.clear-btn {
             background-color: #ef5350; /* লাল ক্লিয়ার */
             color: white;
@@ -753,14 +720,21 @@
         .scientific-calculator-content .scientific-button.clear-btn:hover {
             background-color: #d32f2f;
         }
-        
+        .scientific-calculator-content .scientific-button.equals-btn {
+            background-color: #007bff; /* ইকুয়ালস বোতামের রঙ (নীল) */
+        }
+        .scientific-calculator-content .scientific-button.equals-btn:hover {
+            background-color: #0056b3;
+        }
         .scientific-result { /* স্টাইলিংয়ের জন্য scientific-calculator-content এর বাইরে সরানো হয়েছে */
             margin-top: 20px; /* বর্ধিত মার্জিন */
             padding: 20px; /* বর্ধিত প্যাডিং */
+            background-color: #e6f7ff;
             border-radius: 16px;
-            border: 1px solid;
+            border: 1px solid #b3e0ff;
             font-size: 1.6rem; /* বর্ধিত ফন্ট সাইজ */
             font-weight: 600;
+            color: #0056b3;
             min-height: 65px; /* বর্ধিত উচ্চতা */
             display: flex;
             align-items: center;
@@ -772,6 +746,11 @@
             margin-right: auto;
             max-width: 500px; /* scientific-calculator-content এর সর্বোচ্চ প্রস্থের সাথে সারিবদ্ধ করুন */
         }
+        .dark .scientific-result {
+            background-color: #1a202c;
+            border-color: #4a5568;
+            color: #90cdf4;
+        }
         .error-message { /* স্টাইলিংয়ের জন্য scientific-calculator-content এর বাইরে সরানো হয়েছে */
             color: #d9534f;
             font-size: 1rem;
@@ -781,6 +760,12 @@
             margin-right: auto;
             max-width: 500px; /* scientific-calculator-content এর সর্বোচ্চ প্রস্থের সাথে সারিবদ্ধ করুন */
         }
+        .dark .error-message {
+            color: #fc8181;
+        }
+        .dark .text-gray-800 {
+            color: #f7fafc;
+        }
 
 
         /* সংবাদ বিভাগের স্টাইল */
@@ -789,18 +774,35 @@
             border-radius: 16px;
             margin: 0 auto;
             max-width: 480px; /* বর্ধিত প্রস্থ */
+            background-color: #f8f9fa; /* হালকা ধূসর ব্যাকগ্রাউন্ড */
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .dark .news-content {
+            background-color: #2d3748;
         }
         .news-content .news-display-area {
             margin-top: 20px; /* বর্ধিত মার্জিন */
             padding: 20px; /* বর্ধিত প্যাডিং */
+            background-color: #e6f7ff; /* হালকা নীল ব্যাকগ্রাউন্ড */
             border-radius: 16px;
-            border: 1px solid;
+            border: 1px solid #b3e0ff;
             min-height: 100px; /* বর্ধিত উচ্চতা */
             text-align: left;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
         }
-        
+        .dark .news-content .news-display-area {
+            background-color: #1a202c;
+            border-color: #4a5568;
+        }
+        .news-content .news-display-area h3 {
+            font-size: 1.4rem; /* বর্ধিত ফন্ট সাইজ */
+            font-weight: 700;
+            color: #0056b3;
+            margin-bottom: 12px; /* বর্ধিত মার্জিন */
+        }
+        .dark .news-content .news-display-area h3 {
+            color: #90cdf4;
+        }
         .news-content .news-display-area ul {
             list-style: none;
             padding: 0;
@@ -814,9 +816,15 @@
             font-size: 1.05rem; /* বর্ধিত ফন্ট সাইজ */
             transition: color 0.2s ease;
         }
+        .dark .news-content .news-display-area a {
+            color: #63b3ed;
+        }
         .news-content .news-display-area a:hover {
             color: #0056b3;
             text-decoration: underline;
+        }
+        .dark .news-content .news-display-area a:hover {
+            color: #90cdf4;
         }
         .news-content .news-display-area .error-message {
             color: #d9534f;
@@ -830,11 +838,18 @@
             padding-top: 15px; /* বর্ধিত প্যাডিং */
             border-top: 1px solid #e0e0e0;
         }
+        .dark .bio-link-section {
+            border-top-color: #4a5568;
+        }
 
         .bio-link-section p {
             font-size: 1.05rem; /* বর্ধিত ফন্ট সাইজ */
             font-weight: 600;
+            color: #333;
             margin-bottom: 10px; /* বর্ধিত মার্জিন */
+        }
+        .dark .bio-link-section p {
+            color: #e2e8f0;
         }
 
 
@@ -848,6 +863,11 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            background-color: #ffffff; /* কনভার্টার বিভাগের জন্য সাদা ব্যাকগ্রাউন্ড */
+        }
+        .dark .font-converter-content {
+            background-color: #2d3748;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
         }
         .font-converter-sections-wrapper {
             display: flex;
@@ -871,19 +891,37 @@
             align-items: center;
             margin-bottom: 5px;
         }
-        
+        .font-section-header h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin: 0;
+        }
+        .dark .font-section-header h2 {
+            color: #e2e8f0;
+        }
         .font-converter-content textarea {
             width: 100%;
             min-height: 200px;
             padding: 12px;
-            border: 1px solid;
+            border: 1px solid #cbd5e0;
             border-radius: 8px;
             font-size: 1rem;
             resize: vertical;
             box-sizing: border-box;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            color: #333; /* টেক্সটএরিয়া টেক্সট পঠনযোগ্য নিশ্চিত করুন */
         }
-        
+        .dark .font-converter-content textarea {
+            background-color: #1a202c;
+            border-color: #4a5568;
+            color: #f7fafc;
+        }
+        /* ডানদিকের টেক্সটএরিয়ার জন্য লোড করা SutonnyMJ ফন্ট ব্যবহার করার স্টাইল */
+        #textAreaRight {
+            font-family: 'SUTONNYMJ', sans-serif;
+            font-size: 1.5rem;
+        }
         .font-converter-content textarea:focus {
             outline: none;
             border-color: #6366f1;
@@ -1042,6 +1080,18 @@
             background-color: #0056b3;
             transform: translateY(-1px);
         }
+        .dark .text-green-700 {
+            color: #68d391;
+        }
+        .dark .text-purple-700 {
+            color: #b794f4;
+        }
+        .dark .text-blue-700 {
+            color: #63b3ed;
+        }
+        .dark .list-disc, .dark .list-circle {
+            color: #a0aec0;
+        }
 
 
         /* টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগের নতুন স্টাইল */
@@ -1050,7 +1100,11 @@
             border-radius: 16px;
             margin: 0 auto;
             max-width: 600px; /* চ্যাটের জন্য প্রস্থ বাড়ানো হয়েছে */
+            background-color: #f8f9fa;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .dark .text-assistant-content {
+            background-color: #2d3748;
         }
         .chat-header {
             display: flex;
@@ -1058,7 +1112,14 @@
             align-items: center;
             margin-bottom: 15px;
         }
-        
+        .chat-header h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #333;
+        }
+        .dark .chat-header h3 {
+            color: #e2e8f0;
+        }
         .clear-chat-button {
             background-color: #ef5350;
             color: white;
@@ -1079,9 +1140,14 @@
             flex-direction: column;
             gap: 12px;
             padding: 15px;
+            background-color: #e6f7ff;
             border-radius: 16px;
-            border: 1px solid;
+            border: 1px solid #b3e0ff;
             margin-bottom: 15px;
+        }
+        .dark .chat-window {
+            background-color: #1a202c;
+            border-color: #4a5568;
         }
         .message {
             padding: 10px 15px;
@@ -1097,7 +1163,17 @@
             align-self: flex-end;
             border-bottom-right-radius: 2px;
         }
-        
+        .gemini-message {
+            background-color: #ffffff;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .dark .gemini-message {
+            background-color: #4a5568;
+            color: #f7fafc;
+        }
         .gemini-error-message {
             background-color: #ffebee;
             color: #c62828;
@@ -1115,10 +1191,15 @@
             min-height: 50px;
             padding: 12px;
             margin-bottom: 0;
-            border: 1px solid;
+            border: 1px solid #cce7ff;
             border-radius: 10px;
             font-size: 1rem;
             resize: vertical;
+        }
+        .dark .text-assistant-content textarea {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
         }
         .text-assistant-content .ask-button {
             width: auto;
@@ -1139,6 +1220,9 @@
             font-size: 1rem;
             color: #555;
         }
+        .dark .text-assistant-content .loading-indicator {
+            color: #a0aec0;
+        }
         
         /* নতুন: বাংলা বানান সংশোধন স্টাইল */
         .spell-checker-content {
@@ -1146,24 +1230,40 @@
             border-radius: 16px;
             margin: 0 auto;
             max-width: 600px;
+            background-color: #f8f9fa;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .dark .spell-checker-content {
+            background-color: #2d3748;
         }
         .spell-checker-content textarea {
             width: 100%;
             padding: 12px;
-            border: 1px solid;
+            border: 1px solid #cce7ff;
             border-radius: 10px;
             font-size: 1.1rem;
             resize: vertical;
             box-sizing: border-box;
+            background-color: #eaf6ff;
+            color: #333;
+        }
+        .dark .spell-checker-content textarea {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
         }
         .spell-checker-content .result-area #spellCheckResult {
             min-height: 150px;
-            background-color: var(--bg-container);
+            background-color: #ffffff;
             border-radius: 8px;
             border: 1px solid #ddd;
             padding: 12px;
             white-space: pre-wrap; /* ফরম্যাটিং বজায় রাখতে */
+        }
+        .dark .spell-checker-content .result-area #spellCheckResult {
+            background-color: #1a202c;
+            border-color: #4a5568;
+            color: #e2e8f0;
         }
 
         /* বানান পরীক্ষা করুন বোতামের জন্য নতুন সুন্দর স্টাইল */
@@ -1202,24 +1302,40 @@
             border-radius: 16px;
             margin: 0 auto;
             max-width: 600px;
+            background-color: #f8f9fa;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .dark .text-beautifier-content {
+            background-color: #2d3748;
         }
         .text-beautifier-content textarea {
             width: 100%;
             padding: 12px;
-            border: 1px solid;
+            border: 1px solid #cce7ff;
             border-radius: 10px;
             font-size: 1.1rem;
             resize: vertical;
             box-sizing: border-box;
+            background-color: #eaf6ff;
+            color: #333;
+        }
+        .dark .text-beautifier-content textarea {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
         }
         .text-beautifier-content .result-area #beautifyResult {
             min-height: 150px;
-            background-color: var(--bg-container);
+            background-color: #ffffff;
             border-radius: 8px;
             border: 1px solid #ddd;
             padding: 12px;
             white-space: pre-wrap; /* ফরম্যাটিং বজায় রাখতে */
+        }
+        .dark .text-beautifier-content .result-area #beautifyResult {
+            background-color: #1a202c;
+            border-color: #4a5568;
+            color: #e2e8f0;
         }
 
         /* লেখা সাজানো বোতামের জন্য নতুন সুন্দর স্টাইল */
@@ -1258,24 +1374,40 @@
             border-radius: 16px;
             margin: 0 auto;
             max-width: 600px;
+            background-color: #f8f9fa;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .dark .word-meaning-content {
+            background-color: #2d3748;
         }
         .word-meaning-content input[type="text"] {
             width: 100%;
             padding: 12px;
-            border: 1px solid;
+            border: 1px solid #cce7ff;
             border-radius: 10px;
             font-size: 1.1rem;
             box-sizing: border-box;
+            background-color: #eaf6ff;
+            color: #333;
+        }
+        .dark .word-meaning-content input[type="text"] {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
         }
         .word-meaning-content .result-area #wordMeaningResult {
             min-height: 150px;
-            background-color: var(--bg-container);
+            background-color: #ffffff;
             border-radius: 8px;
             border: 1px solid #ddd;
             padding: 12px;
             white-space: pre-wrap; /* ফরম্যাটিং বজায় রাখতে */
             text-align: left;
+        }
+        .dark .word-meaning-content .result-area #wordMeaningResult {
+            background-color: #1a202c;
+            border-color: #4a5568;
+            color: #e2e8f0;
         }
 
         .find-meaning-button {
@@ -1313,17 +1445,28 @@
             border-radius: 16px;
             margin: 0 auto;
             max-width: 600px;
+            background-color: #f8f9fa;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .dark .tts-content {
+            background-color: #2d3748;
         }
         .tts-content textarea {
             width: 100%;
             padding: 12px;
-            border: 1px solid;
+            border: 1px solid #cce7ff;
             border-radius: 10px;
             font-size: 1.1rem;
             resize: vertical;
             box-sizing: border-box;
+            background-color: #eaf6ff;
+            color: #333;
             margin-bottom: 20px;
+        }
+        .dark .tts-content textarea {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
         }
         .tts-controls {
             display: flex;
@@ -1339,13 +1482,23 @@
         }
         .control-group label {
             font-weight: 600;
+            color: #333;
             min-width: 120px;
+        }
+        .dark .control-group label {
+            color: #e2e8f0;
         }
         .control-group select, .control-group input[type="range"] {
             flex-grow: 1;
             padding: 8px;
             border-radius: 8px;
-            border: 1px solid;
+            border: 1px solid #cce7ff;
+            background-color: #eaf6ff;
+        }
+        .dark .control-group select, .dark .control-group input[type="range"] {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
         }
         .control-group input[type="range"] {
             cursor: pointer;
@@ -1354,6 +1507,9 @@
             font-weight: 500;
             min-width: 25px;
             text-align: center;
+        }
+        .dark .control-group span {
+            color: #e2e8f0;
         }
         .tts-buttons {
             display: flex;
@@ -1428,24 +1584,42 @@
             border-radius: 16px;
             margin: 0 auto;
             max-width: 600px;
+            background-color: #f8f9fa;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .dark .stt-content {
+            background-color: #2d3748;
         }
         .stt-content textarea {
             width: 100%;
             padding: 12px;
-            border: 1px solid;
+            border: 1px solid #cce7ff;
             border-radius: 10px;
             font-size: 1.1rem;
             resize: vertical;
             box-sizing: border-box;
+            background-color: #eaf6ff;
+            color: #333;
             margin-bottom: 20px;
+        }
+        .dark .stt-content textarea {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
         }
         .stt-status {
             font-size: 1rem;
             font-weight: 600;
+            color: #333;
             padding: 10px;
+            background-color: #e6f7ff;
             border-radius: 8px;
-            border: 1px solid;
+            border: 1px solid #b3e0ff;
+        }
+        .dark .stt-status {
+            background-color: #1a202c;
+            border-color: #4a5568;
+            color: #e2e8f0;
         }
         .stt-buttons {
             display: flex;
@@ -1511,6 +1685,7 @@
         }
 
         .api-key-modal-content {
+            background-color: #ffffff;
             padding: 30px; /* বর্ধিত প্যাডিং */
             border-radius: 20px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3); /* গভীর ছায়া */
@@ -1519,6 +1694,9 @@
             text-align: center;
             transform: translateY(-30px); /* সামান্য উপর থেকে আসবে */
             animation: fadeInScale 0.4s ease-out forwards;
+        }
+        .dark .api-key-modal-content {
+            background-color: #2d3748;
         }
 
         @keyframes fadeInScale {
@@ -1535,17 +1713,28 @@
         .api-key-modal-content h3 {
             font-size: 1.8rem; /* বর্ধিত ফন্ট সাইজ */
             font-weight: 700;
+            color: #333;
             margin-bottom: 25px; /* বর্ধিত মার্জিন */
+        }
+        .dark .api-key-modal-content h3 {
+            color: #e2e8f0;
         }
 
         .api-key-modal-content input[type="text"] {
             width: 100%;
             padding: 15px; /* বর্ধিত প্যাডিং */
             margin-bottom: 20px; /* বর্ধিত মার্জিন */
-            border: 1px solid;
+            border: 1px solid #cce7ff; /* হালকা নীল বর্ডার */
             border-radius: 10px;
             font-size: 1.05rem;
             box-sizing: border-box;
+            background-color: #eaf6ff; /* হালকা নীল ইনপুট ব্যাকগ্রাউন্ড */
+            color: #333;
+        }
+        .dark .api-key-modal-content input[type="text"] {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
         }
 
         .api-key-modal-content .modal-buttons {
@@ -1592,8 +1781,19 @@
         .api-key-modal-content .message-area.success {
             color: #28a745; /* সবুজ */
         }
+        .dark .api-key-modal-content .message-area.success {
+            color: #68d391;
+        }
         .api-key-modal-content .message-area.error {
             color: #d9534f; /* লাল */
+        }
+        .dark .api-key-modal-content .message-area.error {
+            color: #fc8181;
+        }
+        .dark .response-area {
+            background-color: #1a202c !important;
+            border-color: #4a5568 !important;
+            color: #e2e8f0;
         }
 
 
@@ -1769,18 +1969,32 @@
     <!-- Animated Background -->
     <div class="area">
         <ul class="circles">
-            <li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
         </ul>
     </div>
 
     <div class="main-container">
-        <h2 class="text-3xl font-bold mb-8">কম্বাইন্ড ক্যালকুলেটর</h2>
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">কম্বাইন্ড ক্যালকুলেটর</h2>
+
+        <!-- নতুন: থিম টগল বাটন -->
+        <div class="theme-toggle-container">
+            <button id="theme-toggle" type="button" class="theme-toggle-button">
+                <svg id="sun-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                <svg id="moon-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            </button>
+        </div>
+
 
         <div class="tab-buttons">
-            <!-- Theme Toggle Button -->
-            <button id="theme-toggle-button" title="Toggle dark/light mode">
-                <!-- SVG icons will be injected by JS -->
-            </button>
             <button id="basicCalcTab" class="tab-button active rounded-xl">সাধারণ ক্যালকুলেটর</button>
             <button id="scientificCalcTab" class="tab-button rounded-xl">সাইন্টিফিক ক্যালকুলেটর</button>
             <button id="ageCalcTab" class="tab-button rounded-xl">বয়স ক্যালকুলেটর</button>
@@ -1807,40 +2021,45 @@
                     </div>
                     <button data-all-clear class="clear calculator-button rounded-xl" style="grid-column: span 2;">AC</button>
                     <button data-delete class="calculator-button rounded-xl">DEL</button>
-                    <button data-operator class="operator calculator-button rounded-xl">÷</button>
+                    <button data-operator class="operator calculator-button rounded-xl">÷</button> <!-- ভাগ -->
                     <button data-number class="calculator-button rounded-xl">7</button>
                     <button data-number class="calculator-button rounded-xl">8</button>
                     <button data-number class="calculator-button rounded-xl">9</button>
-                    <button data-operator class="operator calculator-button rounded-xl">×</button>
+                    <button data-operator class="operator calculator-button rounded-xl">×</button> <!-- গুণ -->
                     <button data-number class="calculator-button rounded-xl">4</button>
                     <button data-number class="calculator-button rounded-xl">5</button>
                     <button data-number class="calculator-button rounded-xl">6</button>
-                    <button data-operator class="operator calculator-button rounded-xl">-</button>
+                    <button data-operator class="operator calculator-button rounded-xl">-</button> <!-- বিয়োগ -->
                     <button data-number class="calculator-button rounded-xl">1</button>
                     <button data-number class="calculator-button rounded-xl">2</button>
                     <button data-number class="calculator-button rounded-xl">3</button>
-                    <button data-operator class="operator calculator-button rounded-xl">+</button>
+                    <button data-operator class="operator calculator-button rounded-xl">+</button> <!-- যোগ -->
                     <button data-number class="zero calculator-button rounded-xl" style="grid-column: span 2;">0</button>
                     <button data-number class="calculator-button rounded-xl">.</button>
-                    <button data-equals class="equals calculator-button rounded-xl">=</button>
+                    <button data-equals class="equals calculator-button rounded-xl">=</button> <!-- সমান -->
                 </div>
+                <!-- নতুন: হিস্টোরি প্যানেল -->
                 <div class="history-panel">
                     <div class="history-header">
                         <h3>হিস্টোরি</h3>
                         <button id="clearHistoryBtn">মুছুন</button>
                     </div>
-                    <ul id="history-list"></ul>
+                    <ul id="history-list">
+                        <!-- হিস্টোরি আইটেম এখানে যুক্ত হবে -->
+                    </ul>
                 </div>
             </div>
+            <!-- LLM-চালিত ব্যাখ্যা বৈশিষ্ট্য -->
             <button id="explainBasicBtn" class="explain-button rounded-xl">ব্যাখ্যা করুন ✨</button>
             <div id="basicExplanationLoading" class="loading-indicator">জেমিনি ব্যাখ্যা করছে</div>
-            <div id="basicExplanation" class="response-area rounded-lg mt-4" style="background-color: var(--result-area-bg); border: 1px solid var(--component-border);"></div>
+            <div id="basicExplanation" class="response-area rounded-lg mt-4" style="background-color: #e6f7ff; border: 1px solid #b3e0ff;"></div>
         </div>
 
         <!-- বয়স ক্যালকুলেটর বিভাগ -->
         <div id="ageCalculatorContent" class="calculator-content">
             <div class="age-calculator-content">
-                <h3 class="text-xl font-bold mb-4">বয়স গণনা করুন</h3>
+                <!-- Existing Age Calculator -->
+                <h3 class="text-xl font-bold text-gray-700 mb-4">বয়স গণনা করুন</h3>
                 <div class="input-group">
                     <label for="birthDate">জন্ম তারিখ:</label>
                     <input type="date" id="birthDate" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
@@ -1854,8 +2073,12 @@
                     <p id="ageResult" class="text-xl"></p>
                     <p id="ageErrorMessage" class="error-message"></p>
                 </div>
+                
+                <!-- Divider -->
                 <hr class="my-8 border-gray-300">
-                <h3 class="text-xl font-bold mb-4">বছর ক্যালকুলেটর</h3>
+
+                <!-- New Year Calculator Feature -->
+                <h3 class="text-xl font-bold text-gray-700 mb-4">বছর ক্যালকুলেটর</h3>
                 <p class="text-gray-600 mb-4">যেকোনো তারিখ থেকে নির্দিষ্ট বছর আগে ও পরের তারিখ খুঁজুন।</p>
                 <div class="input-group">
                     <label for="yearCalcDateInput">একটি তারিখ নির্বাচন করুন (খালি রাখলে আজকের তারিখ ব্যবহৃত হবে)</label>
@@ -1866,9 +2089,12 @@
                     <input type="number" id="yearCalcYearsInput" value="10" placeholder="যেমন: ১০" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
                 <button id="calculateYearsBtn" class="calculate-button rounded-xl">হিসাব করুন</button>
-                <div id="yearCalcResult" class="result-area"></div>
+                <div id="yearCalcResult" class="result-area">
+                    <!-- Results will be injected here -->
+                </div>
             </div>
         </div>
+
 
         <!-- তারিখ ও সময় ক্যালকুলেটর বিভাগ -->
         <div id="dateCalculatorContent" class="calculator-content">
@@ -1878,33 +2104,39 @@
                     <button id="showTomorrowDatesBtn" class="show-date-button rounded-xl">আগামীকালের তারিখ ও সময়</button>
                 </div>
                 <div id="dateDisplayResult" class="result-area">
+                    <!-- আজকের তারিখের জন্য -->
                     <div id="todayResultSection">
                         <p class="result-section-title">আজকের তারিখ</p>
                         <p id="todayGregorianDateDisplay"></p>
                         <p id="todayBengaliDateDisplay"></p>
                         <p id="todayHijriDateDisplay"></p>
-                        <p id="todayDayDisplay"></p>
+                        <p id="todayDayDisplay"></p> <!-- আজকের দিনের জন্য নতুন সারি -->
                         <p id="todayTimeDisplay"></p>
                     </div>
+
+                    <!-- আগামীকালের তারিখের জন্য -->
                     <div id="tomorrowResultSection" style="display: none;">
                         <p class="result-section-title">আগামীকালের তারিখ</p>
                         <p id="tomorrowGregorianDateDisplay"></p>
                         <p id="tomorrowBengaliDateDisplay"></p>
                         <p id="tomorrowHijriDateDisplay"></p>
-                        <p id="tomorrowDayDisplay"></p>
+                        <p id="tomorrowDayDisplay"></p> <!-- আগামীকালের দিনের জন্য নতুন সারি -->
                         <p id="tomorrowTimeDisplay"></p>
                     </div>
                 </div>
+
+                <!-- ইংরেজি থেকে বাংলা তারিখ রূপান্তর বৈশিষ্ট্য -->
                 <div class="input-group mt-6">
-                    <label for="englishDateInput" class="font-semibold text-left block mb-2">ইংরেজি তারিখ লিখুন:</label>
-                    <input type="date" id="englishDateInput" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full p-2 border">
+                    <label for="englishDateInput" class="text-gray-700 font-semibold text-left block mb-2">ইংরেজি তারিখ লিখুন:</label>
+                    <input type="date" id="englishDateInput" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full p-2 border border-gray-300">
                 </div>
                 <button id="convertEnglishToBengaliBtn" class="show-date-button rounded-xl mt-4">বাংলা তারিখে রূপান্তর করুন</button>
                 <div id="bengaliConvertedDateDisplay" class="result-area mt-4">
                     <p class="result-section-title">রূপান্তরিত বাংলা তারিখ</p>
                     <p id="convertedBengaliDate"></p>
-                    <p id="convertedDayDisplay"></p>
+                    <p id="convertedDayDisplay"></p> <!-- রূপান্তরিত দিনের জন্য নতুন সারি -->
                 </div>
+                <!-- নতুন বোতাম এবং লিংক -->
                 <a href="https://ajkertarikh.com" target="_blank" class="show-date-button rounded-xl mt-4 block mx-auto text-center">প্রয়োজনে এখানে তারিখ দেখুন</a>
             </div>
         </div>
@@ -1916,47 +2148,58 @@
                     <input type="text" id="scientificExpressionInput" class="expression-input rounded-lg" placeholder="এক্সপ্রেশন লিখুন (যেমন: sin(90) + 2*3)">
                 </div>
                 <div class="scientific-buttons-grid">
+                    <!-- সারি 1 -->
                     <button class="scientific-button clear-btn rounded-lg" data-sci-input="C" style="grid-column: span 2;">C</button>
                     <button class="scientific-button rounded-lg" data-sci-input="DEL">DEL</button>
                     <button class="scientific-button rounded-lg" data-sci-input="(">(</button>
                     <button class="scientific-button rounded-lg" data-sci-input=")">)</button>
+
+                    <!-- সারি 2 (সংখ্যা 1-2-3) -->
                     <button class="scientific-button rounded-lg" data-sci-input="1">1</button>
                     <button class="scientific-button rounded-lg" data-sci-input="2">2</button>
                     <button class="scientific-button rounded-lg" data-sci-input="3">3</button>
                     <button class="scientific-button rounded-lg" data-sci-input="sin">sin</button>
-                    <button class="scientific-button operator-btn rounded-lg" data-sci-input="÷">÷</button>
+                    <button class="scientific-button operator-btn rounded-lg" data-sci-input="÷">÷</button> <!-- ভাগ -->
+
+                    <!-- সারি 3 (সংখ্যা 4-5-6) -->
                     <button class="scientific-button rounded-lg" data-sci-input="4">4</button>
                     <button class="scientific-button rounded-lg" data-sci-input="5">5</button>
                     <button class="scientific-button rounded-lg" data-sci-input="6">6</button>
                     <button class="scientific-button rounded-lg" data-sci-input="cos">cos</button>
-                    <button class="scientific-button operator-btn rounded-lg" data-sci-input="×">×</button>
+                    <button class="scientific-button operator-btn rounded-lg" data-sci-input="×">×</button> <!-- গুণ -->
+
+                    <!-- সারি 4 (সংখ্যা 7-8-9, tan, -) - পরিবর্তিত -->
                     <button class="scientific-button rounded-lg" data-sci-input="7">7</button>
                     <button class="scientific-button rounded-lg" data-sci-input="8">8</button>
                     <button class="scientific-button rounded-lg" data-sci-input="9">9</button>
-                    <button class="scientific-button rounded-lg" data-sci-input="tan">tan</button>
-                    <button class="scientific-button operator-btn rounded-lg" data-sci-input="-">-</button>
+                    <button class="scientific-button rounded-lg" data-sci-input="tan">tan</button> <!-- '7' এর পরিবর্তে 'tan' -->
+                    <button class="scientific-button operator-btn rounded-lg" data-sci-input="-">-</button> <!-- '-' এখানে সরানো হয়েছে -->
+
+                    <!-- সারি 5 (সংখ্যা 0 এবং অন্যান্য) -->
                     <button class="scientific-button rounded-lg" data-sci-input="0" style="grid-column: span 2;">0</button>
                     <button class="scientific-button rounded-lg" data-sci-input=".">.</button>
                     <button class="scientific-button rounded-lg" data-sci-input="π">π</button>
-                    <button class="scientific-button operator-btn rounded-lg" data-sci-input="+">+</button>
+                    <button class="scientific-button operator-btn rounded-lg" data-sci-input="+">+</button> <!-- যোগ -->
+
+                    <!-- সারি 6 (log, ln, sqrt, ^, =) -->
                     <button class="scientific-button rounded-lg" data-sci-input="log">log</button>
                     <button class="scientific-button rounded-lg" data-sci-input="ln">ln</button>
                     <button class="scientific-button rounded-lg" data-sci-input="sqrt">√</button>
                     <button class="scientific-button rounded-lg" data-sci-input="^">^</button>
-                    <button class="scientific-button equals-btn rounded-lg" data-sci-equals style="grid-column: span 1;">=</button>
+                    <button class="scientific-button equals-btn rounded-lg" data-sci-equals style="grid-column: span 1;">=</button> <!-- সমান -->
+
                 </div>
             </div>
+            <!-- scientific-calculator-content এর বাইরে সরানো হয়েছে -->
             <div id="scientificResult" class="scientific-result rounded-lg"></div>
             <div id="scientificErrorMessage" class="error-message"></div>
+            <!-- LLM-চালিত ব্যাখ্যা বৈশিষ্ট্য -->
             <button id="explainScientificBtn" class="explain-button rounded-xl">ব্যাখ্যা করুন ✨</button>
             <div id="scientificExplanationLoading" class="loading-indicator">জেমিনি ব্যাখ্যা করছে</div>
-            <div id="scientificExplanation" class="response-area rounded-lg mt-4" style="background-color: var(--result-area-bg); border: 1px solid var(--component-border);"></div>
+            <div id="scientificExplanation" class="response-area rounded-lg mt-4" style="background-color: #e6f7ff; border: 1px solid #b3e0ff;"></div>
         </div>
 
-        <!-- বাকি কন্টেন্ট এখানে যুক্ত হবে -->
-        <!-- ... (আপনার বাকি HTML কন্টেন্ট এখানে পেস্ট করুন) ... -->
-		<!-- সংবাদ, কনভার্টার, চ্যাট ইত্যাদি সকল কন্টেন্ট এখানে থাকবে -->
-		        <!-- সাম্প্রতিক সংবাদ বিভাগ -->
+        <!-- সাম্প্রতিক সংবাদ বিভাগ -->
         <div id="newsContent" class="calculator-content">
             <div class="news-content"> <!-- সাধারণ কন্টেন্ট প্রদর্শনের জন্য news-content স্টাইলিং পুনরায় ব্যবহার করা হচ্ছে -->
                 <div id="newsDisplayArea" class="news-display-area rounded-lg">
@@ -2023,7 +2266,7 @@
         <!-- নতুন: বাংলা বানান সংশোধন বিভাগ -->
         <div id="spellCheckerContent" class="calculator-content">
             <div class="spell-checker-content">
-                <h3 class="text-xl font-bold mb-4">বাংলা বানান সংশোধন করুন</h3>
+                <h3 class="text-xl font-bold text-gray-700 mb-4">বাংলা বানান সংশোধন করুন</h3>
                 <textarea id="spellCheckInput" rows="8" placeholder="এখানে আপনার বাংলা লেখাটি পেস্ট করুন..."></textarea>
                 <div class="flex gap-4 mt-4">
                     <button id="checkSpellingBtn" class="spell-check-button">
@@ -2044,7 +2287,7 @@
         <!-- নতুন: লেখা সাজানো বিভাগ -->
         <div id="textBeautifierContent" class="calculator-content">
             <div class="text-beautifier-content">
-                <h3 class="text-xl font-bold mb-4">আপনার লেখাকে সহজ ও সুন্দর করুন</h3>
+                <h3 class="text-xl font-bold text-gray-700 mb-4">আপনার লেখাকে সহজ ও সুন্দর করুন</h3>
                 <textarea id="beautifyInput" rows="8" placeholder="এখানে আপনার এলোমেলো বা জটিল লেখাটি পেস্ট করুন..."></textarea>
                 <button id="beautifyTextBtn" class="beautify-button mt-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"></path></svg>
@@ -2065,7 +2308,7 @@
         <!-- নতুন: শব্দের অর্থ বিভাগ -->
         <div id="wordMeaningContent" class="calculator-content">
             <div class="word-meaning-content">
-                <h3 class="text-xl font-bold mb-4">শব্দের অর্থ ও ব্যাখ্যা খুঁজুন</h3>
+                <h3 class="text-xl font-bold text-gray-700 mb-4">শব্দের অর্থ ও ব্যাখ্যা খুঁজুন</h3>
                 <input type="text" id="wordMeaningInput" placeholder="এখানে বাংলা বা ইংরেজি শব্দ লিখুন..." class="mb-4">
                 <div class="flex gap-4">
                     <button id="findMeaningBtn" class="find-meaning-button">
@@ -2086,7 +2329,7 @@
         <!-- নতুন: টেক্সট টু স্পিচ বিভাগ -->
         <div id="textToSpeechContent" class="calculator-content">
             <div class="tts-content">
-                <h3 class="text-xl font-bold mb-4">বাংলা টেক্সট টু স্পিচ</h3>
+                <h3 class="text-xl font-bold text-gray-700 mb-4">বাংলা টেক্সট টু স্পিচ</h3>
                 <textarea id="ttsInput" rows="8" placeholder="এখানে আপনার বাংলা লেখাটি পেস্ট করুন..."></textarea>
                 <div class="tts-controls">
                     <div class="control-group">
@@ -2117,7 +2360,7 @@
         <!-- নতুন: স্পিচ টু টেক্সট বিভাগ -->
         <div id="speechToTextContent" class="calculator-content">
             <div class="stt-content">
-                <h3 class="text-xl font-bold mb-4">বাংলা স্পিচ টু টেক্সট</h3>
+                <h3 class="text-xl font-bold text-gray-700 mb-4">বাংলা স্পিচ টু টেক্সট</h3>
                 <div id="sttStatus" class="stt-status mb-4">অবস্থা: নিষ্ক্রিয়</div>
                 <textarea id="sttOutput" rows="8" class="rounded-lg" placeholder="আপনি কথা বলা শুরু করলে আপনার কথা এখানে লেখা হবে..."></textarea>
                 <div class="stt-buttons mt-4">
@@ -2233,33 +2476,33 @@
     </div>
 
     <script>
-        // --- Theme Management ---
-        const themeToggleButton = document.getElementById('theme-toggle-button');
-        const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-        const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+        // ====================================================================
+        // START: DARK MODE / LIGHT MODE TOGGLE SCRIPT
+        // ====================================================================
+        const themeToggleBtn = document.getElementById('theme-toggle');
 
-        // Function to apply theme and update icon
-        const applyTheme = (theme) => {
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
-                themeToggleButton.innerHTML = sunIcon;
+        // পৃষ্ঠা লোড হওয়ার সাথে সাথে থিম পরীক্ষা করুন
+        if (localStorage.getItem('color-theme') === 'dark' || 
+           (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            // 'dark' ক্লাস টগল করুন
+            document.documentElement.classList.toggle('dark');
+
+            // লোকাল স্টোরেজে পছন্দ সেভ করুন
+            if (document.documentElement.classList.contains('dark')) {
+                localStorage.setItem('color-theme', 'dark');
             } else {
-                document.documentElement.classList.remove('dark');
-                themeToggleButton.innerHTML = moonIcon;
+                localStorage.setItem('color-theme', 'light');
             }
-        };
-
-        // Check for saved theme in localStorage and apply it
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        applyTheme(savedTheme);
-
-        // Event listener for the theme toggle button
-        themeToggleButton.addEventListener('click', () => {
-            const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('theme', newTheme);
-            applyTheme(newTheme);
         });
+        // ====================================================================
+        // END: DARK MODE / LIGHT MODE TOGGLE SCRIPT
+        // ====================================================================
 
 
         // ইউনিকোড থেকে বিজয় রূপান্তরের জন্য ম্যাপিং
