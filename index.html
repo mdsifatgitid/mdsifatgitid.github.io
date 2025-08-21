@@ -2851,6 +2851,10 @@
                 textAreaRight.value = bijoyOutput;
                 addState('textAreaRight');
             }
+            
+            // *** নতুন সংযোজন: স্বয়ংক্রিয়ভাবে ফিক্স ফাংশন কল করুন ***
+            // showAlert প্যারামিটার false পাঠানো হয়েছে যাতে কোনো পপ-আপ বার্তা না আসে।
+            fixAnsiText(false);
         }
 
         // ====================================================================
@@ -2861,10 +2865,7 @@
             const textAreaRight = document.getElementById('textAreaRight');
             let bijoyInput = textAreaRight ? textAreaRight.value : '';
 
-            // [ধাপ ০ সরানো হয়েছে কারণ এটি ত্রুটিপূর্ণ এবং নতুন ইউনিকোড-ভিত্তিক যুক্তি দ্বারা প্রতিস্থাপিত হয়েছে]
-
             // --- ধাপ ১: বিজয় থেকে ইউনিকোড ম্যাপিং ---
-            // এই অংশটি অপরিবর্তিত রয়েছে। এটি একটি "কাঁচা" ইউনিকোড স্ট্রিং তৈরি করে।
             let unicodeOutput = '';
             let i = 0;
             while (i < bijoyInput.length) {
@@ -2893,10 +2894,7 @@
             const unicodeHasanta = '\\u09CD';
             const unicodeRef = '\\u09B0' + unicodeHasanta;
 
-            // ধাপ ২.১: রেফ (র্) পুনঃক্রম করুন (উন্নত এবং সমন্বিত যুক্তি)
-            // এই একক ধাপটি সমস্ত রেফ পুনঃক্রম পরিচালনা করে। এটি একটি ব্যঞ্জনবর্ণ ক্লাস্টার (ঐচ্ছিক কার-চিহ্ন সহ) খুঁজে বের করে
-            // যার পরে একটি রেফ থাকে এবং তাদের স্থান পরিবর্তন করে। এটি ব্যবহারকারীর অনুরোধটি সঠিকভাবে সমাধান করে।
-            // উদাহরণ: ক্তা + র্ -> র্ক্তা এবং ক + র্ -> র্ক উভয়ই সঠিকভাবে কাজ করে।
+            // ধাপ ২.১: রেফ (র্) পুনঃক্রম করুন
             const unicodeVowelSigns = '[\\u09BE-\\u09C4\\u09C7-\\u09C8\\u09CB-\\u09CC\\u09D7]'; // সকল কার-চিহ্ন
             const consonantCluster = `(?:[${unicodeConsonants}](?:${unicodeHasanta}[${unicodeConsonants}])*)`;
             const fullClusterWithVowel = `(${consonantCluster}(?:${unicodeVowelSigns})?)`;
@@ -2904,19 +2902,15 @@
             unicodeOutput = unicodeOutput.replace(robustRephReorder, '$2$1');
 
             // ধাপ ২.২: প্রি-সিডিং কার-চিহ্ন (ি, ে, ৈ) সঠিক স্থানে আনুন 
-            // এই ধাপটি এখন রেফ পুনঃক্রমের পরে চলে, যা সঠিক ক্রমানুসারে নিশ্চিত করে।
             const consonantClusterPattern = `(?:${unicodeRef})?(?:[${unicodeConsonants}](?:${unicodeHasanta}[${unicodeConsonants}])*)`;
             const reorderRegex = new RegExp(`([${unicodeIkar}${unicodeEkar}${unicodeOikar}])(${consonantClusterPattern})`, 'g');
             unicodeOutput = unicodeOutput.replace(reorderRegex, '$2$1');
 
             // ধাপ ২.৩: ও-কার এবং ঔ-কার গঠন করুন
-            // এখন যেহেতু 'ে' সঠিক স্থানে আছে (ব্যঞ্জনবর্ণের পরে), আমরা 'ো' এবং 'ৌ' গঠন করতে পারি।
-            // ব্যঞ্জনবর্ণ + ে + া -> ব্যঞ্জনবর্ণ + ো
             const unicodeAkar = '\u09BE'; // া
             const unicodeOkar = '\u09CB'; // ো
             unicodeOutput = unicodeOutput.replace(new RegExp(`(${unicodeEkar})(${unicodeAkar})`, 'g'), unicodeOkar);
 
-            // ব্যঞ্জনবর্ণ + ে + ৗ -> ব্যঞ্জনবর্ণ + ৌ
             const unicodeOuKarPart2 = '\u09D7'; // ৗ
             const unicodeOukar = '\u09CC'; // ৌ
             unicodeOutput = unicodeOutput.replace(new RegExp(`(${unicodeEkar})(${unicodeOuKarPart2})`, 'g'), unicodeOukar);
@@ -2924,7 +2918,7 @@
 
             // ধাপ ৩: ম্যানুয়াল ইউনিকোড রিপ্লেসমেন্ট প্রয়োগ (যদি প্রয়োজন হয়)
             for (const [wrong, correct] of Object.entries(manualUnicodeReplacements)) {
-                if (wrong) { // খালি কী এড়িয়ে চলুন
+                if (wrong) {
                     const regex = new RegExp(wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
                     unicodeOutput = unicodeOutput.replace(regex, correct);
                 }
@@ -2940,7 +2934,7 @@
         // ====================================================================
 
         // ====================================================================
- // START: ANSI TEXT FIX FUNCTION (UPDATED FOR WORD LIST)
+        // START: ANSI TEXT FIX FUNCTION (UPDATED FOR WORD LIST & SILENT MODE)
         // ====================================================================
 
         // এই লিস্টে যে শব্দগুলো যোগ করবেন, "ফিক্স করুন" বাটন সেগুলোকে পরিবর্তন করবে না।
@@ -2952,7 +2946,8 @@
             // এখানে কমা দিয়ে আরও শব্দ যোগ করুন, যেমন: 'كلمة', 'word'
         ];
 
-        function fixAnsiText() {
+        // *** পরিবর্তিত ফাংশন: showAlert প্যারামিটার যোগ করা হয়েছে ***
+        function fixAnsiText(showAlert = true) {
             const textAreaRight = document.getElementById('textAreaRight');
             if (!textAreaRight) return;
 
@@ -2963,35 +2958,28 @@
             wordsToIgnore.forEach((word, index) => {
                 const placeholder = `___IGNORE_WORD_${index}___`;
                 placeholders[placeholder] = word;
-                // RegExp ব্যবহার করে সব অকারেন্স রিপ্লেস করা হচ্ছে
                 const regex = new RegExp(word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
                 textToFix = textToFix.replace(regex, placeholder);
             });
 
-
-            // ধাপ ১: ব্যবহারকারীর অনুরোধ অনুযায়ী, বিজয় টেক্সটবক্সে ভুলবশত থাকা ইউনিকোড অক্ষরগুলিকে তাদের আনসি সমতুল্য দিয়ে প্রতিস্থাপন করুন।
-            // এটি unicodeToBijoyMap ব্যবহার করে করা হয়।
-            for (const key of sortedUnicodeKeys) { // sortedUnicodeKeys বিশ্বব্যাপী সংজ্ঞায়িত এবং দৈর্ঘ্য অনুসারে সাজানো
+            // ধাপ ১: বিজয় টেক্সটবক্সে ভুলবশত থাকা ইউনিকোড অক্ষরগুলিকে তাদের আনসি সমতুল্য দিয়ে প্রতিস্থাপন করুন।
+            for (const key of sortedUnicodeKeys) {
                 if (key.length > 0 && textToFix.includes(key)) {
-                    // সমস্ত ocorrances প্রতিস্থাপন করতে একটি RegExp ব্যবহার করুন
                     const regex = new RegExp(key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
                     textToFix = textToFix.replace(regex, unicodeToBijoyMap[key]);
                 }
             }
 
-            // ধাপ ২: ম্যানুয়াল আনসি রিপ্লেসমেন্ট ম্যাপ প্রয়োগ করুন (বিদ্যমান যুক্তি)
-            // এটি সাধারণ আনসি-টু-আনসি ভুলগুলি সংশোধন করে।
+            // ধাপ ২: ম্যানুয়াল আনসি রিপ্লেসমেন্ট ম্যাপ প্রয়োগ করুন
             for (const [wrong, correct] of Object.entries(manualAnsiReplacements)) {
-                if (wrong) { // খালি কী এড়িয়ে চলুন
+                if (wrong) {
                     const regex = new RegExp(wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
                     textToFix = textToFix.replace(regex, correct);
                 }
             }
             
-            // ধাপ ৩: বিশেষ কেস হ্যান্ডলিং (বিদ্যমান যুক্তি)
-            // শব্দের শুরুতে বা বাক্যের শুরুতে ‡ থাকলে † হবে
+            // ধাপ ৩: বিশেষ কেস হ্যান্ডলিং
             textToFix = textToFix.replace(/(^|\s|\|)‡/gm, '$1†');
-            // শব্দের শুরুতে বা বাক্যের শুরুতে ‰ থাকলে ˆ হবে
             textToFix = textToFix.replace(/(^|\s|\|)‰/gm, '$1ˆ');
 
             // ধাপ ৪: প্লেসহোল্ডারগুলোকে আবার আসল শব্দ দিয়ে প্রতিস্থাপন করুন
@@ -3003,10 +2991,13 @@
                 }
             }
 
-
             textAreaRight.value = textToFix;
-            addState('textAreaRight'); // আনডু/রিডু এর জন্য স্টেট যোগ করুন
-            showCustomAlert('লেখা ফিক্স করা হয়েছে!'); // ব্যবহারকারীকে জানান
+            addState('textAreaRight');
+            
+            // *** নতুন সংযোজন: শর্তসাপেক্ষে বার্তা দেখানো ***
+            if (showAlert) {
+                showCustomAlert('লেখা ফিক্স করা হয়েছে!');
+            }
         }
         // ====================================================================
         // END: ANSI TEXT FIX FUNCTION
