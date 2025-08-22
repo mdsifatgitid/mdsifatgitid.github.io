@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -1094,6 +1093,94 @@
             color: #a0aec0;
         }
 
+        /* নতুন: পরিমাপ (ইউনিট কনভার্টার) স্টাইল */
+        .measurement-content {
+            padding: 20px;
+            border-radius: 16px;
+            margin: 0 auto;
+            max-width: 800px; /* প্রস্থ বাড়ানো হয়েছে */
+            background-color: #f8f9fa;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .dark .measurement-content {
+            background-color: #2d3748;
+        }
+        .converter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .converter-section {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .dark .converter-section {
+            background-color: #1a202c;
+            border-color: #4a5568;
+        }
+        .converter-section h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #3f51b5;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .dark .converter-section h3 {
+            color: #90cdf4;
+        }
+        .converter-section .input-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .converter-section .input-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+        .converter-section label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 5px;
+        }
+        .dark .converter-section label {
+            color: #a0aec0;
+        }
+        .converter-section input[type="number"],
+        .converter-section select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: #f7fafc;
+        }
+        .dark .converter-section input[type="number"],
+        .dark .converter-section select {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
+        }
+        .swap-icon {
+            font-size: 1.5rem;
+            color: #3f51b5;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin-top: 20px; /* ইনপুটের সাথে সারিবদ্ধ করতে */
+        }
+        .dark .swap-icon {
+            color: #90cdf4;
+        }
+        .swap-icon:hover {
+            transform: rotate(180deg);
+        }
+
 
         /* টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগের নতুন স্টাইল */
         .text-assistant-content {
@@ -1848,6 +1935,7 @@
             .scientific-calculator-content,
             .news-content,
             .font-converter-content,
+            .measurement-content, /* Measurement content responsiveness */
             .text-assistant-content,
             .spell-checker-content,
             .text-beautifier-content,
@@ -1998,7 +2086,7 @@
             <button id="scientificCalcTab" class="tab-button rounded-xl">সাইন্টিফিক ক্যালকুলেটর</button>
             <button id="ageCalcTab" class="tab-button rounded-xl">বয়স ক্যালকুলেটর</button>
             <button id="dateCalcTab" class="tab-button rounded-xl">তারিখ ও সময়</button>
-            <button id="newsTab" class="tab-button rounded-xl">সাম্প্রতিক খবর</button>
+            <button id="measurementTab" class="tab-button rounded-xl">পরিমাপ</button> <!-- নতুন ট্যাব -->
             <button id="converterTab" class="tab-button rounded-xl">কনভার্টার</button>
             <button id="spellCheckTab" class="tab-button rounded-xl">বানান সংশোধন</button>
             <button id="textBeautifierTab" class="tab-button rounded-xl">লেখা সাজানো</button>
@@ -2006,6 +2094,7 @@
             <button id="ttsTab" class="tab-button rounded-xl">টেক্সট টু স্পিচ</button>
             <button id="sttTab" class="tab-button rounded-xl">স্পিচ টু টেক্সট</button>
             <button id="textAssistantTab" class="tab-button rounded-xl">টেক্সট অ্যাসিস্ট্যান্ট</button>
+            <button id="newsTab" class="tab-button rounded-xl">সাম্প্রতিক খবর</button>
             <button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
             <button id="setApiKeyBtn" class="tab-button rounded-xl" style="background-color: #ef5350; color: white;">API কী সেট করুন</button>
         </div>
@@ -2197,6 +2286,174 @@
             <div id="scientificExplanationLoading" class="loading-indicator">জেমিনি ব্যাখ্যা করছে</div>
             <div id="scientificExplanation" class="response-area rounded-lg mt-4" style="background-color: #e6f7ff; border: 1px solid #b3e0ff;"></div>
         </div>
+
+        <!-- নতুন: পরিমাপ (ইউনিট কনভার্টার) বিভাগ -->
+        <div id="measurementContent" class="calculator-content">
+            <div class="measurement-content">
+                <div class="converter-grid">
+                    <!-- দৈর্ঘ্য রূপান্তরকারী -->
+                    <div class="converter-section">
+                        <h3>দৈর্ঘ্য রূপান্তরকারী</h3>
+                        <div class="input-row">
+                            <div class="input-wrapper">
+                                <label for="lengthFromValue">পরিমাণ</label>
+                                <input type="number" id="lengthFromValue" class="unit-input" data-converter="length" value="1">
+                            </div>
+                            <div class="input-wrapper">
+                                <label for="lengthFromUnit">একক (থেকে)</label>
+                                <select id="lengthFromUnit" class="unit-select" data-converter="length">
+                                    <option value="meter">মিটার</option>
+                                    <option value="kilometer">কিলোমিটার</option>
+                                    <option value="centimeter">সেন্টিমিটার</option>
+                                    <option value="millimeter">মিলিমিটার</option>
+                                    <option value="mile">মাইল</option>
+                                    <option value="yard">গজ</option>
+                                    <option value="foot" selected>ফুট</option>
+                                    <option value="inch">ইঞ্চি</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                             <div class="input-wrapper">
+                                <label for="lengthToValue">ফলাফল</label>
+                                <input type="number" id="lengthToValue" class="unit-input" data-converter="length_rev" readonly>
+                            </div>
+                            <div class="input-wrapper">
+                                <label for="lengthToUnit">একক (তে)</label>
+                                <select id="lengthToUnit" class="unit-select" data-converter="length">
+                                    <option value="meter">মিটার</option>
+                                    <option value="kilometer">কিলোমিটার</option>
+                                    <option value="centimeter">সেন্টিমিটার</option>
+                                    <option value="millimeter">মিলিমিটার</option>
+                                    <option value="mile">মাইল</option>
+                                    <option value="yard">গজ</option>
+                                    <option value="foot">ফুট</option>
+                                    <option value="inch" selected>ইঞ্চি</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ওজন রূপান্তরকারী -->
+                    <div class="converter-section">
+                        <h3>ওজন রূপান্তরকারী</h3>
+                         <div class="input-row">
+                            <div class="input-wrapper">
+                                <label for="weightFromValue">পরিমাণ</label>
+                                <input type="number" id="weightFromValue" class="unit-input" data-converter="weight" value="1">
+                            </div>
+                            <div class="input-wrapper">
+                                <label for="weightFromUnit">একক (থেকে)</label>
+                                <select id="weightFromUnit" class="unit-select" data-converter="weight">
+                                    <option value="gram">গ্রাম</option>
+                                    <option value="kilogram" selected>কিলোগ্রাম</option>
+                                    <option value="milligram">মিলিগ্রাম</option>
+                                    <option value="tonne">টন</option>
+                                    <option value="pound">পাউন্ড</option>
+                                    <option value="ounce">আউন্স</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                             <div class="input-wrapper">
+                                <label for="weightToValue">ফলাফল</label>
+                                <input type="number" id="weightToValue" class="unit-input" data-converter="weight_rev" readonly>
+                            </div>
+                            <div class="input-wrapper">
+                                <label for="weightToUnit">একক (তে)</label>
+                                <select id="weightToUnit" class="unit-select" data-converter="weight">
+                                    <option value="gram" selected>গ্রাম</option>
+                                    <option value="kilogram">কিলোগ্রাম</option>
+                                    <option value="milligram">মিলিগ্রাম</option>
+                                    <option value="tonne">টন</option>
+                                    <option value="pound">পাউন্ড</option>
+                                    <option value="ounce">আউন্স</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ক্ষেত্রফল রূপান্তরকারী -->
+                    <div class="converter-section">
+                        <h3>ক্ষেত্রফল রূপান্তরকারী</h3>
+                         <div class="input-row">
+                            <div class="input-wrapper">
+                                <label for="areaFromValue">পরিমাণ</label>
+                                <input type="number" id="areaFromValue" class="unit-input" data-converter="area" value="1">
+                            </div>
+                            <div class="input-wrapper">
+                                <label for="areaFromUnit">একক (থেকে)</label>
+                                <select id="areaFromUnit" class="unit-select" data-converter="area">
+                                    <option value="sq_meter">বর্গ মিটার</option>
+                                    <option value="sq_kilometer">বর্গ কিলোমিটার</option>
+                                    <option value="sq_foot" selected>বর্গ ফুট</option>
+                                    <option value="sq_inch">বর্গ ইঞ্চি</option>
+                                    <option value="hectare">হেক্টর</option>
+                                    <option value="acre">একর</option>
+                                    <option value="bigha">বিঘা</option>
+                                    <option value="katha">কাঠা</option>
+                                    <option value="shotok">শতক</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                             <div class="input-wrapper">
+                                <label for="areaToValue">ফলাফল</label>
+                                <input type="number" id="areaToValue" class="unit-input" data-converter="area_rev" readonly>
+                            </div>
+                            <div class="input-wrapper">
+                                <label for="areaToUnit">একক (তে)</label>
+                                <select id="areaToUnit" class="unit-select" data-converter="area">
+                                    <option value="sq_meter">বর্গ মিটার</option>
+                                    <option value="sq_kilometer">বর্গ কিলোমিটার</option>
+                                    <option value="sq_foot">বর্গ ফুট</option>
+                                    <option value="sq_inch">বর্গ ইঞ্চি</option>
+                                    <option value="hectare">হেক্টর</option>
+                                    <option value="acre">একর</option>
+                                    <option value="bigha">বিঘা</option>
+                                    <option value="katha" selected>কাঠা</option>
+                                    <option value="shotok">শতক</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- তাপমাত্রা রূপান্তরকারী -->
+                    <div class="converter-section">
+                        <h3>তাপমাত্রা রূপান্তরকারী</h3>
+                         <div class="input-row">
+                            <div class="input-wrapper">
+                                <label for="tempFromValue">পরিমাণ</label>
+                                <input type="number" id="tempFromValue" class="unit-input" data-converter="temperature" value="0">
+                            </div>
+                            <div class="input-wrapper">
+                                <label for="tempFromUnit">একক (থেকে)</label>
+                                <select id="tempFromUnit" class="unit-select" data-converter="temperature">
+                                    <option value="celsius" selected>সেলসিয়াস</option>
+                                    <option value="fahrenheit">ফারেনহাইট</option>
+                                    <option value="kelvin">কেলভিন</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                             <div class="input-wrapper">
+                                <label for="tempToValue">ফলাফল</label>
+                                <input type="number" id="tempToValue" class="unit-input" data-converter="temperature_rev" readonly>
+                            </div>
+                            <div class="input-wrapper">
+                                <label for="tempToUnit">একক (তে)</label>
+                                <select id="tempToUnit" class="unit-select" data-converter="temperature">
+                                    <option value="celsius">সেলসিয়াস</option>
+                                    <option value="fahrenheit" selected>ফারেনহাইট</option>
+                                    <option value="kelvin">কেলভিন</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <!-- সাম্প্রতিক সংবাদ বিভাগ -->
         <div id="newsContent" class="calculator-content">
@@ -3017,6 +3274,157 @@
                 }
             }
         }
+
+        // ====================================================================
+        // START: UNIT CONVERTER (MEASUREMENT) SCRIPT
+        // ====================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const measurementTab = document.getElementById('measurementTab');
+            const measurementContent = document.getElementById('measurementContent');
+
+            if (measurementTab) {
+                measurementTab.addEventListener('click', () => showTab('measurement'));
+            }
+
+            function showTab(tabId) {
+                // Hide all content
+                document.querySelectorAll('.calculator-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                // Deactivate all tabs
+                document.querySelectorAll('.tab-button').forEach(button => {
+                    button.classList.remove('active');
+                });
+
+                // Show selected tab and content
+                const activeContent = document.getElementById(tabId + 'Content');
+                const activeTab = document.getElementById(tabId + 'Tab');
+
+                if(activeContent) activeContent.classList.add('active');
+                if(activeTab) activeTab.classList.add('active');
+            }
+
+
+            // Unit conversion logic
+            const unitInputs = document.querySelectorAll('.unit-input');
+            const unitSelects = document.querySelectorAll('.unit-select');
+
+            const factors = {
+                length: { // base: meter
+                    meter: 1,
+                    kilometer: 1000,
+                    centimeter: 0.01,
+                    millimeter: 0.001,
+                    mile: 1609.34,
+                    yard: 0.9144,
+                    foot: 0.3048,
+                    inch: 0.0254
+                },
+                weight: { // base: gram
+                    gram: 1,
+                    kilogram: 1000,
+                    milligram: 0.001,
+                    tonne: 1000000,
+                    pound: 453.592,
+                    ounce: 28.3495
+                },
+                area: { // base: square meter
+                    sq_meter: 1,
+                    sq_kilometer: 1000000,
+                    sq_foot: 0.092903,
+                    sq_inch: 0.00064516,
+                    hectare: 10000,
+                    acre: 4046.86,
+                    bigha: 1337.8, // Approximate value for Bangladesh
+                    katha: 66.89,   // 1 Bigha = 20 Katha
+                    shotok: 40.4686 // 1 Acre = 100 Shotok
+                }
+            };
+
+            function convertUnits(converterType, isReverse = false) {
+                const fromValueEl = document.getElementById(`${converterType}FromValue`);
+                const fromUnitEl = document.getElementById(`${converterType}FromUnit`);
+                const toValueEl = document.getElementById(`${converterType}ToValue`);
+                const toUnitEl = document.getElementById(`${converterType}ToUnit`);
+
+                if (!fromValueEl || !fromUnitEl || !toValueEl || !toUnitEl) return;
+                
+                let fromValue, fromUnit, toUnit;
+
+                if (isReverse) {
+                    fromValue = parseFloat(toValueEl.value);
+                    fromUnit = toUnitEl.value;
+                    toUnit = fromUnitEl.value;
+                } else {
+                    fromValue = parseFloat(fromValueEl.value);
+                    fromUnit = fromUnitEl.value;
+                    toUnit = toUnitEl.value;
+                }
+
+
+                if (isNaN(fromValue)) {
+                     if (isReverse) fromValueEl.value = '';
+                     else toValueEl.value = '';
+                     return;
+                }
+
+                let result;
+
+                if (converterType === 'temperature') {
+                    // Temperature conversion logic
+                    if (fromUnit === toUnit) {
+                        result = fromValue;
+                    } else if (fromUnit === 'celsius') {
+                        result = toUnit === 'fahrenheit' ? (fromValue * 9/5) + 32 : fromValue + 273.15;
+                    } else if (fromUnit === 'fahrenheit') {
+                        result = toUnit === 'celsius' ? (fromValue - 32) * 5/9 : (fromValue - 32) * 5/9 + 273.15;
+                    } else if (fromUnit === 'kelvin') {
+                        result = toUnit === 'celsius' ? fromValue - 273.15 : (fromValue - 273.15) * 9/5 + 32;
+                    }
+                } else {
+                    // Factor-based conversion logic
+                    const conversionFactors = factors[converterType];
+                    const valueInBaseUnit = fromValue * conversionFactors[fromUnit];
+                    result = valueInBaseUnit / conversionFactors[toUnit];
+                }
+                
+                const targetEl = isReverse ? fromValueEl : toValueEl;
+                // ফলাফলকে 6 দশমিক স্থান পর্যন্ত সীমাবদ্ধ রাখা হয়েছে
+                targetEl.value = parseFloat(result.toFixed(6));
+
+            }
+
+            unitInputs.forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const converter = e.target.dataset.converter;
+                    const isReverse = converter.includes('_rev');
+                    const type = converter.replace('_rev', '');
+                    if(isReverse) {
+                        // When typing in the 'To' field, convert back to the 'From' field
+                        convertUnits(type, true);
+                    } else {
+                        convertUnits(type);
+                    }
+                });
+            });
+
+            unitSelects.forEach(select => {
+                select.addEventListener('change', (e) => {
+                    const type = e.target.dataset.converter;
+                    // Trigger conversion from the 'From' field whenever a unit changes
+                    convertUnits(type);
+                });
+            });
+
+            // Initialize all converters on page load
+            ['length', 'weight', 'area', 'temperature'].forEach(type => {
+                convertUnits(type);
+            });
+        });
+        // ====================================================================
+        // END: UNIT CONVERTER (MEASUREMENT) SCRIPT
+        // ====================================================================
+
 
 		// কাস্টম অ্যালার্ট বক্স বাস্তবায়ন
         function showCustomAlert(message) {
