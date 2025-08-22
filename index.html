@@ -1311,6 +1311,55 @@
         .dark .text-assistant-content .loading-indicator {
             color: #a0aec0;
         }
+
+        /* নতুন: ফাইল আপলোড প্রিভিউ স্টাইল */
+        #filePreviewContainer {
+            background-color: #e6f7ff;
+            border-color: #b3e0ff;
+        }
+        .dark #filePreviewContainer {
+            background-color: #1a202c;
+            border-color: #4a5568;
+        }
+        #filePreviewContainer img, #filePreviewContainer video {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        #removeFileBtn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #ef5350;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: #333;
+        }
+        .dark .file-info {
+            color: #e2e8f0;
+        }
+        .user-message img {
+            max-width: 150px;
+            border-radius: 8px;
+            margin-top: 8px;
+        }
         
         /* নতুন: বাংলা বানান সংশোধন স্টাইল */
         .spell-checker-content {
@@ -2639,7 +2688,16 @@
                     <!-- চ্যাট বার্তা এখানে যুক্ত করা হবে -->
                 </div>
                 <div id="assistantLoading" class="loading-indicator">জেমিনি চিন্তা করছে...</div>
+                <!-- ফাইল প্রিভিউ কন্টেইনার -->
+                <div id="filePreviewContainer" class="hidden mb-2 p-2 border rounded-lg relative">
+                    <!-- প্রিভিউ এখানে JS দ্বারা যুক্ত করা হবে -->
+                </div>
                 <div class="input-container">
+                    <!-- নতুন ফাইল আপলোড বাটন -->
+                    <label for="fileUploadInput" class="flex items-center justify-center p-2.5 rounded-lg bg-gray-200 hover:bg-gray-300 cursor-pointer dark:bg-gray-600 dark:hover:bg-gray-500 transition-colors" title="ফাইল আপলোড করুন">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 dark:text-gray-300"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                    </label>
+                    <input type="file" id="fileUploadInput" class="hidden" accept="image/png, image/jpeg, image/webp, text/*, audio/*, video/*">
                     <textarea id="assistantInput" placeholder="এখানে আপনার প্রশ্ন লিখুন..."></textarea>
                     <button id="askGeminiBtn" class="ask-button">পাঠান</button>
                 </div>
@@ -3274,7 +3332,337 @@
                 }
             }
         }
+        // ====================================================================
+        // START: NEW FILE UPLOAD SCRIPT FOR TEXT ASSISTANT
+        // ====================================================================
 
+        const fileUploadInput = document.getElementById('fileUploadInput');
+        const filePreviewContainer = document.getElementById('filePreviewContainer');
+        let uploadedFile = null; // আপলোড করা ফাইলের তথ্য সংরক্ষণ করতে
+
+        if (fileUploadInput) {
+            fileUploadInput.addEventListener('change', handleFileSelect);
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            // ফাইলের ধরন এবং আকার যাচাই করুন
+            const allowedTypes = ['image/png', 'image/jpeg', 'image/webp', 'text/plain', 'audio/mpeg', 'audio/wav', 'video/mp4', 'video/webm'];
+            if (!allowedTypes.includes(file.type)) {
+                showCustomAlert('শুধুমাত্র ছবি, টেক্সট, অডিও, এবং ভিডিও ফাইল আপলোড করা যাবে।');
+                fileUploadInput.value = ''; // ইনপুট রিসেট করুন
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedFile = {
+                    name: file.name,
+                    type: file.type,
+                    base64: e.target.result.split(',')[1], // Base64 ডেটা পান
+                    dataUrl: e.target.result // প্রিভিউ এর জন্য ডেটা URL
+                };
+                displayFilePreview();
+            };
+            reader.onerror = function() {
+                showCustomAlert('ফাইলটি পড়তে একটি ত্রুটি হয়েছে।');
+                uploadedFile = null;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function displayFilePreview() {
+            if (!uploadedFile || !filePreviewContainer) return;
+
+            filePreviewContainer.innerHTML = ''; // আগের প্রিভিউ পরিষ্কার করুন
+            filePreviewContainer.classList.remove('hidden');
+
+            const previewWrapper = document.createElement('div');
+            previewWrapper.className = 'relative flex items-center gap-3 p-2';
+
+            let previewElement;
+            if (uploadedFile.type.startsWith('image/')) {
+                previewElement = document.createElement('img');
+                previewElement.src = uploadedFile.dataUrl;
+            } else if (uploadedFile.type.startsWith('video/')) {
+                previewElement = document.createElement('video');
+                previewElement.src = uploadedFile.dataUrl;
+                previewElement.controls = false; // কন্ট্রোল দেখাবেন না
+            } else if (uploadedFile.type.startsWith('audio/')) {
+                previewElement = document.createElement('div');
+                previewElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 dark:text-gray-300"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`;
+            } else { // টেক্সট বা অন্যান্য ফাইলের জন্য
+                previewElement = document.createElement('div');
+                previewElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 dark:text-gray-300"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>`;
+            }
+
+            if (previewElement.tagName === 'IMG' || previewElement.tagName === 'VIDEO') {
+                previewElement.className = 'w-16 h-16 object-cover rounded-lg';
+            }
+
+
+            const fileInfo = document.createElement('div');
+            fileInfo.className = 'file-info';
+            fileInfo.textContent = uploadedFile.name;
+
+            const removeBtn = document.createElement('button');
+            removeBtn.id = 'removeFileBtn';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.title = 'ফাইল সরান';
+            removeBtn.onclick = removeFile;
+
+            previewWrapper.appendChild(removeBtn);
+            previewWrapper.appendChild(previewElement);
+            previewWrapper.appendChild(fileInfo);
+            filePreviewContainer.appendChild(previewWrapper);
+        }
+
+        function removeFile() {
+            uploadedFile = null;
+            fileUploadInput.value = ''; // ফাইল ইনপুট রিসেট করুন
+            filePreviewContainer.innerHTML = '';
+            filePreviewContainer.classList.add('hidden');
+        }
+
+        // চ্যাট উইন্ডোতে ফাইলসহ বার্তা যোগ করার জন্য ফাংশন আপডেট করুন
+        function addMessageToChat(text, sender, file = null) {
+            const chatWindow = document.getElementById('chatWindow');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', `${sender}-message`);
+
+            const textElement = document.createElement('p');
+            textElement.innerText = text;
+            messageElement.appendChild(textElement);
+
+            if (file && file.type.startsWith('image/')) {
+                const imgElement = document.createElement('img');
+                imgElement.src = file.dataUrl;
+                messageElement.appendChild(imgElement);
+            }
+
+            if (chatWindow) {
+                chatWindow.appendChild(messageElement);
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+        }
+
+        // জেমিনিকে জিজ্ঞাসা করার ফাংশন আপডেট করুন
+        async function handleAskGemini() {
+            const assistantInput = document.getElementById('assistantInput');
+            const assistantLoading = document.getElementById('assistantLoading');
+            const askGeminiBtn = document.getElementById('askGeminiBtn');
+            const chatWindow = document.getElementById('chatWindow');
+            let chatHistory = window.chatHistory || [];
+
+            const promptText = assistantInput.value.trim();
+            if (!promptText && !uploadedFile) return;
+
+            // ব্যবহারকারীর বার্তা প্রদর্শন করুন
+            addMessageToChat(promptText, 'user', uploadedFile);
+            assistantInput.value = '';
+
+            let userParts = [];
+            if (promptText) {
+                userParts.push({
+                    text: promptText
+                });
+            }
+            if (uploadedFile) {
+                userParts.push({
+                    inlineData: {
+                        mimeType: uploadedFile.type,
+                        data: uploadedFile.base64
+                    }
+                });
+            }
+
+            chatHistory.push({
+                role: "user",
+                parts: userParts
+            });
+            window.chatHistory = chatHistory;
+
+            // ফাইল পাঠানোর পর প্রিভিউ সরিয়ে ফেলুন
+            removeFile();
+
+            if (assistantLoading) assistantLoading.style.display = 'block';
+            if (askGeminiBtn) askGeminiBtn.disabled = true;
+
+            try {
+                const apiKey = localStorage.getItem('geminiApiKey');
+                if (!apiKey) {
+                    addMessageToChat('জেমিনি API কী সেট করা হয়নি। অনুগ্রহ করে "API কী সেট করুন" বাটনে ক্লিক করে কী সেট করুন।', 'gemini-error');
+                    return;
+                }
+
+                const payload = {
+                    contents: chatHistory
+                };
+                const model = "gemini-2.5-flash-preview-05-20";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                let geminiText;
+
+                if (result.candidates && result.candidates[0]?.content?.parts?.[0]?.text) {
+                    geminiText = result.candidates[0].content.parts[0].text;
+                    chatHistory.push({
+                        role: "model",
+                        parts: [{
+                            text: geminiText
+                        }]
+                    });
+                    window.chatHistory = chatHistory;
+                } else {
+                    geminiText = 'দুঃখিত, আমি কোনো উত্তর খুঁজে পাইনি। অনুগ্রহ করে আবার চেষ্টা করুন।';
+                    console.error('API Response Error:', result);
+                }
+                addMessageToChat(geminiText, 'gemini');
+
+            } catch (error) {
+                const errorMessage = 'একটি ত্রুটি ঘটেছে: ' + error.message;
+                addMessageToChat(errorMessage, 'gemini-error');
+                console.error('API Call Error:', error);
+            } finally {
+                if (assistantLoading) assistantLoading.style.display = 'none';
+                if (askGeminiBtn) askGeminiBtn.disabled = false;
+            }
+        }
+        // ====================================================================
+        // END: NEW FILE UPLOAD SCRIPT
+        // ====================================================================
+
+        // ====================================================================
+        // START: UNIT CONVERTER (MEASUREMENT) SCRIPT
+        // ====================================================================
+        function initializeUnitConverters() {
+            const unitInputs = document.querySelectorAll('.unit-input');
+            const unitSelects = document.querySelectorAll('.unit-select');
+
+            const factors = {
+                length: { // base: meter
+                    meter: 1,
+                    kilometer: 1000,
+                    centimeter: 0.01,
+                    millimeter: 0.001,
+                    mile: 1609.34,
+                    yard: 0.9144,
+                    foot: 0.3048,
+                    inch: 0.0254
+                },
+                weight: { // base: gram
+                    gram: 1,
+                    kilogram: 1000,
+                    milligram: 0.001,
+                    tonne: 1000000,
+                    pound: 453.592,
+                    ounce: 28.3495
+                },
+                area: { // base: square meter
+                    sq_meter: 1,
+                    sq_kilometer: 1000000,
+                    sq_foot: 0.092903,
+                    sq_inch: 0.00064516,
+                    hectare: 10000,
+                    acre: 4046.86,
+                    bigha: 1337.8, // Approximate value for Bangladesh
+                    katha: 66.89, // 1 Bigha = 20 Katha
+                    shotok: 40.4686 // 1 Acre = 100 Shotok
+                }
+            };
+
+            function convertUnits(converterType, isReverse = false) {
+                const fromValueEl = document.getElementById(`${converterType}FromValue`);
+                const fromUnitEl = document.getElementById(`${converterType}FromUnit`);
+                const toValueEl = document.getElementById(`${converterType}ToValue`);
+                const toUnitEl = document.getElementById(`${converterType}ToUnit`);
+
+                if (!fromValueEl || !fromUnitEl || !toValueEl || !toUnitEl) return;
+
+                let fromValue, fromUnit, toUnit;
+
+                if (isReverse) {
+                    fromValue = parseFloat(toValueEl.value);
+                    fromUnit = toUnitEl.value;
+                    toUnit = fromUnitEl.value;
+                } else {
+                    fromValue = parseFloat(fromValueEl.value);
+                    fromUnit = fromUnitEl.value;
+                    toUnit = toUnitEl.value;
+                }
+
+
+                if (isNaN(fromValue)) {
+                    if (isReverse) fromValueEl.value = '';
+                    else toValueEl.value = '';
+                    return;
+                }
+
+                let result;
+
+                if (converterType === 'temperature') {
+                    // Temperature conversion logic
+                    if (fromUnit === toUnit) {
+                        result = fromValue;
+                    } else if (fromUnit === 'celsius') {
+                        result = toUnit === 'fahrenheit' ? (fromValue * 9 / 5) + 32 : fromValue + 273.15;
+                    } else if (fromUnit === 'fahrenheit') {
+                        result = toUnit === 'celsius' ? (fromValue - 32) * 5 / 9 : (fromValue - 32) * 5 / 9 + 273.15;
+                    } else if (fromUnit === 'kelvin') {
+                        result = toUnit === 'celsius' ? fromValue - 273.15 : (fromValue - 273.15) * 9 / 5 + 32;
+                    }
+                } else {
+                    // Factor-based conversion logic
+                    const conversionFactors = factors[converterType];
+                    const valueInBaseUnit = fromValue * conversionFactors[fromUnit];
+                    result = valueInBaseUnit / conversionFactors[toUnit];
+                }
+
+                const targetEl = isReverse ? fromValueEl : toValueEl;
+                // ফলাফলকে 6 দশমিক স্থান পর্যন্ত সীমাবদ্ধ রাখা হয়েছে
+                targetEl.value = parseFloat(result.toFixed(6));
+
+            }
+
+            unitInputs.forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const converter = e.target.dataset.converter;
+                    const isReverse = converter.includes('_rev');
+                    const type = converter.replace('_rev', '');
+                    if (isReverse) {
+                        // When typing in the 'To' field, convert back to the 'From' field
+                        convertUnits(type, true);
+                    } else {
+                        convertUnits(type);
+                    }
+                });
+            });
+
+            unitSelects.forEach(select => {
+                select.addEventListener('change', (e) => {
+                    const type = e.target.dataset.converter;
+                    // Trigger conversion from the 'From' field whenever a unit changes
+                    convertUnits(type);
+                });
+            });
+
+            // Initialize all converters on page load
+            ['length', 'weight', 'area', 'temperature'].forEach(type => {
+                convertUnits(type);
+            });
+        }
         // ====================================================================
         // START: UNIT CONVERTER (MEASUREMENT) SCRIPT
         // ====================================================================
@@ -3558,6 +3946,7 @@
                 const scientificCalcTab = document.getElementById('scientificCalcTab');
                 const newsTab = document.getElementById('newsTab');
                 const converterTab = document.getElementById('converterTab');
+                const measurementTab = document.getElementById('measurementTab'); // Add this line
                 const textAssistantTab = document.getElementById('textAssistantTab');
                 const allFeaturesTab = document.getElementById('allFeaturesTab');
                 const setApiKeyBtn = document.getElementById('setApiKeyBtn');
@@ -3573,6 +3962,7 @@
                 const scientificCalculatorContent = document.getElementById('scientificCalculatorContent');
                 const newsContent = document.getElementById('newsContent');
                 const converterContent = document.getElementById('converterContent');
+                const measurementContent = document.getElementById('measurementContent'); // Add this line
                 const textAssistantContent = document.getElementById('textAssistantContent');
                 const allFeaturesContent = document.getElementById('allFeaturesContent');
                 const spellCheckerContent = document.getElementById('spellCheckerContent');
@@ -3619,12 +4009,12 @@
 
                 function showTab(tabId) {
                     // সমস্ত ট্যাব বোতাম থেকে 'active' ক্লাস সরিয়ে দিন
-                    [basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, textAssistantTab, allFeaturesTab].forEach(tab => {
+                    [basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, textAssistantTab, allFeaturesTab].forEach(tab => {
                         if (tab) tab.classList.remove('active');
                     });
 
                     // সমস্ত কন্টেন্ট বিভাগ লুকান
-                    [basicCalculatorContent, ageCalculatorContent, dateCalculatorContent, scientificCalculatorContent, newsContent, converterContent, spellCheckerContent, textBeautifierContent, wordMeaningContent, textToSpeechContent, speechToTextContent, textAssistantContent, allFeaturesContent].forEach(content => {
+                    [basicCalculatorContent, ageCalculatorContent, dateCalculatorContent, scientificCalculatorContent, newsContent, converterContent, measurementContent, spellCheckerContent, textBeautifierContent, wordMeaningContent, textToSpeechContent, speechToTextContent, textAssistantContent, allFeaturesContent].forEach(content => {
                         if (content) content.classList.remove('active');
                     });
 
@@ -3647,7 +4037,11 @@
                     } else if (tabId === 'converter' && converterTab && converterContent) {
                         converterTab.classList.add('active');
                         converterContent.classList.add('active');
-                    } else if (tabId === 'textAssistant' && textAssistantTab && textAssistantContent) {
+                    } else if (tabId === 'measurement' && measurementTab && measurementContent) { // Add this block
+                        measurementTab.classList.add('active');
+                        measurementContent.classList.add('active');
+                    }
+                    else if (tabId === 'textAssistant' && textAssistantTab && textAssistantContent) {
                         textAssistantTab.classList.add('active');
                         textAssistantContent.classList.add('active');
                     } else if (tabId === 'allFeatures' && allFeaturesTab && allFeaturesContent) {
@@ -3680,6 +4074,7 @@
                 if (scientificCalcTab) scientificCalcTab.addEventListener('click', () => showTab('scientific'));
                 if (newsTab) newsTab.addEventListener('click', () => showTab('news'));
                 if (converterTab) converterTab.addEventListener('click', () => showTab('converter'));
+                if (measurementTab) measurementTab.addEventListener('click', () => showTab('measurement')); // Add this line
                 if (spellCheckTab) spellCheckTab.addEventListener('click', () => showTab('spellCheck'));
                 if (textBeautifierTab) textBeautifierTab.addEventListener('click', () => showTab('beautify'));
                 if (wordMeaningTab) wordMeaningTab.addEventListener('click', () => showTab('meaning'));
@@ -3944,17 +4339,17 @@
                             basicCalculator.clear();
                         }
                     });
-					
-		// বৈজ্ঞানিক ক্যালকুলেটরের জন্য কীবোর্ড ডিলিট বাটনের ইভেন্ট লিসেনার
-        document.addEventListener('keydown', (e) => {
-            // "C" (ক্লিয়ার) বাটনের কাজ অনুকরণ করুন
-            if (e.key === 'Delete') {
-                if (scientificExpressionInput) scientificExpressionInput.value = '';
-                if (scientificResultDisplay) scientificResultDisplay.innerText = '';
-                if (scientificErrorMessage) scientificErrorMessage.innerText = '';
-                if (scientificExplanation) scientificExplanation.innerText = '';
-            }
-        });
+
+                    // বৈজ্ঞানিক ক্যালকুলেটরের জন্য কীবোর্ড ডিলিট বাটনের ইভেন্ট লিসেনার
+                    document.addEventListener('keydown', (e) => {
+                        // "C" (ক্লিয়ার) বাটনের কাজ অনুকরণ করুন
+                        if (e.key === 'Delete') {
+                            if (scientificExpressionInput) scientificExpressionInput.value = '';
+                            if (scientificResultDisplay) scientificResultDisplay.innerText = '';
+                            if (scientificErrorMessage) scientificErrorMessage.innerText = '';
+                            if (scientificExplanation) scientificExplanation.innerText = '';
+                        }
+                    });
                 } else {
                     console.error('মৌলিক ক্যালকুলেটর ডিসপ্লে উপাদান পাওয়া যায়নি।');
                 }
@@ -4455,63 +4850,63 @@
 
                 // এক্সপ্রেশন ইনপুটে বোতামের মান যোগ করুন
                 scientificButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        console.log('বৈজ্ঞানিক বোতামে ক্লিক করা হয়েছে:', button.dataset.sciInput);
-        const value = button.dataset.sciInput;
-        const inputElement = scientificExpressionInput;
-        // C বাটন চাপলে পুরো ইনপুট ক্ষেত্র পরিষ্কার হবে
-        if (value === 'C') {
-            if (inputElement) inputElement.value = '';
-            if (scientificResultDisplay) scientificResultDisplay.innerText = '';
-            if (scientificErrorMessage) scientificErrorMessage.innerText = '';
-            if (scientificExplanation) scientificExplanation.innerText = '';
-        // DEL বাটন চাপলে একটি অক্ষর মুছে যাবে
-        } else if (value === 'DEL') {
-            if (inputElement) {
-                inputElement.value = inputElement.value.slice(0, -1);
-            }
-        } else if (button.dataset.sciEquals !== undefined) {
-            // সমান হ্যান্ডেল করুন
-            evaluateScientificExpression();
-        } else if (functionsWithParentheses.includes(value)) {
-            // () প্রয়োজন এমন ফাংশন হ্যান্ডেল করুন
-            if (inputElement) {
-                const start = inputElement.selectionStart;
-                const end = inputElement.selectionEnd;
-                const text = inputElement.value;
-                const newValue = text.substring(0, start) + value + '()' + text.substring(end);
-                inputElement.value = newValue;
-                // বন্ধনীর ভিতরে কার্সার অবস্থান করুন
-                inputElement.selectionStart = start + value.length + 1;
-                inputElement.selectionEnd = start + value.length + 1;
-                inputElement.focus();
-            }
-        } else if (value) {
-            // অন্যান্য মান যোগ করুন
-            if (inputElement) inputElement.value += value;
-        }
-    });
-});
+                    button.addEventListener('click', () => {
+                        console.log('বৈজ্ঞানিক বোতামে ক্লিক করা হয়েছে:', button.dataset.sciInput);
+                        const value = button.dataset.sciInput;
+                        const inputElement = scientificExpressionInput;
+                        // C বাটন চাপলে পুরো ইনপুট ক্ষেত্র পরিষ্কার হবে
+                        if (value === 'C') {
+                            if (inputElement) inputElement.value = '';
+                            if (scientificResultDisplay) scientificResultDisplay.innerText = '';
+                            if (scientificErrorMessage) scientificErrorMessage.innerText = '';
+                            if (scientificExplanation) scientificExplanation.innerText = '';
+                            // DEL বাটন চাপলে একটি অক্ষর মুছে যাবে
+                        } else if (value === 'DEL') {
+                            if (inputElement) {
+                                inputElement.value = inputElement.value.slice(0, -1);
+                            }
+                        } else if (button.dataset.sciEquals !== undefined) {
+                            // সমান হ্যান্ডেল করুন
+                            evaluateScientificExpression();
+                        } else if (functionsWithParentheses.includes(value)) {
+                            // () প্রয়োজন এমন ফাংশন হ্যান্ডেল করুন
+                            if (inputElement) {
+                                const start = inputElement.selectionStart;
+                                const end = inputElement.selectionEnd;
+                                const text = inputElement.value;
+                                const newValue = text.substring(0, start) + value + '()' + text.substring(end);
+                                inputElement.value = newValue;
+                                // বন্ধনীর ভিতরে কার্সার অবস্থান করুন
+                                inputElement.selectionStart = start + value.length + 1;
+                                inputElement.selectionEnd = start + value.length + 1;
+                                inputElement.focus();
+                            }
+                        } else if (value) {
+                            // অন্যান্য মান যোগ করুন
+                            if (inputElement) inputElement.value += value;
+                        }
+                    });
+                });
 
                 // কীবোর্ড ইনপুট সমর্থন
-if (scientificExpressionInput) {
-    scientificExpressionInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            evaluateScientificExpression();
-        } else if (e.key === 'Escape') {
-            if (scientificExpressionInput) scientificExpressionInput.value = '';
-            if (scientificResultDisplay) scientificResultDisplay.innerText = '';
-            if (scientificErrorMessage) scientificErrorMessage.innerText = '';
-            if (scientificExplanation) scientificExplanation.innerText = '';
-        } else if (e.key === 'Backspace' || e.key === 'Delete') {
-            // ব্যাকস্পেস বা ডিলিট বাটন চাপলে শেষ অক্ষরটি মুছে যাবে
-            if (scientificExpressionInput) {
-                scientificExpressionInput.value = scientificExpressionInput.value.slice(0, -1);
-            }
-        }
-    });
-}
+                if (scientificExpressionInput) {
+                    scientificExpressionInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            evaluateScientificExpression();
+                        } else if (e.key === 'Escape') {
+                            if (scientificExpressionInput) scientificExpressionInput.value = '';
+                            if (scientificResultDisplay) scientificResultDisplay.innerText = '';
+                            if (scientificErrorMessage) scientificErrorMessage.innerText = '';
+                            if (scientificExplanation) scientificExplanation.innerText = '';
+                        } else if (e.key === 'Backspace' || e.key === 'Delete') {
+                            // ব্যাকস্পেস বা ডিলিট বাটন চাপলে শেষ অক্ষরটি মুছে যাবে
+                            if (scientificExpressionInput) {
+                                scientificExpressionInput.value = scientificExpressionInput.value.slice(0, -1);
+                            }
+                        }
+                    });
+                }
 
                 function evaluateScientificExpression() {
                     const expression = scientificExpressionInput ? scientificExpressionInput.value : '';
@@ -4920,10 +5315,10 @@ if (scientificExpressionInput) {
                 const resumeBtn = document.getElementById('resumeBtn');
                 const stopBtn = document.getElementById('stopBtn');
                 const clearTtsBtn = document.getElementById('clearTtsBtn');
-                
+
                 // ভয়েস এবং পিচ/রেট কন্ট্রোলগুলি এখন জেমিনি দ্বারা নিয়ন্ত্রিত হবে, তাই UI থেকে সরানো হয়েছে
                 const ttsControls = document.querySelector('.tts-controls');
-                if(ttsControls) ttsControls.style.display = 'none';
+                if (ttsControls) ttsControls.style.display = 'none';
 
                 let ttsAudio; // অডিও অবজেক্ট সংরক্ষণ করার জন্য
 
@@ -4970,7 +5365,9 @@ if (scientificExpressionInput) {
                         }
                     }
 
-                    return new Blob([header, pcmData], { type: 'audio/wav' });
+                    return new Blob([header, pcmData], {
+                        type: 'audio/wav'
+                    });
                 }
 
                 async function handleGeminiTTS() {
@@ -4979,7 +5376,7 @@ if (scientificExpressionInput) {
                         showCustomAlert('অনুগ্রহ করে কথা বলার জন্য কিছু টেক্সট লিখুন।');
                         return;
                     }
-                    
+
                     const apiKey = localStorage.getItem('geminiApiKey');
                     if (!apiKey) {
                         showCustomAlert('জেমিনি API কী সেট করা হয়নি।');
@@ -4997,15 +5394,23 @@ if (scientificExpressionInput) {
 
                     try {
                         const payload = {
-                            contents: [{ parts: [{ text: textToSpeak }] }],
-                            generationConfig: { responseModalities: ["AUDIO"] },
+                            contents: [{
+                                parts: [{
+                                    text: textToSpeak
+                                }]
+                            }],
+                            generationConfig: {
+                                responseModalities: ["AUDIO"]
+                            },
                             model: "gemini-2.5-flash-preview-tts"
                         };
 
                         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
                         const response = await fetch(apiUrl, {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
                             body: JSON.stringify(payload)
                         });
 
@@ -5017,7 +5422,7 @@ if (scientificExpressionInput) {
                         if (audioData && mimeType && mimeType.startsWith("audio/")) {
                             const sampleRateMatch = mimeType.match(/rate=(\d+)/);
                             if (!sampleRateMatch) throw new Error("স্যাম্পেল রেট পাওয়া যায়নি।");
-                            
+
                             const sampleRate = parseInt(sampleRateMatch[1], 10);
                             const pcmData = base64ToArrayBuffer(audioData);
                             const pcm16 = new Int16Array(pcmData);
@@ -5026,7 +5431,7 @@ if (scientificExpressionInput) {
 
                             ttsAudio = new Audio(audioUrl);
                             ttsAudio.play();
-                            
+
                             ttsAudio.onended = () => {
                                 speakBtn.innerText = 'শুনুন';
                                 speakBtn.disabled = false;
@@ -5092,7 +5497,7 @@ if (scientificExpressionInput) {
                     // ভাষা স্বয়ংক্রিয়ভাবে সনাক্ত করার জন্য, lang বৈশিষ্ট্যটি সেট করা হয় না।
                     // তবে, সেরা ফলাফলের জন্য একটি নির্দিষ্ট ভাষা সেট করা ভাল।
                     // ডিফল্ট হিসেবে বাংলা সেট করা হলো।
-                    recognition.lang = 'bn-BD'; 
+                    recognition.lang = 'bn-BD';
 
                     recognition.onstart = () => {
                         isListening = true;
@@ -5104,7 +5509,7 @@ if (scientificExpressionInput) {
                     recognition.onresult = (event) => {
                         let finalTranscript = sttOutput.value.substring(0, sttOutput.selectionStart);
                         let interimTranscript = '';
-                        
+
                         for (let i = event.resultIndex; i < event.results.length; ++i) {
                             if (event.results[i].isFinal) {
                                 finalTranscript += event.results[i][0].transcript;
@@ -5118,7 +5523,7 @@ if (scientificExpressionInput) {
                     recognition.onerror = (event) => {
                         console.error('Speech Recognition Error:', event.error);
                         let errorMessage = 'একটি স্পিচ টু টেক্সট ত্রুটি হয়েছে।';
-                         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
                             errorMessage = 'মাইক্রোফোন ব্যবহারের অনুমতি প্রয়োজন।';
                         } else if (event.error === 'no-speech') {
                             errorMessage = 'কোনো কথা সনাক্ত করা যায়নি।';
@@ -5149,9 +5554,9 @@ if (scientificExpressionInput) {
                             }
                         });
                     }
-                    
+
                     if (copySttBtn) copySttBtn.addEventListener('click', () => copyToClipboard('sttOutput'));
-                    
+
                     if (clearSttBtn) {
                         clearSttBtn.addEventListener('click', () => {
                             sttOutput.value = '';
@@ -5162,7 +5567,7 @@ if (scientificExpressionInput) {
                 } else {
                     sttStatus.innerText = 'দুঃখিত, আপনার ব্রাউজার স্পিচ রিকগনিশন সমর্থন করে না। 😔';
                     [startSttBtn, stopSttBtn, copySttBtn, clearSttBtn].forEach(btn => {
-                        if(btn) btn.disabled = true;
+                        if (btn) btn.disabled = true;
                     });
                 }
                 // ====================================================================
@@ -5174,29 +5579,15 @@ if (scientificExpressionInput) {
                 const assistantInput = document.getElementById('assistantInput');
                 const askGeminiBtn = document.getElementById('askGeminiBtn');
                 const chatWindow = document.getElementById('chatWindow');
-                const assistantLoading = document.getElementById('assistantLoading');
                 const clearChatBtn = document.getElementById('clearChatBtn');
 
-                let chatHistory = []; // কথোপকথনের ইতিহাস সংরক্ষণ করে
-
-                // চ্যাট উইন্ডোতে বার্তা যোগ করার জন্য হেল্পার ফাংশন
-                function addMessageToChat(text, sender) {
-                    const messageElement = document.createElement('div');
-                    messageElement.classList.add('message', `${sender}-message`);
-                    // XSS প্রতিরোধ করতে innerText ব্যবহার করা হচ্ছে
-                    messageElement.innerText = text;
-                    if (chatWindow) {
-                        chatWindow.appendChild(messageElement);
-                        // স্বয়ংক্রিয়ভাবে নতুন বার্তায় স্ক্রোল করুন
-                        chatWindow.scrollTop = chatWindow.scrollHeight;
-                    }
-                }
+                window.chatHistory = []; // কথোপকথনের ইতিহাস সংরক্ষণ করে
 
                 // চ্যাট মুছুন বোতামের কার্যকারিতা
                 if (clearChatBtn) {
                     clearChatBtn.addEventListener('click', () => {
                         if (chatWindow) chatWindow.innerHTML = '';
-                        chatHistory = []; // ইতিহাস রিসেট করুন
+                        window.chatHistory = []; // ইতিহাস রিসেট করুন
                         addMessageToChat('হ্যালো! আমি আপনার টেক্সট অ্যাসিস্ট্যান্ট। আমি আপনাকে কীভাবে সাহায্য করতে পারি?', 'gemini');
                     });
                 }
@@ -5217,88 +5608,20 @@ if (scientificExpressionInput) {
                     });
                 }
 
-                async function handleAskGemini() {
-                    const prompt = assistantInput.value.trim();
-                    if (!prompt || !chatWindow) return;
-
-                    // ব্যবহারকারীর বার্তা প্রদর্শন করুন
-                    addMessageToChat(prompt, 'user');
-                    assistantInput.value = ''; // ইনপুট বক্স পরিষ্কার করুন
-
-                    // ব্যবহারকারীর বার্তা ইতিহাসে যোগ করুন
-                    chatHistory.push({
-                        role: "user",
-                        parts: [{
-                            text: prompt
-                        }]
-                    });
-
-                    // লোডিং ইন্ডিকেটর দেখান
-                    if (assistantLoading) assistantLoading.style.display = 'block';
-                    if (askGeminiBtn) askGeminiBtn.disabled = true;
-
-                    try {
-                        const apiKey = localStorage.getItem('geminiApiKey');
-                        if (!apiKey) {
-                            addMessageToChat('জেমিনি API কী সেট করা হয়নি। অনুগ্রহ করে "API কী সেট করুন" বাটনে ক্লিক করে কী সেট করুন।', 'gemini-error');
-                            return;
-                        }
-
-                        // কথোপকথনের ধারাবাহিকতা বজায় রাখতে সম্পূর্ণ chatHistory পাঠানো হচ্ছে
-                        const payload = {
-                            contents: chatHistory
-                        };
-                        // লেটেস্ট ফ্ল্যাশ মডেল ব্যবহার করা হচ্ছে
-                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-                        const response = await fetch(apiUrl, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(payload)
-                        });
-
-                        const result = await response.json();
-                        let geminiText;
-
-                        if (result.candidates && result.candidates.length > 0 &&
-                            result.candidates[0].content && result.candidates[0].content.parts &&
-                            result.candidates[0].content.parts.length > 0) {
-                            geminiText = result.candidates[0].content.parts[0].text;
-                            // জেমিনির উত্তর ইতিহাসে যোগ করুন
-                            chatHistory.push({
-                                role: "model",
-                                parts: [{
-                                    text: geminiText
-                                }]
-                            });
-                        } else {
-                            geminiText = 'দুঃখিত, আমি কোনো উত্তর খুঁজে পাইনি। অনুগ্রহ করে আবার চেষ্টা করুন।';
-                            console.error('API Response Error:', result);
-                        }
-                        addMessageToChat(geminiText, 'gemini');
-
-                    } catch (error) {
-                        const errorMessage = 'একটি ত্রুটি ঘটেছে: ' + error.message;
-                        addMessageToChat(errorMessage, 'gemini-error');
-                        console.error('API Call Error:', error);
-                    } finally {
-                        if (assistantLoading) assistantLoading.style.display = 'none';
-                        if (askGeminiBtn) askGeminiBtn.disabled = false;
-                    }
-                }
-
                 // --- ফন্ট কনভার্টার লিসেনার যোগ করুন ---
                 const fixAnsiButton = document.getElementById('fixAnsiButton');
                 if (fixAnsiButton) {
-                    fixAnsiButton.addEventListener('click', fixAnsiText);
+                    fixAnsiButton.addEventListener('click', () => fixAnsiText(true));
                 }
 
                 // *** সংশোধিত: প্রাথমিক বার্তাটি এখানে যোগ করা হয়েছে ***
-                if (chatWindow) {
-                    addMessageToChat('হ্যালো! আমি আপনার টেক্সট অ্যাসিস্ট্যান্ট। আমি আপনাকে কীভাবে সাহায্য করতে পারি?', 'gemini');
+                if (chatWindow && chatWindow.children.length === 0) {
+                     addMessageToChat('হ্যালো! আমি আপনার টেক্সট অ্যাসিস্ট্যান্ট। আমি আপনাকে কীভাবে সাহায্য করতে পারি?', 'gemini');
                 }
+                
+                // ইউনিট কনভার্টার ইনিশিয়ালাইজ করুন
+                initializeUnitConverters();
+
 
             } catch (e) {
                 console.error('DOMContentLoaded এক্সিকিউশনের সময় একটি ত্রুটি ঘটেছে:', e);
