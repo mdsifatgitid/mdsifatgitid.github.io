@@ -3670,38 +3670,30 @@
         // ====================================================================
 
 
-		// কাস্টম অ্যালার্ট বক্স বাস্তবায়ন
-        function showCustomAlert(message) {
-            const alertBox = document.createElement('div');
-            alertBox.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background-color: #333;
-                color: white;
-                padding: 15px 25px;
-                border-radius: 8px;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-                z-index: 1000;
-                font-size: 1.1rem;
-                opacity: 0;
-                transition: opacity 0.3s ease-in-out;
-            `;
-            alertBox.textContent = message;
-            document.body.appendChild(alertBox);
+		// কাস্টম অ্যালার্ট বক্স বাস্তবায়ন New
+		function showCustomAlert(message) {
+		const alertBox = document.createElement('div');
+		alertBox.classList.add(
+        'fixed', 'top-1/2', 'left-1/2', 'transform', '-translate-x-1/2', '-translate-y-1/2',
+        'bg-gray-800', 'text-white', 'p-4', 'rounded-lg', 'shadow-2xl',
+        'z-50', 'text-lg', 'transition-all', 'duration-100', 'ease-in-out',
+        'scale-75', 'opacity-0'
+    );
+		alertBox.textContent = message;
+		document.body.appendChild(alertBox);
 
-            // ফেড ইন
-            setTimeout(() => {
-                alertBox.style.opacity = 1;
-            }, 10);
+    // ফেড-ইন এবং স্কেল-ইন
+		setTimeout(() => {
+        alertBox.classList.remove('scale-75', 'opacity-0');
+        alertBox.classList.add('scale-100', 'opacity-100');
+		}, 10);
 
-            // 2 সেকেন্ড পর ফেড আউট এবং সরান
-            setTimeout(() => {
-                alertBox.style.opacity = 0;
-                alertBox.addEventListener('transitionend', () => alertBox.remove());
-            }, 2000);
-        }
+    // 3 সেকেন্ড পর ফেড-আউট এবং সরান
+		setTimeout(() => {
+        alertBox.classList.remove('scale-100', 'opacity-100');
+        setTimeout(() => alertBox.remove(), 100);
+		}, 2000);
+	}
 
         // টেক্সটএরিয়াগুলির জন্য আনডু/রিডু ইতিহাস
         let historyLeft = [];
