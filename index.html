@@ -1794,6 +1794,141 @@
             cursor: not-allowed;
         }
 
+        /* নতুন: টাইপিং টেস্ট স্টাইল */
+        .typing-test-content {
+            padding: 20px;
+            border-radius: 16px;
+            margin: 0 auto;
+            max-width: 800px;
+            background-color: #f8f9fa;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .dark .typing-test-content {
+            background-color: #2d3748;
+        }
+        .typing-settings {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .typing-settings label {
+            font-weight: 600;
+            color: #333;
+        }
+        .dark .typing-settings label {
+            color: #e2e8f0;
+        }
+        .typing-settings select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #cce7ff;
+            background-color: #eaf6ff;
+            cursor: pointer;
+        }
+        .dark .typing-settings select {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
+        }
+        .typing-text-display {
+            font-size: 1.5rem;
+            line-height: 2.5rem;
+            letter-spacing: 1px;
+            padding: 20px;
+            border-radius: 12px;
+            background-color: #e6f7ff;
+            border: 1px solid #b3e0ff;
+            margin-bottom: 20px;
+            text-align: left;
+            user-select: none;
+            height: 180px;
+            overflow-y: auto;
+        }
+        .dark .typing-text-display {
+            background-color: #1a202c;
+            border-color: #4a5568;
+            color: #e2e8f0;
+        }
+        .typing-text-display span.correct {
+            color: #28a745;
+        }
+        .typing-text-display span.incorrect {
+            color: #dc3545;
+            text-decoration: underline;
+        }
+        .typing-text-display span.current {
+            background-color: #b3e0ff;
+            border-radius: 4px;
+        }
+        .dark .typing-text-display span.current {
+             background-color: #4a5568;
+        }
+        .typing-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            box-sizing: border-box;
+        }
+        .typing-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+        }
+        .typing-stats {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .dark .typing-stats {
+            background-color: #1a202c;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item h4 {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        .dark .stat-item h4 {
+            color: #a0aec0;
+        }
+        .stat-item p {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3f51b5;
+        }
+        .dark .stat-item p {
+            color: #90cdf4;
+        }
+        .typing-controls {
+            margin-top: 20px;
+        }
+        .restart-typing-btn {
+            background-image: linear-gradient(to right, #60a5fa 0%, #3b82f6 100%);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .restart-typing-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
 
         /* কন্টেন্ট প্রাথমিকভাবে লুকানো */
         .calculator-content {
@@ -2022,7 +2157,8 @@
             .text-beautifier-content,
             .word-meaning-content,
             .tts-content,
-            .stt-content { /* STT এর জন্য প্রতিক্রিয়াশীলতা */
+            .stt-content,
+            .typing-test-content { /* Typing test responsiveness */
                 padding: 15px;
                 border-radius: 12px;
             }
@@ -2174,6 +2310,7 @@
             <button id="ageCalcTab" class="tab-button rounded-xl">বয়স ক্যালকুলেটর</button>
             <button id="dateCalcTab" class="tab-button rounded-xl">তারিখ ও সময়</button>
             <button id="measurementTab" class="tab-button rounded-xl">পরিমাপ</button> <!-- নতুন ট্যাব -->
+            <button id="typingTestTab" class="tab-button rounded-xl">টাইপিং টেস্ট</button> <!-- নতুন টাইপিং টেস্ট ট্যাব -->
             <button id="converterTab" class="tab-button rounded-xl">কনভার্টার</button>
             <button id="spellCheckTab" class="tab-button rounded-xl">বানান সংশোধন</button>
             <button id="textBeautifierTab" class="tab-button rounded-xl">লেখা সাজানো</button>
@@ -2541,6 +2678,60 @@
             </div>
         </div>
 
+        <!-- নতুন: টাইপিং টেস্ট বিভাগ -->
+        <div id="typingTestContent" class="calculator-content">
+            <div class="typing-test-content">
+                <h3 class="text-xl font-bold text-gray-700 mb-4">টাইপিং টেস্ট</h3>
+                <div class="typing-settings">
+                    <div>
+                        <label for="typingTime">সময় (মিনিট): </label>
+                        <select id="typingTime">
+                            <option value="1">১</option>
+                            <option value="2">২</option>
+                            <option value="5">৫</option>
+                            <option value="10">১০</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="typingLanguage">ভাষা: </label>
+                        <select id="typingLanguage">
+                            <option value="bn">বাংলা</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="typingTextDisplay" class="typing-text-display">
+                    অনুশীলন শুরু করতে নিচের বক্সে টাইপ করুন...
+                </div>
+                <textarea id="typingInput" class="typing-input" placeholder="এখানে টাইপ করুন..." disabled></textarea>
+                <div id="typingStats" class="typing-stats">
+                    <div class="stat-item">
+                        <h4>সময়</h4>
+                        <p id="timerDisplay">--:--</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>WPM</h4>
+                        <p id="wpmDisplay">0</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>সঠিক</h4>
+                        <p id="correctWordsDisplay">0</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>ভুল</h4>
+                        <p id="incorrectWordsDisplay">0</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>নির্ভুলতা</h4>
+                        <p id="accuracyDisplay">100%</p>
+                    </div>
+                </div>
+                <div class="typing-controls">
+                    <button id="restartTypingBtn" class="restart-typing-btn">পুনরায় শুরু করুন</button>
+                </div>
+            </div>
+        </div>
+
 
         <!-- সাম্প্রতিক সংবাদ বিভাগ -->
         <div id="newsContent" class="calculator-content">
@@ -2828,6 +3019,228 @@
     </div>
 
     <script>
+	
+	
+document.addEventListener('DOMContentLoaded', () => {
+    // Typing Test Tab এর জন্য প্রয়োজনীয় সকল DOM উপাদান নির্বাচন করা
+    const typingTestTab = document.getElementById('typingTestTab');
+    const typingTestContent = document.getElementById('typingTestContent');
+
+    const typingTimeSelect = document.getElementById('typingTime');
+    const typingLanguageSelect = document.getElementById('typingLanguage');
+    const typingTextDisplay = document.getElementById('typingTextDisplay');
+    const typingInput = document.getElementById('typingInput');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const wpmDisplay = document.getElementById('wpmDisplay');
+    const correctWordsDisplay = document.getElementById('correctWordsDisplay');
+    const incorrectWordsDisplay = document.getElementById('incorrectWordsDisplay');
+    const accuracyDisplay = document.getElementById('accuracyDisplay');
+    const restartTypingBtn = document.getElementById('restartTypingBtn');
+
+    // বাংলা এবং ইংরেজি অনুচ্ছেদের নমুনা
+    const paragraphs = {
+        bn: [
+            "বাংলা আমার মাতৃভাষা এবং আমি এই ভাষাকে অনেক ভালোবাসি। এই ভাষার জন্য আমাদের পূর্বপুরুষেরা রক্ত দিয়েছেন। একুশে ফেব্রুয়ারি আমাদের জন্য একটি গর্বের দিন।",
+            "বাংলাদেশ একটি সুন্দর দেশ। এখানে ছয়টি ঋতু পর্যায়ক্রমে আসে। প্রতিটি ঋতুরই নিজস্ব সৌন্দর্য ও বৈশিষ্ট্য রয়েছে। বর্ষাকালে প্রচুর বৃষ্টিপাত হয় এবং নদনদী পানিতে ভরে যায়।",
+            "তথ্যপ্রযুক্তি আমাদের জীবনকে অনেক সহজ করে দিয়েছে। ইন্টারনেট ব্যবহার করে আমরা বিশ্বের যেকোনো প্রান্তের মানুষের সাথে যোগাযোগ করতে পারি। শিক্ষা, স্বাস্থ্য, এবং বিনোদনের ক্ষেত্রেও এর ব্যাপক প্রভাব রয়েছে।"
+        ],
+        en: [
+            "The quick brown fox jumps over the lazy dog. This sentence contains all the letters of the English alphabet. It is often used for practicing typing.",
+            "Technology has revolutionized the way we live and work. The internet connects billions of people worldwide, providing access to information and endless opportunities.",
+            "To be successful in life, one needs dedication, hard work, and perseverance. Challenges are a part of the journey, but they make us stronger and more resilient."
+        ]
+    };
+
+    let timer;
+    let totalTime = parseInt(typingTimeSelect.value) * 60;
+    let timeRemaining = totalTime;
+    let isTestActive = false;
+    let typedChars = 0;
+    let correctChars = 0;
+    let incorrectChars = 0;
+
+    // টেস্ট শুরু বা রিসেট করার ফাংশন
+    function initializeTest() {
+        // চলমান টাইমার বন্ধ করা
+        clearInterval(timer);
+        isTestActive = false;
+
+        // সেটিংস থেকে মান নেওয়া
+        const selectedLanguage = typingLanguageSelect.value;
+        totalTime = parseInt(typingTimeSelect.value) * 60;
+        timeRemaining = totalTime;
+
+        // ইনপুট এবং পরিসংখ্যান রিসেট করা
+        typingInput.value = '';
+        typingInput.disabled = false;
+        typedChars = 0;
+        correctChars = 0;
+        incorrectChars = 0;
+
+        // একটি নতুন অনুচ্ছেদ লোড করা
+        const availableParagraphs = paragraphs[selectedLanguage];
+        const randomIndex = Math.floor(Math.random() * availableParagraphs.length);
+        const selectedParagraph = availableParagraphs[randomIndex];
+
+        // প্রতিটি অক্ষরকে একটি span-এ ভাগ করে প্রদর্শন করা
+        typingTextDisplay.innerHTML = selectedParagraph.split('').map(char => `<span>${char}</span>`).join('');
+        const spans = typingTextDisplay.querySelectorAll('span');
+        if (spans.length > 0) {
+            spans[0].classList.add('current'); // প্রথম অক্ষরকে বর্তমান হিসেবে চিহ্নিত করা
+        }
+
+        // পরিসংখ্যান প্রদর্শন রিসেট করা
+        updateTimerDisplay();
+        wpmDisplay.innerText = '0';
+        correctWordsDisplay.innerText = '0';
+        incorrectWordsDisplay.innerText = '0';
+        accuracyDisplay.innerText = '100%';
+    }
+
+    // টাইমার প্রদর্শন আপডেট করার ফাংশন
+    function updateTimerDisplay() {
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        timerDisplay.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    // টাইপিং ইনপুট হ্যান্ডেল করার ফাংশন
+    function handleTypingInput() {
+        if (!isTestActive && timeRemaining > 0) {
+            startTimer();
+            isTestActive = true;
+        }
+
+        const spans = typingTextDisplay.querySelectorAll('span');
+        const inputValue = typingInput.value;
+        const currentTypedChar = inputValue[inputValue.length - 1];
+
+        // যদি ব্যবহারকারী ব্যাকস্পেস চাপে
+        if (inputValue.length < typedChars) {
+            typedChars--;
+            spans[typedChars].classList.remove('correct', 'incorrect', 'current');
+            if (typedChars > 0) {
+                 spans[typedChars - 1].classList.remove('correct', 'incorrect');
+            }
+            spans[typedChars].classList.add('current');
+            return;
+        }
+        
+        const currentOriginalChar = spans[typedChars].innerText;
+
+        if (currentTypedChar === currentOriginalChar) {
+            spans[typedChars].classList.add('correct');
+            correctChars++;
+        } else {
+            spans[typedChars].classList.add('incorrect');
+            incorrectChars++;
+        }
+
+        spans[typedChars].classList.remove('current');
+        typedChars++;
+
+        if (typedChars < spans.length) {
+            spans[typedChars].classList.add('current');
+        } else {
+            // অনুচ্ছেদ শেষ হলে টেস্ট শেষ করা
+            endTest();
+        }
+        
+        updateStats();
+    }
+
+    // টাইমার শুরু করার ফাংশন
+    function startTimer() {
+        timer = setInterval(() => {
+            timeRemaining--;
+            updateTimerDisplay();
+            updateStats();
+            if (timeRemaining <= 0) {
+                endTest();
+            }
+        }, 1000);
+    }
+    
+    // পরিসংখ্যান আপডেট করার ফাংশন
+    function updateStats() {
+        const totalTyped = correctChars + incorrectChars;
+        if (totalTyped === 0) return;
+
+        // WPM (Words Per Minute) গণনা
+        const timeElapsedInMinutes = (totalTime - timeRemaining) / 60;
+        if (timeElapsedInMinutes > 0) {
+            const grossWPM = (typedChars / 5) / timeElapsedInMinutes;
+            wpmDisplay.innerText = Math.round(grossWPM > 0 ? grossWPM : 0);
+        }
+
+        // নির্ভুলতা গণনা
+        const accuracy = (correctChars / typedChars) * 100;
+        accuracyDisplay.innerText = `${Math.round(accuracy)}%`;
+        
+        // সঠিক এবং ভুল শব্দ গণনা (আনুমানিক)
+        const text = typingTextDisplay.innerText.substring(0, typedChars);
+        const words = text.split(' ').filter(word => word !== '');
+        
+        let correctWords = 0;
+        let incorrectWords = 0;
+        const typedWords = typingInput.value.trim().split(' ');
+        const originalWords = typingTextDisplay.innerText.split(' ');
+
+        typedWords.forEach((word, index) => {
+            if (word === originalWords[index]) {
+                correctWords++;
+            } else {
+                incorrectWords++;
+            }
+        });
+
+        correctWordsDisplay.innerText = correctWords;
+        incorrectWordsDisplay.innerText = incorrectWords;
+    }
+
+
+    // টেস্ট শেষ করার ফাংশন
+    function endTest() {
+        clearInterval(timer);
+        isTestActive = false;
+        typingInput.disabled = true;
+        showCustomAlert('টাইপিং টেস্ট শেষ হয়েছে!');
+        updateStats(); // চূড়ান্ত ফলাফল গণনা
+    }
+
+    // ইভেন্ট লিসেনার যোগ করা
+    if (typingTestTab) {
+        typingTestTab.addEventListener('click', () => {
+             showTab('typingTest'); // showTab ফাংশনটি আপনার মূল ফাইলে আছে বলে ধরে নিচ্ছি
+             initializeTest();
+        });
+    }
+    
+    if (restartTypingBtn) {
+        restartTypingBtn.addEventListener('click', initializeTest);
+    }
+    
+    if (typingInput) {
+        typingInput.addEventListener('input', handleTypingInput);
+    }
+    
+    if (typingLanguageSelect) {
+        typingLanguageSelect.addEventListener('change', initializeTest);
+    }
+    
+    if (typingTimeSelect) {
+        typingTimeSelect.addEventListener('change', initializeTest);
+    }
+
+    // পৃষ্ঠা লোড হওয়ার সাথে সাথে প্রথমবার টেস্ট শুরু করা
+    // শুধুমাত্র টাইপিং টেস্ট ট্যাবটি সক্রিয় থাকলেই এটি চালু হবে
+    if (typingTestContent && typingTestContent.classList.contains('active')) {
+        initializeTest();
+    }
+});
+	
+	
+	
         // ====================================================================
         // START: DATE AND TIME BANNER SCRIPT (নতুন যুক্ত করা হয়েছে)
         // ====================================================================
@@ -4011,7 +4424,7 @@
                 const wordMeaningTab = document.getElementById('wordMeaningTab');
                 const ttsTab = document.getElementById('ttsTab'); // TTS ট্যাব
                 const sttTab = document.getElementById('sttTab'); // STT ট্যাব
-
+				const typingTestTab = document.getElementById('typingTestTab'); // এই লাইনটি যোগ করুন
                 const basicCalculatorContent = document.getElementById('basicCalculatorContent');
                 const ageCalculatorContent = document.getElementById('ageCalculatorContent');
                 const dateCalculatorContent = document.getElementById('dateCalculatorContent');
@@ -4064,63 +4477,65 @@
 
 
                 function showTab(tabId) {
-                    // সমস্ত ট্যাব বোতাম থেকে 'active' ক্লাস সরিয়ে দিন
-                    [basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, textAssistantTab, allFeaturesTab].forEach(tab => {
-                        if (tab) tab.classList.remove('active');
-                    });
+    // সমস্ত ট্যাব বোতাম থেকে 'active' ক্লাস সরিয়ে দিন
+    [basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, typingTestTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, textAssistantTab, allFeaturesTab].forEach(tab => {
+        if (tab) tab.classList.remove('active');
+    });
 
-                    // সমস্ত কন্টেন্ট বিভাগ লুকান
-                    [basicCalculatorContent, ageCalculatorContent, dateCalculatorContent, scientificCalculatorContent, newsContent, converterContent, measurementContent, spellCheckerContent, textBeautifierContent, wordMeaningContent, textToSpeechContent, speechToTextContent, textAssistantContent, allFeaturesContent].forEach(content => {
-                        if (content) content.classList.remove('active');
-                    });
+    // সমস্ত কন্টেন্ট বিভাগ লুকান
+    [basicCalculatorContent, ageCalculatorContent, dateCalculatorContent, scientificCalculatorContent, newsContent, converterContent, measurementContent, typingTestContent, spellCheckerContent, textBeautifierContent, wordMeaningContent, textToSpeechContent, speechToTextContent, textAssistantContent, allFeaturesContent].forEach(content => {
+        if (content) content.classList.remove('active');
+    });
 
-                    // নির্বাচিত ট্যাব সক্রিয় করুন এবং এর কন্টেন্ট দেখান
-                    if (tabId === 'basic' && basicCalcTab && basicCalculatorContent) {
-                        basicCalcTab.classList.add('active');
-                        basicCalculatorContent.classList.add('active');
-                    } else if (tabId === 'age' && ageCalcTab && ageCalculatorContent) {
-                        ageCalcTab.classList.add('active');
-                        ageCalculatorContent.classList.add('active');
-                    } else if (tabId === 'date' && dateCalcTab && dateCalculatorContent) {
-                        dateCalcTab.classList.add('active');
-                        dateCalculatorContent.classList.add('active');
-                    } else if (tabId === 'scientific' && scientificCalcTab && scientificCalculatorContent) {
-                        scientificCalcTab.classList.add('active');
-                        scientificCalculatorContent.classList.add('active');
-                    } else if (tabId === 'news' && newsTab && newsContent) {
-                        newsTab.classList.add('active');
-                        newsContent.classList.add('active');
-                    } else if (tabId === 'converter' && converterTab && converterContent) {
-                        converterTab.classList.add('active');
-                        converterContent.classList.add('active');
-                    } else if (tabId === 'measurement' && measurementTab && measurementContent) { // Add this block
-                        measurementTab.classList.add('active');
-                        measurementContent.classList.add('active');
-                    }
-                    else if (tabId === 'textAssistant' && textAssistantTab && textAssistantContent) {
-                        textAssistantTab.classList.add('active');
-                        textAssistantContent.classList.add('active');
-                    } else if (tabId === 'allFeatures' && allFeaturesTab && allFeaturesContent) {
-                        allFeaturesTab.classList.add('active');
-                        allFeaturesContent.classList.add('active');
-                    } else if (tabId === 'spellCheck' && spellCheckTab && spellCheckerContent) {
-                        spellCheckTab.classList.add('active');
-                        spellCheckerContent.classList.add('active');
-                    } else if (tabId === 'beautify' && textBeautifierTab && textBeautifierContent) {
-                        textBeautifierTab.classList.add('active');
-                        textBeautifierContent.classList.add('active');
-                    } else if (tabId === 'meaning' && wordMeaningTab && wordMeaningContent) {
-                        wordMeaningTab.classList.add('active');
-                        wordMeaningContent.classList.add('active');
-                    } else if (tabId === 'tts' && ttsTab && textToSpeechContent) { // TTS ট্যাব লজিক
-                        ttsTab.classList.add('active');
-                        textToSpeechContent.classList.add('active');
-                    } else if (tabId === 'stt' && sttTab && speechToTextContent) { // STT ট্যাব লজিক
-                        sttTab.classList.add('active');
-                        speechToTextContent.classList.add('active');
-                    }
-                    console.log(`ট্যাব পরিবর্তন করা হয়েছে: ${tabId}`);
-                }
+    // নির্বাচিত ট্যাব সক্রিয় করুন এবং এর কন্টেন্ট দেখান
+    if (tabId === 'basic' && basicCalcTab && basicCalculatorContent) {
+        basicCalcTab.classList.add('active');
+        basicCalculatorContent.classList.add('active');
+    } else if (tabId === 'age' && ageCalcTab && ageCalculatorContent) {
+        ageCalcTab.classList.add('active');
+        ageCalculatorContent.classList.add('active');
+    } else if (tabId === 'date' && dateCalcTab && dateCalculatorContent) {
+        dateCalcTab.classList.add('active');
+        dateCalculatorContent.classList.add('active');
+    } else if (tabId === 'scientific' && scientificCalcTab && scientificCalculatorContent) {
+        scientificCalcTab.classList.add('active');
+        scientificCalculatorContent.classList.add('active');
+    } else if (tabId === 'news' && newsTab && newsContent) {
+        newsTab.classList.add('active');
+        newsContent.classList.add('active');
+    } else if (tabId === 'converter' && converterTab && converterContent) {
+        converterTab.classList.add('active');
+        converterContent.classList.add('active');
+    } else if (tabId === 'measurement' && measurementTab && measurementContent) { 
+        measurementTab.classList.add('active');
+        measurementContent.classList.add('active');
+    } else if (tabId === 'typingTest' && typingTestTab && typingTestContent) { // নতুন যুক্ত করা অংশ
+        typingTestTab.classList.add('active');
+        typingTestContent.classList.add('active');
+    } else if (tabId === 'textAssistant' && textAssistantTab && textAssistantContent) {
+        textAssistantTab.classList.add('active');
+        textAssistantContent.classList.add('active');
+    } else if (tabId === 'allFeatures' && allFeaturesTab && allFeaturesContent) {
+        allFeaturesTab.classList.add('active');
+        allFeaturesContent.classList.add('active');
+    } else if (tabId === 'spellCheck' && spellCheckTab && spellCheckerContent) {
+        spellCheckTab.classList.add('active');
+        spellCheckerContent.classList.add('active');
+    } else if (tabId === 'beautify' && textBeautifierTab && textBeautifierContent) {
+        textBeautifierTab.classList.add('active');
+        textBeautifierContent.classList.add('active');
+    } else if (tabId === 'meaning' && wordMeaningTab && wordMeaningContent) {
+        wordMeaningTab.classList.add('active');
+        wordMeaningContent.classList.add('active');
+    } else if (tabId === 'tts' && ttsTab && textToSpeechContent) { 
+        ttsTab.classList.add('active');
+        textToSpeechContent.classList.add('active');
+    } else if (tabId === 'stt' && sttTab && speechToTextContent) { 
+        sttTab.classList.add('active');
+        speechToTextContent.classList.add('active');
+    }
+    console.log(`ট্যাব পরিবর্তন করা হয়েছে: ${tabId}`);
+}
 
 
 
@@ -4136,6 +4551,7 @@
                 if (wordMeaningTab) wordMeaningTab.addEventListener('click', () => showTab('meaning'));
                 if (ttsTab) ttsTab.addEventListener('click', () => showTab('tts')); // TTS ট্যাব ইভেন্ট
                 if (sttTab) sttTab.addEventListener('click', () => showTab('stt')); // STT ট্যাব ইভেন্ট
+				if (typingTestTab) typingTestTab.addEventListener('click', () => showTab('typingTest')); // এই লাইনটি যোগ করুন
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
                 if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
 
