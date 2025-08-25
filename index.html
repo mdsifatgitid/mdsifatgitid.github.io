@@ -2708,6 +2708,16 @@
                             <option value="custom">কাস্টম টেক্সট</option>
                         </select>
                     </div>
+                    <div>
+                        <label for="timeSelection">সময় নির্বাচন:</label>
+                        <select id="timeSelection">
+                            <option value="0">আনলিমিটেড</option>
+                            <option value="60">১ মিনিট</option>
+                            <option value="120">২ মিনিট</option>
+                            <option value="180">৩ মিনিট</option>
+                            <option value="300">৫ মিনিট</option>
+                        </select>
+                    </div>
                 </div>
                 <textarea id="custom-text-input" class="hidden" placeholder="এখানে আপনার কাস্টম টেক্সট লিখুন..."></textarea>
                 <div id="typingTextDisplay" class="typing-text-display">
@@ -2716,8 +2726,12 @@
                 <textarea id="typingInput" class="typing-input" placeholder="এখানে টাইপ করুন..." disabled></textarea>
                 <div id="typingStats" class="typing-stats">
                     <div class="stat-item">
-                        <h4>টাইপ করা হয়েছে</h4>
-                        <p id="timerDisplay">০০:০০</p>
+                        <h4>অতিবাহিত সময়</h4>
+                        <p id="elapsedTimeDisplay">০০:০০</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>অবশিষ্ট সময়</h4>
+                        <p id="remainingTimeDisplay">০০:০০</p>
                     </div>
                     <div class="stat-item">
                         <h4>WPM</h4>
@@ -3043,6 +3057,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // নতুন যুক্ত করা উপাদান
     const textSelection = document.getElementById('textSelection');
+    const timeSelection = document.getElementById('timeSelection'); // নতুন টাইম সিলেক্ট
     const customTextInputContainer = document.getElementById('custom-text-input');
     const clearTypingBtn = document.getElementById('clearTypingBtn');
     const totalWordsDisplay = document.getElementById('totalWordsDisplay');
@@ -3050,7 +3065,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // আগের উপাদান
     const typingTextDisplay = document.getElementById('typingTextDisplay');
     const typingInput = document.getElementById('typingInput');
-    const timerDisplay = document.getElementById('timerDisplay');
+    const elapsedTimeDisplay = document.getElementById('elapsedTimeDisplay'); // অতিবাহিত সময়
+    const remainingTimeDisplay = document.getElementById('remainingTimeDisplay'); // অবশিষ্ট সময়
     const wpmDisplay = document.getElementById('wpmDisplay');
     const correctWordsDisplay = document.getElementById('correctWordsDisplay');
     const incorrectWordsDisplay = document.getElementById('incorrectWordsDisplay');
@@ -3068,7 +3084,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     let timer;
-    let timeElapsed = 0; // অতিবাহিত সময় গণনা করার জন্য
+    let timeElapsed = 0; // অতিবাহিত সময়
+    let totalTestTime = 0; // মোট পরীক্ষার সময় (সেকেন্ডে)
     let isTestActive = false;
     let typedChars = 0;
     let correctChars = 0;
@@ -3079,6 +3096,9 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(timer); // চলমান টাইমার বন্ধ করা
         isTestActive = false;
         timeElapsed = 0;
+
+        // টাইম সিলেক্ট থেকে মোট সময় সেট করা
+        totalTestTime = parseInt(timeSelection.value, 10);
 
         // ইনপুট এবং পরিসংখ্যান রিসেট করা
         typingInput.value = '';
@@ -3109,7 +3129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // পরিসংখ্যান প্রদর্শন রিসেট করা
-        updateTimerDisplay();
+        updateTimeDisplays();
         wpmDisplay.innerText = '0';
         correctWordsDisplay.innerText = '0';
         incorrectWordsDisplay.innerText = '0';
@@ -3117,11 +3137,25 @@ document.addEventListener('DOMContentLoaded', () => {
         totalWordsDisplay.innerText = '0'; // মোট শব্দ রিসেট
     }
 
-    // টাইমার প্রদর্শন আপডেট করার ফাংশন (স্টপওয়াচ)
-    function updateTimerDisplay() {
-        const minutes = Math.floor(timeElapsed / 60);
-        const seconds = timeElapsed % 60;
-        timerDisplay.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    // টাইমার প্রদর্শন আপডেট করার ফাংশন (অতিবাহিত এবং অবশিষ্ট)
+    function updateTimeDisplays() {
+        const elapsedMinutes = Math.floor(timeElapsed / 60);
+        const elapsedSeconds = timeElapsed % 60;
+        elapsedTimeDisplay.innerText = `${elapsedMinutes.toString().padStart(2, '0')}:${elapsedSeconds.toString().padStart(2, '0')}`;
+
+        if (totalTestTime > 0) {
+            const remainingTime = totalTestTime - timeElapsed;
+            if (remainingTime <= 0) {
+                remainingTimeDisplay.innerText = '০০:০০';
+                endTest();
+                return;
+            }
+            const remainingMinutes = Math.floor(remainingTime / 60);
+            const remainingSeconds = remainingTime % 60;
+            remainingTimeDisplay.innerText = `${remainingMinutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        } else {
+            remainingTimeDisplay.innerText = 'আনলিমিটেড'; // আনলিমিটেড মোডের জন্য
+        }
     }
 
     // টাইপিং ইনপুট হ্যান্ডেল করার ফাংশন
@@ -3136,18 +3170,27 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // যদি ব্যবহারকারী ব্যাকস্পেস চাপে
         if (inputValue.length < typedChars) {
-            typedChars--;
-            spans[typedChars].classList.remove('correct', 'incorrect', 'current');
             if (typedChars > 0) {
-                 spans[typedChars - 1].classList.remove('correct', 'incorrect');
-            }
-            if (spans[typedChars]) {
-                 spans[typedChars].classList.add('current');
+                typedChars--;
+                spans[typedChars].classList.remove('correct', 'incorrect', 'current');
+                // Ensure the previous char is also cleared of 'current' if it exists
+                if (typedChars > 0) {
+                     spans[typedChars - 1].classList.remove('correct', 'incorrect');
+                }
+                // Add 'current' to the char at the new typedChars position
+                if (spans[typedChars]) {
+                     spans[typedChars].classList.add('current');
+                }
             }
             updateStats();
             return;
         }
         
+        // যদি ইনপুটটি অনুচ্ছেদের দৈর্ঘ্যের বেশি হয়ে যায়, তাহলে কিছু করবেন না
+        if (typedChars >= spans.length) {
+            return;
+        }
+
         const currentOriginalChar = spans[typedChars].innerText;
         const currentTypedChar = inputValue[typedChars];
 
@@ -3176,8 +3219,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function startTimer() {
         timer = setInterval(() => {
             timeElapsed++;
-            updateTimerDisplay();
+            updateTimeDisplays();
             updateStats(); // প্রতি সেকেন্ডে WPM আপডেট করতে
+            
+            // যদি লিমিটেড টাইম মোড হয় এবং সময় শেষ হয়
+            if (totalTestTime > 0 && timeElapsed >= totalTestTime) {
+                endTest();
+            }
         }, 1000);
     }
     
@@ -3194,7 +3242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // নির্ভুলতা গণনা
-        const accuracy = (correctChars / typedChars) * 100;
+        const accuracy = (typedChars > 0) ? (correctChars / typedChars) * 100 : 100;
         accuracyDisplay.innerText = `${Math.round(accuracy)}%`;
         
         // সঠিক, ভুল এবং মোট শব্দ গণনা
@@ -3256,6 +3304,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             initializeTest();
         });
+    }
+
+    // টাইম সিলেক্ট পরিবর্তনের জন্য ইভেন্ট লিসেনার
+    if (timeSelection) {
+        timeSelection.addEventListener('change', initializeTest);
     }
     
     // পৃষ্ঠা লোড হওয়ার সাথে সাথে প্রথমবার টেস্ট শুরু করা
@@ -3425,7 +3478,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // ব্যানার আপডেট করুন
-            bannerElement.innerHTML = `আজ <span class="text-green-700 dark:text-green-300">${dayOfWeekBengali}</span>, <span class="text-blue-700 dark:text-blue-300">${gregorianDateString} ইং</span>, <span class="text-green-700 dark:text-green-300">${bengaliDateString.replace('বঙ্গাব্দ', '')} বঙ্গাব্দ</span>, <span class="text-purple-700 dark:text-purple-300">${hijriDateString}</span>, <span class="text-green-700 dark:text-green-300">সময়:</span> <span class="text-green-700 dark:text-green-300">${timeString}</span>`;
+            bannerElement.innerHTML = `<span class="text-green-700 dark:text-green-300">আজ</span> <span class="text-green-700 dark:text-green-300">${dayOfWeekBengali}</span>, <span class="text-blue-700 dark:text-blue-300">${gregorianDateString} ইং</span>, <span class="text-green-700 dark:text-green-300">${bengaliDateString.replace('বঙ্গাব্দ', '')} বঙ্গাব্দ</span>, <span class="text-purple-700 dark:text-purple-300">${hijriDateString}</span>, <span class="text-green-700 dark:text-green-300">সময়:</span> <span class="text-green-700 dark:text-green-300">${timeString}</span>`;
         }
 
         // প্রতি সেকেন্ডে ব্যানার আপডেট করুন
