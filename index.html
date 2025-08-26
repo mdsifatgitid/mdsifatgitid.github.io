@@ -3063,294 +3063,308 @@
     <script>
 	
 	
- document.addEventListener('DOMContentLoaded', () => {
-     // Typing Test Tab এর জন্য প্রয়োজনীয় সকল DOM উপাদান নির্বাচন করা
-     const typingTestTab = document.getElementById('typingTestTab');
-     const typingTestContent = document.getElementById('typingTestContent');
-    
-     // নতুন যুক্ত করা উপাদান
-     const textSelection = document.getElementById('textSelection');
-     const timeSelection = document.getElementById('timeSelection');
-     const customTextInputContainer = document.getElementById('custom-text-input');
-     const clearTypingBtn = document.getElementById('clearTypingBtn');
-     const totalWordsDisplay = document.getElementById('totalWordsDisplay');
+document.addEventListener('DOMContentLoaded', () => {
+    // Typing Test Tab এর জন্য প্রয়োজনীয় সকল DOM উপাদান নির্বাচন করা
+    const typingTestTab = document.getElementById('typingTestTab');
+    const typingTestContent = document.getElementById('typingTestContent');
+    
+    // নতুন যুক্ত করা উপাদান
+    const textSelection = document.getElementById('textSelection');
+    const timeSelection = document.getElementById('timeSelection');
+    const customTextInputContainer = document.getElementById('custom-text-input');
+    const clearTypingBtn = document.getElementById('clearTypingBtn');
+    const totalWordsDisplay = document.getElementById('totalWordsDisplay');
 
-     // আগের উপাদান
-     const typingTextDisplay = document.getElementById('typingTextDisplay');
-     const typingInput = document.getElementById('typingInput');
-     const elapsedTimeDisplay = document.getElementById('elapsedTimeDisplay');
-     const remainingTimeDisplay = document.getElementById('remainingTimeDisplay');
-     const wpmDisplay = document.getElementById('wpmDisplay');
-     const correctWordsDisplay = document.getElementById('correctWordsDisplay');
-     const incorrectWordsDisplay = document.getElementById('incorrectWordsDisplay');
-     const accuracyDisplay = document.getElementById('accuracyDisplay');
-     const restartTypingBtn = document.getElementById('restartTypingBtn');
-     const pauseResumeTypingBtn = document.getElementById('pauseResumeTypingBtn'); // নতুন পজ/রিজিউম বাটন
+    // আগের উপাদান
+    const typingTextDisplay = document.getElementById('typingTextDisplay');
+    const typingInput = document.getElementById('typingInput');
+    const elapsedTimeDisplay = document.getElementById('elapsedTimeDisplay');
+    const remainingTimeDisplay = document.getElementById('remainingTimeDisplay');
+    const wpmDisplay = document.getElementById('wpmDisplay');
+    const correctWordsDisplay = document.getElementById('correctWordsDisplay');
+    const incorrectWordsDisplay = document.getElementById('incorrectWordsDisplay');
+    const accuracyDisplay = document.getElementById('accuracyDisplay');
+    const restartTypingBtn = document.getElementById('restartTypingBtn');
+    const pauseResumeTypingBtn = document.getElementById('pauseResumeTypingBtn'); // পজ/রিজিউম বাটন
 
-     // বাংলা এবং ইংরেজি অনুচ্ছেদের নমুনা
-     const paragraphs = {
-         bn_1: "বাংলা আমার মাতৃভাষা এবং আমি এই ভাষাকে অনেক ভালোবাসি। এই ভাষার জন্য আমাদের পূর্বপুরুষেরা রক্ত দিয়েছেন। একুশে ফেব্রুয়ারি আমাদের জন্য একটি গর্বের দিন।",
-         bn_2: "বাংলাদেশ একটি সুন্দর দেশ। এখানে ছয়টি ঋতু পর্যায়ক্রমে আসে। প্রতিটি ঋতুরই নিজস্ব সৌন্দর্য ও বৈশিষ্ট্য রয়েছে। বর্ষাকালে প্রচুর বৃষ্টিপাত হয় এবং নদনদী পানিতে ভরে যায়।",
-         bn_3: "তথ্যপ্রযুক্তি আমাদের জীবনকে অনেক সহজ করে দিয়েছে। ইন্টারনেট ব্যবহার করে আমরা বিশ্বের যেকোনো প্রান্তের মানুষের সাথে যোগাযোগ করতে পারি। শিক্ষা, স্বাস্থ্য, এবং বিনোদনের ক্ষেত্রেও এর ব্যাপক প্রভাব রয়েছে।",
-         en_1: "The quick brown fox jumps over the lazy dog. This sentence contains all the letters of the English alphabet. It is often used for practicing typing.",
-         en_2: "Technology has revolutionized the way we live and work. The internet connects billions of people worldwide, providing access to information and endless opportunities.",
-         en_3: "To be successful in life, one needs dedication, hard work, and perseverance. Challenges are a part of the journey, but they make us stronger and more resilient."
-     };
+    // বাংলা এবং ইংরেজি অনুচ্ছেদের নমুনা
+    const paragraphs = {
+        bn_1: "বাংলা আমার মাতৃভাষা এবং আমি এই ভাষাকে অনেক ভালোবাসি। এই ভাষার জন্য আমাদের পূর্বপুরুষেরা রক্ত দিয়েছেন। একুশে ফেব্রুয়ারি আমাদের জন্য একটি গর্বের দিন।",
+        bn_2: "বাংলাদেশ একটি সুন্দর দেশ। এখানে ছয়টি ঋতু পর্যায়ক্রমে আসে। প্রতিটি ঋতুরই নিজস্ব সৌন্দর্য ও বৈশিষ্ট্য রয়েছে। বর্ষাকালে প্রচুর বৃষ্টিপাত হয় এবং নদনদী পানিতে ভরে যায়।",
+        bn_3: "তথ্যপ্রযুক্তি আমাদের জীবনকে অনেক সহজ করে দিয়েছে। ইন্টারনেট ব্যবহার করে আমরা বিশ্বের যেকোনো প্রান্তের মানুষের সাথে যোগাযোগ করতে পারি। শিক্ষা, স্বাস্থ্য, এবং বিনোদনের ক্ষেত্রেও এর ব্যাপক প্রভাব রয়েছে।",
+        en_1: "The quick brown fox jumps over the lazy dog. This sentence contains all the letters of the English alphabet. It is often used for practicing typing.",
+        en_2: "Technology has revolutionized the way we live and work. The internet connects billions of people worldwide, providing access to information and endless opportunities.",
+        en_3: "To be successful in life, one needs dedication, hard work, and perseverance. Challenges are a part of the journey, but they make us stronger and more resilient."
+    };
 
-     let timer;
-     let timeElapsed = 0;
-     let totalTestTime = 0;
-     let isTestActive = false;
-     let isPaused = false; // নতুন স্টেট: টেস্ট পজ করা হয়েছে কিনা তা ট্র্যাক করতে
-     let typedChars = 0;
-     let correctChars = 0;
-     let incorrectChars = 0;
-    
-     // টেস্ট শুরু বা রিসেট করার ফাংশন
-     function initializeTest() {
-         clearInterval(timer);
-         isTestActive = false;
-         isPaused = false; // পজ স্টেট রিসেট
-         timeElapsed = 0;
+    let timer;
+    let timeElapsed = 0;
+    let totalTestTime = 0;
+    let isTestActive = false;
+    let isPaused = false; // টেস্ট পজ করা হয়েছে কিনা তা ট্র্যাক করতে
+    let correctChars = 0;
+    let incorrectChars = 0;
+    
+    // টেস্ট শুরু বা রিসেট করার ফাংশন
+    function initializeTest() {
+        clearInterval(timer);
+        isTestActive = false;
+        isPaused = false; // পজ স্টেট রিসেট
+        timeElapsed = 0;
 
-         totalTestTime = parseInt(timeSelection.value, 10);
+        totalTestTime = parseInt(timeSelection.value, 10);
 
-         typingInput.value = '';
-         typingInput.disabled = false;
-         typedChars = 0;
-         correctChars = 0;
-         incorrectChars = 0;
+        typingInput.value = '';
+        typingInput.disabled = false;
+        correctChars = 0;
+        incorrectChars = 0;
 
-         const selection = textSelection.value;
-         let selectedParagraph = '';
+        const selection = textSelection.value;
+        let selectedParagraph = '';
 
-         if (selection === 'custom') {
-             selectedParagraph = customTextInputContainer.value.trim();
-             if (!selectedParagraph) {
-                 showCustomAlert('অনুগ্রহ করে কাস্টম টেক্সট ইনপুট করুন। ডিফল্ট অনুচ্ছেদ লোড করা হচ্ছে।');
-                 selectedParagraph = paragraphs['bn_1'];
-             }
-         } else {
-             selectedParagraph = paragraphs[selection];
-         }
+        if (selection === 'custom') {
+            selectedParagraph = customTextInputContainer.value.trim();
+            if (!selectedParagraph) {
+                showCustomAlert('অনুগ্রহ করে কাস্টম টেক্সট ইনপুট করুন। ডিফল্ট অনুচ্ছেদ লোড করা হচ্ছে।');
+                selectedParagraph = paragraphs['bn_1'];
+            }
+        } else {
+            selectedParagraph = paragraphs[selection];
+        }
 
-         typingTextDisplay.innerHTML = selectedParagraph.split('').map(char => `<span>${char}</span>`).join('');
-         const spans = typingTextDisplay.querySelectorAll('span');
-         if (spans.length > 0) {
-             spans[0].classList.add('current');
-         }
+        typingTextDisplay.innerHTML = selectedParagraph.split('').map(char => `<span>${char}</span>`).join('');
+        const spans = typingTextDisplay.querySelectorAll('span');
+        if (spans.length > 0) {
+            spans[0].classList.add('current');
+        }
 
-         updateTimeDisplays();
-         wpmDisplay.innerText = '0';
-         correctWordsDisplay.innerText = '0';
-         incorrectWordsDisplay.innerText = '0';
-         accuracyDisplay.innerText = '100%';
-         totalWordsDisplay.innerText = '0';
+        updateTimeDisplays();
+        wpmDisplay.innerText = '0';
+        correctWordsDisplay.innerText = '0';
+        incorrectWordsDisplay.innerText = '0';
+        accuracyDisplay.innerText = '100%';
+        totalWordsDisplay.innerText = '0';
 
-         // পজ/রিজিউম বাটন রিসেট করা
-         if (pauseResumeTypingBtn) {
-             pauseResumeTypingBtn.innerText = 'থামান';
-             pauseResumeTypingBtn.disabled = true; // টেস্ট শুরু না হওয়া পর্যন্ত নিষ্ক্রিয়
-         }
-     }
+        // পজ/রিজিউম বাটন রিসেট করা
+        if (pauseResumeTypingBtn) {
+            pauseResumeTypingBtn.innerText = 'থামান';
+            pauseResumeTypingBtn.disabled = true; // টেস্ট শুরু না হওয়া পর্যন্ত নিষ্ক্রিয়
+        }
+    }
 
-     // টাইমার প্রদর্শন আপডেট করার ফাংশন
-     function updateTimeDisplays() {
-         const elapsedMinutes = Math.floor(timeElapsed / 60);
-         const elapsedSeconds = timeElapsed % 60;
-         elapsedTimeDisplay.innerText = `${elapsedMinutes.toString().padStart(2, '0')}:${elapsedSeconds.toString().padStart(2, '0')}`;
+    // টাইমার প্রদর্শন আপডেট করার ফাংশন
+    function updateTimeDisplays() {
+        const elapsedMinutes = Math.floor(timeElapsed / 60);
+        const elapsedSeconds = timeElapsed % 60;
+        elapsedTimeDisplay.innerText = `${elapsedMinutes.toString().padStart(2, '0')}:${elapsedSeconds.toString().padStart(2, '0')}`;
 
-         if (totalTestTime > 0) {
-             const remainingTime = totalTestTime - timeElapsed;
-             if (remainingTime <= 0) {
-                 remainingTimeDisplay.innerText = '০০:০০';
-                 endTest();
-                 return;
-             }
-             const remainingMinutes = Math.floor(remainingTime / 60);
-             const remainingSeconds = remainingTime % 60;
-             remainingTimeDisplay.innerText = `${remainingMinutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-         } else {
-             remainingTimeDisplay.innerText = 'আনলিমিটেড';
-         }
-     }
+        if (totalTestTime > 0) {
+            const remainingTime = totalTestTime - timeElapsed;
+            if (remainingTime <= 0) {
+                remainingTimeDisplay.innerText = '০০:০০';
+                if (isTestActive) endTest();
+                return;
+            }
+            const remainingMinutes = Math.floor(remainingTime / 60);
+            const remainingSeconds = remainingTime % 60;
+            remainingTimeDisplay.innerText = `${remainingMinutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        } else {
+            remainingTimeDisplay.innerText = 'আনলিমিটেড';
+        }
+    }
 
-     // টাইপিং ইনপুট হ্যান্ডেল করার ফাংশন
-     function handleTypingInput() {
-         if (isPaused) return; // টেস্ট পজ থাকলে কিছু করবেনা
+    // *** সংশোধিত ফাংশন: handleTypingInput ***
+    // এই ফাংশনটি প্রতিটি ইনপুটের পরে পুরো লেখাটি পুনরায় যাচাই করে,
+    // যা ভুল সংশোধন এবং অক্ষর বাদ পড়ার সমস্যা সমাধান করে।
+    function handleTypingInput() {
+        if (isPaused) return;
 
-         if (!isTestActive) {
-             startTimer();
-             isTestActive = true;
-             if (pauseResumeTypingBtn) pauseResumeTypingBtn.disabled = false; // টেস্ট শুরু হলে বাটন সক্রিয় করুন
-         }
+        // প্রথম অক্ষর টাইপ করার সাথে সাথে টাইমার শুরু করুন
+        if (!isTestActive && typingInput.value.length > 0) {
+            startTimer();
+            isTestActive = true;
+            if (pauseResumeTypingBtn) pauseResumeTypingBtn.disabled = false;
+        }
 
-         const spans = typingTextDisplay.querySelectorAll('span');
-         const inputValue = typingInput.value;
-        
-         if (inputValue.length < typedChars) {
-             if (typedChars > 0) {
-                 typedChars--;
-                 spans[typedChars].classList.remove('correct', 'incorrect', 'current');
-                 if (typedChars > 0) {
-                     spans[typedChars - 1].classList.remove('correct', 'incorrect');
-                 }
-                 if (spans[typedChars]) {
-                     spans[typedChars].classList.add('current');
-                 }
-             }
-             updateStats();
-             return;
-         }
-        
-         if (typedChars >= spans.length) {
-             return;
-         }
+        const spans = Array.from(typingTextDisplay.querySelectorAll('span'));
+        const typedValue = typingInput.value;
+        const typedLength = typedValue.length;
 
-         const currentOriginalChar = spans[typedChars].innerText;
-         const currentTypedChar = inputValue[typedChars];
+        let localCorrectChars = 0;
+        let localIncorrectChars = 0;
 
-         if (currentTypedChar === currentOriginalChar) {
-             spans[typedChars].classList.add('correct');
-             correctChars++;
-         } else {
-             spans[typedChars].classList.add('incorrect');
-             incorrectChars++;
-         }
+        // টাইপ করা সমস্ত অক্ষর পুনরায় মূল্যায়ন করুন
+        spans.forEach((charSpan, index) => {
+            // পূর্ববর্তী অবস্থা পরিষ্কার করুন
+            charSpan.classList.remove('correct', 'incorrect', 'current');
 
-         spans[typedChars].classList.remove('current');
-         typedChars++;
+            if (index < typedLength) {
+                const originalChar = charSpan.innerText;
+                const typedChar = typedValue[index];
+                
+                // *** সমাধান: তুলনার আগে অক্ষর নরম্যালাইজ করা ***
+                // এটি ইউনিকোডের গঠনগত ভিন্নতার (precomposed vs. decomposed) সমস্যা সমাধান করে।
+                // যেমন: 'ড়' এবং 'ড' + '়' এখন একই হিসাবে বিবেচিত হবে।
+                if (originalChar.normalize('NFC') === typedChar.normalize('NFC')) {
+                    charSpan.classList.add('correct');
+                    localCorrectChars++;
+                } else {
+                    charSpan.classList.add('incorrect');
+                    localIncorrectChars++;
+                }
+            }
+        });
 
-         if (typedChars < spans.length) {
-             spans[typedChars].classList.add('current');
-         } else {
-             endTest();
-         }
-        
-         updateStats();
-     }
+        // পরিসংখ্যান গণনার জন্য গ্লোবাল অক্ষরের সংখ্যা আপডেট করুন
+        correctChars = localCorrectChars;
+        incorrectChars = localIncorrectChars;
 
-     // টাইমার শুরু করার ফাংশন
-     function startTimer() {
-         timer = setInterval(() => {
-             timeElapsed++;
-             updateTimeDisplays();
-             updateStats();
-            
-             if (totalTestTime > 0 && timeElapsed >= totalTestTime) {
-                 endTest();
-             }
-         }, 1000);
-     }
+        // কার্সার (বর্তমান অক্ষর) সেট করুন
+        if (typedLength < spans.length) {
+            spans[typedLength].classList.add('current');
+        } 
+        
+        // টেস্ট শেষ হয়েছে কিনা তা পরীক্ষা করুন
+        if (typedLength >= spans.length) {
+            endTest();
+        }
+        
+        updateStats(); // প্রতিটি ইনপুটের পরে পরিসংখ্যান আপডেট করুন
+    }
 
-     // পজ এবং রিজিউম ফাংশন
-     function togglePauseResume() {
-         if (!isTestActive) return; // টেস্ট শুরু না হলে পজ করা যাবে না
+    // টাইমার শুরু করার ফাংশন
+    function startTimer() {
+        timer = setInterval(() => {
+            timeElapsed++;
+            updateTimeDisplays();
+            updateStats();
+            
+            if (totalTestTime > 0 && timeElapsed >= totalTestTime) {
+                endTest();
+            }
+        }, 1000);
+    }
 
-         isPaused = !isPaused;
+    // পজ এবং রিজিউম ফাংশন
+    function togglePauseResume() {
+        if (!isTestActive) return; // টেস্ট শুরু না হলে পজ করা যাবে না
 
-         if (isPaused) {
-             clearInterval(timer);
-             typingInput.disabled = true;
-             pauseResumeTypingBtn.innerText = 'চালু করুন';
-             showCustomAlert('টেস্ট থামানো হয়েছে।');
-         } else {
-             startTimer(); // টাইমার পুনরায় শুরু করুন
-             typingInput.disabled = false;
-             typingInput.focus(); // ইনপুটে ফোকাস ফিরিয়ে আনুন
-             pauseResumeTypingBtn.innerText = 'থামান';
-             showCustomAlert('টেস্ট পুনরায় শুরু হয়েছে।');
-         }
-     }
-    
-     // পরিসংখ্যান আপডেট করার ফাংশন
-     function updateStats() {
-         const totalTyped = correctChars + incorrectChars;
-         if (totalTyped === 0) return;
+        isPaused = !isPaused;
 
-         const timeElapsedInMinutes = timeElapsed / 60;
-         if (timeElapsedInMinutes > 0) {
-             const grossWPM = (typedChars / 5) / timeElapsedInMinutes;
-             wpmDisplay.innerText = Math.round(grossWPM > 0 ? grossWPM : 0);
-         }
+        if (isPaused) {
+            clearInterval(timer);
+            typingInput.disabled = true;
+            pauseResumeTypingBtn.innerText = 'চালু করুন';
+            showCustomAlert('টেস্ট থামানো হয়েছে।');
+        } else {
+            startTimer(); // টাইমার পুনরায় শুরু করুন
+            typingInput.disabled = false;
+            typingInput.focus(); // ইনপুটে ফোকাস ফিরিয়ে আনুন
+            pauseResumeTypingBtn.innerText = 'থামান';
+            showCustomAlert('টেস্ট পুনরায় শুরু হয়েছে।');
+        }
+    }
+    
+    // *** সংশোধিত ফাংশন: updateStats ***
+    // এই ফাংশনটি পরিসংখ্যান গণনার জন্য সঠিক পদ্ধতি ব্যবহার করে।
+    function updateStats() {
+        const totalTypedChars = correctChars + incorrectChars;
 
-         const accuracy = (typedChars > 0) ? (correctChars / typedChars) * 100 : 100;
-         accuracyDisplay.innerText = `${Math.round(accuracy)}%`;
-        
-         const typedWordsArray = typingInput.value.trim().split(/\s+/).filter(Boolean);
-         const originalWords = typingTextDisplay.innerText.substring(0, typedChars).trim().split(/\s+/).filter(Boolean);
-        
-         let correctWords = 0;
-         typedWordsArray.forEach((word, index) => {
-             if (originalWords[index] && word === originalWords[index]) {
-                 correctWords++;
-             }
-         });
+        // Accuracy Calculation
+        const accuracy = (totalTypedChars > 0) ? (correctChars / totalTypedChars) * 100 : 100;
+        accuracyDisplay.innerText = `${Math.round(accuracy)}%`;
 
-         totalWordsDisplay.innerText = typedWordsArray.length;
-         correctWordsDisplay.innerText = correctWords;
-         incorrectWordsDisplay.innerText = typedWordsArray.length - correctWords;
-     }
+        // WPM Calculation
+        const timeElapsedInMinutes = timeElapsed / 60;
+        if (timeElapsedInMinutes > 0) {
+            // WPM সঠিকভাবে টাইপ করা অক্ষরের উপর ভিত্তি করে গণনা করা হয়
+            const netWPM = (correctChars / 5) / timeElapsedInMinutes;
+            wpmDisplay.innerText = Math.round(netWPM > 0 ? netWPM : 0);
+        } else {
+            wpmDisplay.innerText = '0';
+        }
+        
+        // Word Count Calculation
+        const allOriginalWords = typingTextDisplay.innerText.split(/\s+/).filter(Boolean);
+        const typedWordsArray = typingInput.value.trim().split(/\s+/).filter(Boolean);
+        
+        let correctWordsCount = 0;
+        // ব্যবহারকারী যতগুলো শব্দ টাইপ করেছে, ততগুলো শব্দের তুলনা করুন
+        typedWordsArray.forEach((typedWord, index) => {
+            // *** সমাধান: তুলনার আগে শব্দ নরম্যালাইজ করা ***
+            if (index < allOriginalWords.length && typedWord.normalize('NFC') === allOriginalWords[index].normalize('NFC')) {
+                correctWordsCount++;
+            }
+        });
 
-     // টেস্ট শেষ করার ফাংশন
-     function endTest() {
-         clearInterval(timer);
-         isTestActive = false;
-         typingInput.disabled = true;
-         if (pauseResumeTypingBtn) pauseResumeTypingBtn.disabled = true; // টেস্ট শেষে বাটন নিষ্ক্রিয় করুন
-         showCustomAlert('টাইপিং টেস্ট শেষ হয়েছে!');
-         updateStats();
-     }
+        // যদি ইনপুট খালি থাকে, তাহলে ভুল শব্দ ০ দেখান
+        const incorrectWordsCount = typedWordsArray.length > 0 ? typedWordsArray.length - correctWordsCount : 0;
 
-     // ইভেন্ট লিসেনার যোগ করা
-     if (typingTestTab) {
-         typingTestTab.addEventListener('click', () => {
-              showTab('typingTest');
-              initializeTest();
-         });
-     }
-    
-     if (restartTypingBtn) {
-         restartTypingBtn.addEventListener('click', initializeTest);
-     }
-    
-     if (pauseResumeTypingBtn) {
-         pauseResumeTypingBtn.addEventListener('click', togglePauseResume);
-     }
+        totalWordsDisplay.innerText = typedWordsArray.length;
+        correctWordsDisplay.innerText = correctWordsCount;
+        incorrectWordsDisplay.innerText = incorrectWordsCount;
+    }
 
-     if (clearTypingBtn) {
-         clearTypingBtn.addEventListener('click', () => {
-             initializeTest();
-             typingInput.value = '';
-             typingInput.disabled = true;
-             showCustomAlert('টেস্ট রিসেট করা হয়েছে।');
-         });
-     }
-    
-     if (typingInput) {
-         typingInput.addEventListener('input', handleTypingInput);
-     }
-    
-     if (textSelection) {
-         textSelection.addEventListener('change', (e) => {
-             if (e.target.value === 'custom') {
-                 customTextInputContainer.classList.remove('hidden');
-             } else {
-                 customTextInputContainer.classList.add('hidden');
-             }
-             initializeTest();
-         });
-     }
 
-     if (timeSelection) {
-         timeSelection.addEventListener('change', initializeTest);
-     }
-    
-     if (typingTestContent && typingTestContent.classList.contains('active')) {
-         initializeTest();
-     }
+    // টেস্ট শেষ করার ফাংশন
+    function endTest() {
+        clearInterval(timer);
+        isTestActive = false;
+        typingInput.disabled = true;
+        if (pauseResumeTypingBtn) pauseResumeTypingBtn.disabled = true; // টেস্ট শেষে বাটন নিষ্ক্রিয় করুন
+        showCustomAlert('টাইপিং টেস্ট শেষ হয়েছে!');
+        updateStats(); // চূড়ান্ত পরিসংখ্যান আপডেট করুন
+    }
+
+    // ইভেন্ট লিসেনার যোগ করা
+    if (typingTestTab) {
+        typingTestTab.addEventListener('click', () => {
+             showTab('typingTest');
+             initializeTest();
+        });
+    }
+    
+    if (restartTypingBtn) {
+        restartTypingBtn.addEventListener('click', initializeTest);
+    }
+    
+    if (pauseResumeTypingBtn) {
+        pauseResumeTypingBtn.addEventListener('click', togglePauseResume);
+    }
+
+    if (clearTypingBtn) {
+        clearTypingBtn.addEventListener('click', () => {
+            initializeTest();
+            typingInput.value = '';
+            typingInput.disabled = true;
+            showCustomAlert('টেস্ট রিসেট করা হয়েছে।');
+        });
+    }
+    
+    if (typingInput) {
+        typingInput.addEventListener('input', handleTypingInput);
+    }
+    
+    if (textSelection) {
+        textSelection.addEventListener('change', (e) => {
+            if (e.target.value === 'custom') {
+                customTextInputContainer.classList.remove('hidden');
+            } else {
+                customTextInputContainer.classList.add('hidden');
+            }
+            initializeTest();
+        });
+    }
+
+    if (timeSelection) {
+        timeSelection.addEventListener('change', initializeTest);
+    }
+    
+    // যদি টাইপিং টেস্ট ট্যাবটি ডিফল্টভাবে সক্রিয় থাকে, তবে টেস্ট শুরু করুন
+    if (typingTestContent && typingTestContent.classList.contains('active')) {
+        initializeTest();
+    }
  });
-	
 	
 	
         // ====================================================================
