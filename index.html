@@ -3917,13 +3917,18 @@ document.addEventListener('DOMContentLoaded', () => {
             fixAnsiText(false);
         }
 
-        // ====================================================================
+// ====================================================================
         // START: UPDATED FUNCTION (বিজয় থেকে ইউনিকোড)
         // ====================================================================
         function convertRightToLeft() {
             const textAreaLeft = document.getElementById('textAreaLeft');
             const textAreaRight = document.getElementById('textAreaRight');
             let bijoyInput = textAreaRight ? textAreaRight.value : '';
+
+            // ধাপ ০: প্রথমে fixAnsiText ফাংশন কল করুন
+            // showAlert প্যারামিটার false পাঠানো হয়েছে যাতে কোনো পপ-আপ বার্তা না আসে।
+            fixAnsiText(false); 
+            bijoyInput = textAreaRight ? textAreaRight.value : ''; // ফিক্সড টেক্সট পুনরায় লোড করুন
 
             // --- ধাপ ১: বিজয় থেকে ইউনিকোড ম্যাপিং ---
             let unicodeOutput = '';
