@@ -2036,6 +2036,29 @@
             display: block;
         }
 
+/* নতুন: গুগল ম্যাপ স্টাইল */
+.map-container {
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 800px;
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+.dark .map-container {
+    background-color: #2d3748;
+}
+.map-container iframe {
+    border-radius: 12px;
+    width: 100%;
+    height: 500px; /* উচ্চতা বাড়ানো হয়েছে */
+}
+@media (max-width: 600px) {
+    .map-container iframe {
+        height: 350px;
+    }
+}
+
         /* API কী মডেল স্টাইল */
         .api-key-modal-overlay {
             position: fixed;
@@ -2424,6 +2447,7 @@
             <button id="sttTab" class="tab-button rounded-xl">স্পিচ টু টেক্সট</button>
             <button id="textAssistantTab" class="tab-button rounded-xl">টেক্সট অ্যাসিস্ট্যান্ট</button>
             <button id="newsTab" class="tab-button rounded-xl">সাম্প্রতিক খবর</button>
+			<button id="mapTab" class="tab-button rounded-xl">গুগল ম্যাপ</button>
             <button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
             <button id="setApiKeyBtn" class="tab-button rounded-xl" style="background-color: #ef5350; color: white;">API কী সেট করুন</button>
         </div>
@@ -3162,6 +3186,22 @@
         </div>
 
     </div>
+
+<!-- নতুন: গুগল ম্যাপ বিভাগ -->
+<div id="mapContent" class="calculator-content">
+    <div class="map-container">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">গুগল ম্যাপ - বাংলাদেশ</h3>
+        <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3746118.913102029!2d88.10075841566833!3d23.49058226042993!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30adaaed80e18ba7%3A0xf2d28e0c4e1fc6b!2sBangladesh!5e0!3m2!1sen!2sbd!4v1675346780000!5m2!1sen!2sbd"
+            width="100%"
+            height="450"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+    </div>
+</div>
 
     <!-- API কী মডেল -->
     <div id="apiKeyModal" class="api-key-modal-overlay hidden">
@@ -4686,6 +4726,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const wordMeaningContent = document.getElementById('wordMeaningContent');
                 const textToSpeechContent = document.getElementById('textToSpeechContent'); // TTS কন্টেন্ট
                 const speechToTextContent = document.getElementById('speechToTextContent'); // STT কন্টেন্ট
+				const mapTab = document.getElementById('mapTab');
+				const mapContent = document.getElementById('mapContent');
 
 
                 // API কী মডেল উপাদান
@@ -4727,14 +4769,14 @@ function showTab(tabId) {
     // সমস্ত ট্যাব বোতাম এবং কন্টেন্ট বিভাগ নির্বাচন করুন
     const tabs = [
         basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab,
-        converterTab, measurementTab, typingTestTab, translatorTab, // translatorTab যোগ করা হয়েছে
+        converterTab, measurementTab, typingTestTab, translatorTab, mapTab, // mapTab যোগ করা হয়েছে
         spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab,
         textAssistantTab, allFeaturesTab
     ];
     const contents = [
         basicCalculatorContent, ageCalculatorContent, dateCalculatorContent,
         scientificCalculatorContent, newsContent, converterContent,
-        measurementContent, typingTestContent, translatorContent, // translatorContent যোগ করা হয়েছে
+        measurementContent, typingTestContent, translatorContent, mapContent, // mapContent যোগ করা হয়েছে
         spellCheckerContent, textBeautifierContent, wordMeaningContent,
         textToSpeechContent, speechToTextContent, textAssistantContent,
         allFeaturesContent
@@ -4786,9 +4828,13 @@ function showTab(tabId) {
             activeTab = typingTestTab;
             activeContent = typingTestContent;
             break;
-        case 'translator': // নতুন কেস যোগ করা হয়েছে
+        case 'translator':
             activeTab = translatorTab;
             activeContent = translatorContent;
+            break;
+        case 'map': // নতুন কেস যোগ করা হয়েছে
+            activeTab = mapTab;
+            activeContent = mapContent;
             break;
         case 'spellCheck':
             activeTab = spellCheckTab;
@@ -4841,6 +4887,7 @@ function showTab(tabId) {
                 if (ttsTab) ttsTab.addEventListener('click', () => showTab('tts')); // TTS ট্যাব ইভেন্ট
                 if (sttTab) sttTab.addEventListener('click', () => showTab('stt')); // STT ট্যাব ইভেন্ট
 				if (typingTestTab) typingTestTab.addEventListener('click', () => showTab('typingTest')); // এই লাইনটি যোগ করুন
+				if (mapTab) mapTab.addEventListener('click', () => showTab('map'));
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
                 if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
 
