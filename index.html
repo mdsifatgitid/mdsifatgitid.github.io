@@ -1952,6 +1952,81 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
 
+        /* নতুন: ট্রান্সলেটর স্টাইল */
+        .translator-content {
+            padding: 20px;
+            border-radius: 16px;
+            margin: 0 auto;
+            max-width: 800px; /* সাইড-বাই-সাইড টেক্সটএরিয়ার জন্য প্রস্থ বাড়ানো হয়েছে */
+            background-color: #f8f9fa;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .dark .translator-content {
+            background-color: #2d3748;
+        }
+        .translator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .translator-section textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cce7ff;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            resize: vertical;
+            box-sizing: border-box;
+            background-color: #eaf6ff;
+            color: #333;
+            min-height: 200px;
+        }
+        .dark .translator-section textarea {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
+        }
+        .translator-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .language-selector-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .dark .language-selector-wrapper label {
+            color: #e2e8f0;
+        }
+        .translator-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .translate-button {
+            background-image: linear-gradient(to right, #2980B9 0%, #6DD5FA 100%);
+            color: white;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            width: auto;
+            box-shadow: 0 5px 15px rgba(41, 128, 185, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .translate-button:hover {
+            background-image: linear-gradient(to right, #6DD5FA 0%, #2980B9 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(41, 128, 185, 0.4);
+        }
 
         /* কন্টেন্ট প্রাথমিকভাবে লুকানো */
         .calculator-content {
@@ -2116,6 +2191,11 @@
         }
 
         /* ছোট স্ক্রিনের জন্য প্রতিক্রিয়াশীল সামঞ্জস্য */
+        @media (max-width: 768px) {
+            .translator-grid {
+                grid-template-columns: 1fr;
+            }
+        }
         @media (max-width: 600px) {
             .main-container {
                 padding: 15px;
@@ -2181,7 +2261,8 @@
             .word-meaning-content,
             .tts-content,
             .stt-content,
-            .typing-test-content { /* Typing test responsiveness */
+            .typing-test-content,
+            .translator-content { /* Translator content responsiveness */
                 padding: 15px;
                 border-radius: 12px;
             }
@@ -2332,9 +2413,10 @@
             <button id="scientificCalcTab" class="tab-button rounded-xl">সাইন্টিফিক ক্যালকুলেটর</button>
             <button id="ageCalcTab" class="tab-button rounded-xl">বয়স ক্যালকুলেটর</button>
             <button id="dateCalcTab" class="tab-button rounded-xl">তারিখ ও সময়</button>
-            <button id="measurementTab" class="tab-button rounded-xl">পরিমাপ</button> <!-- নতুন ট্যাব -->
-            <button id="typingTestTab" class="tab-button rounded-xl">টাইপিং টেস্ট</button> <!-- নতুন টাইপিং টেস্ট ট্যাব -->
+            <button id="measurementTab" class="tab-button rounded-xl">পরিমাপ</button>
+            <button id="typingTestTab" class="tab-button rounded-xl">টাইপিং টেস্ট</button>
             <button id="converterTab" class="tab-button rounded-xl">কনভার্টার</button>
+            <button id="translatorTab" class="tab-button rounded-xl">ট্রান্সলেটর</button> <!-- নতুন ট্রান্সলেটর বাটন -->
             <button id="spellCheckTab" class="tab-button rounded-xl">বানান সংশোধন</button>
             <button id="textBeautifierTab" class="tab-button rounded-xl">লেখা সাজানো</button>
             <button id="wordMeaningTab" class="tab-button rounded-xl">শব্দের অর্থ</button>
@@ -2836,6 +2918,40 @@
                 <!-- নতুন "সব মুছুন" বোতাম -->
                 <button class="font-clear-all-button rounded-lg" onclick="clearAllTextareas()">সব মুছুন</button>
                 <a href="https://bangla.plus/bijoy-unicode-converter" target="_blank" class="external-converter-link rounded-xl">প্রয়োজনে এখান থেকে কনভার্ট করুন</a>
+            </div>
+        </div>
+
+        <!-- নতুন: ট্রান্সলেটর বিভাগ -->
+        <div id="translatorContent" class="calculator-content">
+            <div class="translator-content">
+                <h3 class="text-xl font-bold text-gray-700 mb-4">যেকোনো ভাষায় অনুবাদ করুন</h3>
+                <div class="translator-grid">
+                    <!-- Input Text Area -->
+                    <div class="translator-section">
+                        <textarea id="translatorInput" rows="8" placeholder="এখানে আপনার লেখাটি পেস্ট করুন..."></textarea>
+                    </div>
+                    <!-- Output Text Area -->
+                    <div class="translator-section">
+                        <textarea id="translatorOutput" rows="8" placeholder="অনুবাদিত লেখা এখানে দেখা যাবে..." readonly></textarea>
+                    </div>
+                </div>
+                <div class="translator-controls mt-4">
+                     <div class="language-selector-wrapper">
+                        <label for="targetLanguage" class="font-semibold text-gray-700 dark:text-gray-200">কোন ভাষায় অনুবাদ করবেন:</label>
+                        <select id="targetLanguage" class="rounded-lg p-2 border bg-gray-100 dark:bg-gray-600 dark:text-white">
+                            <!-- Languages will be populated by JS -->
+                        </select>
+                    </div>
+                    <button id="translateBtn" class="translate-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"></path></svg>
+                        <span>অনুবাদ করুন</span>
+                    </button>
+                </div>
+                 <div class="translator-actions mt-4">
+                     <button id="copyTranslatedTextBtn" class="font-copy-button rounded-lg">ফলাফল কপি করুন</button>
+                     <button id="clearTranslatorTextBtn" class="font-clear-button rounded-lg">সব মুছুন</button>
+                </div>
+                <div id="translatorLoading" class="loading-indicator mt-4" style="display: none;">অনুবাদ করা হচ্ছে...</div>
             </div>
         </div>
 
@@ -4607,64 +4723,106 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateApiKeyButton();
 
 
-                function showTab(tabId) {
+function showTab(tabId) {
+    // সমস্ত ট্যাব বোতাম এবং কন্টেন্ট বিভাগ নির্বাচন করুন
+    const tabs = [
+        basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab,
+        converterTab, measurementTab, typingTestTab, translatorTab, // translatorTab যোগ করা হয়েছে
+        spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab,
+        textAssistantTab, allFeaturesTab
+    ];
+    const contents = [
+        basicCalculatorContent, ageCalculatorContent, dateCalculatorContent,
+        scientificCalculatorContent, newsContent, converterContent,
+        measurementContent, typingTestContent, translatorContent, // translatorContent যোগ করা হয়েছে
+        spellCheckerContent, textBeautifierContent, wordMeaningContent,
+        textToSpeechContent, speechToTextContent, textAssistantContent,
+        allFeaturesContent
+    ];
+
     // সমস্ত ট্যাব বোতাম থেকে 'active' ক্লাস সরিয়ে দিন
-    [basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, typingTestTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, textAssistantTab, allFeaturesTab].forEach(tab => {
+    tabs.forEach(tab => {
         if (tab) tab.classList.remove('active');
     });
 
     // সমস্ত কন্টেন্ট বিভাগ লুকান
-    [basicCalculatorContent, ageCalculatorContent, dateCalculatorContent, scientificCalculatorContent, newsContent, converterContent, measurementContent, typingTestContent, spellCheckerContent, textBeautifierContent, wordMeaningContent, textToSpeechContent, speechToTextContent, textAssistantContent, allFeaturesContent].forEach(content => {
+    contents.forEach(content => {
         if (content) content.classList.remove('active');
     });
 
     // নির্বাচিত ট্যাব সক্রিয় করুন এবং এর কন্টেন্ট দেখান
-    if (tabId === 'basic' && basicCalcTab && basicCalculatorContent) {
-        basicCalcTab.classList.add('active');
-        basicCalculatorContent.classList.add('active');
-    } else if (tabId === 'age' && ageCalcTab && ageCalculatorContent) {
-        ageCalcTab.classList.add('active');
-        ageCalculatorContent.classList.add('active');
-    } else if (tabId === 'date' && dateCalcTab && dateCalculatorContent) {
-        dateCalcTab.classList.add('active');
-        dateCalculatorContent.classList.add('active');
-    } else if (tabId === 'scientific' && scientificCalcTab && scientificCalculatorContent) {
-        scientificCalcTab.classList.add('active');
-        scientificCalculatorContent.classList.add('active');
-    } else if (tabId === 'news' && newsTab && newsContent) {
-        newsTab.classList.add('active');
-        newsContent.classList.add('active');
-    } else if (tabId === 'converter' && converterTab && converterContent) {
-        converterTab.classList.add('active');
-        converterContent.classList.add('active');
-    } else if (tabId === 'measurement' && measurementTab && measurementContent) { 
-        measurementTab.classList.add('active');
-        measurementContent.classList.add('active');
-    } else if (tabId === 'typingTest' && typingTestTab && typingTestContent) { // নতুন যুক্ত করা অংশ
-        typingTestTab.classList.add('active');
-        typingTestContent.classList.add('active');
-    } else if (tabId === 'textAssistant' && textAssistantTab && textAssistantContent) {
-        textAssistantTab.classList.add('active');
-        textAssistantContent.classList.add('active');
-    } else if (tabId === 'allFeatures' && allFeaturesTab && allFeaturesContent) {
-        allFeaturesTab.classList.add('active');
-        allFeaturesContent.classList.add('active');
-    } else if (tabId === 'spellCheck' && spellCheckTab && spellCheckerContent) {
-        spellCheckTab.classList.add('active');
-        spellCheckerContent.classList.add('active');
-    } else if (tabId === 'beautify' && textBeautifierTab && textBeautifierContent) {
-        textBeautifierTab.classList.add('active');
-        textBeautifierContent.classList.add('active');
-    } else if (tabId === 'meaning' && wordMeaningTab && wordMeaningContent) {
-        wordMeaningTab.classList.add('active');
-        wordMeaningContent.classList.add('active');
-    } else if (tabId === 'tts' && ttsTab && textToSpeechContent) { 
-        ttsTab.classList.add('active');
-        textToSpeechContent.classList.add('active');
-    } else if (tabId === 'stt' && sttTab && speechToTextContent) { 
-        sttTab.classList.add('active');
-        speechToTextContent.classList.add('active');
+    let activeTab, activeContent;
+
+    switch (tabId) {
+        case 'basic':
+            activeTab = basicCalcTab;
+            activeContent = basicCalculatorContent;
+            break;
+        case 'age':
+            activeTab = ageCalcTab;
+            activeContent = ageCalculatorContent;
+            break;
+        case 'date':
+            activeTab = dateCalcTab;
+            activeContent = dateCalculatorContent;
+            break;
+        case 'scientific':
+            activeTab = scientificCalcTab;
+            activeContent = scientificCalculatorContent;
+            break;
+        case 'news':
+            activeTab = newsTab;
+            activeContent = newsContent;
+            break;
+        case 'converter':
+            activeTab = converterTab;
+            activeContent = converterContent;
+            break;
+        case 'measurement':
+            activeTab = measurementTab;
+            activeContent = measurementContent;
+            break;
+        case 'typingTest':
+            activeTab = typingTestTab;
+            activeContent = typingTestContent;
+            break;
+        case 'translator': // নতুন কেস যোগ করা হয়েছে
+            activeTab = translatorTab;
+            activeContent = translatorContent;
+            break;
+        case 'spellCheck':
+            activeTab = spellCheckTab;
+            activeContent = spellCheckerContent;
+            break;
+        case 'beautify':
+            activeTab = textBeautifierTab;
+            activeContent = textBeautifierContent;
+            break;
+        case 'meaning':
+            activeTab = wordMeaningTab;
+            activeContent = wordMeaningContent;
+            break;
+        case 'tts':
+            activeTab = ttsTab;
+            activeContent = textToSpeechContent;
+            break;
+        case 'stt':
+            activeTab = sttTab;
+            activeContent = speechToTextContent;
+            break;
+        case 'textAssistant':
+            activeTab = textAssistantTab;
+            activeContent = textAssistantContent;
+            break;
+        case 'allFeatures':
+            activeTab = allFeaturesTab;
+            activeContent = allFeaturesContent;
+            break;
     }
+
+    if (activeTab) activeTab.classList.add('active');
+    if (activeContent) activeContent.classList.add('active');
+
     console.log(`ট্যাব পরিবর্তন করা হয়েছে: ${tabId}`);
 }
 
@@ -6179,6 +6337,151 @@ document.addEventListener('DOMContentLoaded', () => {
                 // END: BROWSER REAL-TIME SPEECH-TO-TEXT (STT) SCRIPT
                 // ====================================================================
 
+// ====================================================================
+// START: TRANSLATOR SCRIPT (GEMINI API)
+// ====================================================================
+
+// প্রথমে, DOMContentLoaded এর শুরুতে অন্য ট্যাবগুলোর সাথে এগুলোও যোগ করুন
+// const translatorTab = document.getElementById('translatorTab');
+// const translatorContent = document.getElementById('translatorContent');
+
+// ট্রান্সলেটরের জন্য DOM উপাদান
+const translateBtn = document.getElementById('translateBtn');
+const translatorInput = document.getElementById('translatorInput');
+const translatorOutput = document.getElementById('translatorOutput');
+const targetLanguageSelect = document.getElementById('targetLanguage');
+const translatorLoading = document.getElementById('translatorLoading');
+const copyTranslatedTextBtn = document.getElementById('copyTranslatedTextBtn');
+const clearTranslatorTextBtn = document.getElementById('clearTranslatorTextBtn');
+
+// ড্রপডাউনের জন্য ভাষার তালিকা
+const languages = {
+    'en': 'English',
+    'bn': 'Bengali (বাংলা)',
+    'hi': 'Hindi (हिन्दी)',
+    'ar': 'Arabic (العربية)',
+    'es': 'Spanish (Español)',
+    'fr': 'French (Français)',
+    'de': 'German (Deutsch)',
+    'ja': 'Japanese (日本語)',
+    'ko': 'Korean (한국어)',
+    'ru': 'Russian (Русский)',
+    'zh': 'Chinese (中文)',
+    'pt': 'Portuguese (Português)',
+    'it': 'Italian (Italiano)',
+    'id': 'Indonesian (Bahasa Indonesia)',
+    'ms': 'Malay (Bahasa Melayu)',
+    'tr': 'Turkish (Türkçe)',
+    'vi': 'Vietnamese (Tiếng Việt)',
+    'th': 'Thai (ภาษาไทย)',
+    'ur': 'Urdu (اردو)'
+};
+
+// ভাষার ড্রপডাউনটি পূরণ করার ফাংশন
+function populateLanguageDropdown() {
+    if (!targetLanguageSelect) return;
+    targetLanguageSelect.innerHTML = ''; // আগের অপশন মুছে ফেলুন
+    for (const code in languages) {
+        const option = document.createElement('option');
+        option.value = code;
+        option.textContent = languages[code];
+        targetLanguageSelect.appendChild(option);
+    }
+    // ডিফল্ট ভাষা হিসেবে বাংলা সেট করুন
+    targetLanguageSelect.value = 'bn';
+}
+
+// মূল অনুবাদ ফাংশন
+async function handleTranslate() {
+    const textToTranslate = translatorInput.value.trim();
+    const langCode = targetLanguageSelect.value;
+    const langName = languages[langCode];
+
+    if (!textToTranslate) {
+        showCustomAlert('অনুগ্রহ করে অনুবাদ করার জন্য কিছু টেক্সট লিখুন।');
+        return;
+    }
+
+    const apiKey = localStorage.getItem('geminiApiKey');
+    if (!apiKey) {
+        showCustomAlert('জেমিনি API কী সেট করা হয়নি। অনুগ্রহ করে "API কী সেট করুন" বাটনে ক্লিক করে কী সেট করুন।');
+        translatorOutput.value = 'API কী প্রয়োজন।';
+        return;
+    }
+
+    translatorLoading.style.display = 'block';
+    translateBtn.disabled = true;
+    translatorOutput.value = '';
+
+    try {
+        const prompt = `Translate the following text to ${langName}. Provide only the translated text without any additional explanations, introductory phrases, or quotation marks.\n\nText to translate:\n"${textToTranslate}"`;
+
+        const payload = {
+            contents: [{
+                parts: [{ text: prompt }]
+            }]
+        };
+        const model = "gemini-2.5-flash-preview-05-20";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        
+        if (response.ok && result.candidates && result.candidates[0]?.content?.parts?.[0]?.text) {
+            translatorOutput.value = result.candidates[0].content.parts[0].text.trim();
+        } else {
+            const errorText = result?.error?.message || 'একটি অজানা ত্রুটি ঘটেছে।';
+            translatorOutput.value = `অনুবাদ ব্যর্থ হয়েছে: ${errorText}`;
+            console.error('API Response Error:', result);
+        }
+
+    } catch (error) {
+        translatorOutput.value = `একটি ত্রুটি ঘটেছে: ${error.message}`;
+        console.error('API Call Error:', error);
+    } finally {
+        translatorLoading.style.display = 'none';
+        translateBtn.disabled = false;
+    }
+}
+
+// ট্রান্সলেটরের জন্য ইভেন্ট লিসেনার যোগ করুন
+if (translatorTab) {
+    translatorTab.addEventListener('click', () => showTab('translator'));
+}
+
+if (translateBtn) {
+    translateBtn.addEventListener('click', handleTranslate);
+}
+
+if (copyTranslatedTextBtn) {
+    copyTranslatedTextBtn.addEventListener('click', () => {
+        if (translatorOutput.value) {
+            copyToClipboard('translatorOutput');
+        } else {
+            showCustomAlert('কপি করার জন্য কোনো লেখা নেই।');
+        }
+    });
+}
+
+if (clearTranslatorTextBtn) {
+    clearTranslatorTextBtn.addEventListener('click', () => {
+        translatorInput.value = '';
+        translatorOutput.value = '';
+        showCustomAlert('অনুবাদকের লেখা পরিষ্কার করা হয়েছে!');
+    });
+}
+
+// স্ক্রিপ্ট লোড হওয়ার সময় ড্রপডাউনটি পূরণ করুন
+populateLanguageDropdown();
+
+// ====================================================================
+// END: TRANSLATOR SCRIPT
+// ====================================================================
 
                 // --- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) লজিক ---
                 const assistantInput = document.getElementById('assistantInput');
