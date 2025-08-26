@@ -3441,7 +3441,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 month: bengaliMonthNames[currentBengaliMonthIndex],
                 year: bengaliYear,
                 totalDays: totalDaysInBengaliMonth,
-                formatted: `${toBengaliNumber(currentBengaliDay)} ${bengaliMonthNames[currentBengaliMonthIndex]}, ${toBengaliNumber(bengaliYear)} বঙ্গাব্দ`
+                formatted: `${toBengaliNumber(currentBengaliDay)} ${bengaliMonthNames[currentBengaliMonthIndex]} ${toBengaliNumber(bengaliYear)} বঙ্গাব্দ`
             };
         }
 
@@ -3526,7 +3526,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // ব্যানার আপডেট করুন
-            bannerElement.innerHTML = `<span class="text-green-700 dark:text-green-300">আজ</span> <span class="text-green-700 dark:text-green-300">${dayOfWeekBengali}</span>, <span class="text-blue-700 dark:text-blue-300">${gregorianDateString} ইং</span>, <span class="text-green-700 dark:text-green-300">${bengaliDateString.replace('বঙ্গাব্দ', '')} বঙ্গাব্দ</span>, <span class="text-purple-700 dark:text-purple-300">${hijriDateString}</span>, <span class="text-green-700 dark:text-green-300">সময়:</span> <span class="text-green-700 dark:text-green-300">${timeString}</span>`;
+            bannerElement.innerHTML = `<span class="text-green-700 dark:text-green-300">আজ</span> <span class="text-green-700 dark:text-green-300">${dayOfWeekBengali}</span>, <span class="text-blue-700 dark:text-blue-300">${gregorianDateString} ইং</span>, <span class="text-green-700 dark:text-green-300">${bengaliDateString.replace('বঙ্গাব্দ', '')} বঙ্গাব্দ</span>, <span class="text-purple-700 dark:text-purple-300">${hijriDateString}</span>, <span class="text-green-700 dark:text-green-300"> </span><span class="text-green-700 dark:text-green-300">${timeString}</span>`;
         }
 
         // প্রতি সেকেন্ডে ব্যানার আপডেট করুন
