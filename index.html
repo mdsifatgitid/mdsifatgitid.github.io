@@ -2038,10 +2038,10 @@
 
 /* নতুন: গুগল ম্যাপ স্টাইল */
 .map-container {
-    padding: 20px;
+    padding: 10px;
     border-radius: 16px;
     margin: 0 auto;
-    max-width: 800px;
+    max-width: 98%; /* প্রস্থ প্রায় সম্পূর্ণ স্ক্রিন জুড়ে দেওয়া হলো */
     background-color: #f8f9fa;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
@@ -2051,11 +2051,11 @@
 .map-container iframe {
     border-radius: 12px;
     width: 100%;
-    height: 500px; /* উচ্চতা বাড়ানো হয়েছে */
+    height: 65vh; /* উচ্চতা ভিউপোর্টের উচ্চতার ৬৫% করা হলো */
 }
 @media (max-width: 600px) {
     .map-container iframe {
-        height: 350px;
+        height: 55vh; /* মোবাইল ডিভাইসের জন্য উচ্চতা */
     }
 }
 
@@ -3184,9 +3184,6 @@
                 </div>
             </div>
         </div>
-
-    </div>
-
 <!-- নতুন: গুগল ম্যাপ বিভাগ -->
 <div id="mapContent" class="calculator-content">
     <div class="map-container">
@@ -3202,6 +3199,9 @@
         </iframe>
     </div>
 </div>
+    </div>
+
+
 
     <!-- API কী মডেল -->
     <div id="apiKeyModal" class="api-key-modal-overlay hidden">
