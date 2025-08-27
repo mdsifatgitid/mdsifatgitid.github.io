@@ -2059,6 +2059,37 @@
     }
 }
 
+/* গুগল ম্যাপের নতুন ফিচারগুলোর জন্য স্টাইল */
+    .map-features {
+        max-width: 98%;
+        margin: 1rem auto 0;
+        border: 1px solid #e2e8f0;
+    }
+
+    .dark .map-features {
+        border-color: #4a5568;
+    }
+
+    .feature-section:not(:last-child) {
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 1rem;
+    }
+
+    .dark .feature-section:not(:last-child) {
+        border-color: #4a5568;
+    }
+
+    .feature-section input[type="text"] {
+        transition: all 0.3s ease;
+    }
+
+    .feature-section button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
         /* API কী মডেল স্টাইল */
         .api-key-modal-overlay {
             position: fixed;
@@ -2414,6 +2445,8 @@
             <li></li>
         </ul>
     </div>
+	
+<!--css style started from here ওপরে অন্যান্য স্টাইলগুলো আছে।-->
 
     <div class="main-container">
         <!-- বর্তমান তারিখ ও সময় ব্যানার -->
@@ -3184,6 +3217,7 @@
                 </div>
             </div>
         </div>
+		
 <!-- নতুন: গুগল ম্যাপ বিভাগ -->
 <div id="mapContent" class="calculator-content">
     <div class="map-container">
@@ -3196,12 +3230,38 @@
             allowfullscreen=""
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade">
+			
         </iframe>
+		<!-- এই কোডটি mapContent div-এর ভেতরের iframe ট্যাগের পরে যোগ করুন -->
+		<div class="map-features mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg shadow-inner">
+    <!-- স্থান খুঁজুন -->
+    <div class="feature-section mb-4">
+        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">স্থান খুঁজুন (Search Location)</h4>
+        <div class="flex flex-col sm:flex-row gap-2">
+            <input type="text" id="searchInput" placeholder="যেমন: ঢাকা বিশ্ববিদ্যালয়" class="flex-grow p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-blue-500">
+            <button id="searchBtn" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors">খুঁজুন</button>
+        </div>
     </div>
+
+    <!-- আমার অবস্থান -->
+    <div class="feature-section mb-4">
+        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">আমার অবস্থান (My Location)</h4>
+        <button id="myLocationBtn" class="w-full px-4 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors">আমার বর্তমান অবস্থান দেখুন</button>
+    </div>
+
+					<!-- দিকনির্দেশনা -->
+			<div class="feature-section">
+				<h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">দিকনির্দেশনা (Directions)</h4>
+				<div class="flex flex-col sm:flex-row gap-2">
+				<input type="text" id="directionsFrom" placeholder="শুরুর স্থান (From)" class="flex-grow p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-purple-500">
+				<input type="text" id="directionsTo" placeholder="গন্তব্য স্থান (To)" class="flex-grow p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-purple-500">
+				</div>
+				<button id="directionsBtn" class="w-full mt-2 px-4 py-2 bg-purple-500 text-white font-semibold rounded-lg hover:bg-purple-600 transition-colors">দিকনির্দেশনা দেখুন</button>
+			</div>
+		</div>
+	</div>
 </div>
-    </div>
-
-
+</div>
 
     <!-- API কী মডেল -->
     <div id="apiKeyModal" class="api-key-modal-overlay hidden">
@@ -3215,6 +3275,10 @@
             <div id="apiKeyMessage" class="message-area"></div>
         </div>
     </div>
+	
+<!--css style End-->
+
+<!--Script started from here-->
 
     <script>
 	
@@ -4358,6 +4422,69 @@ document.addEventListener('DOMContentLoaded', () => {
                 chatWindow.scrollTop = chatWindow.scrollHeight;
             }
         }
+		
+        // --- গুগল ম্যাপ ফিচার ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const myLocationBtn = document.getElementById('myLocationBtn');
+        const directionsFrom = document.getElementById('directionsFrom');
+        const directionsTo = document.getElementById('directionsTo');
+        const directionsBtn = document.getElementById('directionsBtn');
+
+        // 1. স্থান খোঁজার জন্য ইভেন্ট লিসেনার
+        if (searchBtn) {
+            searchBtn.addEventListener('click', () => {
+                const query = searchInput.value.trim();
+                if (query) {
+                    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+                    window.open(url, '_blank');
+                } else {
+                    showCustomAlert('অনুগ্রহ করে খোঁজার জন্য একটি স্থানের নাম লিখুন।');
+                }
+            });
+             // Enter চেপে সার্চ করার সুবিধা
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    searchBtn.click();
+                }
+            });
+        }
+
+        // 2. আমার অবস্থানের জন্য ইভেন্ট লিসেনার
+        if (myLocationBtn) {
+            myLocationBtn.addEventListener('click', () => {
+                // এই URLটি গুগল ম্যাপকে ব্যবহারকারীর বর্তমান অবস্থান খুঁজতে বলবে
+                const url = 'https://www.google.com/maps/search/My+Location';
+                window.open(url, '_blank');
+            });
+        }
+
+        // 3. দিকনির্দেশনার জন্য ইভেন্ট লিসেনার
+        if (directionsBtn) {
+            directionsBtn.addEventListener('click', () => {
+                const origin = directionsFrom.value.trim();
+                const destination = directionsTo.value.trim();
+                if (origin && destination) {
+                    const url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`;
+                    window.open(url, '_blank');
+                } else {
+                    showCustomAlert('অনুগ্রহ করে শুরু এবং গন্তব্য উভয় স্থান লিখুন।');
+                }
+            });
+            // Enter চেপে দিকনির্দেশনা খোঁজার সুবিধা
+            directionsTo.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    directionsBtn.click();
+                }
+            });
+             directionsFrom.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    directionsBtn.click();
+                }
+            });
+        }
+    });
 
         // জেমিনিকে জিজ্ঞাসা করার ফাংশন আপডেট করুন
         async function handleAskGemini() {
