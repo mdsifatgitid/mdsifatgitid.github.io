@@ -2090,6 +2090,119 @@
         gap: 8px;
     }
 
+    /* নতুন: নামাজের সময়সূচি স্টাইল */
+    .prayer-time-content {
+        padding: 20px;
+        border-radius: 16px;
+        margin: 0 auto;
+        max-width: 800px;
+        background-color: #f8f9fa;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    .dark .prayer-time-content {
+        background-color: #2d3748;
+    }
+    .prayer-times-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        text-align: center;
+    }
+    .prayer-time-card {
+        background-color: #e6f7ff;
+        border: 1px solid #b3e0ff;
+        border-radius: 12px;
+        padding: 20px 15px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .dark .prayer-time-card {
+        background-color: #1a202c;
+        border-color: #4a5568;
+    }
+    .prayer-time-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    .prayer-time-card h4 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #0056b3;
+        margin-bottom: 10px;
+    }
+    .dark .prayer-time-card h4 {
+        color: #90cdf4;
+    }
+    .prayer-time-card p {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+    }
+    .dark .prayer-time-card p {
+        color: #e2e8f0;
+    }
+	
+	/* টগল সুইচের জন্য CSS */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
         /* API কী মডেল স্টাইল */
         .api-key-modal-overlay {
             position: fixed;
@@ -2481,6 +2594,7 @@
             <button id="textAssistantTab" class="tab-button rounded-xl">টেক্সট অ্যাসিস্ট্যান্ট</button>
             <button id="newsTab" class="tab-button rounded-xl">সাম্প্রতিক খবর</button>
 			<button id="mapTab" class="tab-button rounded-xl">গুগল ম্যাপ</button>
+			<button id="prayerTimeTab" class="tab-button rounded-xl">নামাজের সময়সূচি</button>
             <button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
             <button id="setApiKeyBtn" class="tab-button rounded-xl" style="background-color: #ef5350; color: white;">API কী সেট করুন</button>
         </div>
@@ -3261,6 +3375,86 @@
 		</div>
 	</div>
 </div>
+<!-- নতুন: নামাজের সময়সূচি বিভাগ -->
+<div id="prayerTimeContent" class="calculator-content">
+    <div class="prayer-time-content">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">নামাজের সময়সূচি</h3>
+        <p id="prayerTimeDate" class="text-md font-semibold text-gray-600 dark:text-gray-300 mb-4"></p>
+        
+        <div class="district-selector-wrapper mb-6">
+            <label for="district-select" class="block text-left mb-2 font-semibold text-gray-700 dark:text-gray-200">আপনার জেলা নির্বাচন করুন:</label>
+            <select id="district-select" class="w-full p-3 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all"></select>
+        </div>
+
+
+<!-- prayerTimeContent div এর মধ্যে, district-selector-wrapper এর নিচে যোগ করুন -->
+<div class="manual-time-control-wrapper mb-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-inner">
+    <div class="flex items-center justify-between mb-4">
+        <label for="manualTimeToggle" class="font-semibold text-gray-700 dark:text-gray-200">ম্যানুয়াল সময় সেট করুন:</label>
+        <label class="switch">
+            <input type="checkbox" id="manualTimeToggle">
+            <span class="slider round"></span>
+        </label>
+    </div>
+    <div id="manualTimeInputs" class="hidden grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div>
+            <label for="manualSehri" class="block text-sm font-medium text-gray-600 dark:text-gray-300">সাহরি:</label>
+            <input type="time" id="manualSehri" value="04:00" class="w-full p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+        </div>
+        <div>
+            <label for="manualFajr" class="block text-sm font-medium text-gray-600 dark:text-gray-300">ফজর:</label>
+            <input type="time" id="manualFajr" value="04:10" class="w-full p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+        </div>
+        <div>
+            <label for="manualDhuhr" class="block text-sm font-medium text-gray-600 dark:text-gray-300">যোহর:</label>
+            <input type="time" id="manualDhuhr" value="12:00" class="w-full p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+        </div>
+        <div>
+            <label for="manualAsr" class="block text-sm font-medium text-gray-600 dark:text-gray-300">আসর:</label>
+            <input type="time" id="manualAsr" value="16:30" class="w-full p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+        </div>
+        <div>
+            <label for="manualIftar" class="block text-sm font-medium text-gray-600 dark:text-gray-300">ইফতার ও মাগরিব:</label>
+            <input type="time" id="manualIftar" value="18:45" class="w-full p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+        </div>
+        <div>
+            <label for="manualIsha" class="block text-sm font-medium text-gray-600 dark:text-gray-300">ইশা:</label>
+            <input type="time" id="manualIsha" value="20:00" class="w-full p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+        </div>
+    </div>
+</div>
+
+
+        <div id="prayer-times-display" class="prayer-times-grid">
+            <div class="prayer-time-card">
+                <h4>সাহরি</h4>
+                <p id="sehri-time">--:--</p>
+            </div>
+            <div class="prayer-time-card">
+                <h4>ফজর</h4>
+                <p id="fajr-time">--:--</p>
+            </div>
+            <div class="prayer-time-card">
+                <h4>যোহর</h4>
+                <p id="dhuhr-time">--:--</p>
+            </div>
+            <div class="prayer-time-card">
+                <h4>আসর</h4>
+                <p id="asr-time">--:--</p>
+            </div>
+            <div class="prayer-time-card">
+                <h4>ইফতার ও মাগরিব</h4>
+                <p id="iftar-time">--:--</p>
+            </div>
+            <div class="prayer-time-card">
+                <h4>ইশা</h4>
+                <p id="isha-time">--:--</p>
+            </div>
+        </div>
+        <!-- আপডেট করা দ্রষ্টব্য -->
+        <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">দ্রষ্টব্য: সময়সূচি aladhan.com API থেকে আনা হয়েছে (হিসাব পদ্ধতি: University of Islamic Sciences, Karachi)। এটি ইসলামিক ফাউন্ডেশনের সময়ের সাথে কিছুটা ভিন্ন হতে পারে।</p>
+    </div>
+</div>
 </div>
 
     <!-- API কী মডেল -->
@@ -3838,7 +4032,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "ঘ্ন": "Nœ",     "ঘ্র": "Nª",     "ঙ্গু": "½y",     "জ্জ্ব": "¾¡",   "ত্ত্ব": "Ë¡",     "ত্রু": "Îæ",     "দ্রু": "`ªæ",    "ভ্রু": "åæ",     "শ্রু": "kÖæ",	"য়ূ": "q~",
             "ম্প": "¤ú",     "্র্য": "ª‍¨",    "র‌্য": "i¨",     "ক্য": "K¨",     "ল্যু": "j¨y",    "ক্লু": "K¬z",    "ত্র্য": "Î¨",     "স্থ্য": "¯’¨",    "দ্য": "`¨", 
             "ক্য": "K¨",     "ভ্য": "f¨",     "ল্য": "j¨", 	"দ্যু": "`y¨",     "ম্য": "g¨",     "ন্য": "b¨",     "ণ্য": "Y¨",     "কার্য": "Kvh©",   "র্ষ": "l©",       "র্য": "h©",		
-		"ব্যু": "ey¨",   "ত্ব": "Z¡",	"হ্ব": "nŸ",	"গ্নু": "Mœy",	"র্ু": "z©",       "৳": "$",      "র্ষূ": "l~©",        "র্ষু": "ly©",    "–": "-","৷": "|",	"ড়ূ": "o~",	"“ছ": "ÒQ",
+		"ব্যু": "ey¨",   "ত্ব": "Z¡",	"হ্ব": "nŸ",	"গ্নু": "Mœy",	"র্ু": "z©",       "৳": "$",      "র্ষূ": "l~©",        "র্ষু": "ly©",    "–": "-","৷": "|",	"ড়ূ": "o~",  "“ছ": "ÒQ",
        
 
 		
@@ -3994,11 +4188,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			"Yª": "Yª",        "ÿè~": "ÿè‚",      "ÿè„": "ÿè…",      "ÿèy": "ÿèz",      "ÿy": "ÿz",       "Z&_": "Ì",       "Z&b": "Zœ",       "Z&e": "Z¡",          "Z&g": "Z¥",
 			"Z&h": "Z¨",       "Z&i": "Î",        "Z&Z": "Ë",       "Z~": "Z‚",        "Z„": "Z…",       "Zª": "Î",        "Zª~": "Îƒ",          "Zªy": "Îæ",           "Zy": "Zz",
 			"|‡": "|†",			",‡": ",†",			".‡": ".†",			"-‡": "-†",			"?‡": "?†",		":‡": ":†",			"=‡": "=†",			"|‰": "|ˆ",	     "K©~": "K‚©",	
-			",‰": ",ˆ",		"f¨~": "f‚¨",				"f©~": "f‚©",		".‰": ".ˆ",		"-‰": "-ˆ",			"?‰": "?ˆ",			":‰": ":ˆ",			"=‰": "=ˆ",  		 "wwK¬": "wK¬w",
-			"e©…": "e„©",	   "e¨~": "e~¨",    	  "P©~": "P‚©Ó",   		 "P©y": "Pz©",     "K©y" :"Kz©", 			"f©y": "fz©",	"Ky": "Kz",			"v©": "©v",		"x©": "©x",
-			"Š©": "©Š", 		"¯Õ": "¯’",			"ÓQ": "”Q", 		"ÒQ": "”Q",	"wwó": "wów",	"šÔ": "š‘",			"dÖ": "d«",  		"f’": "f‚",			"šÕ": "š’",		 "¯Ô": "¯‘",	"ÓP": "”P", "ÓT": "”T", "e«": "eª", 	"g…": "g„",	"e…" : "e„",	"U«" : "Uª",	"d«" : "d«",	"k«" : "kÖ",	"'‡" : "'†",	
-			"'‰" : "'ˆ",		"gœ": "¤œ",		"Auv": "Avu",		"iÒ": "iæ",		"M«": "MÖ",	"KÍ¡": "³¦", "¯-":"¯Í", 	"U©y": "Uz©",	"¨~": "‚¨", 				"©¨y": "y©¨", "©¨~": "~¨",	"¨©": "©¨",	"©¨z": "z©¨", "©¨‚": "‚©¨",	"©z": "z©",	"©‚": "‚©",	"©y": "y©", "©~": "~©", "P‚©Ó": "P‚©",	"MÖÒ": "MÖæ",	"Ê": "æ",	"­": "ø",
-			"b‚": "b~",	
+			",‰": ",ˆ",		"f¨~": "f‚¨",				"f©~": "f‚©",		".‰": ".ˆ",		"-‰": "-ˆ",			"?‰": "?ˆ",			":‰": ":ˆ",		"=‰": "=ˆ",   "wwK¬": "wK¬w",
+			"e©…": "e„©",	   "e¨~": "e~¨",    	  "P©~": "P‚©Ó",   		 "P©y": "Pz©",     "K©y" :"Kz©", 			"f©y": "fz©",		 "Ky": "Kz",	"v©": "©v",		"x©": "©x",
+			"Š©": "©Š", 		"¯Õ": "¯’",			"ÓQ": "”Q", 		"ÒQ": "”Q",	"wwó": "wów",	"šÔ": "š‘",	"dÖ": "d«",  "f’": "f‚",	"šÕ": "š’", "¯Ô": "¯‘",	"ÓP": "”P", "ÓT": "”T", "e«": "eª", 	"g…": "g„",	"e…" : "e„",	"U«" : "Uª",	"d«" : "d«",	"k«" : "kÖ",	"'‡" : "'†",	
+			"'‰" : "'ˆ",		"gœ": "¤œ",		"Auv": "Avu",		"iÒ": "iæ",		"M«": "MÖ",	"KÍ¡": "³¦", "¯-":"¯Í", 	"U©y": "Uz©",	"¨~": "‚¨", 		"©¨y": "y©¨", "©¨~": "~¨",	"¨©": "©¨",	"©¨z": "z©¨", "©¨‚": "‚©¨",	"©z": "z©",	"©‚": "‚©",	"©y": "y©", "©~": "~©", "P‚©Ó": "P‚©",	"MÖÒ": "MÖæ",	"Ê": "æ",	"­": "ø",
+			"b‚": "b~",
 			"ÎÒ": "Îæ", "_ªÒ": "_ªæ", "×Ÿ": "×¦", "`ªÒ": "`ªæ", "š-": "šÍ", "š-¡": "šÍ¦", "c&Î": "ßª", "cÖÒ": "cÖæ", "eªÒ": "eªæ", "åÒ": "åæ", "kÖÒ": "kÖæ", "¯ªÒ": "¯ªæ", 
 
         };
@@ -4488,6 +4682,229 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+// নতুন: নামাজের সময়সূচি ট্যাব এর জন্য ফাংশন (API ইন্টিগ্রেশন এবং লোকাল স্টোরেজ সহ)
+function initializePrayerTimeTab() {
+    const districtSelect = document.getElementById('district-select');
+    const prayerTimeDate = document.getElementById('prayerTimeDate');
+    const manualTimeToggle = document.getElementById('manualTimeToggle');
+    const manualTimeInputsContainer = document.getElementById('manualTimeInputs');
+
+    // ম্যানুয়াল ইনপুট ক্ষেত্র
+    const manualInputs = {
+        sehri: document.getElementById('manualSehri'),
+        fajr: document.getElementById('manualFajr'),
+        dhuhr: document.getElementById('manualDhuhr'),
+        asr: document.getElementById('manualAsr'),
+        iftar: document.getElementById('manualIftar'),
+        isha: document.getElementById('manualIsha')
+    };
+
+    if (!districtSelect || !manualTimeToggle || !manualTimeInputsContainer) return;
+
+    // API কলের জন্য বাংলা জেলার নামের সাথে ইংরেজি নামের ম্যাপিং
+    const districtMap = {
+        "বরগুনা": "Barguna", "বরিশাল": "Barisal", "ভোলা": "Bhola", "ঝালকাঠি": "Jhalokati", "পটুয়াখালী": "Patuakhali", "পিরোজপুর": "Pirojpur",
+        "বান্দরবান": "Bandarban", "ব্রাহ্মণবাড়িয়া": "Brahmanbaria", "চাঁদপুর": "Chandpur", "চট্টগ্রাম": "Chattogram", "কুমিল্লা": "Cumilla", "কক্সবাজার": "Cox's Bazar", "ফেনী": "Feni", "খাগড়াছড়ি": "Khagrachhari", "লক্ষ্মীপুর": "Lakshmipur", "নোয়াখালী": "Noakhali", "রাঙ্গামাটি": "Rangamati",
+        "ঢাকা": "Dhaka", "ফরিদপুর": "Faridpur", "গাজীপুর": "Gazipur", "গোপালগঞ্জ": "Gopalganj", "কিশোরগঞ্জ": "Kishoreganj", "মাদারীপুর": "Madaripur", "মানিকগঞ্জ": "Manikganj", "মুন্সিগঞ্জ": "Munshiganj", "নারায়ণগঞ্জ": "Narayanganj", "নরসিংদী": "Narsingdi", "রাজবাড়ী": "Rajbari", "শরীয়তপুর": "Shariatpur", "টাঙ্গাইল": "Tangail",
+        "বাগেরহাট": "Bagerhat", "চুয়াডাঙ্গা": "Chuadanga", "যশোর": "Jashore", "ঝিনাইদহ": "Jhenaidah", "খুলনা": "Khulna", "কুষ্টিয়া": "Kushtia", "মাগুরা": "Magura", "মেহেরপুর": "Meherpur", "নড়াইল": "Narail", "সাতক্ষীরা": "Satkhira",
+        "জামালপুর": "Jamalpur", "ময়মনসিংহ": "Mymensingh", "নেত্রকোনা": "Netrokona", "শেরপুর": "Sherpur",
+        "বগুড়া": "Bogura", "জয়পুরহাট": "Joypurhat", "নওগাঁ": "Naogaon", "নাটোর": "Natore", "চাঁপাইনবাবগঞ্জ": "Chapainawabganj", "পাবনা": "Pabna", "রাজশাহী": "Rajshahi", "সিরাজগঞ্জ": "Sirajganj",
+        "দিনাজপুর": "Dinajpur", "গাইবান্ধা": "Gaibandha", "কুড়িগ্রাম": "Kurigram", "লালমনিরহাট": "Lalmonirhat", "নীলফামারী": "Nilphamari", "পঞ্চগড়": "Panchagarh", "রংপুর": "Rangpur", "ঠাকুরগাঁও": "Thakurgaon",
+        "হবিগঞ্জ": "Habiganj", "মৌলভীবাজার": "Moulvibazar", "সুনামগঞ্জ": "Sunamganj", "সিলেট": "Sylhet"
+    };
+
+    // ====================================================================
+    // START: সেটিংস সেভ এবং লোড করার ফাংশন
+    // ====================================================================
+
+    // সকল সেটিংস লোকাল স্টোরেজে সেভ করার ফাংশন
+    const saveSettings = () => {
+        const settings = {
+            isManual: manualTimeToggle.checked,
+            district: districtSelect.value,
+            manualTimes: {
+                sehri: manualInputs.sehri.value,
+                fajr: manualInputs.fajr.value,
+                dhuhr: manualInputs.dhuhr.value,
+                asr: manualInputs.asr.value,
+                iftar: manualInputs.iftar.value,
+                isha: manualInputs.isha.value,
+            }
+        };
+        localStorage.setItem('prayerTimeSettings', JSON.stringify(settings));
+        console.log('সেটিংস সেভ করা হয়েছে:', settings);
+    };
+
+    // লোকাল স্টোরেজ থেকে সেটিংস লোড করার ফাংশন
+    const loadSettings = () => {
+        const savedSettings = localStorage.getItem('prayerTimeSettings');
+        if (savedSettings) {
+            const settings = JSON.parse(savedSettings);
+            console.log('সেটিংস লোড করা হয়েছে:', settings);
+
+            // টগল অবস্থা পুনরুদ্ধার করুন
+            manualTimeToggle.checked = settings.isManual;
+
+            // জেলা নির্বাচন পুনরুদ্ধার করুন
+            if (settings.district) {
+                // জেলা ড্রপডাউন লোড হওয়ার জন্য একটু অপেক্ষা করুন
+                setTimeout(() => {
+                    districtSelect.value = settings.district;
+                }, 100);
+            }
+
+            // ম্যানুয়াল সময় পুনরুদ্ধার করুন
+            if (settings.manualTimes) {
+                manualInputs.sehri.value = settings.manualTimes.sehri || '04:00';
+                manualInputs.fajr.value = settings.manualTimes.fajr || '04:10';
+                manualInputs.dhuhr.value = settings.manualTimes.dhuhr || '12:00';
+                manualInputs.asr.value = settings.manualTimes.asr || '16:30';
+                manualInputs.iftar.value = settings.manualTimes.iftar || '18:45';
+                manualInputs.isha.value = settings.manualTimes.isha || '20:00';
+            }
+        }
+    };
+
+    // ====================================================================
+    // END: সেটিংস সেভ এবং লোড করার ফাংশন
+    // ====================================================================
+
+    // 24-ঘণ্টার সময়কে 12-ঘণ্টার ফরম্যাটে রূপান্তর করার ফাংশন
+    function formatTo12Hour(time24) {
+        if (!time24 || typeof time24 !== 'string') return '--:--';
+        const [hour, minute] = time24.split(':').map(Number);
+        const period = hour >= 12 ? 'PM' : 'AM';
+        const hour12 = hour % 12 || 12;
+        return `${hour12.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${period}`;
+    }
+
+    // ম্যানুয়াল সময় প্রদর্শন করার ফাংশন
+    function displayManualTimes() {
+        document.getElementById('sehri-time').textContent = formatTo12Hour(manualInputs.sehri.value);
+        document.getElementById('fajr-time').textContent = formatTo12Hour(manualInputs.fajr.value);
+        document.getElementById('dhuhr-time').textContent = formatTo12Hour(manualInputs.dhuhr.value);
+        document.getElementById('asr-time').textContent = formatTo12Hour(manualInputs.asr.value);
+        document.getElementById('iftar-time').textContent = formatTo12Hour(manualInputs.iftar.value);
+        document.getElementById('isha-time').textContent = formatTo12Hour(manualInputs.isha.value);
+        districtSelect.disabled = true;
+    }
+
+    // API থেকে ডেটা নিয়ে আসার এবং প্রদর্শনের ফাংশন
+    async function fetchAndDisplayPrayerTimes(district) {
+        const prayerTimesP = document.querySelectorAll('.prayer-times-grid p');
+        prayerTimesP.forEach(p => p.textContent = 'লোড হচ্ছে...');
+        districtSelect.disabled = false;
+
+        const englishDistrict = districtMap[district];
+        if (!englishDistrict) {
+            prayerTimesP.forEach(p => p.textContent = 'ত্রুটি');
+            showCustomAlert('জেলা খুঁজে পাওয়া যায়নি।');
+            return;
+        }
+
+        const today = new Date();
+        const dateString = `${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()}`;
+        const url = `https://api.aladhan.com/v1/timingsByCity/${dateString}?city=${englishDistrict}&country=Bangladesh&method=1`;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`API থেকে সাড়া পাওয়া যায়নি (স্ট্যাটাস: ${response.status})`);
+            const data = await response.json();
+
+            if (data.code === 200) {
+                const times = data.data.timings;
+                const [fajrHour, fajrMinute] = times.Fajr.split(':').map(Number);
+                const fajrDate = new Date();
+                fajrDate.setHours(fajrHour, fajrMinute, 0, 0);
+                fajrDate.setMinutes(fajrDate.getMinutes() - 10);
+                const sehriTime24 = `${fajrDate.getHours().toString().padStart(2, '0')}:${fajrDate.getMinutes().toString().padStart(2, '0')}`;
+
+                document.getElementById('sehri-time').textContent = formatTo12Hour(sehriTime24);
+                document.getElementById('fajr-time').textContent = formatTo12Hour(times.Fajr);
+                document.getElementById('dhuhr-time').textContent = formatTo12Hour(times.Dhuhr);
+                document.getElementById('asr-time').textContent = formatTo12Hour(times.Asr);
+                document.getElementById('iftar-time').textContent = formatTo12Hour(times.Maghrib);
+                document.getElementById('isha-time').textContent = formatTo12Hour(times.Isha);
+            } else {
+                throw new Error('API থেকে ডেটা সঠিকভাবে আসেনি।');
+            }
+        } catch (error) {
+            console.error('Prayer Times Error:', error);
+            prayerTimesP.forEach(p => p.textContent = 'ব্যর্থ');
+            showCustomAlert(`সময় আনতে সমস্যা হয়েছে: ${error.message}`);
+        }
+    }
+
+    // টগল সুইচের পরিবর্তন হ্যান্ডেল করুন
+    manualTimeToggle.addEventListener('change', () => {
+        if (manualTimeToggle.checked) {
+            manualTimeInputsContainer.classList.remove('hidden');
+            displayManualTimes();
+        } else {
+            manualTimeInputsContainer.classList.add('hidden');
+            fetchAndDisplayPrayerTimes(districtSelect.value);
+        }
+        saveSettings(); // পরিবর্তন সেভ করুন
+    });
+
+    // ম্যানুয়াল ইনপুট পরিবর্তন হলে সময় আপডেট এবং সেভ করুন
+    Object.values(manualInputs).forEach(input => {
+        input.addEventListener('input', () => {
+            if (manualTimeToggle.checked) {
+                displayManualTimes();
+            }
+            saveSettings(); // পরিবর্তন সেভ করুন
+        });
+    });
+
+    // জেলা পরিবর্তন হলে সময় আপডেট এবং সেভ করুন
+    districtSelect.addEventListener('change', (e) => {
+        if (!manualTimeToggle.checked) {
+            fetchAndDisplayPrayerTimes(e.target.value);
+        }
+        saveSettings(); // পরিবর্তন সেভ করুন
+    });
+
+    // ড্রপডাউন এ জেলার নাম যোগ করা
+    if (districtSelect.options.length <= 1) {
+        Object.keys(districtMap).forEach(district => {
+            const option = document.createElement('option');
+            option.value = district;
+            option.textContent = district;
+            districtSelect.appendChild(option);
+        });
+    }
+
+    // --- মূল التنفيذ লজিক ---
+    loadSettings(); // প্রথমে সেভ করা সেটিংস লোড করুন
+
+    // লোড করা সেটিংসের উপর ভিত্তি করে প্রাথমিক অবস্থা নির্ধারণ করুন
+    if (manualTimeToggle.checked) {
+        manualTimeInputsContainer.classList.remove('hidden');
+        displayManualTimes();
+    } else {
+        manualTimeInputsContainer.classList.add('hidden');
+        fetchAndDisplayPrayerTimes(districtSelect.value || "ঢাকা");
+    }
+
+    // আজকের তারিখ প্রদর্শন
+    const today = new Date();
+    prayerTimeDate.textContent = today.toLocaleDateString('bn-BD', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+    // যখন নামাজের সময়সূচি ট্যাব ক্লিক করা হবে, তখন এই ফাংশনটি চালু হবে
+    document.getElementById('prayerTimeTab')?.addEventListener('click', initializePrayerTimeTab);
+    
+    // 페이지 로드 시 기도 시간 탭이 활성화되어 있으면 초기화
+    if (document.getElementById('prayerTimeContent')?.classList.contains('active')) {
+        initializePrayerTimeTab();
+    }
+
         // জেমিনিকে জিজ্ঞাসা করার ফাংশন আপডেট করুন
         async function handleAskGemini() {
             const assistantInput = document.getElementById('assistantInput');
@@ -4857,7 +5274,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const speechToTextContent = document.getElementById('speechToTextContent'); // STT কন্টেন্ট
 				const mapTab = document.getElementById('mapTab');
 				const mapContent = document.getElementById('mapContent');
-
+				const prayerTimeTab = document.getElementById('prayerTimeTab'); // এই লাইনটি যুক্ত করুন
+				const prayerTimeContent = document.getElementById('prayerTimeContent'); // এই লাইনটি যুক্ত করুন
 
                 // API কী মডেল উপাদান
                 const apiKeyModal = document.getElementById('apiKeyModal');
@@ -4898,14 +5316,14 @@ function showTab(tabId) {
     // সমস্ত ট্যাব বোতাম এবং কন্টেন্ট বিভাগ নির্বাচন করুন
     const tabs = [
         basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab,
-        converterTab, measurementTab, typingTestTab, translatorTab, mapTab, // mapTab যোগ করা হয়েছে
+        converterTab, measurementTab, typingTestTab, translatorTab, mapTab, prayerTimeTab, // mapTab যোগ করা হয়েছে
         spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab,
         textAssistantTab, allFeaturesTab
     ];
     const contents = [
         basicCalculatorContent, ageCalculatorContent, dateCalculatorContent,
         scientificCalculatorContent, newsContent, converterContent,
-        measurementContent, typingTestContent, translatorContent, mapContent, // mapContent যোগ করা হয়েছে
+        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, // mapContent যোগ করা হয়েছে
         spellCheckerContent, textBeautifierContent, wordMeaningContent,
         textToSpeechContent, speechToTextContent, textAssistantContent,
         allFeaturesContent
@@ -4965,6 +5383,11 @@ function showTab(tabId) {
             activeTab = mapTab;
             activeContent = mapContent;
             break;
+			case 'prayerTime':
+                activeTab = prayerTimeTab;
+                activeContent = prayerTimeContent;
+                initializePrayerTimeTab(); // ট্যাব দেখানোর সময় ডেটা লোড করুন
+                break;
         case 'spellCheck':
             activeTab = spellCheckTab;
             activeContent = spellCheckerContent;
@@ -5017,6 +5440,7 @@ function showTab(tabId) {
                 if (sttTab) sttTab.addEventListener('click', () => showTab('stt')); // STT ট্যাব ইভেন্ট
 				if (typingTestTab) typingTestTab.addEventListener('click', () => showTab('typingTest')); // এই লাইনটি যোগ করুন
 				if (mapTab) mapTab.addEventListener('click', () => showTab('map'));
+                if (prayerTimeTab) prayerTimeTab.addEventListener('click', () => showTab('prayerTime')); // এই লাইনটি যোগ করুন
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
                 if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
 
