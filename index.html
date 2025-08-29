@@ -6864,7 +6864,8 @@ function showTab(tabId) {
                 const clearSttBtn = document.getElementById('clearSttBtn');
 
                 let recognition;
-                let isListening = false;
+				let isListening = false;
+				let final_transcript = ''; // <--- এই লাইনটি যোগ করুন
 
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -6878,25 +6879,26 @@ function showTab(tabId) {
                     recognition.lang = 'bn-BD';
 
                     recognition.onstart = () => {
-                        isListening = true;
-                        sttStatus.innerText = 'অবস্থা: শুনছে... 🎙️';
-                        startSttBtn.disabled = true;
-                        stopSttBtn.disabled = false;
-                    };
+						isListening = true;
+						sttStatus.innerText = 'অবস্থা: শুনছে... 🎙️';
+						startSttBtn.disabled = true;
+						stopSttBtn.disabled = false;
+						final_transcript = sttOutput.value; // <--- এই লাইনটি যোগ করুন
+					};
 
                     recognition.onresult = (event) => {
-                        let finalTranscript = sttOutput.value.substring(0, sttOutput.selectionStart);
-                        let interimTranscript = '';
-
-                        for (let i = event.resultIndex; i < event.results.length; ++i) {
-                            if (event.results[i].isFinal) {
-                                finalTranscript += event.results[i][0].transcript;
-                            } else {
-                                interimTranscript += event.results[i][0].transcript;
-                            }
-                        }
-                        sttOutput.value = finalTranscript + interimTranscript;
-                    };
+    let interim_transcript = '';
+    for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+            // চূড়ান্ত ফলাফলের শেষে একটি স্পেস যোগ করুন
+            final_transcript += event.results[i][0].transcript + ' ';
+        } else {
+            interim_transcript += event.results[i][0].transcript;
+        }
+    }
+    // চূড়ান্ত এবং অন্তর্বর্তী ফলাফল একত্রিত করে দেখান
+    sttOutput.value = final_transcript + interim_transcript;
+};
 
                     recognition.onerror = (event) => {
                         console.error('Speech Recognition Error:', event.error);
