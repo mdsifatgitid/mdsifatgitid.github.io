@@ -6854,124 +6854,100 @@ function showTab(tabId) {
                 // ====================================================================
                 // START: BROWSER REAL-TIME SPEECH-TO-TEXT (STT) SCRIPT
                 // দ্রষ্টব্য: রিয়েল-টাইম ফলাফলের জন্য ব্রাউজারের Web Speech API সবচেয়ে উপযুক্ত।
-               // জেমিনি এপিআই রিয়েল-টাইম স্ট্রিমিং সমর্থন করে না।
+                // জেমিনি এপিআই রিয়েল-টাইম স্ট্রিমিং সমর্থন করে না।
                 // ====================================================================
-const sttOutput = document.getElementById('sttOutput');
-const sttStatus = document.getElementById('sttStatus');
-const startSttBtn = document.getElementById('startSttBtn');
-const stopSttBtn = document.getElementById('stopSttBtn');
-const copySttBtn = document.getElementById('copySttBtn');
-const clearSttBtn = document.getElementById('clearSttBtn');
+                const sttOutput = document.getElementById('sttOutput');
+                const sttStatus = document.getElementById('sttStatus');
+                const startSttBtn = document.getElementById('startSttBtn');
+                const stopSttBtn = document.getElementById('stopSttBtn');
+                const copySttBtn = document.getElementById('copySttBtn');
+                const clearSttBtn = document.getElementById('clearSttBtn');
 
-let recognition;
-let isListening = false;
+                let recognition;
+                let isListening = false;
 
-// Web Speech API সাপোর্ট করে কিনা তা পরীক্ষা করুন
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-if (SpeechRecognition) {
-    recognition = new SpeechRecognition();
-    recognition.continuous = true; // একটানা শোনার জন্য
-    recognition.interimResults = true; // অন্তর্বর্তীকালীন ফলাফল দেখানোর জন্য
-    recognition.lang = 'bn-BD'; // বাংলা ভাষার জন্য সেট করা হয়েছে
+                if (SpeechRecognition) {
+                    recognition = new SpeechRecognition();
+                    recognition.continuous = true;
+                    recognition.interimResults = true;
+                    // ভাষা স্বয়ংক্রিয়ভাবে সনাক্ত করার জন্য, lang বৈশিষ্ট্যটি সেট করা হয় না।
+                    // তবে, সেরা ফলাফলের জন্য একটি নির্দিষ্ট ভাষা সেট করা ভাল।
+                    // ডিফল্ট হিসেবে বাংলা সেট করা হলো।
+                    recognition.lang = 'bn-BD';
 
-    let textBeforeRecognition = ''; // কথা বলা শুরুর আগের লেখা সংরক্ষণ করার জন্য
+                    recognition.onstart = () => {
+                        isListening = true;
+                        sttStatus.innerText = 'অবস্থা: শুনছে... 🎙️';
+                        startSttBtn.disabled = true;
+                        stopSttBtn.disabled = false;
+                    };
 
-    // যখন কথা বলা শুরু হবে
-    recognition.onstart = () => {
-        isListening = true;
-        sttStatus.innerText = 'অবস্থা: শুনছে... 🎙️';
-        startSttBtn.disabled = true;
-        stopSttBtn.disabled = false;
-        
-        // কথা বলা শুরু করার আগে টেক্সটবক্সের লেখা সংরক্ষণ করুন
-        textBeforeRecognition = sttOutput.value;
-        // যদি আগে থেকেই লেখা থাকে এবং শেষে স্পেস না থাকে, একটি স্পেস যোগ করুন
-        if (textBeforeRecognition && !textBeforeRecognition.endsWith(' ')) {
-            textBeforeRecognition += ' ';
-        }
-    };
-
-    // যখন কোনো ফলাফল পাওয়া যাবে (মূল সমাধান এখানে)
-    recognition.onresult = (event) => {
-                        let finalTranscript = '';
+                    recognition.onresult = (event) => {
+                        let finalTranscript = sttOutput.value.substring(0, sttOutput.selectionStart);
                         let interimTranscript = '';
 
-                        // event.results হলো একটি তালিকা যেখানে কথা বলার পর সমস্ত ফলাফল জমা থাকে।
-                        // আমরা পুরো তালিকা জুড়ে লুপ করে চূড়ান্ত (final) এবং অন্তর্বর্তী (interim) ফলাফল আলাদা করব।
-                        for (let i = 0; i < event.results.length; i++) {
-                            const transcriptPart = event.results[i][0].transcript;
-
-                            // isFinal প্রপার্টিটি বলে দেয় যে ফলাফলটি চূড়ান্ত কি না।
-                            if (event.results[i][0].confidence > 0 && event.results[i].isFinal) {
-                                // শুধুমাত্র চূড়ান্ত ফলাফলগুলোকেই finalTranscript-এ যোগ করা হচ্ছে।
-                                finalTranscript += transcriptPart.trim() + ' ';
+                        for (let i = event.resultIndex; i < event.results.length; ++i) {
+                            if (event.results[i].isFinal) {
+                                finalTranscript += event.results[i][0].transcript;
                             } else {
-                                // কথা বলার সময় লাইভ যা দেখা যায়, তা হলো অন্তর্বর্তী ফলাফল।
-                                interimTranscript += transcriptPart;
+                                interimTranscript += event.results[i][0].transcript;
                             }
                         }
-
-                        // টেক্সটবক্সের মান হিসেবে চূড়ান্ত এবং অন্তর্বর্তী ফলাফল একসাথে দেখানো হচ্ছে।
-                        // এই পদ্ধতিটি প্রতিবার নতুন করে ভ্যালু সেট করে, তাই লেখা রিপিট হয় না।
                         sttOutput.value = finalTranscript + interimTranscript;
                     };
 
-    // কোনো ত্রুটি হলে
-    recognition.onerror = (event) => {
-        console.error('Speech Recognition Error:', event.error);
-        let errorMessage = 'একটি স্পিচ টু টেক্সট ত্রুটি হয়েছে।';
-        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-            errorMessage = 'মাইক্রোফোন ব্যবহারের অনুমতি প্রয়োজন।';
-        } else if (event.error === 'no-speech') {
-            errorMessage = 'কোনো কথা সনাক্ত করা যায়নি।';
-        }
-        sttStatus.innerText = `অবস্থা: ত্রুটি - ${errorMessage} ❌`;
-        showCustomAlert(`STT ত্রুটি: ${errorMessage}`);
-    };
+                    recognition.onerror = (event) => {
+                        console.error('Speech Recognition Error:', event.error);
+                        let errorMessage = 'একটি স্পিচ টু টেক্সট ত্রুটি হয়েছে।';
+                        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                            errorMessage = 'মাইক্রোফোন ব্যবহারের অনুমতি প্রয়োজন।';
+                        } else if (event.error === 'no-speech') {
+                            errorMessage = 'কোনো কথা সনাক্ত করা যায়নি।';
+                        }
+                        sttStatus.innerText = `অবস্থা: ত্রুটি - ${errorMessage} ❌`;
+                        showCustomAlert(`STT ত্রুটি: ${errorMessage}`);
+                    };
 
-    // যখন কথা বলা শেষ হবে
-    recognition.onend = () => {
-        isListening = false;
-        sttStatus.innerText = 'অবস্থা: নিষ্ক্রিয় ✅';
-        startSttBtn.disabled = false;
-        stopSttBtn.disabled = true;
-    };
+                    recognition.onend = () => {
+                        isListening = false;
+                        sttStatus.innerText = 'অবস্থা: নিষ্ক্রিয় ✅';
+                        startSttBtn.disabled = false;
+                        stopSttBtn.disabled = true;
+                    };
 
-    // বোতামের জন্য ইভেন্ট লিসেনার
-    if (startSttBtn) {
-        startSttBtn.addEventListener('click', () => {
-            if (!isListening) {
-                recognition.start();
-            }
-        });
-    }
+                    if (startSttBtn) {
+                        startSttBtn.addEventListener('click', () => {
+                            if (!isListening) {
+                                recognition.start();
+                            }
+                        });
+                    }
 
-    if (stopSttBtn) {
-        stopSttBtn.addEventListener('click', () => {
-            if (isListening) {
-                recognition.stop();
-            }
-        });
-    }
+                    if (stopSttBtn) {
+                        stopSttBtn.addEventListener('click', () => {
+                            if (isListening) {
+                                recognition.stop();
+                            }
+                        });
+                    }
 
-    if (copySttBtn) copySttBtn.addEventListener('click', () => copyToClipboard('sttOutput'));
+                    if (copySttBtn) copySttBtn.addEventListener('click', () => copyToClipboard('sttOutput'));
 
-    if (clearSttBtn) {
-        clearSttBtn.addEventListener('click', () => {
-            sttOutput.value = '';
-            textBeforeRecognition = ''; // লেখা পরিষ্কার করলে ভেরিয়েবলও রিসেট করুন
-            if (isListening) recognition.stop();
-        });
-    }
+                    if (clearSttBtn) {
+                        clearSttBtn.addEventListener('click', () => {
+                            sttOutput.value = '';
+                            if (isListening) recognition.stop();
+                        });
+                    }
 
-} else {
-    // যদি ব্রাউজার স্পিচ রিকগনিশন সমর্থন না করে
-    sttStatus.innerText = 'দুঃখিত, আপনার ব্রাউজার স্পিচ রিকগনিশন সমর্থন করে না। 😔';
-    [startSttBtn, stopSttBtn, copySttBtn, clearSttBtn].forEach(btn => {
-        if (btn) btn.disabled = true;
-    });
-}
+                } else {
+                    sttStatus.innerText = 'দুঃখিত, আপনার ব্রাউজার স্পিচ রিকগনিশন সমর্থন করে না। 😔';
+                    [startSttBtn, stopSttBtn, copySttBtn, clearSttBtn].forEach(btn => {
+                        if (btn) btn.disabled = true;
+                    });
+                }
                 // ====================================================================
                 // END: BROWSER REAL-TIME SPEECH-TO-TEXT (STT) SCRIPT
                 // ====================================================================
