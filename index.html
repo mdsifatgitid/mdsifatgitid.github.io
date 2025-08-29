@@ -6894,23 +6894,28 @@ if (SpeechRecognition) {
 
     // যখন কোনো ফলাফল পাওয়া যাবে (মূল সমাধান এখানে)
     recognition.onresult = (event) => {
-        let interim_transcript = '';
-        let final_transcript = '';
+                        let finalTranscript = '';
+                        let interimTranscript = '';
 
-        // event.results অবজেক্টের শুরু থেকে শেষ পর্যন্ত লুপ করে সম্পূর্ণ ট্রান্সক্রিপ্টটি নতুন করে তৈরি করুন
-        for (let i = 0; i < event.results.length; ++i) {
-            // যদি ফলাফলটি চূড়ান্ত হয়, তবে final_transcript-এ যোগ করুন
-            if (event.results[i].isFinal) {
-                final_transcript += event.results[i][0].transcript;
-            } else {
-                // অন্যথায়, এটি অন্তর্বর্তীকালীন ফলাফল
-                interim_transcript += event.results[i][0].transcript;
-            }
-        }
-        
-        // টেক্সটবক্সের মান আপডেট করুন: আগের লেখার সাথে নতুন চূড়ান্ত এবং অন্তর্বর্তীকালীন লেখা যোগ করুন
-        sttOutput.value = textBeforeRecognition + final_transcript + interim_transcript;
-    };
+                        // event.results হলো একটি তালিকা যেখানে কথা বলার পর সমস্ত ফলাফল জমা থাকে।
+                        // আমরা পুরো তালিকা জুড়ে লুপ করে চূড়ান্ত (final) এবং অন্তর্বর্তী (interim) ফলাফল আলাদা করব।
+                        for (let i = 0; i < event.results.length; i++) {
+                            const transcriptPart = event.results[i][0].transcript;
+
+                            // isFinal প্রপার্টিটি বলে দেয় যে ফলাফলটি চূড়ান্ত কি না।
+                            if (event.results[i][0].confidence > 0 && event.results[i].isFinal) {
+                                // শুধুমাত্র চূড়ান্ত ফলাফলগুলোকেই finalTranscript-এ যোগ করা হচ্ছে।
+                                finalTranscript += transcriptPart.trim() + ' ';
+                            } else {
+                                // কথা বলার সময় লাইভ যা দেখা যায়, তা হলো অন্তর্বর্তী ফলাফল।
+                                interimTranscript += transcriptPart;
+                            }
+                        }
+
+                        // টেক্সটবক্সের মান হিসেবে চূড়ান্ত এবং অন্তর্বর্তী ফলাফল একসাথে দেখানো হচ্ছে।
+                        // এই পদ্ধতিটি প্রতিবার নতুন করে ভ্যালু সেট করে, তাই লেখা রিপিট হয় না।
+                        sttOutput.value = finalTranscript + interimTranscript;
+                    };
 
     // কোনো ত্রুটি হলে
     recognition.onerror = (event) => {
