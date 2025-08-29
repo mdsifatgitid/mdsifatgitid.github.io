@@ -6854,7 +6854,7 @@ function showTab(tabId) {
                 // ====================================================================
                 // START: BROWSER REAL-TIME SPEECH-TO-TEXT (STT) SCRIPT
                 // দ্রষ্টব্য: রিয়েল-টাইম ফলাফলের জন্য ব্রাউজারের Web Speech API সবচেয়ে উপযুক্ত।
-                // জেমিনি এপিআই রিয়েল-টাইম স্ট্রিমিং সমর্থন করে না।
+               // জেমিনি এপিআই রিয়েল-টাইম স্ট্রিমিং সমর্থন করে না।
                 // ====================================================================
                 const sttOutput = document.getElementById('sttOutput');
                 const sttStatus = document.getElementById('sttStatus');
@@ -6864,8 +6864,8 @@ function showTab(tabId) {
                 const clearSttBtn = document.getElementById('clearSttBtn');
 
                 let recognition;
-				let isListening = false;
-				let final_transcript = ''; // <--- এই লাইনটি যোগ করুন
+                let isListening = false;
+                let textBeforeRecognition = ""; // নতুন, পরিষ্কার ভেরিয়েবল
 
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -6873,32 +6873,32 @@ function showTab(tabId) {
                     recognition = new SpeechRecognition();
                     recognition.continuous = true;
                     recognition.interimResults = true;
-                    // ভাষা স্বয়ংক্রিয়ভাবে সনাক্ত করার জন্য, lang বৈশিষ্ট্যটি সেট করা হয় না।
-                    // তবে, সেরা ফলাফলের জন্য একটি নির্দিষ্ট ভাষা সেট করা ভাল।
-                    // ডিফল্ট হিসেবে বাংলা সেট করা হলো।
                     recognition.lang = 'bn-BD';
 
                     recognition.onstart = () => {
-						isListening = true;
-						sttStatus.innerText = 'অবস্থা: শুনছে... 🎙️';
-						startSttBtn.disabled = true;
-						stopSttBtn.disabled = false;
-						final_transcript = sttOutput.value; // <--- এই লাইনটি যোগ করুন
-					};
+                        isListening = true;
+                        sttStatus.innerText = 'অবস্থা: শুনছে... 🎙️';
+                        startSttBtn.disabled = true;
+                        stopSttBtn.disabled = false;
+                        // কথা বলা শুরুর আগে টেক্সটবক্সের লেখা সংরক্ষণ করুন
+                        textBeforeRecognition = sttOutput.value ? sttOutput.value + ' ' : '';
+                    };
 
                     recognition.onresult = (event) => {
-    let interim_transcript = '';
-    for (let i = event.resultIndex; i < event.results.length; ++i) {
-        if (event.results[i].isFinal) {
-            // চূড়ান্ত ফলাফলের শেষে একটি স্পেস যোগ করুন
-            final_transcript += event.results[i][0].transcript + ' ';
-        } else {
-            interim_transcript += event.results[i][0].transcript;
-        }
-    }
-    // চূড়ান্ত এবং অন্তর্বর্তী ফলাফল একত্রিত করে দেখান
-    sttOutput.value = final_transcript + interim_transcript;
-};
+                        let interim_transcript = '';
+                        let final_transcript = '';
+
+                        // প্রতিবার ইভেন্ট থেকে সম্পূর্ণ নতুন করে ট্রান্সক্রিপ্ট তৈরি করুন
+                        for (let i = 0; i < event.results.length; ++i) {
+                            if (event.results[i].isFinal) {
+                                final_transcript += event.results[i][0].transcript + ' ';
+                            } else {
+                                interim_transcript += event.results[i][0].transcript;
+                            }
+                        }
+                        // আগের লেখার সাথে নতুন ট্রান্সক্রিপ্ট যোগ করে দেখান
+                        sttOutput.value = textBeforeRecognition + final_transcript + interim_transcript;
+                    };
 
                     recognition.onerror = (event) => {
                         console.error('Speech Recognition Error:', event.error);
@@ -6917,11 +6917,15 @@ function showTab(tabId) {
                         sttStatus.innerText = 'অবস্থা: নিষ্ক্রিয় ✅';
                         startSttBtn.disabled = false;
                         stopSttBtn.disabled = true;
+                        // কাজ শেষ হলে ভেরিয়েবলটি রিসেট করুন
+                        textBeforeRecognition = "";
                     };
 
                     if (startSttBtn) {
                         startSttBtn.addEventListener('click', () => {
                             if (!isListening) {
+                                // কথা বলা শুরুর আগে টেক্সটবক্সের লেখাটি নিয়ে নিন
+                                textBeforeRecognition = sttOutput.value ? sttOutput.value + ' ' : '';
                                 recognition.start();
                             }
                         });
@@ -6940,6 +6944,7 @@ function showTab(tabId) {
                     if (clearSttBtn) {
                         clearSttBtn.addEventListener('click', () => {
                             sttOutput.value = '';
+                            textBeforeRecognition = ''; // ভেরিয়েবল পরিষ্কার করুন
                             if (isListening) recognition.stop();
                         });
                     }
