@@ -6865,18 +6865,19 @@ const clearSttBtn = document.getElementById('clearSttBtn');
 
 let recognition;
 let isListening = false;
-// final_transcript নামের গ্লোবাল ভেরিয়েবলটি সরানো হয়েছে কারণ এটি সমস্যার কারণ ছিল।
 
+// Web Speech API সাপোর্ট করে কিনা তা পরীক্ষা করুন
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 if (SpeechRecognition) {
     recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
+    recognition.continuous = true; // একটানা শোনার জন্য
+    recognition.interimResults = true; // অন্তর্বর্তীকালীন ফলাফল দেখানোর জন্য
     recognition.lang = 'bn-BD'; // বাংলা ভাষার জন্য সেট করা হয়েছে
 
-    let textBeforeRecognition = ''; // কথা বলা শুরুর আগের লেখা সংরক্ষণ করার জন্য নতুন ভেরিয়েবল
+    let textBeforeRecognition = ''; // কথা বলা শুরুর আগের লেখা সংরক্ষণ করার জন্য
 
+    // যখন কথা বলা শুরু হবে
     recognition.onstart = () => {
         isListening = true;
         sttStatus.innerText = 'অবস্থা: শুনছে... 🎙️';
@@ -6891,23 +6892,27 @@ if (SpeechRecognition) {
         }
     };
 
+    // যখন কোনো ফলাফল পাওয়া যাবে (মূল সমাধান এখানে)
     recognition.onresult = (event) => {
         let interim_transcript = '';
-        let final_transcript_this_session = '';
+        let final_transcript = '';
 
-        // বর্তমান সেশনের জন্য পুরো ট্রান্সক্রিপ্টটি নতুন করে তৈরি করুন
+        // event.results অবজেক্টের শুরু থেকে শেষ পর্যন্ত লুপ করে সম্পূর্ণ ট্রান্সক্রিপ্টটি নতুন করে তৈরি করুন
         for (let i = 0; i < event.results.length; ++i) {
+            // যদি ফলাফলটি চূড়ান্ত হয়, তবে final_transcript-এ যোগ করুন
             if (event.results[i].isFinal) {
-                final_transcript_this_session += event.results[i][0].transcript;
+                final_transcript += event.results[i][0].transcript;
             } else {
+                // অন্যথায়, এটি অন্তর্বর্তীকালীন ফলাফল
                 interim_transcript += event.results[i][0].transcript;
             }
         }
         
-        // আগের লেখার সাথে নতুন সেশনের ট্রান্সক্রিপ্ট যোগ করে দেখান
-        sttOutput.value = textBeforeRecognition + final_transcript_this_session + interim_transcript;
+        // টেক্সটবক্সের মান আপডেট করুন: আগের লেখার সাথে নতুন চূড়ান্ত এবং অন্তর্বর্তীকালীন লেখা যোগ করুন
+        sttOutput.value = textBeforeRecognition + final_transcript + interim_transcript;
     };
 
+    // কোনো ত্রুটি হলে
     recognition.onerror = (event) => {
         console.error('Speech Recognition Error:', event.error);
         let errorMessage = 'একটি স্পিচ টু টেক্সট ত্রুটি হয়েছে।';
@@ -6920,14 +6925,15 @@ if (SpeechRecognition) {
         showCustomAlert(`STT ত্রুটি: ${errorMessage}`);
     };
 
+    // যখন কথা বলা শেষ হবে
     recognition.onend = () => {
         isListening = false;
         sttStatus.innerText = 'অবস্থা: নিষ্ক্রিয় ✅';
         startSttBtn.disabled = false;
         stopSttBtn.disabled = true;
-        // সেশন শেষ হলে event.results রিসেট হয়, তাই textBeforeRecognition এখানে পরিবর্তনের প্রয়োজন নেই।
     };
 
+    // বোতামের জন্য ইভেন্ট লিসেনার
     if (startSttBtn) {
         startSttBtn.addEventListener('click', () => {
             if (!isListening) {
@@ -6955,6 +6961,7 @@ if (SpeechRecognition) {
     }
 
 } else {
+    // যদি ব্রাউজার স্পিচ রিকগনিশন সমর্থন না করে
     sttStatus.innerText = 'দুঃখিত, আপনার ব্রাউজার স্পিচ রিকগনিশন সমর্থন করে না। 😔';
     [startSttBtn, stopSttBtn, copySttBtn, clearSttBtn].forEach(btn => {
         if (btn) btn.disabled = true;
