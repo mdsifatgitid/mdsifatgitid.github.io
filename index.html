@@ -6829,7 +6829,7 @@ function showTab(tabId) {
                     } catch (error) {
                         console.error('Gemini TTS Error:', error);
                         showCustomAlert(`একটি ত্রুটি ঘটেছে: ${error.message}`);
-                        speakBtn.innerText = 'শুনুন';
+                        speakBtn.innerText = 'লোড করুন';
                         speakBtn.disabled = false;
                     }
                 }
@@ -6841,7 +6841,7 @@ function showTab(tabId) {
                     if (ttsAudio) {
                         ttsAudio.pause();
                         ttsAudio.currentTime = 0;
-                        speakBtn.innerText = 'শুনুন';
+                        speakBtn.innerText = 'লোড করুন';
                         speakBtn.disabled = false;
                     }
                 });
