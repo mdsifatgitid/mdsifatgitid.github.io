@@ -6851,7 +6851,7 @@ function showTab(tabId) {
                         ttsAudio.pause();
                         ttsAudio.currentTime = 0;
                     }
-                    speakBtn.innerText = 'শুনুন';
+                    speakBtn.innerText = 'লোড করুন';
                     speakBtn.disabled = false;
                 });
                 // ====================================================================
@@ -6883,14 +6883,14 @@ function showTab(tabId) {
                     // ভাষা স্বয়ংক্রিয়ভাবে সনাক্ত করার জন্য, lang বৈশিষ্ট্যটি সেট করা হয় না।
                     // তবে, সেরা ফলাফলের জন্য একটি নির্দিষ্ট ভাষা সেট করা ভাল।
                     // ডিফল্ট হিসেবে বাংলা সেট করা হলো।
-let sttLanguageSelect = document.getElementById('sttLanguageSelect');
-if (sttLanguageSelect) {
-    recognition.lang = sttLanguageSelect.value; // ড্রপডাউন থেকে নির্বাচিত ভাষা সেট করুন
-    sttLanguageSelect.addEventListener('change', (event) => {
-        recognition.lang = event.target.value; // ভাষা পরিবর্তন হলে আপডেট করুন
-        showCustomAlert(`ভাষা পরিবর্তন করা হয়েছে: ${event.target.options[event.target.selectedIndex].text}`);
-    });
-}
+				let sttLanguageSelect = document.getElementById('sttLanguageSelect');
+				if (sttLanguageSelect) {
+					recognition.lang = sttLanguageSelect.value; // ড্রপডাউন থেকে নির্বাচিত ভাষা সেট করুন
+					sttLanguageSelect.addEventListener('change', (event) => {
+					recognition.lang = event.target.value; // ভাষা পরিবর্তন হলে আপডেট করুন
+					showCustomAlert(`ভাষা পরিবর্তন করা হয়েছে: ${event.target.options[event.target.selectedIndex].text}`);
+				});
+				}
 
                     recognition.onstart = () => {
                         isListening = true;
