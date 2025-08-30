@@ -2535,6 +2535,121 @@ input:checked + .slider:before {
                 border-radius: 8px;
             }
         }
+		/* নতুন: ছবি থেকে লেখা (OCR) স্টাইল */
+.image-to-text-content {
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 600px;
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+.dark .image-to-text-content {
+    background-color: #2d3748;
+}
+.image-upload-area {
+    border: 2px dashed #007bff;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #eaf6ff;
+    transition: background-color 0.3s ease;
+}
+.dark .image-upload-area {
+    border-color: #63b3ed;
+    background-color: #1a202c;
+}
+.image-upload-area:hover {
+    background-color: #d4eaff;
+}
+.dark .image-upload-area:hover {
+    background-color: #2c3748;
+}
+.image-upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #007bff;
+    font-weight: 600;
+    cursor: pointer;
+}
+.dark .image-upload-label {
+    color: #63b3ed;
+}
+.image-preview {
+    margin-top: 20px;
+    text-align: center;
+    position: relative;
+}
+.image-preview img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 12px;
+    border: 2px solid #b3e0ff;
+}
+.dark .image-preview img {
+    border-color: #4a5568;
+}
+.image-preview .remove-image-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(239, 83, 80, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.extract-text-button {
+    background-image: linear-gradient(to right, #6d28d9 0%, #4c1d95 100%); /* Deep Purple Gradient */
+    color: white;
+    padding: 14px 25px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    width: 100%;
+    box-shadow: 0 5px 15px rgba(109, 40, 217, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.extract-text-button:hover {
+    background-image: linear-gradient(to right, #5b21b6 0%, #4c1d95 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(109, 40, 217, 0.4);
+}
+.image-to-text-content .result-area textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cce7ff;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    resize: vertical;
+    box-sizing: border-box;
+    background-color: #eaf6ff;
+    color: #333;
+}
+.dark .image-to-text-content .result-area textarea {
+    background-color: #1a202c;
+    border-color: #4a5568;
+    color: #f7fafc;
+}
+<!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে -->
     </style>
 </head>
 <body>
@@ -2595,6 +2710,7 @@ input:checked + .slider:before {
             <button id="newsTab" class="tab-button rounded-xl">সাম্প্রতিক খবর</button>
 			<button id="mapTab" class="tab-button rounded-xl">গুগল ম্যাপ</button>
 			<button id="prayerTimeTab" class="tab-button rounded-xl">নামাজের সময়সূচি</button>
+			<button id="imageToTextTab" class="tab-button rounded-xl">ছবি থেকে লেখা</button>
             <button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
             <button id="setApiKeyBtn" class="tab-button rounded-xl" style="background-color: #ef5350; color: white;">API কী সেট করুন</button>
         </div>
@@ -3463,6 +3579,37 @@ input:checked + .slider:before {
         <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">দ্রষ্টব্য: সময়সূচি aladhan.com API থেকে আনা হয়েছে (হিসাব পদ্ধতি: University of Islamic Sciences, Karachi)। এটি ইসলামিক ফাউন্ডেশনের সময়ের সাথে কিছুটা ভিন্ন হতে পারে।</p>
     </div>
 </div>
+
+<!-- নতুন: ছবি থেকে লেখা (OCR) বিভাগ -->
+<div id="imageToTextContent" class="calculator-content">
+    <div class="image-to-text-content">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">ছবি থেকে লেখা বের করুন (OCR)</h3>
+        <div class="image-upload-area">
+            <label for="ocrImageInput" class="image-upload-label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 mb-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span>একটি ছবি নির্বাচন করুন</span>
+            </label>
+            <input type="file" id="ocrImageInput" accept="image/png, image/jpeg, image/webp" class="hidden">
+        </div>
+        <div id="ocrImagePreview" class="image-preview hidden"></div>
+        <div class="flex gap-4 mt-4">
+            <button id="extractTextBtn" class="extract-text-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+                <span>লেখা বের করুন</span>
+            </button>
+        </div>
+        <div id="ocrLoading" class="loading-indicator mt-4" style="display: none;">ছবি থেকে লেখা বের করা হচ্ছে...</div>
+        <div class="result-area mt-4">
+            <div class="flex justify-between items-center mb-2">
+                <p class="result-section-title" style="text-align: left; margin: 0;">বের করা লেখা</p>
+                <button id="copyOcrTextBtn" class="font-copy-button rounded-lg">কপি করুন</button>
+            </div>
+            <textarea id="ocrResultText" rows="10" placeholder="এখানে লেখা দেখা যাবে..." readonly></textarea>
+        </div>
+        <button id="clearOcrBtn" class="font-clear-button rounded-lg mt-4 w-full">সব মুছে ফেলুন</button>
+    </div>
+</div>
+<!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে -->
 </div>
 
     <!-- API কী মডেল -->
@@ -3490,6 +3637,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const typingTestTab = document.getElementById('typingTestTab');
     const typingTestContent = document.getElementById('typingTestContent');
     
+	const imageToTextTab = document.getElementById('imageToTextTab');
+	const imageToTextContent = document.getElementById('imageToTextContent');
+	
     // নতুন যুক্ত করা উপাদান
     const textSelection = document.getElementById('textSelection');
     const timeSelection = document.getElementById('timeSelection');
@@ -5250,6 +5400,7 @@ function initializePrayerTimeTab() {
             console.log('DOMContentLoaded ইভেন্ট চালু হয়েছে। স্ক্রিপ্ট চলছে।');
             try {
                 // --- ট্যাব পরিবর্তন লজিক ---
+				//এখানে নতুন ট্যাবের নামটি যুক্ত করতে হয়। এখানে ট্যাব যুক্ত করা অনুযায়ী ট্যাব সাজানো থাকবে।
                 const basicCalcTab = document.getElementById('basicCalcTab');
                 const ageCalcTab = document.getElementById('ageCalcTab');
                 const dateCalcTab = document.getElementById('dateCalcTab');
@@ -5321,17 +5472,17 @@ function initializePrayerTimeTab() {
 
 
 function showTab(tabId) {
-    // সমস্ত ট্যাব বোতাম এবং কন্টেন্ট বিভাগ নির্বাচন করুন
+    // সমস্ত ট্যাব বোতাম এবং কন্টেন্ট বিভাগ নির্বাচন করুন, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয়।
     const tabs = [
         basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab,
-        converterTab, measurementTab, typingTestTab, translatorTab, mapTab, prayerTimeTab, // mapTab যোগ করা হয়েছে
+        converterTab, measurementTab, typingTestTab, translatorTab, mapTab, prayerTimeTab, imageToTextTab,
         spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab,
         textAssistantTab, allFeaturesTab
     ];
     const contents = [
         basicCalculatorContent, ageCalculatorContent, dateCalculatorContent,
         scientificCalculatorContent, newsContent, converterContent,
-        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, // mapContent যোগ করা হয়েছে
+        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent,
         spellCheckerContent, textBeautifierContent, wordMeaningContent,
         textToSpeechContent, speechToTextContent, textAssistantContent,
         allFeaturesContent
@@ -5349,7 +5500,8 @@ function showTab(tabId) {
 
     // নির্বাচিত ট্যাব সক্রিয় করুন এবং এর কন্টেন্ট দেখান
     let activeTab, activeContent;
-
+	
+//নিচের অংশে নতুন ট্যাবের কেস যুক্ত করতে হয়।
     switch (tabId) {
         case 'basic':
             activeTab = basicCalcTab;
@@ -5387,15 +5539,19 @@ function showTab(tabId) {
             activeTab = translatorTab;
             activeContent = translatorContent;
             break;
-        case 'map': // নতুন কেস যোগ করা হয়েছে
+        case 'map':
             activeTab = mapTab;
             activeContent = mapContent;
             break;
-			case 'prayerTime':
-                activeTab = prayerTimeTab;
-                activeContent = prayerTimeContent;
-                initializePrayerTimeTab(); // ট্যাব দেখানোর সময় ডেটা লোড করুন
-                break;
+		case 'prayerTime':
+            activeTab = prayerTimeTab;
+            activeContent = prayerTimeContent;
+            initializePrayerTimeTab();
+            break;
+        case 'imageToText':
+            activeTab = imageToTextTab;
+            activeContent = imageToTextContent;
+            break;
         case 'spellCheck':
             activeTab = spellCheckTab;
             activeContent = spellCheckerContent;
@@ -5432,7 +5588,7 @@ function showTab(tabId) {
     console.log(`ট্যাব পরিবর্তন করা হয়েছে: ${tabId}`);
 }
 
-
+//নিচের এই সেকশনে নতুন ট্যাবের ইফ লাইনটি যুক্ত করতে হয়।
 
                 if (basicCalcTab) basicCalcTab.addEventListener('click', () => showTab('basic'));
                 if (ageCalcTab) ageCalcTab.addEventListener('click', () => showTab('age'));
@@ -5449,6 +5605,7 @@ function showTab(tabId) {
 				if (typingTestTab) typingTestTab.addEventListener('click', () => showTab('typingTest')); // এই লাইনটি যোগ করুন
 				if (mapTab) mapTab.addEventListener('click', () => showTab('map'));
                 if (prayerTimeTab) prayerTimeTab.addEventListener('click', () => showTab('prayerTime')); // এই লাইনটি যোগ করুন
+				if (imageToTextTab) imageToTextTab.addEventListener('click', () => showTab('imageToText'));
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
                 if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
 
@@ -7110,6 +7267,142 @@ if (clearTranslatorTextBtn) {
 populateLanguageDropdown();
 
 // ====================================================================
+// START: IMAGE TO TEXT (OCR) SCRIPT
+// ====================================================================
+const ocrImageInput = document.getElementById('ocrImageInput');
+const ocrImagePreview = document.getElementById('ocrImagePreview');
+const extractTextBtn = document.getElementById('extractTextBtn');
+const ocrLoading = document.getElementById('ocrLoading');
+const ocrResultText = document.getElementById('ocrResultText');
+const copyOcrTextBtn = document.getElementById('copyOcrTextBtn');
+const clearOcrBtn = document.getElementById('clearOcrBtn');
+
+let ocrUploadedFile = null;
+
+if (ocrImageInput) {
+    ocrImageInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            ocrUploadedFile = {
+                type: file.type,
+                base64: e.target.result.split(',')[1],
+                dataUrl: e.target.result
+            };
+            displayOcrImagePreview();
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function displayOcrImagePreview() {
+    if (!ocrUploadedFile) return;
+    ocrImagePreview.innerHTML = `
+        <img src="${ocrUploadedFile.dataUrl}" alt="Uploaded Image Preview">
+        <button class="remove-image-btn" title="ছবি সরান">&times;</button>
+    `;
+    ocrImagePreview.classList.remove('hidden');
+    ocrImagePreview.querySelector('.remove-image-btn').addEventListener('click', clearOcrAreas);
+}
+
+function clearOcrAreas() {
+    ocrUploadedFile = null;
+    if(ocrImageInput) ocrImageInput.value = '';
+    if(ocrImagePreview) ocrImagePreview.innerHTML = '';
+    if(ocrImagePreview) ocrImagePreview.classList.add('hidden');
+    if(ocrResultText) ocrResultText.value = '';
+    if(ocrLoading) ocrLoading.style.display = 'none';
+}
+
+if (clearOcrBtn) {
+    clearOcrBtn.addEventListener('click', () => {
+         clearOcrAreas();
+         showCustomAlert('সমস্ত কিছু মুছে ফেলা হয়েছে!');
+    });
+}
+
+if (extractTextBtn) {
+    extractTextBtn.addEventListener('click', async () => {
+        if (!ocrUploadedFile) {
+            showCustomAlert('অনুগ্রহ করে প্রথমে একটি ছবি নির্বাচন করুন।');
+            return;
+        }
+
+        const apiKey = localStorage.getItem('geminiApiKey');
+        if (!apiKey) {
+            showCustomAlert('জেমিনি API কী সেট করা হয়নি।');
+            return;
+        }
+
+        ocrLoading.style.display = 'block';
+        extractTextBtn.disabled = true;
+        ocrResultText.value = '';
+
+        try {
+            const prompt = "Extract all text from this image, including any text in different languages. Provide only the extracted text without any additional comments or explanations.";
+            
+            const payload = {
+                contents: [{
+                    parts: [
+                        { text: prompt },
+                        {
+                            inlineData: {
+                                mimeType: ocrUploadedFile.type,
+                                data: ocrUploadedFile.base64
+                            }
+                        }
+                    ]
+                }]
+            };
+
+            const model = "gemini-2.5-flash-preview-05-20";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            const result = await response.json();
+
+            if (response.ok && result.candidates && result.candidates[0]?.content?.parts?.[0]?.text) {
+                ocrResultText.value = result.candidates[0].content.parts[0].text.trim();
+            } else {
+                const errorText = result?.error?.message || 'একটি অজানা ত্রুটি ঘটেছে। ছবিটি থেকে লেখা বের করা যায়নি।';
+                ocrResultText.value = `ব্যর্থ হয়েছে: ${errorText}`;
+                console.error('OCR API Response Error:', result);
+            }
+
+        } catch (error) {
+            ocrResultText.value = `একটি ত্রুটি ঘটেছে: ${error.message}`;
+            console.error('OCR API Call Error:', error);
+        } finally {
+            ocrLoading.style.display = 'none';
+            extractTextBtn.disabled = false;
+        }
+    });
+}
+
+if(copyOcrTextBtn){
+    copyOcrTextBtn.addEventListener('click', () => {
+        if(ocrResultText.value){
+            copyToClipboard('ocrResultText');
+        } else {
+            showCustomAlert('কপি করার জন্য কোনো লেখা নেই।');
+        }
+    });
+}
+// ====================================================================
+// END: IMAGE TO TEXT (OCR) SCRIPT
+// ====================================================================
+
+
+//নতুন কোনো ট্যাব যুক্ত করলে তার স্ক্রিপ্ট এটির আগে অ্যাড করতে হবে।
+
+// ====================================================================
 // END: TRANSLATOR SCRIPT
 // ====================================================================
 
@@ -7171,6 +7464,7 @@ populateLanguageDropdown();
                     mainContainer.prepend(errorMessageDiv);
                 }
             }
+			
         });
 
         window.onload = function() {
