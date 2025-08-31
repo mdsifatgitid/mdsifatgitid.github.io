@@ -4073,7 +4073,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Hijri Date (using existing logic)
             let hijriCalculationDate = new Date(now);
-            hijriCalculationDate.setDate(hijriCalculationDate.getDate() - 1); // Adjust as in displayDates for local convention এখানে 1 দিন
+            hijriCalculationDate.setDate(hijriCalculationDate.getDate() - 2); // Adjust as in displayDates for local convention এখানে 1 দিন
 																			//বা দুই দিন কমবেশি করে সেট করতে হবে প্রতিমাসে আরবি তারিখের ক্ষেত্রে।
             const hijriDateFormatter = new Intl.DateTimeFormat('ar-SA', {
                 calendar: 'islamic',
@@ -6274,7 +6274,7 @@ function showTab(tabId) {
                     // এই সামঞ্জস্য স্থানীয় চাঁদ দেখা ভিত্তিক ক্যালেন্ডারের সাথে সারিবদ্ধ করার জন্য সাধারণ,
 					//১ দিন বা ২ দিন আগে পরে করতে নিচের লজিকের মান বসাতে হবে, এখানে 1 দিন বা দুই দিন
 					//কমবেশি করে সেট করতে হবে প্রতিমাসে আরবি তারিখের ক্ষেত্রে।
-                    hijriCalculationDate.setDate(hijriCalculationDate.getDate() - 1);
+                    hijriCalculationDate.setDate(hijriCalculationDate.getDate() - 2);
 
                     const hijriDateFormatter = new Intl.DateTimeFormat('ar-SA', {
                         calendar: 'islamic',
