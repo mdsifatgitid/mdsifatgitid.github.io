@@ -2659,6 +2659,18 @@ input:checked + .slider:before {
     background-color: #2c3748;
     border-color: #90cdf4;
 }
+/* নতুন: ওয়ার্ড কাউন্টার স্টাইল */
+.word-counter-content {
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 800px;
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+.dark .word-counter-content {
+    background-color: #2d3748;
+}
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে -->
     </style>
 </head>
@@ -2721,6 +2733,7 @@ input:checked + .slider:before {
 			<button id="mapTab" class="tab-button rounded-xl">গুগল ম্যাপ</button>
 			<button id="prayerTimeTab" class="tab-button rounded-xl">নামাজের সময়সূচি</button>
 			<button id="imageToTextTab" class="tab-button rounded-xl">ছবি থেকে লেখা</button>
+			<button id="wordCounterTab" class="tab-button rounded-xl">ওয়ার্ড কাউন্টার</button>
             <button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
             <button id="setApiKeyBtn" class="tab-button rounded-xl" style="background-color: #ef5350; color: white;">API কী সেট করুন</button>
         </div>
@@ -3609,6 +3622,32 @@ input:checked + .slider:before {
         <button id="clearOcrBtn" class="font-clear-button rounded-lg mt-4 w-full">সব মুছে ফেলুন</button>
     </div>
 </div>
+<!-- নতুন: ওয়ার্ড কাউন্টার বিভাগ -->
+<div id="wordCounterContent" class="calculator-content">
+    <div class="word-counter-content">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">ওয়ার্ড ও ক্যারেক্টার কাউন্টার</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">নিচের টেক্সটবক্সে আপনার লেখা পেস্ট করুন অথবা টাইপ করুন। ফলাফল রিয়েল-টাইমে আপডেট হবে।</p>
+        <textarea id="wordCounterInput" rows="10" class="w-full p-3 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all" placeholder="এখানে আপনার লেখা পেস্ট করুন অথবা টাইপ করুন..."></textarea>
+        <div id="wordCounterStats" class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+            <div class="p-4 bg-blue-100 dark:bg-blue-900 rounded-lg shadow">
+                <h4 class="text-lg font-semibold text-blue-800 dark:text-blue-200">শব্দ</h4>
+                <p id="wordCount" class="text-2xl font-bold text-blue-600 dark:text-blue-300">0</p>
+            </div>
+            <div class="p-4 bg-green-100 dark:bg-green-900 rounded-lg shadow">
+                <h4 class="text-lg font-semibold text-green-800 dark:text-green-200">অক্ষর</h4>
+                <p id="charCount" class="text-2xl font-bold text-green-600 dark:text-green-300">0</p>
+            </div>
+            <div class="p-4 bg-purple-100 dark:bg-purple-900 rounded-lg shadow">
+                <h4 class="text-lg font-semibold text-purple-800 dark:text-purple-200">বাক্য</h4>
+                <p id="sentenceCount" class="text-2xl font-bold text-purple-600 dark:text-purple-300">0</p>
+            </div>
+            <div class="p-4 bg-yellow-100 dark:bg-yellow-900 rounded-lg shadow">
+                <h4 class="text-lg font-semibold text-yellow-800 dark:text-yellow-200">অনুচ্ছেদ</h4>
+                <p id="paragraphCount" class="text-2xl font-bold text-yellow-600 dark:text-yellow-300">0</p>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে -->
 </div>
 
@@ -3639,7 +3678,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
 	const imageToTextTab = document.getElementById('imageToTextTab');
 	const imageToTextContent = document.getElementById('imageToTextContent');
-	
+	const wordCounterTab = document.getElementById('wordCounterTab');
+	const wordCounterContent = document.getElementById('wordCounterContent');
     // নতুন যুক্ত করা উপাদান
     const textSelection = document.getElementById('textSelection');
     const timeSelection = document.getElementById('timeSelection');
@@ -5475,15 +5515,15 @@ function showTab(tabId) {
     // সমস্ত ট্যাব বোতাম এবং কন্টেন্ট বিভাগ নির্বাচন করুন, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয়।
     const tabs = [
         basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab,
-        converterTab, measurementTab, typingTestTab, translatorTab, mapTab, prayerTimeTab, imageToTextTab,
-        spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab,
+        converterTab, measurementTab, typingTestTab, translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab,
+        spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, 
         textAssistantTab, allFeaturesTab
     ];
     const contents = [
         basicCalculatorContent, ageCalculatorContent, dateCalculatorContent,
         scientificCalculatorContent, newsContent, converterContent,
-        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent,
-        spellCheckerContent, textBeautifierContent, wordMeaningContent,
+        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent,
+        spellCheckerContent, textBeautifierContent, wordMeaningContent, 
         textToSpeechContent, speechToTextContent, textAssistantContent,
         allFeaturesContent
     ];
@@ -5552,6 +5592,10 @@ function showTab(tabId) {
             activeTab = imageToTextTab;
             activeContent = imageToTextContent;
             break;
+		case 'wordCounter':
+			activeTab = wordCounterTab;
+			activeContent = wordCounterContent;
+		break;
         case 'spellCheck':
             activeTab = spellCheckTab;
             activeContent = spellCheckerContent;
@@ -5606,6 +5650,7 @@ function showTab(tabId) {
 				if (mapTab) mapTab.addEventListener('click', () => showTab('map'));
                 if (prayerTimeTab) prayerTimeTab.addEventListener('click', () => showTab('prayerTime')); // এই লাইনটি যোগ করুন
 				if (imageToTextTab) imageToTextTab.addEventListener('click', () => showTab('imageToText'));
+				if (wordCounterTab) wordCounterTab.addEventListener('click', () => showTab('wordCounter'));
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
                 if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
 
@@ -7451,6 +7496,53 @@ if(copyOcrTextBtn){
 // END: IMAGE TO TEXT (OCR) SCRIPT
 // ====================================================================
 
+// ====================================================================
+// START: WORD COUNTER SCRIPT
+// ====================================================================
+function initializeWordCounter() {
+    const wordCounterInput = document.getElementById('wordCounterInput');
+    const wordCountEl = document.getElementById('wordCount');
+    const charCountEl = document.getElementById('charCount');
+    const sentenceCountEl = document.getElementById('sentenceCount');
+    const paragraphCountEl = document.getElementById('paragraphCount');
+
+    if (!wordCounterInput) return;
+
+    wordCounterInput.addEventListener('input', () => {
+        const text = wordCounterInput.value;
+
+        // Character Count
+        const charCount = text.length;
+        charCountEl.textContent = new Intl.NumberFormat('bn-BD').format(charCount);
+
+        // Word Count
+        const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+        const wordCount = words.length;
+        wordCountEl.textContent = text.trim() === '' ? '০' : new Intl.NumberFormat('bn-BD').format(wordCount);
+
+        // Sentence Count (handles English and Bengali terminators)
+        const sentences = text.trim().split(/[.!?।]/).filter(sentence => sentence.trim().length > 0);
+        const sentenceCount = sentences.length;
+        sentenceCountEl.textContent = new Intl.NumberFormat('bn-BD').format(sentenceCount);
+
+        // Paragraph Count
+        const paragraphs = text.trim().split(/\n+/).filter(para => para.trim().length > 0);
+        const paragraphCount = paragraphs.length;
+        paragraphCountEl.textContent = new Intl.NumberFormat('bn-BD').format(paragraphCount);
+    });
+}
+
+// Initialize the word counter when the tab is shown
+if (wordCounterTab) {
+    wordCounterTab.addEventListener('click', initializeWordCounter);
+}
+// If it's the default active tab, initialize it on load
+if (wordCounterContent && wordCounterContent.classList.contains('active')) {
+    initializeWordCounter();
+}
+// ====================================================================
+// END: WORD COUNTER SCRIPT
+// ====================================================================
 
 //নতুন কোনো ট্যাব যুক্ত করলে তার স্ক্রিপ্ট এটির আগে অ্যাড করতে হবে।
 
