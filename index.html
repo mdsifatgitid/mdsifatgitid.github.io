@@ -2649,6 +2649,16 @@ input:checked + .slider:before {
     border-color: #4a5568;
     color: #f7fafc;
 }
+/* Drag & Drop এর জন্য নতুন স্টাইল */
+.image-upload-area.drag-over {
+    background-color: #cce7ff; /* ড্র্যাগ করার সময় ব্যাকগ্রাউন্ড রঙ পরিবর্তন হবে */
+    border-style: solid;
+    border-color: #0056b3;
+}
+.dark .image-upload-area.drag-over {
+    background-color: #2c3748;
+    border-color: #90cdf4;
+}
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে -->
     </style>
 </head>
@@ -7267,9 +7277,10 @@ if (clearTranslatorTextBtn) {
 populateLanguageDropdown();
 
 // ====================================================================
-// START: IMAGE TO TEXT (OCR) SCRIPT
+// START: IMAGE TO TEXT (OCR) SCRIPT (Drag & Drop Updated)
 // ====================================================================
 const ocrImageInput = document.getElementById('ocrImageInput');
+const imageUploadArea = document.querySelector('.image-upload-area'); // আপলোড এরিয়া সিলেক্ট করা হয়েছে
 const ocrImagePreview = document.getElementById('ocrImagePreview');
 const extractTextBtn = document.getElementById('extractTextBtn');
 const ocrLoading = document.getElementById('ocrLoading');
@@ -7279,24 +7290,75 @@ const clearOcrBtn = document.getElementById('clearOcrBtn');
 
 let ocrUploadedFile = null;
 
+// ফাইল প্রসেস করার জন্য একটি ফাংশন তৈরি করা হয়েছে
+function handleOcrFile(file) {
+    if (!file) return;
+    
+    // ফাইলটি ছবি কিনা তা পরীক্ষা করা হচ্ছে
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+        showCustomAlert('শুধুমাত্র PNG, JPEG, বা WEBP ফরম্যাটের ছবি আপলোড করুন।');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        ocrUploadedFile = {
+            type: file.type,
+            base64: e.target.result.split(',')[1],
+            dataUrl: e.target.result
+        };
+        displayOcrImagePreview();
+    };
+    reader.onerror = () => {
+        showCustomAlert('ফাইলটি পড়তে একটি ত্রুটি হয়েছে।');
+    };
+    reader.readAsDataURL(file);
+}
+
+// ইনপুট থেকে ফাইল সিলেক্ট হ্যান্ডেল করা
 if (ocrImageInput) {
     ocrImageInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            ocrUploadedFile = {
-                type: file.type,
-                base64: e.target.result.split(',')[1],
-                dataUrl: e.target.result
-            };
-            displayOcrImagePreview();
-        };
-        reader.readAsDataURL(file);
+        handleOcrFile(file);
     });
 }
 
+// Drag and Drop ইভেন্ট লিসেনার যোগ করা হয়েছে
+if (imageUploadArea) {
+    // ডিফল্ট আচরণ বন্ধ করা
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        imageUploadArea.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        }, false);
+    });
+
+    // ড্র্যাগ করে ছবির উপরে আনলে আপলোড এরিয়া হাইলাইট হবে
+    ['dragenter', 'dragover'].forEach(eventName => {
+        imageUploadArea.addEventListener(eventName, () => {
+            imageUploadArea.classList.add('drag-over');
+        }, false);
+    });
+
+    // ড্র্যাগ করে ছবি সরিয়ে নিলে হাইলাইট চলে যাবে
+    ['dragleave', 'drop'].forEach(eventName => {
+        imageUploadArea.addEventListener(eventName, () => {
+            imageUploadArea.classList.remove('drag-over');
+        }, false);
+    });
+
+    // ফাইল ড্রপ করলে হ্যান্ডেল করা হবে
+    imageUploadArea.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files.length > 0) {
+            handleOcrFile(files[0]); // প্রথম ফাইলটি প্রসেস করা হবে
+        }
+    }, false);
+}
+
+// বাকি ফাংশনগুলো আগের মতোই থাকছে
 function displayOcrImagePreview() {
     if (!ocrUploadedFile) return;
     ocrImagePreview.innerHTML = `
