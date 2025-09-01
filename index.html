@@ -2791,6 +2791,102 @@ input:checked + .slider:before {
     color: #90cdf4;
 }
 
+/* নতুন: নোটপ্যাড / টু-ডু লিস্ট স্টাইল */
+.notepad-container {
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 600px;
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+.dark .notepad-container {
+    background-color: #2d3748;
+}
+.notepad-input-area {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.task-input {
+    flex-grow: 1;
+    padding: 12px;
+    border: 1px solid #cce7ff;
+    border-radius: 10px;
+    font-size: 1rem;
+    background-color: #eaf6ff;
+    color: #333;
+}
+.dark .task-input {
+    background-color: #4a5568;
+    border-color: #718096;
+    color: #f7fafc;
+}
+.add-task-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.add-task-btn:hover {
+    background-color: #218838;
+}
+.task-list {
+    list-style: none;
+    padding: 0;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    word-break: break-word;
+}
+.dark .task-item {
+    background-color: #1a202c;
+    border-color: #4a5568;
+}
+.task-item.completed span {
+    text-decoration: line-through;
+    color: #6c757d;
+}
+.dark .task-item.completed span {
+    color: #a0aec0;
+}
+.task-item span {
+    flex-grow: 1;
+    text-align: left;
+    cursor: pointer; /* Allows clicking to mark as complete */
+}
+.delete-task-btn {
+    background-color: #ef5350;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-left: 10px;
+    flex-shrink: 0;
+    line-height: 1;
+    transition: background-color 0.2s ease;
+}
+.delete-task-btn:hover {
+    background-color: #d32f2f;
+}
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে -->
     </style>
@@ -2856,6 +2952,7 @@ input:checked + .slider:before {
 			<button id="imageToTextTab" class="tab-button rounded-xl">ছবি থেকে লেখা</button>
 			<button id="wordCounterTab" class="tab-button rounded-xl">ওয়ার্ড কাউন্টার</button>
 			<button id="weatherTab" class="tab-button rounded-xl">আবহাওয়া</button>
+			<button id="notepadTab" class="tab-button rounded-xl">নোটপ্যাড</button>
             <button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
             <button id="setApiKeyBtn" class="tab-button rounded-xl" style="background-color: #ef5350; color: white;">API কী সেট করুন</button>
         </div>
@@ -3804,7 +3901,20 @@ input:checked + .slider:before {
 <!-- আবহাওয়া সেকশন শেষ -->
 </div>
 
-
+<!-- নতুন: নোটপ্যাড / টু-ডু লিস্ট বিভাগ -->
+<div id="notepadContent" class="calculator-content">
+    <div class="notepad-container">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">নোটপ্যাড / টু-ডু লিস্ট</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">আপনার কাজ বা নোট যোগ করুন। ব্রাউজার বন্ধ করলেও আপনার ডেটা সেভ থাকবে। কাজ শেষ হলে লেখার ওপর ক্লিক করুন।</p>
+        <div class="notepad-input-area">
+            <input type="text" id="taskInput" placeholder="এখানে নতুন কাজ বা নোট লিখুন..." class="task-input">
+            <button id="addTaskBtn" class="add-task-btn">যোগ করুন</button>
+        </div>
+        <ul id="taskList" class="task-list">
+            <!-- কাজগুলো এখানে জাভাস্ক্রিপ্ট দ্বারা যুক্ত হবে -->
+        </ul>
+    </div>
+</div>
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে -->
 </div>
@@ -3834,6 +3944,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const typingTestTab = document.getElementById('typingTestTab');
     const typingTestContent = document.getElementById('typingTestContent');
     
+	const notepadTab = document.getElementById('notepadTab');
+	const notepadContent = document.getElementById('notepadContent');
 	const imageToTextTab = document.getElementById('imageToTextTab');
 	const imageToTextContent = document.getElementById('imageToTextContent');
 	const wordCounterTab = document.getElementById('wordCounterTab');
@@ -5674,14 +5786,14 @@ function showTab(tabId) {
     // সমস্ত ট্যাব বোতাম এবং কন্টেন্ট বিভাগ নির্বাচন করুন, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয়।
     const tabs = [
         basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab,
-        converterTab, measurementTab, typingTestTab, translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab,
+        converterTab, measurementTab, typingTestTab, translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab,
         spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, 
         textAssistantTab, allFeaturesTab
     ];
     const contents = [
         basicCalculatorContent, ageCalculatorContent, dateCalculatorContent,
         scientificCalculatorContent, newsContent, converterContent,
-        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, weatherContent,
+        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, weatherContent, notepadContent,
         spellCheckerContent, textBeautifierContent, wordMeaningContent, 
         textToSpeechContent, speechToTextContent, textAssistantContent,
         allFeaturesContent
@@ -5759,6 +5871,10 @@ function showTab(tabId) {
             activeTab = weatherTab;
             activeContent = weatherContent;
             break;
+		case 'notepad':
+			activeTab = notepadTab;
+			activeContent = notepadContent;
+		break;
         case 'spellCheck':
             activeTab = spellCheckTab;
             activeContent = spellCheckerContent;
@@ -5815,6 +5931,10 @@ function showTab(tabId) {
 				if (imageToTextTab) imageToTextTab.addEventListener('click', () => showTab('imageToText'));
 				if (wordCounterTab) wordCounterTab.addEventListener('click', () => showTab('wordCounter'));
 				if (weatherTab) weatherTab.addEventListener('click', () => showTab('weather'));
+				if (notepadTab) notepadTab.addEventListener('click', () => {
+					showTab('notepad');
+					initializeNotepad(); // Notepad চালু করার জন্য এই ফাংশন কল করুন
+					});
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
                 if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
 
@@ -7820,6 +7940,89 @@ if (cityInput) {
 // ====================================================================
 // END: WEATHER TAB SCRIPT
 // ====================================================================
+
+// ====================================================================
+// START: NOTEPAD / TO-DO LIST SCRIPT
+// ====================================================================
+function initializeNotepad() {
+    const taskInput = document.getElementById('taskInput');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const taskList = document.getElementById('taskList');
+
+    if (!taskInput || !addTaskBtn || !taskList) return;
+
+    // localStorage থেকে কাজগুলো লোড করুন
+    loadTasks();
+
+    function loadTasks() {
+        const tasks = JSON.parse(localStorage.getItem('notepadTasks')) || [];
+        taskList.innerHTML = ''; // আগের লিস্ট পরিষ্কার করুন
+        tasks.forEach(task => createTaskElement(task.text, task.completed));
+    }
+
+    function saveTasks() {
+        const tasks = [];
+        document.querySelectorAll('.task-item').forEach(item => {
+            tasks.push({
+                text: item.querySelector('span').textContent,
+                completed: item.classList.contains('completed')
+            });
+        });
+        localStorage.setItem('notepadTasks', JSON.stringify(tasks));
+    }
+
+    function createTaskElement(text, isCompleted = false) {
+        const li = document.createElement('li');
+        li.className = 'task-item';
+        if (isCompleted) {
+            li.classList.add('completed');
+        }
+
+        const span = document.createElement('span');
+        span.textContent = text;
+        // লেখায় ক্লিক করলে কাজটি সম্পন্ন বা অসম্পন্ন হিসেবে মার্ক হবে
+        span.addEventListener('click', () => {
+            li.classList.toggle('completed');
+            saveTasks();
+        });
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-task-btn';
+        deleteBtn.innerHTML = '&times;';
+        deleteBtn.addEventListener('click', () => {
+            li.remove();
+            saveTasks();
+        });
+
+        li.appendChild(span);
+        li.appendChild(deleteBtn);
+        taskList.appendChild(li);
+    }
+
+    function addTask() {
+        const taskText = taskInput.value.trim();
+        if (taskText) {
+            createTaskElement(taskText);
+            saveTasks();
+            taskInput.value = '';
+            taskInput.focus();
+        } else {
+            showCustomAlert('অনুগ্রহ করে একটি কাজ বা নোট লিখুন।');
+        }
+    }
+
+    addTaskBtn.addEventListener('click', addTask);
+    taskInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // ফর্ম সাবমিট হওয়া থেকে বিরত রাখুন
+            addTask();
+        }
+    });
+}
+// ====================================================================
+// END: NOTEPAD / TO-DO LIST SCRIPT
+// ====================================================================
+
 
 //নতুন কোনো ট্যাব যুক্ত করলে তার স্ক্রিপ্ট এটির আগে অ্যাড করতে হবে।
 
