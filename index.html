@@ -3785,7 +3785,26 @@ input:checked + .slider:before {
         </div>
         <div id="weatherLoading" class="loading-indicator mt-4" style="display: none;">আবহাওয়ার তথ্য আনা হচ্ছে...</div>
     </div>
+<!-- আবহাওয়া সেকশন শুরু -->
+<section id="weather-section" class="bg-gray-800 p-8 rounded-xl shadow-lg mt-8 hidden">
+    <div class="text-center mb-6">
+        <h2 class="text-3xl font-bold text-white mb-2">আবহাওয়ার পূর্বাভাস</h2>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-2 mb-4">
+            <input type="text" id="location-search-input" placeholder="শহর বা জেলার নাম লিখুন..." class="p-2 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-80">
+            <button id="search-weather-button" class="bg-blue-600 text-white p-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors w-full sm:w-auto">
+                অনুসন্ধান করুন
+            </button>
+        </div>
+        <p class="text-gray-400 text-lg" id="location-name"></p>
+    </div>
+    <div id="forecast-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
+        <!-- এখানে প্রতিটি দিনের আবহাওয়ার কার্ডগুলো JavaScript দ্বারা যুক্ত হবে -->
+    </div>
+</section>
+<!-- আবহাওয়া সেকশন শেষ -->
 </div>
+
+
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে -->
 </div>
@@ -7868,6 +7887,222 @@ if (cityInput) {
             }
 			
         });
+
+// আবহাওয়া ডেটা আনার জন্য JavaScript কোড
+// আবহাওয়া কোডগুলোকে বাংলায় রূপান্তর করার জন্য একটি ম্যাপ
+const weatherCodes = {
+    0: {
+        text: "পরিষ্কার আকাশ",
+        icon: "☀️"
+    },
+    1: {
+        text: "প্রধানত পরিষ্কার",
+        icon: "🌤️"
+    },
+    2: {
+        text: "আংশিক মেঘলা",
+        icon: "⛅"
+    },
+    3: {
+        text: "মেঘলা",
+        icon: "☁️"
+    },
+    45: {
+        text: "কুয়াশা",
+        icon: "🌫️"
+    },
+    48: {
+        text: "হিম কুয়াশা",
+        icon: "🌫️"
+    },
+    51: {
+        text: "হালকা গুঁড়ি গুঁড়ি বৃষ্টি",
+        icon: "🌧️"
+    },
+    53: {
+        text: "মাঝারি গুঁড়ি গুঁড়ি বৃষ্টি",
+        icon: "🌧️"
+    },
+    55: {
+        text: "ঘন গুঁড়ি গুঁড়ি বৃষ্টি",
+        icon: "🌧️"
+    },
+    56: {
+        text: "হালকা হিমায়িত গুঁড়ি গুঁড়ি বৃষ্টি",
+        icon: "🌧️"
+    },
+    57: {
+        text: "ঘন হিমায়িত গুঁড়ি গুঁড়ি বৃষ্টি",
+        icon: "🌧️"
+    },
+    61: {
+        text: "হালকা বৃষ্টি",
+        icon: "🌧️"
+    },
+    63: {
+        text: "মাঝারি বৃষ্টি",
+        icon: "🌧️"
+    },
+    65: {
+        text: "প্রবল বৃষ্টি",
+        icon: "🌧️"
+    },
+    66: {
+        text: "হালকা হিমায়িত বৃষ্টি",
+        icon: "🌧️"
+    },
+    67: {
+        text: "ঘন হিমায়িত বৃষ্টি",
+        icon: "🌧️"
+    },
+    71: {
+        text: "হালকা তুষারপাত",
+        icon: "🌨️"
+    },
+    73: {
+        text: "মাঝারি তুষারপাত",
+        icon: "🌨️"
+    },
+    75: {
+        text: "প্রবল তুষারপাত",
+        icon: "🌨️"
+    },
+    77: {
+        text: "তুষার দানা",
+        icon: "❄️"
+    },
+    80: {
+        text: "হালকা বৃষ্টি",
+        icon: "🌧️"
+    },
+    81: {
+        text: "মাঝারি বৃষ্টি",
+        icon: "🌧️"
+    },
+    82: {
+        text: "প্রবল বৃষ্টি",
+        icon: "🌧️"
+    },
+    85: {
+        text: "হালকা তুষার বৃষ্টি",
+        icon: "🌨️"
+    },
+    86: {
+        text: "প্রবল তুষার বৃষ্টি",
+        icon: "🌨️"
+    },
+    95: {
+        text: "বজ্রপাতসহ ঝড়",
+        icon: "⛈️"
+    },
+    96: {
+        text: "বজ্রপাতসহ হালকা শিলাবৃষ্টি",
+        icon: "⛈️"
+    },
+    99: {
+        text: "বজ্রপাতসহ প্রবল শিলাবৃষ্টি",
+        icon: "⛈️"
+    }
+};
+
+// তারিখকে বাংলায় রূপান্তর করার জন্য ফাংশন
+function getBanglaDay(date) {
+    const days = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
+    return days[date.getDay()];
+}
+
+// আবহাওয়ার ডেটা আনা এবং রেন্ডার করার জন্য মূল ফাংশন
+async function fetchAndDisplayWeather(latitude, longitude, locationName) {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=8`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const forecastContainer = document.getElementById('forecast-container');
+        const weatherSection = document.getElementById('weather-section');
+        const locationNameEl = document.getElementById('location-name');
+
+        if (data.daily) {
+            forecastContainer.innerHTML = ''; // পুরোনো ডেটা মুছে ফেলা
+            locationNameEl.textContent = locationName;
+
+            // প্রতিদিনের জন্য কার্ড তৈরি করা
+            for (let i = 0; i < data.daily.time.length; i++) {
+                const date = new Date(data.daily.time[i]);
+                const day = i === 0 ? "আজ" : getBanglaDay(date);
+                const maxTemp = Math.round(data.daily.temperature_2m_max[i]);
+                const minTemp = Math.round(data.daily.temperature_2m_min[i]);
+                const weatherCode = data.daily.weathercode[i];
+                const weatherInfo = weatherCodes[weatherCode] || {
+                    text: 'তথ্য নেই',
+                    icon: '❓'
+                };
+
+                const cardHtml = `
+                    <div class="bg-gray-700 p-4 rounded-lg text-center text-white shadow-md transform transition-transform hover:scale-105">
+                        <p class="text-xl font-bold">${day}</p>
+                        <p class="text-4xl my-2">${weatherInfo.icon}</p>
+                        <p class="text-lg font-semibold">${weatherInfo.text}</p>
+                        <p class="text-sm">সর্বোচ্চ: ${maxTemp}°C</p>
+                        <p class="text-sm">সর্বনিম্ন: ${minTemp}°C</p>
+                    </div>
+                `;
+                forecastContainer.innerHTML += cardHtml;
+            }
+            weatherSection.classList.remove('hidden'); // সেকশন দৃশ্যমান করা
+        } else {
+            console.error('আবহাওয়ার ডেটা লোড করা যায়নি:', data);
+        }
+    } catch (error) {
+        console.error('আবহাওয়ার ডেটা আনার সময় ত্রুটি:', error);
+    }
+}
+
+// জিওকোডিং এপিআই ব্যবহার করে শহরের নাম থেকে অক্ষাংশ ও দ্রাঘিমাংশ খুঁজে বের করার ফাংশন
+async function searchLocation(locationName) {
+    const geocodingUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(locationName)}&count=1&language=bn`;
+
+    try {
+        const response = await fetch(geocodingUrl);
+        const data = await response.json();
+        const locationNameEl = document.getElementById('location-name');
+
+        if (data.results && data.results.length > 0) {
+            const firstResult = data.results[0];
+            fetchAndDisplayWeather(firstResult.latitude, firstResult.longitude, firstResult.name);
+        } else {
+            locationNameEl.textContent = 'অবস্থান খুঁজে পাওয়া যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।';
+            console.warn('অবস্থান খুঁজে পাওয়া যায়নি।');
+        }
+    } catch (error) {
+        console.error('অবস্থান অনুসন্ধানের সময় ত্রুটি:', error);
+        document.getElementById('location-name').textContent = 'অবস্থান অনুসন্ধানের সময় একটি ত্রুটি হয়েছে।';
+    }
+}
+
+// পেজ লোড হলে ডিফল্ট অবস্থান (ঢাকা) এর জন্য আবহাওয়ার ডেটা লোড করা
+document.addEventListener('DOMContentLoaded', () => {
+    searchLocation('Dhaka');
+
+    const searchButton = document.getElementById('search-weather-button');
+    const searchInput = document.getElementById('location-search-input');
+
+    searchButton.addEventListener('click', () => {
+        const location = searchInput.value;
+        if (location) {
+            searchLocation(location);
+        }
+    });
+
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const location = searchInput.value;
+            if (location) {
+                searchLocation(location);
+            }
+        }
+    });
+});
 
         window.onload = function() {
             const preloader = document.getElementById('preloader');
