@@ -2723,10 +2723,10 @@ input:checked + .slider:before {
     padding: 20px;
     text-align: center;
     border: 1px solid #b3e0ff;
-    min-height: 250px;
+    min-height: auto; /* উচ্চতা পরিবর্তন করা হয়েছে */
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* কন্টেন্ট ওপর থেকে শুরু হবে */
 }
 .dark .weather-result-area {
     background-color: #1a202c;
@@ -2754,12 +2754,43 @@ input:checked + .slider:before {
     text-transform: capitalize;
     margin-bottom: 15px;
 }
-.weather-details {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 15px;
+
+/* নতুন যুক্ত করা এবং আপডেট করা স্টাইল */
+.weather-feels-like {
     font-size: 1rem;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    color: #555;
 }
+.dark .weather-feels-like {
+    color: #a0aec0;
+}
+.weather-extra-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    width: 100%;
+    margin-top: 20px;
+    text-align: left;
+}
+.detail-item {
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 10px;
+    border-radius: 10px;
+}
+.dark .detail-item {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+.detail-item strong {
+    display: block;
+    font-size: 0.9rem;
+    color: #3f51b5;
+    margin-bottom: 5px;
+}
+.dark .detail-item strong {
+    color: #90cdf4;
+}
+
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে -->
     </style>
@@ -7670,6 +7701,16 @@ const weatherLoading = document.getElementById('weatherLoading');
 // আপনি [https://openweathermap.org/api](https://openweathermap.org/api) - এই লিংক থেকে বিনামূল্যে একটি কী পেতে পারেন।
 const weatherApiKey = '4a5a19a6db3c60132629d8bd29949841'; // <--- এখানে আপনার API কী বসাতে হবে
 
+// নতুন: UNIX টাইমস্ট্যাম্পকে লোকাল সময়ে রূপান্তর করার জন্য ফাংশন
+function formatTime(timestamp) {
+    const date = new Date(timestamp * 1000); // সেকেন্ডকে মিলিসেকেন্ডে রূপান্তর করা হয়েছে
+    return date.toLocaleTimeString('bn-BD', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    });
+}
+
 async function getWeather(city) {
     if (weatherApiKey === 'YOUR_API_KEY_HERE' || weatherApiKey === '') {
         weatherResult.innerHTML = '<p class="text-red-500 font-semibold">আবহাওয়া API কী সেট করা হয়নি। অনুগ্রহ করে স্ক্রিপ্টে আপনার কী যোগ করুন।</p>';
@@ -7700,17 +7741,41 @@ async function getWeather(city) {
 }
 
 function displayWeather(data) {
-    const { name, main, weather, wind } = data;
-    const iconUrl = `https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`;
+    const { name, main, weather, wind, sys } = data; // sys যোগ করা হয়েছে
+    const iconUrl = `https://openweathermap.org/img/wn/${weather[0].icon}@4x.png`; // আইকন বড় করা হয়েছে
 
     weatherResult.innerHTML = `
         <h4>${name}</h4>
         <img src="${iconUrl}" alt="${weather[0].description}" class="weather-icon">
         <p class="temp">${Math.round(main.temp)}&deg;C</p>
         <p class="description">${weather[0].description}</p>
-        <div class="weather-details">
-            <span><strong>আর্দ্রতা:</strong> ${main.humidity}%</span>
-            <span><strong>বাতাস:</strong> ${wind.speed.toFixed(1)} মি/সে</span>
+        <p class="weather-feels-like"> অনুভূত হচ্ছে: ${Math.round(main.feels_like)}&deg;C</p>
+
+        <div class="weather-extra-details">
+            <div class="detail-item">
+                <strong>সর্বোচ্চ তাপমাত্রা</strong>
+                <span>${Math.round(main.temp_max)}&deg;C</span>
+            </div>
+            <div class="detail-item">
+                <strong>সর্বনিম্ন তাপমাত্রা</strong>
+                <span>${Math.round(main.temp_min)}&deg;C</span>
+            </div>
+             <div class="detail-item">
+                <strong>আর্দ্রতা</strong>
+                <span>${main.humidity}%</span>
+            </div>
+            <div class="detail-item">
+                <strong>বাতাসের গতি</strong>
+                <span>${wind.speed.toFixed(1)} মি/সে</span>
+            </div>
+            <div class="detail-item">
+                <strong>সূর্যোদয়</strong>
+                <span>${formatTime(sys.sunrise)}</span>
+            </div>
+            <div class="detail-item">
+                <strong>সূর্যাস্ত</strong>
+                <span>${formatTime(sys.sunset)}</span>
+            </div>
         </div>
     `;
 }
