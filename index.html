@@ -2671,6 +2671,96 @@ input:checked + .slider:before {
 .dark .word-counter-content {
     background-color: #2d3748;
 }
+
+/* নতুন: আবহাওয়া বিভাগের স্টাইল */
+.weather-content {
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 500px;
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+.dark .weather-content {
+    background-color: #2d3748;
+}
+.weather-search-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.city-input {
+    flex-grow: 1;
+    padding: 12px;
+    border: 1px solid #cce7ff;
+    border-radius: 10px;
+    font-size: 1rem;
+    background-color: #eaf6ff;
+    color: #333;
+}
+.dark .city-input {
+    background-color: #4a5568;
+    border-color: #718096;
+    color: #f7fafc;
+}
+.search-weather-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.search-weather-button:hover {
+    background-color: #0056b3;
+}
+.weather-result-area {
+    background-color: #e6f7ff;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #b3e0ff;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.dark .weather-result-area {
+    background-color: #1a202c;
+    border-color: #4a5568;
+}
+.weather-result-area h4 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0056b3;
+}
+.dark .weather-result-area h4 {
+    color: #90cdf4;
+}
+.weather-result-area .weather-icon {
+    width: 100px;
+    height: 100px;
+    margin: 10px auto;
+}
+.weather-result-area .temp {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+.weather-result-area .description {
+    font-size: 1.2rem;
+    text-transform: capitalize;
+    margin-bottom: 15px;
+}
+.weather-details {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+    font-size: 1rem;
+}
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে -->
     </style>
 </head>
@@ -2734,6 +2824,7 @@ input:checked + .slider:before {
 			<button id="prayerTimeTab" class="tab-button rounded-xl">নামাজের সময়সূচি</button>
 			<button id="imageToTextTab" class="tab-button rounded-xl">ছবি থেকে লেখা</button>
 			<button id="wordCounterTab" class="tab-button rounded-xl">ওয়ার্ড কাউন্টার</button>
+			<button id="weatherTab" class="tab-button rounded-xl">আবহাওয়া</button>
             <button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
             <button id="setApiKeyBtn" class="tab-button rounded-xl" style="background-color: #ef5350; color: white;">API কী সেট করুন</button>
         </div>
@@ -3648,6 +3739,23 @@ input:checked + .slider:before {
         </div>
     </div>
 </div>
+
+<!-- নতুন: আবহাওয়া বিভাগ -->
+<div id="weatherContent" class="calculator-content">
+    <div class="weather-content">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">আবহাওয়ার পূর্বাভাস</h3>
+        <div class="weather-search-box">
+            <input type="text" id="cityInput" placeholder="আপনার শহরের নাম লিখুন..." class="city-input">
+            <button id="searchWeatherBtn" class="search-weather-button">খুঁজুন</button>
+        </div>
+        <div id="weatherResult" class="weather-result-area">
+            <!-- আবহাওয়ার তথ্য এখানে দেখানো হবে -->
+            <p>একটি শহরের নাম লিখে 'খুঁজুন' বাটনে ক্লিক করুন।</p>
+        </div>
+        <div id="weatherLoading" class="loading-indicator mt-4" style="display: none;">আবহাওয়ার তথ্য আনা হচ্ছে...</div>
+    </div>
+</div>
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে -->
 </div>
 
@@ -3686,7 +3794,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const customTextInputContainer = document.getElementById('custom-text-input');
     const clearTypingBtn = document.getElementById('clearTypingBtn');
     const totalWordsDisplay = document.getElementById('totalWordsDisplay');
-
+	const weatherTab = document.getElementById('weatherTab');
+	const weatherContent = document.getElementById('weatherContent');
     // আগের উপাদান
     const typingTextDisplay = document.getElementById('typingTextDisplay');
     const typingInput = document.getElementById('typingInput');
@@ -5515,14 +5624,14 @@ function showTab(tabId) {
     // সমস্ত ট্যাব বোতাম এবং কন্টেন্ট বিভাগ নির্বাচন করুন, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয়।
     const tabs = [
         basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab,
-        converterTab, measurementTab, typingTestTab, translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab,
+        converterTab, measurementTab, typingTestTab, translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab,
         spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, 
         textAssistantTab, allFeaturesTab
     ];
     const contents = [
         basicCalculatorContent, ageCalculatorContent, dateCalculatorContent,
         scientificCalculatorContent, newsContent, converterContent,
-        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent,
+        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, weatherContent,
         spellCheckerContent, textBeautifierContent, wordMeaningContent, 
         textToSpeechContent, speechToTextContent, textAssistantContent,
         allFeaturesContent
@@ -5596,6 +5705,10 @@ function showTab(tabId) {
 			activeTab = wordCounterTab;
 			activeContent = wordCounterContent;
 		break;
+		case 'weather': // নতুন এই case টি যোগ করুন
+            activeTab = weatherTab;
+            activeContent = weatherContent;
+            break;
         case 'spellCheck':
             activeTab = spellCheckTab;
             activeContent = spellCheckerContent;
@@ -5651,6 +5764,7 @@ function showTab(tabId) {
                 if (prayerTimeTab) prayerTimeTab.addEventListener('click', () => showTab('prayerTime')); // এই লাইনটি যোগ করুন
 				if (imageToTextTab) imageToTextTab.addEventListener('click', () => showTab('imageToText'));
 				if (wordCounterTab) wordCounterTab.addEventListener('click', () => showTab('wordCounter'));
+				if (weatherTab) weatherTab.addEventListener('click', () => showTab('weather'));
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
                 if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
 
@@ -7542,6 +7656,85 @@ if (wordCounterContent && wordCounterContent.classList.contains('active')) {
 }
 // ====================================================================
 // END: WORD COUNTER SCRIPT
+// ====================================================================
+
+// ====================================================================
+// START: WEATHER TAB SCRIPT (NEW)
+// ====================================================================
+const cityInput = document.getElementById('cityInput');
+const searchWeatherBtn = document.getElementById('searchWeatherBtn');
+const weatherResult = document.getElementById('weatherResult');
+const weatherLoading = document.getElementById('weatherLoading');
+
+// অনুগ্রহ করে এখানে আপনার নিজের OpenWeatherMap API কী বসান।
+// আপনি [https://openweathermap.org/api](https://openweathermap.org/api) - এই লিংক থেকে বিনামূল্যে একটি কী পেতে পারেন।
+const weatherApiKey = '4a5a19a6db3c60132629d8bd29949841'; // <--- এখানে আপনার API কী বসাতে হবে
+
+async function getWeather(city) {
+    if (weatherApiKey === 'YOUR_API_KEY_HERE' || weatherApiKey === '') {
+        weatherResult.innerHTML = '<p class="text-red-500 font-semibold">আবহাওয়া API কী সেট করা হয়নি। অনুগ্রহ করে স্ক্রিপ্টে আপনার কী যোগ করুন।</p>';
+        return;
+    }
+
+    weatherLoading.style.display = 'block';
+    weatherResult.innerHTML = '';
+
+    try {
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weatherApiKey}&units=metric&lang=bn`);
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error('শহরটি খুঁজে পাওয়া যায়নি।');
+            } else if (response.status === 401) {
+                throw new Error('API কী টি সঠিক নয়।');
+            } else {
+                throw new Error('একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+            }
+        }
+        const data = await response.json();
+        displayWeather(data);
+    } catch (error) {
+        weatherResult.innerHTML = `<p class="text-red-500 font-semibold">${error.message}</p>`;
+    } finally {
+        weatherLoading.style.display = 'none';
+    }
+}
+
+function displayWeather(data) {
+    const { name, main, weather, wind } = data;
+    const iconUrl = `https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`;
+
+    weatherResult.innerHTML = `
+        <h4>${name}</h4>
+        <img src="${iconUrl}" alt="${weather[0].description}" class="weather-icon">
+        <p class="temp">${Math.round(main.temp)}&deg;C</p>
+        <p class="description">${weather[0].description}</p>
+        <div class="weather-details">
+            <span><strong>আর্দ্রতা:</strong> ${main.humidity}%</span>
+            <span><strong>বাতাস:</strong> ${wind.speed.toFixed(1)} মি/সে</span>
+        </div>
+    `;
+}
+
+if (searchWeatherBtn) {
+    searchWeatherBtn.addEventListener('click', () => {
+        const city = cityInput.value.trim();
+        if (city) {
+            getWeather(city);
+        } else {
+            showCustomAlert('অনুগ্রহ করে একটি শহরের নাম লিখুন।');
+        }
+    });
+}
+
+if (cityInput) {
+    cityInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            searchWeatherBtn.click();
+        }
+    });
+}
+// ====================================================================
+// END: WEATHER TAB SCRIPT
 // ====================================================================
 
 //নতুন কোনো ট্যাব যুক্ত করলে তার স্ক্রিপ্ট এটির আগে অ্যাড করতে হবে।
