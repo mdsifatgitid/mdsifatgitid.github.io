@@ -8167,17 +8167,33 @@ function initializeNotepad() {
 
                 // --- ফন্ট কনভার্টার লিসেনার যোগ করুন ---
 				// ====================================================================
-// START: PASTE FROM CLIPBOARD FUNCTIONALITY (নতুন যুক্ত করা হয়েছে)
+// ====================================================================
+// START: PASTE FROM CLIPBOARD FUNCTIONALITY (আপডেট করা হয়েছে)
 // ====================================================================
 async function pasteFromClipboard(textareaId) {
     const textarea = document.getElementById(textareaId);
     if (!textarea) return;
 
     try {
-        // ক্লিপবোর্ড থেকে টেক্সট পড়ুন
         const text = await navigator.clipboard.readText();
         if (text) {
-            textarea.value = text;
+            // কার্সরের বর্তমান অবস্থান সংরক্ষণ করুন
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+
+            // কার্সরের অবস্থানে টেক্সট যুক্ত করুন
+            const currentValue = textarea.value;
+            const newValue = currentValue.substring(0, start) + text + currentValue.substring(end);
+            textarea.value = newValue;
+
+            // পেস্ট করা টেক্সটের শেষে কার্সরের অবস্থান আপডেট করুন
+            const newCursorPosition = start + text.length;
+            textarea.selectionStart = newCursorPosition;
+            textarea.selectionEnd = newCursorPosition;
+            
+            // টেক্সটবক্সে ফোকাস করুন
+            textarea.focus();
+
             // আনডু/রিডু কার্যকারিতার জন্য স্টেট যোগ করুন
             addState(textareaId);
             showCustomAlert('টেক্সট পেস্ট করা হয়েছে!');
@@ -8190,7 +8206,7 @@ async function pasteFromClipboard(textareaId) {
     }
 }
 
-// নতুন পেস্ট বাটনগুলোর জন্য ইভেন্ট লিসেনার
+// নতুন পেস্ট বাটনগুলোর জন্য ইভেন্ট লিসেনার (এটি অপরিবর্তিত থাকবে)
 const pasteButtonLeft = document.getElementById('pasteButtonLeft');
 const pasteButtonRight = document.getElementById('pasteButtonRight');
 
