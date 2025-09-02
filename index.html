@@ -2792,7 +2792,7 @@ input:checked + .slider:before {
     color: #90cdf4;
 }
 
-/* নতুন: নোটপ্যাড / টু-ডু লিস্ট স্টাইল */
+/* নতুন: নোটপ্যাড / টু-ডু লিস্ট স্টাইল (আপডেট করা) */
 .notepad-container {
     padding: 20px;
     border-radius: 16px;
@@ -2832,7 +2832,7 @@ input:checked + .slider:before {
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color: 0.3s ease;
 }
 .add-task-btn:hover {
     background-color: #218838;
@@ -2845,8 +2845,8 @@ input:checked + .slider:before {
 }
 .task-item {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    align-items: center; /* উল্লম্বভাবে মাঝখানে রাখার জন্য */
+    gap: 10px; /* আইটেমগুলোর মধ্যে ফাঁক */
     padding: 12px;
     background-color: #ffffff;
     border-radius: 8px;
@@ -2859,17 +2859,17 @@ input:checked + .slider:before {
     background-color: #1a202c;
     border-color: #4a5568;
 }
-.task-item.completed span {
+.task-item.completed .task-text { /* Selector updated */
     text-decoration: line-through;
     color: #6c757d;
 }
-.dark .task-item.completed span {
+.dark .task-item.completed .task-text { /* Dark mode selector updated */
     color: #a0aec0;
 }
-.task-item span {
+.task-item .task-text { /* New class for text span */
     flex-grow: 1;
-    text-align: justify;
-    cursor: pointer; /* Allows clicking to mark as complete */
+    text-align: left; /* Justify can look weird for short text */
+    cursor: pointer;
 }
 .delete-task-btn {
     background-color: #ef5350;
@@ -2880,13 +2880,44 @@ input:checked + .slider:before {
     height: 30px;
     font-size: 1.2rem;
     cursor: pointer;
-    margin-left: 10px;
+    margin-left: auto; /* ডিলিট বাটন ডানদিকে ঠেলে দেওয়ার জন্য */
     flex-shrink: 0;
     line-height: 1;
     transition: background-color 0.2s ease;
 }
 .delete-task-btn:hover {
     background-color: #d32f2f;
+}
+
+/* নতুন: টাস্ক আইটেমের নাম্বারিং স্টাইল (আপডেট করা) */
+.task-number {
+    font-weight: bold;
+    color: #3f51b5;
+    background-color: #e0e7ff;
+    border-radius: 50%;
+    width: 24px;       /* সাইজ কমানো হয়েছে */
+    height: 24px;      /* সাইজ কমানো হয়েছে */
+    font-size: 0.85rem;  /* ফন্ট সাইজ কমানো হয়েছে */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.dark .task-number {
+    color: #90cdf4;
+    background-color: #4a5568;
+}
+
+/* নতুন: ড্র্যাগ করার সময় টাস্ক আইটেমের স্টাইল */
+.task-item.dragging {
+    opacity: 0.5;
+    background-color: #cce7ff;
+}
+
+.dark .task-item.dragging {
+    background-color: #2c3748;
 }
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে -->
@@ -7952,22 +7983,36 @@ function initializeNotepad() {
 
     if (!taskInput || !addTaskBtn || !taskList) return;
 
-    // localStorage থেকে কাজগুলো লোড করুন
-    loadTasks();
-
+    // কাজ যোগ করার ফাংশন
+    function addTask() {
+        const text = taskInput.value.trim();
+        if (text === '') {
+            showCustomAlert('অনুগ্রহ করে একটি কাজ বা নোট লিখুন।');
+            return;
+        }
+        createTaskElement(text);
+        taskInput.value = '';
+        saveTasks();
+        updateTaskNumbers();
+    }
+    
     function loadTasks() {
         const tasks = JSON.parse(localStorage.getItem('notepadTasks')) || [];
-        taskList.innerHTML = ''; // আগের লিস্ট পরিষ্কার করুন
+        taskList.innerHTML = '';
         tasks.forEach(task => createTaskElement(task.text, task.completed));
+        updateTaskNumbers();
     }
 
     function saveTasks() {
         const tasks = [];
         document.querySelectorAll('.task-item').forEach(item => {
-            tasks.push({
-                text: item.querySelector('span').textContent,
-                completed: item.classList.contains('completed')
-            });
+            const taskTextSpan = item.querySelector('.task-text'); // Selector updated
+            if (taskTextSpan) {
+                 tasks.push({
+                    text: taskTextSpan.textContent,
+                    completed: item.classList.contains('completed')
+                });
+            }
         });
         localStorage.setItem('notepadTasks', JSON.stringify(tasks));
     }
@@ -7975,50 +8020,99 @@ function initializeNotepad() {
     function createTaskElement(text, isCompleted = false) {
         const li = document.createElement('li');
         li.className = 'task-item';
+        li.setAttribute('draggable', 'true');
         if (isCompleted) {
             li.classList.add('completed');
         }
 
-        const span = document.createElement('span');
-        span.textContent = text;
-        // লেখায় ক্লিক করলে কাজটি সম্পন্ন বা অসম্পন্ন হিসেবে মার্ক হবে
-        span.addEventListener('click', () => {
+        const numberSpan = document.createElement('span');
+        numberSpan.className = 'task-number';
+
+        const textSpan = document.createElement('span');
+        textSpan.className = 'task-text'; // <-- এই ক্লাসটি যোগ করা হয়েছে
+        textSpan.textContent = text;
+        textSpan.addEventListener('click', () => {
             li.classList.toggle('completed');
             saveTasks();
         });
 
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-task-btn';
-        deleteBtn.innerHTML = '&times;';
+        deleteBtn.innerHTML = '×';
         deleteBtn.addEventListener('click', () => {
             li.remove();
             saveTasks();
+            updateTaskNumbers();
         });
 
-        li.appendChild(span);
+        li.appendChild(numberSpan);
+        li.appendChild(textSpan);
         li.appendChild(deleteBtn);
         taskList.appendChild(li);
     }
+    
+    // localStorage থেকে কাজগুলো লোড করুন
+    loadTasks();
 
-    function addTask() {
-        const taskText = taskInput.value.trim();
-        if (taskText) {
-            createTaskElement(taskText);
-            saveTasks();
-            taskInput.value = '';
-            taskInput.focus();
-        } else {
-            showCustomAlert('অনুগ্রহ করে একটি কাজ বা নোট লিখুন।');
-        }
-    }
-
+    // Event Listeners
     addTaskBtn.addEventListener('click', addTask);
     taskInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-            e.preventDefault(); // ফর্ম সাবমিট হওয়া থেকে বিরত রাখুন
+            e.preventDefault();
             addTask();
         }
     });
+
+    // Drag-and-drop event listeners
+    taskList.addEventListener('dragstart', e => {
+        if (e.target.classList.contains('task-item')) {
+            e.target.classList.add('dragging');
+        }
+    });
+
+    taskList.addEventListener('dragend', e => {
+        if (e.target.classList.contains('task-item')) {
+            e.target.classList.remove('dragging');
+            saveTasks();
+            updateTaskNumbers();
+        }
+    });
+
+    taskList.addEventListener('dragover', e => {
+        e.preventDefault();
+        const afterElement = getDragAfterElement(taskList, e.clientY);
+        const dragging = document.querySelector('.dragging');
+        if (dragging) {
+            if (afterElement == null) {
+                taskList.appendChild(dragging);
+            } else {
+                taskList.insertBefore(dragging, afterElement);
+            }
+        }
+    });
+
+    function updateTaskNumbers() {
+        const taskItems = taskList.querySelectorAll('.task-item');
+        taskItems.forEach((task, index) => {
+            const numberEl = task.querySelector('.task-number');
+            if (numberEl) {
+                numberEl.textContent = index + 1;
+            }
+        });
+    }
+
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.task-item:not(.dragging)')];
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
 }
 // ====================================================================
 // END: NOTEPAD / TO-DO LIST SCRIPT
