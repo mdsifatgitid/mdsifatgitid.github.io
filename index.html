@@ -3451,7 +3451,10 @@ input:checked + .slider:before {
                     <div class="font-converter-section">
                         <div class="font-section-header">
                             <h2>ইউনিকোড টেক্সট</h2>
-                            <button class="font-copy-button rounded-lg" onclick="copyToClipboard('textAreaLeft')">কপি করুন</button>
+                            <div class="flex gap-2">
+							<button id="pasteButtonLeft" class="font-copy-button rounded-lg" style="background-image: linear-gradient(to right, #60a5fa 0%, #3b82f6 100%);">পেস্ট</button>
+						<button class="font-copy-button rounded-lg" onclick="copyToClipboard('textAreaLeft')">কপি করুন</button>
+						</div>
                         </div>
                         <textarea id="textAreaLeft" placeholder="এখানে ইউনিকোড টেক্সট লিখুন"></textarea>
                         <div class="font-button-group">
@@ -3466,8 +3469,9 @@ input:checked + .slider:before {
                         <div class="font-section-header">
                             <h2>বিজয় টেক্সট</h2>
                             <div class="flex gap-2">
-                                <button id="fixAnsiButton" class="font-copy-button rounded-lg" style="background-image: linear-gradient(to right, #60a5fa 0%, #3b82f6 100%);">ফিক্স করুন</button>
-                                <button class="font-copy-button rounded-lg" onclick="copyToClipboard('textAreaRight')">কপি করুন</button>
+                                <button id="pasteButtonRight" class="font-copy-button rounded-lg" style="background-image: linear-gradient(to right, #60a5fa 0%, #3b82f6 100%);">পেস্ট</button>
+								<button id="fixAnsiButton" class="font-copy-button rounded-lg" style="background-image: linear-gradient(to right, #60a5fa 0%, #3b82f6 100%);">ফিক্স করুন</button>
+								<button class="font-copy-button rounded-lg" onclick="copyToClipboard('textAreaRight')">কপি করুন</button>
                             </div>
                         </div>
                         <textarea id="textAreaRight" placeholder="এখানে বিজয় টেক্সট লিখুন"></textarea>
@@ -8162,6 +8166,43 @@ function initializeNotepad() {
                 }
 
                 // --- ফন্ট কনভার্টার লিসেনার যোগ করুন ---
+				// ====================================================================
+// START: PASTE FROM CLIPBOARD FUNCTIONALITY (নতুন যুক্ত করা হয়েছে)
+// ====================================================================
+async function pasteFromClipboard(textareaId) {
+    const textarea = document.getElementById(textareaId);
+    if (!textarea) return;
+
+    try {
+        // ক্লিপবোর্ড থেকে টেক্সট পড়ুন
+        const text = await navigator.clipboard.readText();
+        if (text) {
+            textarea.value = text;
+            // আনডু/রিডু কার্যকারিতার জন্য স্টেট যোগ করুন
+            addState(textareaId);
+            showCustomAlert('টেক্সট পেস্ট করা হয়েছে!');
+        } else {
+            showCustomAlert('ক্লিপবোর্ডে কোনো টেক্সট নেই।');
+        }
+    } catch (err) {
+        console.error('পেস্ট করতে ব্যর্থ:', err);
+        showCustomAlert('পেস্ট করতে ব্যর্থ হয়েছে। ব্রাউজার পারমিশন চেক করুন।');
+    }
+}
+
+// নতুন পেস্ট বাটনগুলোর জন্য ইভেন্ট লিসেনার
+const pasteButtonLeft = document.getElementById('pasteButtonLeft');
+const pasteButtonRight = document.getElementById('pasteButtonRight');
+
+if (pasteButtonLeft) {
+    pasteButtonLeft.addEventListener('click', () => pasteFromClipboard('textAreaLeft'));
+}
+if (pasteButtonRight) {
+    pasteButtonRight.addEventListener('click', () => pasteFromClipboard('textAreaRight'));
+}
+// ====================================================================
+// END: PASTE FROM CLIPBOARD FUNCTIONALITY
+// ====================================================================
                 const fixAnsiButton = document.getElementById('fixAnsiButton');
                 if (fixAnsiButton) {
                     fixAnsiButton.addEventListener('click', () => fixAnsiText(true));
