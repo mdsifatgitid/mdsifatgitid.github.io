@@ -7990,14 +7990,24 @@ function initializeNotepad() {
 
     if (!taskInput || !addTaskBtn || !taskList) return;
 
-    // কাজ যোগ করার ফাংশন
+    // কাজ যোগ বা আপডেট করার ফাংশন
     function addTask() {
         const text = taskInput.value.trim();
         if (text === '') {
             showCustomAlert('অনুগ্রহ করে একটি কাজ বা নোট লিখুন।');
             return;
         }
-        createTaskElement(text);
+
+        // আমরা নতুন কাজ যোগ করছি নাকি আপডেট করছি তা বোতামের লেখা দেখে পরীক্ষা করুন
+        if (addTaskBtn.textContent === 'আপডেট করুন') {
+            // এটি একটি আপডেট
+            createTaskElement(text); // নতুন লেখা দিয়ে এলিমেন্টটি আবার তৈরি করুন
+            addTaskBtn.textContent = 'যোগ করুন'; // বোতামের লেখা রিসেট করুন
+        } else {
+            // এটি একটি নতুন কাজ
+            createTaskElement(text);
+        }
+
         taskInput.value = '';
         saveTasks();
         updateTaskNumbers();
@@ -8013,7 +8023,7 @@ function initializeNotepad() {
     function saveTasks() {
         const tasks = [];
         document.querySelectorAll('.task-item').forEach(item => {
-            const taskTextSpan = item.querySelector('.task-text'); // Selector updated
+            const taskTextSpan = item.querySelector('.task-text');
             if (taskTextSpan) {
                  tasks.push({
                     text: taskTextSpan.textContent,
@@ -8036,17 +8046,38 @@ function initializeNotepad() {
         numberSpan.className = 'task-number';
 
         const textSpan = document.createElement('span');
-        textSpan.className = 'task-text'; // <-- এই ক্লাসটি যোগ করা হয়েছে
+        textSpan.className = 'task-text';
         textSpan.textContent = text;
+        
+        // সিംഗেল ক্লিকে কাজ সম্পন্ন/অসম্পন্ন টগল করুন
         textSpan.addEventListener('click', () => {
             li.classList.toggle('completed');
             saveTasks();
+        });
+
+        // ডাবল ক্লিকে এডিটের জন্য হ্যান্ডেল করুন (নতুন যুক্ত করা হয়েছে)
+        textSpan.addEventListener('dblclick', () => {
+            // যদি ইতোমধ্যে কোনো আইটেম এডিট করা হয়, তবে নতুন এডিট শুরু করতে বাধা দিন
+            if (addTaskBtn.textContent === 'আপডেট করুন') {
+                showCustomAlert('অনুগ্রহ করে বর্তমান সম্পাদনা শেষ করুন।');
+                return;
+            }
+            taskInput.value = textSpan.textContent; // ইনপুট ফিল্ডে লেখাটি পাঠান
+            addTaskBtn.textContent = 'আপডেট করুন'; // বোতামের লেখা পরিবর্তন করুন
+            taskList.removeChild(li); // তালিকা থেকে আইটেমটি সরিয়ে ফেলুন
+            updateTaskNumbers(); // নম্বর আপডেট করুন
+            taskInput.focus(); // ইনপুট ফিল্ডে ফোকাস করুন
         });
 
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-task-btn';
         deleteBtn.innerHTML = '×';
         deleteBtn.addEventListener('click', () => {
+            // যদি কোনো আইটেম এডিট করার সময় ডিলিট করা হয়, তাহলে বোতামটি রিসেট করুন
+            if (addTaskBtn.textContent === 'আপডেট করুন' && taskInput.value === textSpan.textContent) {
+                 taskInput.value = '';
+                 addTaskBtn.textContent = 'যোগ করুন';
+            }
             li.remove();
             saveTasks();
             updateTaskNumbers();
