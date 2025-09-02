@@ -1685,6 +1685,18 @@
         .tts-button.stop:hover {
             background-color: #c82333;
         }
+		/* New download button style */
+        .tts-button.download {
+            background-color: #007bff; /* Blue */
+        }
+        .tts-button.download:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+        .tts-button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
         /* New clear button style for TTS/STT */
         .tts-button.clear-input,
         .stt-button.clear-input {
@@ -3613,6 +3625,7 @@ input:checked + .slider:before {
 					<button id="pauseBtn" class="tts-button pause rounded-lg">থামান</button>
                     <button id="stopBtn" class="tts-button stop rounded-lg">শেষ করুন</button>
                     <button id="clearTtsBtn" class="tts-button clear-input rounded-lg">মুছুন</button> <!-- Added Clear button -->
+					<button id="downloadTtsBtn" class="tts-button download rounded-lg" disabled>ডাউনলোড করুন</button>
                 </div>
             </div>
         </div>
@@ -7217,171 +7230,204 @@ function showTab(tabId) {
                     });
                 }
 
-                // ====================================================================
-                // START: GEMINI API TEXT-TO-SPEECH (TTS) SCRIPT
-                // ====================================================================
-                const ttsInput = document.getElementById('ttsInput');
-                const speakBtn = document.getElementById('speakBtn');
-                const pauseBtn = document.getElementById('pauseBtn');
-                const resumeBtn = document.getElementById('resumeBtn');
-                const stopBtn = document.getElementById('stopBtn');
-                const clearTtsBtn = document.getElementById('clearTtsBtn');
+// ====================================================================
+// START: GEMINI API TEXT-TO-SPEECH (TTS) SCRIPT
+// ====================================================================
+const ttsInput = document.getElementById('ttsInput');
+const speakBtn = document.getElementById('speakBtn');
+const pauseBtn = document.getElementById('pauseBtn');
+const resumeBtn = document.getElementById('resumeBtn');
+const stopBtn = document.getElementById('stopBtn');
+const clearTtsBtn = document.getElementById('clearTtsBtn');
+const downloadTtsBtn = document.getElementById('downloadTtsBtn'); // ডাউনলোড বাটন
 
-                // ভয়েস এবং পিচ/রেট কন্ট্রোলগুলি এখন জেমিনি দ্বারা নিয়ন্ত্রিত হবে, তাই UI থেকে সরানো হয়েছে
-                const ttsControls = document.querySelector('.tts-controls');
-                if (ttsControls) ttsControls.style.display = 'none';
+// ভয়েস এবং পিচ/রেট কন্ট্রোলগুলি এখন জেমিনি দ্বারা নিয়ন্ত্রিত হবে, তাই UI থেকে সরানো হয়েছে
+const ttsControls = document.querySelector('.tts-controls');
+if (ttsControls) ttsControls.style.display = 'none';
 
-                let ttsAudio; // অডিও অবজেক্ট সংরক্ষণ করার জন্য
+let ttsAudio; // অডিও অবজেক্ট সংরক্ষণ করার জন্য
+let downloadableAudioBlob = null; // ডাউনলোডযোগ্য অডিও ব্লব সংরক্ষণ করার জন্য
 
-                // Base64 থেকে ArrayBuffer এ রূপান্তর করার জন্য হেল্পার ফাংশন
-                function base64ToArrayBuffer(base64) {
-                    const binaryString = window.atob(base64);
-                    const len = binaryString.length;
-                    const bytes = new Uint8Array(len);
-                    for (let i = 0; i < len; i++) {
-                        bytes[i] = binaryString.charCodeAt(i);
-                    }
-                    return bytes.buffer;
-                }
+// Base64 থেকে ArrayBuffer এ রূপান্তর করার জন্য হেল্পার ফাংশন
+function base64ToArrayBuffer(base64) {
+    const binaryString = window.atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+}
 
-                // PCM ডেটা থেকে WAV ফাইল তৈরি করার জন্য হেল্পার ফাংশন
-                function pcmToWav(pcmData, sampleRate) {
-                    const header = new ArrayBuffer(44);
-                    const view = new DataView(header);
-                    const numChannels = 1;
-                    const bitsPerSample = 16;
-                    const blockAlign = numChannels * bitsPerSample / 8;
-                    const byteRate = sampleRate * blockAlign;
+// PCM ডেটা থেকে WAV ফাইল তৈরি করার জন্য হেল্পার ফাংশন
+function pcmToWav(pcmData, sampleRate) {
+    const header = new ArrayBuffer(44);
+    const view = new DataView(header);
+    const numChannels = 1;
+    const bitsPerSample = 16;
+    const blockAlign = numChannels * bitsPerSample / 8;
+    const byteRate = sampleRate * blockAlign;
 
-                    // RIFF chunk descriptor
-                    writeString(view, 0, 'RIFF');
-                    view.setUint32(4, 36 + pcmData.byteLength, true);
-                    writeString(view, 8, 'WAVE');
-                    // "fmt " sub-chunk
-                    writeString(view, 12, 'fmt ');
-                    view.setUint32(16, 16, true);
-                    view.setUint16(20, 1, true); // Audio format 1 for PCM
-                    view.setUint16(22, numChannels, true);
-                    view.setUint32(24, sampleRate, true);
-                    view.setUint32(28, byteRate, true);
-                    view.setUint16(32, blockAlign, true);
-                    view.setUint16(34, bitsPerSample, true);
-                    // "data" sub-chunk
-                    writeString(view, 36, 'data');
-                    view.setUint32(40, pcmData.byteLength, true);
+    // RIFF chunk descriptor
+    writeString(view, 0, 'RIFF');
+    view.setUint32(4, 36 + pcmData.byteLength, true);
+    writeString(view, 8, 'WAVE');
+    // "fmt " sub-chunk
+    writeString(view, 12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true); // Audio format 1 for PCM
+    view.setUint16(22, numChannels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, byteRate, true);
+    view.setUint16(32, blockAlign, true);
+    view.setUint16(34, bitsPerSample, true);
+    // "data" sub-chunk
+    writeString(view, 36, 'data');
+    view.setUint32(40, pcmData.byteLength, true);
 
-                    function writeString(view, offset, string) {
-                        for (let i = 0; i < string.length; i++) {
-                            view.setUint8(offset + i, string.charCodeAt(i));
-                        }
-                    }
+    function writeString(view, offset, string) {
+        for (let i = 0; i < string.length; i++) {
+            view.setUint8(offset + i, string.charCodeAt(i));
+        }
+    }
 
-                    return new Blob([header, pcmData], {
-                        type: 'audio/wav'
-                    });
-                }
+    return new Blob([header, pcmData], {
+        type: 'audio/wav'
+    });
+}
 
-                async function handleGeminiTTS() {
-                    const textToSpeak = ttsInput.value.trim();
-                    if (!textToSpeak) {
-                        showCustomAlert('অনুগ্রহ করে কথা বলার জন্য কিছু টেক্সট লিখুন।');
-                        return;
-                    }
+async function handleGeminiTTS() {
+    const textToSpeak = ttsInput.value.trim();
+    if (!textToSpeak) {
+        showCustomAlert('অনুগ্রহ করে কথা বলার জন্য কিছু টেক্সট লিখুন।');
+        return;
+    }
 
-                    const apiKey = localStorage.getItem('geminiApiKey');
-                    if (!apiKey) {
-                        showCustomAlert('জেমিনি API কী সেট করা হয়নি।');
-                        return;
-                    }
+    const apiKey = localStorage.getItem('geminiApiKey');
+    if (!apiKey) {
+        showCustomAlert('জেমিনি API কী সেট করা হয়নি।');
+        return;
+    }
 
-                    // আগের অডিও বন্ধ করুন
-                    if (ttsAudio) {
-                        ttsAudio.pause();
-                        ttsAudio.currentTime = 0;
-                    }
+    // আগের অডিও বন্ধ করুন এবং ডাউনলোড বাটন নিষ্ক্রিয় করুন
+    if (ttsAudio) {
+        ttsAudio.pause();
+        ttsAudio.currentTime = 0;
+    }
+    downloadableAudioBlob = null;
+    if (downloadTtsBtn) downloadTtsBtn.disabled = true;
 
-                    speakBtn.disabled = true;
-                    speakBtn.innerText = 'লোড হচ্ছে...';
+    speakBtn.disabled = true;
+    speakBtn.innerText = 'লোড হচ্ছে...';
 
-                    try {
-                        const payload = {
-                            contents: [{
-                                parts: [{
-                                    text: textToSpeak
-                                }]
-                            }],
-                            generationConfig: {
-                                responseModalities: ["AUDIO"]
-                            },
-                            model: "gemini-2.5-flash-preview-tts"
-                        };
+    try {
+        const payload = {
+            contents: [{
+                parts: [{
+                    text: textToSpeak
+                }]
+            }],
+            generationConfig: {
+                responseModalities: ["AUDIO"]
+            },
+            model: "gemini-2.5-flash-preview-tts"
+        };
 
-                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-                        const response = await fetch(apiUrl, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(payload)
-                        });
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
 
-                        const result = await response.json();
-                        const part = result?.candidates?.[0]?.content?.parts?.[0];
-                        const audioData = part?.inlineData?.data;
-                        const mimeType = part?.inlineData?.mimeType;
+        const result = await response.json();
+        const part = result?.candidates?.[0]?.content?.parts?.[0];
+        const audioData = part?.inlineData?.data;
+        const mimeType = part?.inlineData?.mimeType;
 
-                        if (audioData && mimeType && mimeType.startsWith("audio/")) {
-                            const sampleRateMatch = mimeType.match(/rate=(\d+)/);
-                            if (!sampleRateMatch) throw new Error("স্যাম্পেল রেট পাওয়া যায়নি।");
+        if (audioData && mimeType && mimeType.startsWith("audio/")) {
+            const sampleRateMatch = mimeType.match(/rate=(\d+)/);
+            if (!sampleRateMatch) throw new Error("স্যাম্পেল রেট পাওয়া যায়নি।");
 
-                            const sampleRate = parseInt(sampleRateMatch[1], 10);
-                            const pcmData = base64ToArrayBuffer(audioData);
-                            const pcm16 = new Int16Array(pcmData);
-                            const wavBlob = pcmToWav(pcm16, sampleRate);
-                            const audioUrl = URL.createObjectURL(wavBlob);
+            const sampleRate = parseInt(sampleRateMatch[1], 10);
+            const pcmData = base64ToArrayBuffer(audioData);
+            const pcm16 = new Int16Array(pcmData);
+            const wavBlob = pcmToWav(pcm16, sampleRate);
+            
+            downloadableAudioBlob = wavBlob; // ডাউনলোড করার জন্য ব্লব সংরক্ষণ করুন
+            
+            const audioUrl = URL.createObjectURL(wavBlob);
 
-                            ttsAudio = new Audio(audioUrl);
-                            ttsAudio.play();
+            ttsAudio = new Audio(audioUrl);
+            ttsAudio.play();
+            
+            if (downloadTtsBtn) downloadTtsBtn.disabled = false; // ডাউনলোড বাটন সক্রিয় করুন
 
-                            ttsAudio.onended = () => {
-                                speakBtn.innerText = 'লোড করুন';
-                                speakBtn.disabled = false;
-                            };
+            ttsAudio.onended = () => {
+                speakBtn.innerText = 'লোড করুন';
+                speakBtn.disabled = false;
+            };
 
-                        } else {
-                            throw new Error('API থেকে কোনো অডিও ডেটা পাওয়া যায়নি।');
-                        }
-                    } catch (error) {
-                        console.error('Gemini TTS Error:', error);
-                        showCustomAlert(`একটি ত্রুটি ঘটেছে: ${error.message}`);
-                        speakBtn.innerText = 'লোড করুন';
-                        speakBtn.disabled = false;
-                    }
-                }
+        } else {
+            throw new Error('API থেকে কোনো অডিও ডেটা পাওয়া যায়নি।');
+        }
+    } catch (error) {
+        console.error('Gemini TTS Error:', error);
+        showCustomAlert(`একটি ত্রুটি ঘটেছে: ${error.message}`);
+        speakBtn.innerText = 'লোড করুন';
+        speakBtn.disabled = false;
+        if (downloadTtsBtn) downloadTtsBtn.disabled = true;
+    }
+}
 
-                if (speakBtn) speakBtn.addEventListener('click', handleGeminiTTS);
-                if (pauseBtn) pauseBtn.addEventListener('click', () => ttsAudio?.pause());
-                if (resumeBtn) resumeBtn.addEventListener('click', () => ttsAudio?.play());
-                if (stopBtn) stopBtn.addEventListener('click', () => {
-                    if (ttsAudio) {
-                        ttsAudio.pause();
-                        ttsAudio.currentTime = 0;
-                        speakBtn.innerText = 'লোড করুন';
-                        speakBtn.disabled = false;
-                    }
-                });
-                if (clearTtsBtn) clearTtsBtn.addEventListener('click', () => {
-                    ttsInput.value = '';
-                    if (ttsAudio) {
-                        ttsAudio.pause();
-                        ttsAudio.currentTime = 0;
-                    }
-                    speakBtn.innerText = 'লোড করুন';
-                    speakBtn.disabled = false;
-                });
-                // ====================================================================
-                // END: GEMINI API TEXT-TO-SPEECH (TTS) SCRIPT
-                // ====================================================================
+if (speakBtn) speakBtn.addEventListener('click', handleGeminiTTS);
+if (pauseBtn) pauseBtn.addEventListener('click', () => ttsAudio?.pause());
+if (resumeBtn) resumeBtn.addEventListener('click', () => ttsAudio?.play());
+if (stopBtn) stopBtn.addEventListener('click', () => {
+    if (ttsAudio) {
+        ttsAudio.pause();
+        ttsAudio.currentTime = 0;
+        speakBtn.innerText = 'লোড করুন';
+        speakBtn.disabled = false;
+        if (downloadTtsBtn) downloadTtsBtn.disabled = true; // Stop করলে ডাউনলোড বাটন নিষ্ক্রিয় করুন
+        downloadableAudioBlob = null;
+    }
+});
+if (clearTtsBtn) clearTtsBtn.addEventListener('click', () => {
+    ttsInput.value = '';
+    if (ttsAudio) {
+        ttsAudio.pause();
+        ttsAudio.currentTime = 0;
+    }
+    speakBtn.innerText = 'লোড করুন';
+    speakBtn.disabled = false;
+    if (downloadTtsBtn) downloadTtsBtn.disabled = true; // Clear করলে ডাউনলোড বাটন নিষ্ক্রিয় করুন
+    downloadableAudioBlob = null;
+});
+
+// ডাউনলোড বাটনের জন্য নতুন ইভেন্ট লিসেনার
+if (downloadTtsBtn) {
+    downloadTtsBtn.addEventListener('click', () => {
+        if (downloadableAudioBlob) {
+            const url = URL.createObjectURL(downloadableAudioBlob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'bangla-toolbox-tts.wav'; // ফাইলের নাম
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        } else {
+            showCustomAlert('ডাউনলোড করার জন্য কোনো অডিও নেই।');
+        }
+    });
+}
+// ====================================================================
+// END: GEMINI API TEXT-TO-SPEECH (TTS) SCRIPT
+// ====================================================================
 
 
                 // ====================================================================
