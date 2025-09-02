@@ -3192,172 +3192,173 @@ input:checked + .slider:before {
             <div id="scientificExplanation" class="response-area rounded-lg mt-4" style="background-color: #e6f7ff; border: 1px solid #b3e0ff;"></div>
         </div>
 
-        <!-- নতুন: পরিমাপ (ইউনিট কনভার্টার) বিভাগ -->
-        <div id="measurementContent" class="calculator-content">
-            <div class="measurement-content">
-                <div class="converter-grid">
-                    <!-- দৈর্ঘ্য রূপান্তরকারী -->
-                    <div class="converter-section">
-                        <h3>দৈর্ঘ্য রূপান্তরকারী</h3>
-                        <div class="input-row">
-                            <div class="input-wrapper">
-                                <label for="lengthFromValue">পরিমাণ</label>
-                                <input type="number" id="lengthFromValue" class="unit-input" data-converter="length" value="1">
-                            </div>
-                            <div class="input-wrapper">
-                                <label for="lengthFromUnit">একক (থেকে)</label>
-                                <select id="lengthFromUnit" class="unit-select" data-converter="length">
-                                    <option value="meter">মিটার</option>
-                                    <option value="kilometer">কিলোমিটার</option>
-                                    <option value="centimeter">সেন্টিমিটার</option>
-                                    <option value="millimeter">মিলিমিটার</option>
-                                    <option value="mile">মাইল</option>
-                                    <option value="yard">গজ</option>
-                                    <option value="foot" selected>ফুট</option>
-                                    <option value="inch">ইঞ্চি</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="input-row">
-                             <div class="input-wrapper">
-                                <label for="lengthToValue">ফলাফল</label>
-                                <input type="number" id="lengthToValue" class="unit-input" data-converter="length_rev" readonly>
-                            </div>
-                            <div class="input-wrapper">
-                                <label for="lengthToUnit">একক (তে)</label>
-                                <select id="lengthToUnit" class="unit-select" data-converter="length">
-                                    <option value="meter">মিটার</option>
-                                    <option value="kilometer">কিলোমিটার</option>
-                                    <option value="centimeter">সেন্টিমিটার</option>
-                                    <option value="millimeter">মিলিমিটার</option>
-                                    <option value="mile">মাইল</option>
-                                    <option value="yard">গজ</option>
-                                    <option value="foot">ফুট</option>
-                                    <option value="inch" selected>ইঞ্চি</option>
-                                </select>
-                            </div>
-                        </div>
+<!-- পরিমাপ (ইউনিট কনভার্টার) বিভাগ শুরু -->
+<div id="measurementContent" class="calculator-content">
+    <div class="measurement-content">
+        <div class="converter-grid">
+            <!-- দৈর্ঘ্য রূপান্তরকারী -->
+            <div class="converter-section">
+                <h3>দৈর্ঘ্য রূপান্তরকারী</h3>
+                <div class="input-row">
+                    <div class="input-wrapper">
+                        <label for="lengthFromValue">পরিমাণ (থেকে)</label>
+                        <input type="number" id="lengthFromValue" class="unit-input" data-converter="length" value="1">
                     </div>
-
-                    <!-- ওজন রূপান্তরকারী -->
-                    <div class="converter-section">
-                        <h3>ওজন রূপান্তরকারী</h3>
-                         <div class="input-row">
-                            <div class="input-wrapper">
-                                <label for="weightFromValue">পরিমাণ</label>
-                                <input type="number" id="weightFromValue" class="unit-input" data-converter="weight" value="1">
-                            </div>
-                            <div class="input-wrapper">
-                                <label for="weightFromUnit">একক (থেকে)</label>
-                                <select id="weightFromUnit" class="unit-select" data-converter="weight">
-                                    <option value="gram">গ্রাম</option>
-                                    <option value="kilogram" selected>কিলোগ্রাম</option>
-                                    <option value="milligram">মিলিগ্রাম</option>
-                                    <option value="tonne">টন</option>
-                                    <option value="pound">পাউন্ড</option>
-                                    <option value="ounce">আউন্স</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="input-row">
-                             <div class="input-wrapper">
-                                <label for="weightToValue">ফলাফল</label>
-                                <input type="number" id="weightToValue" class="unit-input" data-converter="weight_rev" readonly>
-                            </div>
-                            <div class="input-wrapper">
-                                <label for="weightToUnit">একক (তে)</label>
-                                <select id="weightToUnit" class="unit-select" data-converter="weight">
-                                    <option value="gram" selected>গ্রাম</option>
-                                    <option value="kilogram">কিলোগ্রাম</option>
-                                    <option value="milligram">মিলিগ্রাম</option>
-                                    <option value="tonne">টন</option>
-                                    <option value="pound">পাউন্ড</option>
-                                    <option value="ounce">আউন্স</option>
-                                </select>
-                            </div>
-                        </div>
+                    <div class="input-wrapper">
+                        <label for="lengthFromUnit">একক</label>
+                        <select id="lengthFromUnit" class="unit-select" data-converter="length">
+                            <option value="meter">মিটার</option>
+                            <option value="kilometer">কিলোমিটার</option>
+                            <option value="centimeter">সেন্টিমিটার</option>
+                            <option value="millimeter">মিলিমিটার</option>
+                            <option value="mile">মাইল</option>
+                            <option value="yard">গজ</option>
+                            <option value="foot" selected>ফুট</option>
+                            <option value="inch">ইঞ্চি</option>
+                        </select>
                     </div>
-
-                    <!-- ক্ষেত্রফল রূপান্তরকারী -->
-                    <div class="converter-section">
-                        <h3>ক্ষেত্রফল রূপান্তরকারী</h3>
-                         <div class="input-row">
-                            <div class="input-wrapper">
-                                <label for="areaFromValue">পরিমাণ</label>
-                                <input type="number" id="areaFromValue" class="unit-input" data-converter="area" value="1">
-                            </div>
-                            <div class="input-wrapper">
-                                <label for="areaFromUnit">একক (থেকে)</label>
-                                <select id="areaFromUnit" class="unit-select" data-converter="area">
-                                    <option value="sq_meter">বর্গ মিটার</option>
-                                    <option value="sq_kilometer">বর্গ কিলোমিটার</option>
-                                    <option value="sq_foot" selected>বর্গ ফুট</option>
-                                    <option value="sq_inch">বর্গ ইঞ্চি</option>
-                                    <option value="hectare">হেক্টর</option>
-                                    <option value="acre">একর</option>
-                                    <option value="bigha">বিঘা</option>
-                                    <option value="katha">কাঠা</option>
-                                    <option value="shotok">শতক</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="input-row">
-                             <div class="input-wrapper">
-                                <label for="areaToValue">ফলাফল</label>
-                                <input type="number" id="areaToValue" class="unit-input" data-converter="area_rev" readonly>
-                            </div>
-                            <div class="input-wrapper">
-                                <label for="areaToUnit">একক (তে)</label>
-                                <select id="areaToUnit" class="unit-select" data-converter="area">
-                                    <option value="sq_meter">বর্গ মিটার</option>
-                                    <option value="sq_kilometer">বর্গ কিলোমিটার</option>
-                                    <option value="sq_foot">বর্গ ফুট</option>
-                                    <option value="sq_inch">বর্গ ইঞ্চি</option>
-                                    <option value="hectare">হেক্টর</option>
-                                    <option value="acre">একর</option>
-                                    <option value="bigha">বিঘা</option>
-                                    <option value="katha" selected>কাঠা</option>
-                                    <option value="shotok">শতক</option>
-                                </select>
-                            </div>
-                        </div>
+                </div>
+                <div class="input-row">
+                     <div class="input-wrapper">
+                        <label for="lengthToValue">ফলাফল (তে)</label>
+                        <input type="number" id="lengthToValue" class="unit-input" data-converter="length_rev">
                     </div>
+                    <div class="input-wrapper">
+                        <label for="lengthToUnit">একক</label>
+                        <select id="lengthToUnit" class="unit-select" data-converter="length">
+                            <option value="meter">মিটার</option>
+                            <option value="kilometer">কিলোমিটার</option>
+                            <option value="centimeter">সেন্টিমিটার</option>
+                            <option value="millimeter">মিলিমিটার</option>
+                            <option value="mile">মাইল</option>
+                            <option value="yard">গজ</option>
+                            <option value="foot">ফুট</option>
+                            <option value="inch" selected>ইঞ্চি</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
 
-                    <!-- তাপমাত্রা রূপান্তরকারী -->
-                    <div class="converter-section">
-                        <h3>তাপমাত্রা রূপান্তরকারী</h3>
-                         <div class="input-row">
-                            <div class="input-wrapper">
-                                <label for="tempFromValue">পরিমাণ</label>
-                                <input type="number" id="tempFromValue" class="unit-input" data-converter="temperature" value="0">
-                            </div>
-                            <div class="input-wrapper">
-                                <label for="tempFromUnit">একক (থেকে)</label>
-                                <select id="tempFromUnit" class="unit-select" data-converter="temperature">
-                                    <option value="celsius" selected>সেলসিয়াস</option>
-                                    <option value="fahrenheit">ফারেনহাইট</option>
-                                    <option value="kelvin">কেলভিন</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="input-row">
-                             <div class="input-wrapper">
-                                <label for="tempToValue">ফলাফল</label>
-                                <input type="number" id="tempToValue" class="unit-input" data-converter="temperature_rev" readonly>
-                            </div>
-                            <div class="input-wrapper">
-                                <label for="tempToUnit">একক (তে)</label>
-                                <select id="tempToUnit" class="unit-select" data-converter="temperature">
-                                    <option value="celsius">সেলসিয়াস</option>
-                                    <option value="fahrenheit" selected>ফারেনহাইট</option>
-                                    <option value="kelvin">কেলভিন</option>
-                                </select>
-                            </div>
-                        </div>
+            <!-- ওজন রূপান্তরকারী -->
+            <div class="converter-section">
+                <h3>ওজন রূপান্তরকারী</h3>
+                 <div class="input-row">
+                    <div class="input-wrapper">
+                        <label for="weightFromValue">পরিমাণ (থেকে)</label>
+                        <input type="number" id="weightFromValue" class="unit-input" data-converter="weight" value="1">
+                    </div>
+                    <div class="input-wrapper">
+                        <label for="weightFromUnit">একক</label>
+                        <select id="weightFromUnit" class="unit-select" data-converter="weight">
+                            <option value="gram">গ্রাম</option>
+                            <option value="kilogram" selected>কিলোগ্রাম</option>
+                            <option value="milligram">মিলিগ্রাম</option>
+                            <option value="tonne">টন</option>
+                            <option value="pound">পাউন্ড</option>
+                            <option value="ounce">আউন্স</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-row">
+                     <div class="input-wrapper">
+                        <label for="weightToValue">ফলাফল (তে)</label>
+                        <input type="number" id="weightToValue" class="unit-input" data-converter="weight_rev">
+                    </div>
+                    <div class="input-wrapper">
+                        <label for="weightToUnit">একক</label>
+                        <select id="weightToUnit" class="unit-select" data-converter="weight">
+                            <option value="gram" selected>গ্রাম</option>
+                            <option value="kilogram">কিলোগ্রাম</option>
+                            <option value="milligram">মিলিগ্রাম</option>
+                            <option value="tonne">টন</option>
+                            <option value="pound">পাউন্ড</option>
+                            <option value="ounce">আউন্স</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ক্ষেত্রফল রূপান্তরকারী -->
+            <div class="converter-section">
+                <h3>ক্ষেত্রফল রূপান্তরকারী</h3>
+                 <div class="input-row">
+                    <div class="input-wrapper">
+                        <label for="areaFromValue">পরিমাণ (থেকে)</label>
+                        <input type="number" id="areaFromValue" class="unit-input" data-converter="area" value="1">
+                    </div>
+                    <div class="input-wrapper">
+                        <label for="areaFromUnit">একক</label>
+                        <select id="areaFromUnit" class="unit-select" data-converter="area">
+                            <option value="sq_meter">বর্গ মিটার</option>
+                            <option value="sq_kilometer">বর্গ কিলোমিটার</option>
+                            <option value="sq_foot" selected>বর্গ ফুট</option>
+                            <option value="sq_inch">বর্গ ইঞ্চি</option>
+                            <option value="hectare">হেক্টর</option>
+                            <option value="acre">একর</option>
+                            <option value="bigha">বিঘা</option>
+                            <option value="katha">কাঠা</option>
+                            <option value="shotok">শতক</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-row">
+                     <div class="input-wrapper">
+                        <label for="areaToValue">ফলাফল (তে)</label>
+                        <input type="number" id="areaToValue" class="unit-input" data-converter="area_rev">
+                    </div>
+                    <div class="input-wrapper">
+                        <label for="areaToUnit">একক</label>
+                        <select id="areaToUnit" class="unit-select" data-converter="area">
+                            <option value="sq_meter">বর্গ মিটার</option>
+                            <option value="sq_kilometer">বর্গ কিলোমিটার</option>
+                            <option value="sq_foot">বর্গ ফুট</option>
+                            <option value="sq_inch">বর্গ ইঞ্চি</option>
+                            <option value="hectare">হেক্টর</option>
+                            <option value="acre">একর</option>
+                            <option value="bigha">বিঘা</option>
+                            <option value="katha" selected>কাঠা</option>
+                            <option value="shotok">শতক</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- তাপমাত্রা রূপান্তরকারী -->
+            <div class="converter-section">
+                <h3>তাপমাত্রা রূপান্তরকারী</h3>
+                 <div class="input-row">
+                    <div class="input-wrapper">
+                        <label for="tempFromValue">পরিমাণ (থেকে)</label>
+                        <input type="number" id="tempFromValue" class="unit-input" data-converter="temperature" value="0">
+                    </div>
+                    <div class="input-wrapper">
+                        <label for="tempFromUnit">একক</label>
+                        <select id="tempFromUnit" class="unit-select" data-converter="temperature">
+                            <option value="celsius" selected>সেলসিয়াস</option>
+                            <option value="fahrenheit">ফারেনহাইট</option>
+                            <option value="kelvin">কেলভিন</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-row">
+                     <div class="input-wrapper">
+                        <label for="tempToValue">ফলাফল (তে)</label>
+                        <input type="number" id="tempToValue" class="unit-input" data-converter="temperature_rev">
+                    </div>
+                    <div class="input-wrapper">
+                        <label for="tempToUnit">একক</label>
+                        <select id="tempToUnit" class="unit-select" data-converter="temperature">
+                            <option value="celsius">সেলসিয়াস</option>
+                            <option value="fahrenheit" selected>ফারেনহাইট</option>
+                            <option value="kelvin">কেলভিন</option>
+                        </select>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+<!-- পরিমাপ (ইউনিট কনভার্টার) বিভাগ শেষ -->
 
         <!-- নতুন: টাইপিং টেস্ট বিভাগ (আপডেট করা হয়েছে) -->
         <div id="typingTestContent" class="calculator-content">
@@ -5520,130 +5521,123 @@ function initializePrayerTimeTab() {
         // END: NEW FILE UPLOAD SCRIPT
         // ====================================================================
 
-        // ====================================================================
-        // START: UNIT CONVERTER (MEASUREMENT) SCRIPT
-        // ====================================================================
-        function initializeUnitConverters() {
-            const unitInputs = document.querySelectorAll('.unit-input');
-            const unitSelects = document.querySelectorAll('.unit-select');
+// ====================================================================
+// START: UNIT CONVERTER (MEASUREMENT) SCRIPT (CORRECTED)
+// ====================================================================
+function initializeUnitConverters() {
+    // শুধুমাত্র পরিমাপ সেকশনের ভেতরের ইনপুট ও সিলেক্ট এলিমেন্টগুলোই ধরবে
+    const unitInputs = document.querySelectorAll('#measurementContent .unit-input');
+    const unitSelects = document.querySelectorAll('#measurementContent .unit-select');
 
-            const factors = {
-                length: { // base: meter
-                    meter: 1,
-                    kilometer: 1000,
-                    centimeter: 0.01,
-                    millimeter: 0.001,
-                    mile: 1609.34,
-                    yard: 0.9144,
-                    foot: 0.3048,
-                    inch: 0.0254
-                },
-                weight: { // base: gram
-                    gram: 1,
-                    kilogram: 1000,
-                    milligram: 0.001,
-                    tonne: 1000000,
-                    pound: 453.592,
-                    ounce: 28.3495
-                },
-                area: { // base: square meter
-                    sq_meter: 1,
-                    sq_kilometer: 1000000,
-                    sq_foot: 0.092903,
-                    sq_inch: 0.00064516,
-                    hectare: 10000,
-                    acre: 4046.86,
-                    bigha: 1337.8, // Approximate value for Bangladesh
-                    katha: 66.89, // 1 Bigha = 20 Katha
-                    shotok: 40.4686 // 1 Acre = 100 Shotok
-                }
-            };
+    const factors = {
+        length: { // base: meter
+            meter: 1,
+            kilometer: 1000,
+            centimeter: 0.01,
+            millimeter: 0.001,
+            mile: 1609.34,
+            yard: 0.9144,
+            foot: 0.3048,
+            inch: 0.0254
+        },
+        weight: { // base: gram
+            gram: 1,
+            kilogram: 1000,
+            milligram: 0.001,
+            tonne: 1000000,
+            pound: 453.592,
+            ounce: 28.3495
+        },
+        area: { // base: square meter
+            sq_meter: 1,
+            sq_kilometer: 1000000,
+            sq_foot: 0.092903,
+            sq_inch: 0.00064516,
+            hectare: 10000,
+            acre: 4046.86,
+            bigha: 1337.8, // Approximate value for Bangladesh
+            katha: 66.89, // 1 Bigha = 20 Katha
+            shotok: 40.4686 // 1 Acre = 100 Shotok
+        }
+    };
 
-            function convertUnits(converterType, isReverse = false) {
-                const fromValueEl = document.getElementById(`${converterType}FromValue`);
-                const fromUnitEl = document.getElementById(`${converterType}FromUnit`);
-                const toValueEl = document.getElementById(`${converterType}ToValue`);
-                const toUnitEl = document.getElementById(`${converterType}ToUnit`);
+    function performConversion(sourceElement) {
+        if (!sourceElement) return;
 
-                if (!fromValueEl || !fromUnitEl || !toValueEl || !toUnitEl) return;
+        const converterType = sourceElement.dataset.converter.replace('_rev', '');
+        const isReverse = sourceElement.dataset.converter.includes('_rev');
 
-                let fromValue, fromUnit, toUnit;
+        // সোর্স এবং টার্গেট এলিমেন্টগুলো শনাক্ত করুন
+        const fromValueEl = document.getElementById(`${converterType}FromValue`);
+        const fromUnitEl = document.getElementById(`${converterType}FromUnit`);
+        const toValueEl = document.getElementById(`${converterType}ToValue`);
+        const toUnitEl = document.getElementById(`${converterType}ToUnit`);
 
-                if (isReverse) {
-                    fromValue = parseFloat(toValueEl.value);
-                    fromUnit = toUnitEl.value;
-                    toUnit = fromUnitEl.value;
-                } else {
-                    fromValue = parseFloat(fromValueEl.value);
-                    fromUnit = fromUnitEl.value;
-                    toUnit = toUnitEl.value;
-                }
+        const sourceValueEl = isReverse ? toValueEl : fromValueEl;
+        const sourceUnitEl = isReverse ? toUnitEl : fromUnitEl;
+        const targetValueEl = isReverse ? fromValueEl : toValueEl;
+        const targetUnitEl = isReverse ? fromUnitEl : toUnitEl;
 
-
-                if (isNaN(fromValue)) {
-                    if (isReverse) fromValueEl.value = '';
-                    else toValueEl.value = '';
-                    return;
-                }
-
-                let result;
-
-                if (converterType === 'temperature') {
-                    // Temperature conversion logic
-                    if (fromUnit === toUnit) {
-                        result = fromValue;
-                    } else if (fromUnit === 'celsius') {
-                        result = toUnit === 'fahrenheit' ? (fromValue * 9 / 5) + 32 : fromValue + 273.15;
-                    } else if (fromUnit === 'fahrenheit') {
-                        result = toUnit === 'celsius' ? (fromValue - 32) * 5 / 9 : (fromValue - 32) * 5 / 9 + 273.15;
-                    } else if (fromUnit === 'kelvin') {
-                        result = toUnit === 'celsius' ? fromValue - 273.15 : (fromValue - 273.15) * 9 / 5 + 32;
-                    }
-                } else {
-                    // Factor-based conversion logic
-                    const conversionFactors = factors[converterType];
-                    const valueInBaseUnit = fromValue * conversionFactors[fromUnit];
-                    result = valueInBaseUnit / conversionFactors[toUnit];
-                }
-
-                const targetEl = isReverse ? fromValueEl : toValueEl;
-                // ফলাফলকে 6 দশমিক স্থান পর্যন্ত সীমাবদ্ধ রাখা হয়েছে
-                targetEl.value = parseFloat(result.toFixed(6));
-
-            }
-
-            unitInputs.forEach(input => {
-                input.addEventListener('input', (e) => {
-                    const converter = e.target.dataset.converter;
-                    const isReverse = converter.includes('_rev');
-                    const type = converter.replace('_rev', '');
-                    if (isReverse) {
-                        // When typing in the 'To' field, convert back to the 'From' field
-                        convertUnits(type, true);
-                    } else {
-                        convertUnits(type);
-                    }
-                });
-            });
-
-            unitSelects.forEach(select => {
-                select.addEventListener('change', (e) => {
-                    const type = e.target.dataset.converter;
-                    // Trigger conversion from the 'From' field whenever a unit changes
-                    convertUnits(type);
-                });
-            });
-
-            // Initialize all converters on page load
-            ['length', 'weight', 'area', 'temperature'].forEach(type => {
-                convertUnits(type);
-            });
+        const sourceValue = parseFloat(sourceValueEl.value);
+        
+        if (isNaN(sourceValue)) {
+            targetValueEl.value = '';
+            return;
         }
 
-        // ====================================================================
-        // END: UNIT CONVERTER (MEASUREMENT) SCRIPT
-        // ====================================================================
+        const fromUnit = sourceUnitEl.value;
+        const toUnit = targetUnitEl.value;
+        let result;
 
+        if (converterType === 'temperature') {
+            // তাপমাত্রা রূপান্তরের লজিক
+            if (fromUnit === toUnit) {
+                result = sourceValue;
+            } else if (fromUnit === 'celsius') {
+                result = toUnit === 'fahrenheit' ? (sourceValue * 9 / 5) + 32 : sourceValue + 273.15;
+            } else if (fromUnit === 'fahrenheit') {
+                result = toUnit === 'celsius' ? (sourceValue - 32) * 5 / 9 : ((sourceValue - 32) * 5 / 9) + 273.15;
+            } else if (fromUnit === 'kelvin') {
+                result = toUnit === 'celsius' ? sourceValue - 273.15 : ((sourceValue - 273.15) * 9 / 5) + 32;
+            }
+        } else {
+            // ফ্যাক্টর-ভিত্তিক রূপান্তরের লজিক
+            const conversionFactors = factors[converterType];
+            const valueInBaseUnit = sourceValue * conversionFactors[fromUnit];
+            result = valueInBaseUnit / conversionFactors[toUnit];
+        }
+
+        // একটি নির্দিষ্ট দশমিক স্থান পর্যন্ত ফলাফল প্রদর্শন করুন
+        targetValueEl.value = Number(result.toFixed(6));
+    }
+
+    unitInputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+            performConversion(e.target);
+        });
+    });
+
+    unitSelects.forEach(select => {
+        select.addEventListener('change', (e) => {
+            // কোন ইনপুটটি সোর্স হিসেবে ব্যবহৃত হবে তা নির্ধারণ করুন
+            const converterType = e.target.dataset.converter;
+            const fromValueEl = document.getElementById(`${converterType}FromValue`);
+            // যখন ইউনিট পরিবর্তন হয়, তখন সবসময় 'From' ফিল্ড থেকে গণনা শুরু করুন
+            performConversion(fromValueEl);
+        });
+    });
+
+    // পেজ লোড হওয়ার সাথে সাথে সকল কনভার্টার চালু করুন
+    ['length', 'weight', 'area', 'temperature'].forEach(type => {
+        const fromValueEl = document.getElementById(`${type}FromValue`);
+        if(fromValueEl) {
+             performConversion(fromValueEl);
+        }
+    });
+}
+// ====================================================================
+// END: UNIT CONVERTER (MEASUREMENT) SCRIPT (CORRECTED)
+// ====================================================================
 
 		// কাস্টম অ্যালার্ট বক্স বাস্তবায়ন New
 		function showCustomAlert(message) {
