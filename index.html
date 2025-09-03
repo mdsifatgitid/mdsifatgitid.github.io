@@ -3695,27 +3695,40 @@ input:checked + .slider:before {
         </div>
 
         <!-- নতুন: স্পিচ টু টেক্সট বিভাগ -->
-        <div id="speechToTextContent" class="calculator-content">
-            <div class="stt-content">
-                <h3 class="text-xl font-bold text-gray-700 mb-4">বাংলা স্পিচ টু টেক্সট</h3>
-				<!-- নতুন ভাষা নির্বাচনের ড্রপডাউন এখানে যোগ করুন -->
-<div class="control-group mb-4">
-    <label for="sttLanguageSelect" class="font-semibold text-gray-700 dark:text-gray-200">ভাষা নির্বাচন করুন:</label>
-    <select id="sttLanguageSelect" class="rounded-lg p-2 border bg-gray-100 dark:bg-gray-600 dark:text-white flex-grow">
-        <option value="bn-BD">বাংলা (বাংলাদেশ)</option>
-        <option value="en-US">English (United States)</option>
-    </select>
-</div>
-                <div id="sttStatus" class="stt-status mb-4">অবস্থা: নিষ্ক্রিয়</div>
-                <textarea id="sttOutput" rows="8" class="rounded-lg" placeholder="আপনি কথা বলা শুরু করলে আপনার কথা এখানে লেখা হবে..."></textarea>
-                <div class="stt-buttons mt-4">
-                    <button id="startSttBtn" class="stt-button start rounded-lg">শুনুন</button>
-                    <button id="stopSttBtn" class="stt-button stop rounded-lg">থামান</button>
-                    <button id="copySttBtn" class="stt-button copy rounded-lg">কপি করুন</button>
-                    <button id="clearSttBtn" class="stt-button clear-input rounded-lg">মুছুন</button> <!-- Added Clear button -->
-                </div>
-            </div>
+<div id="speechToTextContent" class="calculator-content">
+    <div class="stt-content">
+        <h3 class="text-xl font-bold text-gray-700 mb-4">বাংলা স্পিচ টু টেক্সট (Gemini API)</h3>
+        <div id="sttStatus" class="stt-status mb-4">অবস্থা: নিষ্ক্রিয়</div>
+        <textarea id="sttOutput" rows="8" class="rounded-lg" placeholder="রেকর্ড করুন বা অডিও আপলোড করে কথাকে লেখায় রূপান্তর করুন..."></textarea>
+        <!-- অডিও আপলোডের জন্য লুকানো ফাইল ইনপুট -->
+        <input type="file" id="audioFileInput" class="hidden" accept="audio/*">
+        <div class="stt-buttons mt-4">
+            <button id="startSttBtn" data-state="record" class="stt-button start rounded-lg">রেকর্ড করুন</button>
+            <button id="uploadAudioBtn" class="stt-button copy rounded-lg">আপলোড করুন</button>
+            <button id="copySttBtn" class="stt-button copy rounded-lg">কপি করুন</button>
+            <button id="clearSttBtn" class="stt-button clear-input rounded-lg">মুছুন</button>
         </div>
+        <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">দ্রষ্টব্য: রেকর্ডিং শেষ হলে 'পাঠান' বাটনে ক্লিক করে লেখাটি পেতে কিছুক্ষণ অপেক্ষা করুন।</p>
+    </div>
+</div>
+<!-- নতুন: স্পিচ টু টেক্সট বিভাগ -->
+<div id="speechToTextContent" class="calculator-content">
+    <div class="stt-content">
+        <h3 class="text-xl font-bold text-gray-700 mb-4">বাংলা স্পিচ টু টেক্সট (Gemini API)</h3>
+        <div id="sttStatus" class="stt-status mb-4">অবস্থা: নিষ্ক্রিয়</div>
+        <textarea id="sttOutput" rows="8" class="rounded-lg" placeholder="রেকর্ড করুন বা অডিও আপলোড করে কথাকে লেখায় রূপান্তর করুন..."></textarea>
+        <!-- অডিও আপলোডের জন্য লুকানো ফাইল ইনপুট -->
+        <input type="file" id="audioFileInput" class="hidden" accept="audio/*">
+        <div class="stt-buttons mt-4">
+            <button id="startSttBtn" data-state="record" class="stt-button start rounded-lg">রেকর্ড করুন</button>
+            <button id="uploadAudioBtn" class="stt-button copy rounded-lg">আপলোড করুন</button>
+            <button id="copySttBtn" class="stt-button copy rounded-lg">কপি করুন</button>
+            <button id="clearSttBtn" class="stt-button clear-input rounded-lg">মুছুন</button>
+        </div>
+        <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">দ্রষ্টব্য: রেকর্ডিং শেষ হলে 'পাঠান' বাটনে ক্লিক করে লেখাটি পেতে কিছুক্ষণ অপেক্ষা করুন।</p>
+    </div>
+</div>
+
 
         <!-- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগ -->
         <div id="textAssistantContent" class="calculator-content">
@@ -7617,114 +7630,216 @@ if (downloadTtsBtn) {
 // END: GEMINI API TEXT-TO-SPEECH (TTS) SCRIPT
 // ====================================================================
 
+// ====================================================================
+// START: GEMINI API BASED SPEECH-TO-TEXT (STT) SCRIPT
+// This entire block replaces the old browser-based SpeechRecognition script.
+// ====================================================================
+const sttOutput = document.getElementById('sttOutput');
+const sttStatus = document.getElementById('sttStatus');
+const startSttBtn = document.getElementById('startSttBtn');
+const uploadAudioBtn = document.getElementById('uploadAudioBtn');
+const audioFileInput = document.getElementById('audioFileInput');
+const copySttBtn = document.getElementById('copySttBtn');
+const clearSttBtn = document.getElementById('clearSttBtn');
 
-                // ====================================================================
-                // START: BROWSER REAL-TIME SPEECH-TO-TEXT (STT) SCRIPT
-                // দ্রষ্টব্য: রিয়েল-টাইম ফলাফলের জন্য ব্রাউজারের Web Speech API সবচেয়ে উপযুক্ত।
-                // জেমিনি এপিআই রিয়েল-টাইম স্ট্রিমিং সমর্থন করে না।
-                // ====================================================================
-                const sttOutput = document.getElementById('sttOutput');
-                const sttStatus = document.getElementById('sttStatus');
-                const startSttBtn = document.getElementById('startSttBtn');
-                const stopSttBtn = document.getElementById('stopSttBtn');
-                const copySttBtn = document.getElementById('copySttBtn');
-                const clearSttBtn = document.getElementById('clearSttBtn');
+let mediaRecorder;
+let audioChunks = [];
+let audioBlob = null;
+let isRecording = false;
 
-                let recognition;
-                let isListening = false;
+// Helper function to insert text at the current cursor position
+function insertTextAtCursor(textarea, text) {
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const oldText = textarea.value;
+    const newText = oldText.substring(0, start) + text + oldText.substring(end);
+    textarea.value = newText;
+    // Place cursor after the inserted text
+    textarea.selectionStart = textarea.selectionEnd = start + text.length;
+    textarea.focus();
+}
 
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+// Main function to transcribe audio using Gemini API
+async function transcribeAudioWithGemini(audioFile) {
+    const apiKey = localStorage.getItem('geminiApiKey');
+    if (!apiKey) {
+        showCustomAlert('জেমিনি API কী সেট করা হয়নি।');
+        sttStatus.innerText = 'অবস্থা: API কী প্রয়োজন।';
+        return;
+    }
 
-                if (SpeechRecognition) {
-                    recognition = new SpeechRecognition();
-                    recognition.continuous = true;
-                    recognition.interimResults = true;
-                    // ভাষা স্বয়ংক্রিয়ভাবে সনাক্ত করার জন্য, lang বৈশিষ্ট্যটি সেট করা হয় না।
-                    // তবে, সেরা ফলাফলের জন্য একটি নির্দিষ্ট ভাষা সেট করা ভাল।
-                    // ডিফল্ট হিসেবে বাংলা সেট করা হলো।
-				let sttLanguageSelect = document.getElementById('sttLanguageSelect');
-				if (sttLanguageSelect) {
-					recognition.lang = sttLanguageSelect.value; // ড্রপডাউন থেকে নির্বাচিত ভাষা সেট করুন
-					sttLanguageSelect.addEventListener('change', (event) => {
-					recognition.lang = event.target.value; // ভাষা পরিবর্তন হলে আপডেট করুন
-					showCustomAlert(`ভাষা পরিবর্তন করা হয়েছে: ${event.target.options[event.target.selectedIndex].text}`);
-				});
-				}
+    sttStatus.innerText = 'অবস্থা: অডিও প্রসেসিং ও জেমিনিকে পাঠানো হচ্ছে...';
+    if(startSttBtn) startSttBtn.disabled = true;
+    if(uploadAudioBtn) uploadAudioBtn.disabled = true;
 
-                    recognition.onstart = () => {
-                        isListening = true;
-                        sttStatus.innerText = 'অবস্থা: শুনছে... 🎙️';
-                        startSttBtn.disabled = true;
-                        stopSttBtn.disabled = false;
-                    };
 
-                    recognition.onresult = (event) => {
-                        let finalTranscript = sttOutput.value.substring(0, sttOutput.selectionStart);
-                        let interimTranscript = '';
+    // Convert audio blob/file to Base64
+    const reader = new FileReader();
+    reader.readAsDataURL(audioFile);
+    reader.onloadend = async () => {
+        const base64Audio = reader.result.split(',')[1];
+        const mimeType = audioFile.type.split(';')[0]; // Get MIME type without codecs
 
-                        for (let i = event.resultIndex; i < event.results.length; ++i) {
-                            if (event.results[i].isFinal) {
-                                finalTranscript += event.results[i][0].transcript;
-                            } else {
-                                interimTranscript += event.results[i][0].transcript;
+        try {
+            const prompt = "Transcribe the following audio. Provide only the transcribed text without any additional comments, explanations, or introductory phrases.";
+
+            const payload = {
+                contents: [{
+                    parts: [
+                        { text: prompt },
+                        {
+                            inlineData: {
+                                mimeType: mimeType,
+                                data: base64Audio
                             }
                         }
-                        sttOutput.value = finalTranscript + interimTranscript;
-                    };
+                    ]
+                }]
+            };
 
-                    recognition.onerror = (event) => {
-                        console.error('Speech Recognition Error:', event.error);
-                        let errorMessage = 'একটি স্পিচ টু টেক্সট ত্রুটি হয়েছে।';
-                        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-                            errorMessage = 'মাইক্রোফোন ব্যবহারের অনুমতি প্রয়োজন।';
-                        } else if (event.error === 'no-speech') {
-                            errorMessage = 'কোনো কথা সনাক্ত করা যায়নি।';
-                        }
-                        sttStatus.innerText = `অবস্থা: ত্রুটি - ${errorMessage} ❌`;
-                        showCustomAlert(`STT ত্রুটি: ${errorMessage}`);
-                    };
+            const model = "gemini-2.5-flash-preview-05-20"; // This model supports multimodal input
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-                    recognition.onend = () => {
-                        isListening = false;
-                        sttStatus.innerText = 'অবস্থা: নিষ্ক্রিয় ✅';
-                        startSttBtn.disabled = false;
-                        stopSttBtn.disabled = true;
-                    };
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
-                    if (startSttBtn) {
-                        startSttBtn.addEventListener('click', () => {
-                            if (!isListening) {
-                                recognition.start();
-                            }
-                        });
-                    }
+            const result = await response.json();
 
-                    if (stopSttBtn) {
-                        stopSttBtn.addEventListener('click', () => {
-                            if (isListening) {
-                                recognition.stop();
-                            }
-                        });
-                    }
+            if (response.ok && result.candidates && result.candidates[0]?.content?.parts?.[0]?.text) {
+                const transcribedText = result.candidates[0].content.parts[0].text.trim();
+                insertTextAtCursor(sttOutput, transcribedText + " "); // Add a space after inserting
+                sttStatus.innerText = 'অবস্থা: সফলভাবে টেক্সটে রূপান্তরিত হয়েছে! ✅';
+            } else {
+                const errorText = result?.error?.message || 'একটি অজানা ত্রুটি ঘটেছে। অডিও থেকে লেখা বের করা যায়নি।';
+                sttStatus.innerText = `অবস্থা: ব্যর্থ হয়েছে - ${errorText}`;
+                console.error('STT API Response Error:', result);
+                showCustomAlert(`ট্রান্সক্রাইব করতে ব্যর্থ: ${errorText}`);
+            }
+        } catch (error) {
+            sttStatus.innerText = `অবস্থা: একটি ত্রুটি ঘটেছে - ${error.message}`;
+            console.error('STT API Call Error:', error);
+            showCustomAlert(`একটি ত্রুটি ঘটেছে: ${error.message}`);
+        } finally {
+             // Reset the record button state
+             if(startSttBtn) {
+                 startSttBtn.dataset.state = 'record';
+                 startSttBtn.innerText = 'রেকর্ড করুন';
+                 startSttBtn.disabled = false;
+             }
+             if(uploadAudioBtn) uploadAudioBtn.disabled = false;
+        }
+    };
+    reader.onerror = (error) => {
+        console.error('File Reader Error:', error);
+        sttStatus.innerText = 'অবস্থা: ফাইল পড়তে সমস্যা হয়েছে।';
+        showCustomAlert('ফাইলটি পড়তে একটি ত্রুটি হয়েছে।');
+        if(startSttBtn) startSttBtn.disabled = false;
+        if(uploadAudioBtn) uploadAudioBtn.disabled = false;
+    };
+}
 
-                    if (copySttBtn) copySttBtn.addEventListener('click', () => copyToClipboard('sttOutput'));
 
-                    if (clearSttBtn) {
-                        clearSttBtn.addEventListener('click', () => {
-                            sttOutput.value = '';
-                            if (isListening) recognition.stop();
-                        });
-                    }
+// Event listener for the record/stop/send button
+if (startSttBtn) {
+    startSttBtn.addEventListener('click', async () => {
+        const state = startSttBtn.dataset.state;
 
-                } else {
-                    sttStatus.innerText = 'দুঃখিত, আপনার ব্রাউজার স্পিচ রিকগনিশন সমর্থন করে না। 😔';
-                    [startSttBtn, stopSttBtn, copySttBtn, clearSttBtn].forEach(btn => {
-                        if (btn) btn.disabled = true;
-                    });
-                }
-                // ====================================================================
-                // END: BROWSER REAL-TIME SPEECH-TO-TEXT (STT) SCRIPT
-                // ====================================================================
+        if (state === 'record') {
+            // Start recording
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = []; // Clear previous chunks
+
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    // Use a common MIME type like audio/webm
+                    audioBlob = new Blob(audioChunks, { type: 'audio/webm' }); 
+                    startSttBtn.dataset.state = 'send';
+                    startSttBtn.innerText = 'পাঠান';
+                    sttStatus.innerText = 'অবস্থা: রেকর্ডিং শেষ। পাঠানোর জন্য প্রস্তুত।';
+                    startSttBtn.disabled = false;
+                    // Stop microphone track to turn off indicator
+                    stream.getTracks().forEach(track => track.stop());
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+                startSttBtn.dataset.state = 'recording';
+                startSttBtn.innerText = 'থামান';
+                sttStatus.innerText = 'অবস্থা: রেকর্ডিং চলছে... 🎙️';
+            } catch (err) {
+                console.error("Microphone access error:", err);
+                sttStatus.innerText = 'অবস্থা: মাইক্রোফোন অ্যাক্সেস করা যায়নি।';
+                showCustomAlert('মাইক্রোফোন ব্যবহারের অনুমতি প্রয়োজন।');
+            }
+        } else if (state === 'recording') {
+            // Stop recording
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                startSttBtn.disabled = true; // Disable until onstop event fires
+                sttStatus.innerText = 'অবস্থা: প্রসেসিং...';
+            }
+        } else if (state === 'send') {
+            // Send the recorded audio
+            if (audioBlob) {
+                transcribeAudioWithGemini(audioBlob);
+                audioBlob = null; // Clear blob after sending
+            } else {
+                 sttStatus.innerText = 'অবস্থা: পাঠানোর জন্য কোনো রেকর্ডিং নেই।';
+            }
+        }
+    });
+}
+
+// Event listeners for the upload functionality
+if (uploadAudioBtn) {
+    uploadAudioBtn.addEventListener('click', () => {
+        if(audioFileInput) audioFileInput.click();
+    });
+}
+if (audioFileInput) {
+    audioFileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            transcribeAudioWithGemini(file);
+            audioFileInput.value = ''; // Reset input for the next upload
+        }
+    });
+}
+
+
+// Event listeners for copy and clear buttons
+if (copySttBtn) {
+    copySttBtn.addEventListener('click', () => copyToClipboard('sttOutput'));
+}
+
+if (clearSttBtn) {
+    clearSttBtn.addEventListener('click', () => {
+        if (sttOutput) sttOutput.value = '';
+        if (isRecording) {
+            mediaRecorder.stop(); // Stop recording if active
+        }
+        // Reset button to initial state
+        if(startSttBtn) {
+            startSttBtn.dataset.state = 'record';
+            startSttBtn.innerText = 'রেকর্ড করুন';
+            startSttBtn.disabled = false;
+        }
+        if(sttStatus) sttStatus.innerText = 'অবস্থা: নিষ্ক্রিয় ✅';
+    });
+}
+// ====================================================================
+// END: GEMINI API BASED SPEECH-TO-TEXT (STT) SCRIPT
+// ====================================================================
 
 // ====================================================================
 // START: TRANSLATOR SCRIPT (GEMINI API)
