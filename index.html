@@ -2935,6 +2935,13 @@ input:checked + .slider:before {
     background-color: #2c3748;
 }
 
+
+ /* প্রিসেট ড্রপডাউন বাটনের জন্য নতুন CSS */
+    #presetButtonLeft.open svg, #presetButtonRight.open svg {
+        transform: rotate(180deg);
+    }
+
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে -->
     </style>
 </head>
@@ -3456,51 +3463,107 @@ input:checked + .slider:before {
         </div>
 
         <!-- ফন্ট কনভার্টার বিভাগ (আনডু/রিডু সহ আপডেট করা হয়েছে) -->
-        <div id="converterContent" class="calculator-content">
-		<h1 style="color:green">যেকোনো ভাঙ্গা বিজয় লেখা বিজয় টেক্সট বক্সে রেখে ফিক্স করুন বাটনে ক্লিক করলে অথবা ইউনিকোড করে আবার বিজয় করলেও ঠিক হবে।</h1>
-            <div class="font-converter-content">
-                <div class="font-converter-sections-wrapper">
-                    <!-- বাম টেক্সটএরিয়া -->
-                    <div class="font-converter-section">
-                        <div class="font-section-header">
-                            <h2>ইউনিকোড টেক্সট</h2>
-                            <div class="flex gap-2">
-							<button id="pasteButtonLeft" class="font-copy-button rounded-lg" style="background-image: linear-gradient(to right, #60a5fa 0%, #3b82f6 100%);">পেস্ট</button>
-						<button class="font-copy-button rounded-lg" onclick="copyToClipboard('textAreaLeft')">কপি করুন</button>
-						</div>
-                        </div>
-                        <textarea id="textAreaLeft" placeholder="এখানে ইউনিকোড টেক্সট লিখুন"></textarea>
-                        <div class="font-button-group">
-                            <button class="font-conversion-button rounded-lg" onclick="convertLeftToRight()">ইউনিকোড থেকে বিজয়</button>
-                            <button id="undoButtonLeft" class="font-undo-redo-button rounded-lg" onclick="undoText('textAreaLeft')">আনডু</button>
-                            <button id="redoButtonLeft" class="font-undo-redo-button rounded-lg" onclick="redoText('textAreaLeft')">রিডু</button>
-                            <button class="font-clear-button rounded-lg" onclick="clearTextarea('textAreaLeft')">মুছুন</button>
-                        </div>
-                    </div>
-                    <!-- ডান টেক্সটএরিয়া -->
-                    <div class="font-converter-section">
-                        <div class="font-section-header">
-                            <h2>বিজয় টেক্সট</h2>
-                            <div class="flex gap-2">
-                                <button id="pasteButtonRight" class="font-copy-button rounded-lg" style="background-image: linear-gradient(to right, #60a5fa 0%, #3b82f6 100%);">পেস্ট</button>
-								<button id="fixAnsiButton" class="font-copy-button rounded-lg" style="background-image: linear-gradient(to right, #60a5fa 0%, #3b82f6 100%);">ফিক্স করুন</button>
-								<button class="font-copy-button rounded-lg" onclick="copyToClipboard('textAreaRight')">কপি করুন</button>
+<!-- ফন্ট কনভার্টার বিভাগ (প্রিসেট বাটনসহ আপডেট করা হয়েছে) -->
+<div id="converterContent" class="calculator-content">
+    <h1 style="color:green">যেকোনো ভাঙ্গা বিজয় লেখা বিজয় টেক্সট বক্সে রেখে ফিক্স করুন বাটনে ক্লিক করলে অথবা ইউনিকোড করে আবার বিজয় করলেও ঠিক হবে।</h1>
+    <div class="font-converter-content">
+        <div class="font-converter-sections-wrapper">
+            <!-- বাম টেক্সটএরিয়া -->
+            <div class="font-converter-section">
+                <div class="font-section-header">
+                    <h2>ইউনিকোড</h2>
+                    <div class="flex items-center gap-2">
+                        <!-- Preset Dropdown Left -->
+                        <div class="relative inline-block text-left">
+                            <div>
+                                <button type="button" id="presetButtonLeft" class="font-copy-button rounded-lg inline-flex justify-center w-full px-4 py-2 text-sm font-medium" style="background-image: linear-gradient(to right, #fbbf24 0%, #f59e0b 100%);">
+                                    প্রিসেট
+                                    <svg class="-mr-1 ml-2 h-5 w-5 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                </button>
+                            </div>
+                            <div id="dropdownMenuLeft" class="origin-top-left absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none hidden z-10">
+                                <div class="py-1">
+                                    <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="default">ডিফল্ট (কিছুই যুক্ত হবে না)</a>
+                                    <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="single-space">একটি স্পেসসহ</a>
+                                    <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-space">দুটি স্পেসসহ</a>
+                                    <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="four-space">চারটি স্পেস সহ</a>
+                                    <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="single-enter">একটি এন্টার কী</a>
+                                    <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-enter">দুটি এন্টার কী</a>
+                                    <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="custom">কাস্টম</a>
+                                    <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="custom-serial">সিরিয়ালসহ কাস্টম</a>
+                                </div>
                             </div>
                         </div>
-                        <textarea id="textAreaRight" placeholder="এখানে বিজয় টেক্সট লিখুন"></textarea>
-                        <div class="font-button-group">
-                            <button class="font-conversion-button rounded-lg" onclick="convertRightToLeft()">বিজয় থেকে ইউনিকোড</button>
-                            <button id="undoButtonRight" class="font-undo-redo-button rounded-lg" onclick="undoText('textAreaRight')">আনডু</button>
-                            <button id="redoButtonRight" class="font-undo-redo-button rounded-lg" onclick="redoText('textAreaRight')">রিডু</button>
-                            <button class="font-clear-button rounded-lg" onclick="clearTextarea('textAreaRight')">মুছুন</button>
-                        </div>
+                        <button id="pasteButtonLeft" class="font-copy-button rounded-lg" style="background-image: linear-gradient(to right, #60a5fa 0%, #3b82f6 100%);">পেস্ট</button>
+                        <button class="font-copy-button rounded-lg" onclick="copyToClipboard('textAreaLeft')">কপি করুন</button>
                     </div>
                 </div>
-                <!-- নতুন "সব মুছুন" বোতাম -->
-                <button class="font-clear-all-button rounded-lg" onclick="clearAllTextareas()">সব মুছুন</button>
-                <a href="https://bio.link/mdsifatbiolink" target="_blank" class="external-converter-link rounded-xl">প্রয়োজনে এখানে যোগাযোগ করুন অথবা মতামত জানান</a>
+                <textarea id="textAreaLeft" placeholder="এখানে ইউনিকোড টেক্সট লিখুন"></textarea>
+                <div class="font-button-group">
+                    <button class="font-conversion-button rounded-lg" onclick="convertLeftToRight()">ইউনিকোড থেকে বিজয়</button>
+                    <button id="undoButtonLeft" class="font-undo-redo-button rounded-lg" onclick="undoText('textAreaLeft')">আনডু</button>
+                    <button id="redoButtonLeft" class="font-undo-redo-button rounded-lg" onclick="redoText('textAreaLeft')">রিডু</button>
+                    <button class="font-clear-button rounded-lg" onclick="clearTextarea('textAreaLeft')">মুছুন</button>
+                </div>
+            </div>
+            <!-- ডান টেক্সটএরিয়া -->
+            <div class="font-converter-section">
+                <div class="font-section-header">
+                    <h2>বিজয়</h2>
+                    <div class="flex items-center gap-2">
+                         <!-- Preset Dropdown Right -->
+                        <div class="relative inline-block text-left">
+                            <div>
+                                <button type="button" id="presetButtonRight" class="font-copy-button rounded-lg inline-flex justify-center w-full px-4 py-2 text-sm font-medium" style="background-image: linear-gradient(to right, #fbbf24 0%, #f59e0b 100%);">
+                                    প্রিসেট
+                                    <svg class="-mr-1 ml-2 h-5 w-5 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                </button>
+                            </div>
+                            <div id="dropdownMenuRight" class="origin-top-left absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none hidden z-10">
+                                <div class="py-1">
+                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="default">ডিফল্ট (কিছুই যুক্ত হবে না)</a>
+                                    <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="single-space">একটি স্পেসসহ</a>
+                                    <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-space">দুটি স্পেসসহ</a>
+                                    <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="four-space">চারটি স্পেস সহ</a>
+                                    <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="single-enter">একটি এন্টার কী</a>
+                                    <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-enter">দুটি এন্টার কী</a>
+                                    <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="custom">কাস্টম</a>
+                                    <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="custom-serial">সিরিয়ালসহ কাস্টম</a>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="pasteButtonRight" class="font-copy-button rounded-lg" style="background-image: linear-gradient(to right, #60a5fa 0%, #3b82f6 100%);">পেস্ট</button>
+                        <button id="fixAnsiButton" class="font-copy-button rounded-lg" style="background-image: linear-gradient(to right, #60a5fa 0%, #3b82f6 100%);">ফিক্স করুন</button>
+                        <button class="font-copy-button rounded-lg" onclick="copyToClipboard('textAreaRight')">কপি করুন</button>
+                    </div>
+                </div>
+                <textarea id="textAreaRight" placeholder="এখানে বিজয় টেক্সট লিখুন"></textarea>
+                <div class="font-button-group">
+                    <button class="font-conversion-button rounded-lg" onclick="convertRightToLeft()">বিজয় থেকে ইউনিকোড</button>
+                    <button id="undoButtonRight" class="font-undo-redo-button rounded-lg" onclick="undoText('textAreaRight')">আনডু</button>
+                    <button id="redoButtonRight" class="font-undo-redo-button rounded-lg" onclick="redoText('textAreaRight')">রিডু</button>
+                    <button class="font-clear-button rounded-lg" onclick="clearTextarea('textAreaRight')">মুছুন</button>
+                </div>
             </div>
         </div>
+        <!-- নতুন "সব মুছুন" বোতাম -->
+        <button class="font-clear-all-button rounded-lg" onclick="clearAllTextareas()">সব মুছুন</button>
+        <a href="https://bio.link/mdsifatbiolink" target="_blank" class="external-converter-link rounded-xl">প্রয়োজনে এখানে যোগাযোগ করুন অথবা মতামত জানান</a>
+    </div>
+</div>
+
+<!-- কাস্টম প্রিসেট ইনপুটের জন্য মোডাল -->
+<div id="customPresetModal" class="api-key-modal-overlay hidden">
+    <div class="api-key-modal-content">
+        <h3 id="customModalTitle">কাস্টম প্রিসেট</h3>
+        <p id="customModalDesc" class="mb-4 text-gray-600 dark:text-gray-300"></p>
+        <input type="text" id="customPresetInput" placeholder="এখানে আপনার কাস্টম টেক্সট লিখুন..." class="rounded-lg">
+        <div class="modal-buttons mt-4">
+            <button id="saveCustomPresetBtn" class="modal-button save rounded-lg">সেভ করুন</button>
+            <button id="cancelCustomPresetBtn" class="modal-button cancel rounded-lg">বাতিল করুন</button>
+        </div>
+    </div>
+</div>
 
         <!-- নতুন: ট্রান্সলেটর বিভাগ -->
         <div id="translatorContent" class="calculator-content">
@@ -3991,6 +4054,15 @@ input:checked + .slider:before {
 
     <script>
 	
+	// Paste Preset Functionality Variables
+	let pastePresetLeft = 'default';
+	let customPasteValueLeft = '';
+	let customSerialCounterLeft = 1;
+	let pastePresetRight = 'default';
+	let customPasteValueRight = '';
+	let customSerialCounterRight = 1;
+	let currentModalSide = null; // কোন পাশের ('left' বা 'right') মোডাল খোলা হয়েছে তা ট্র্যাক করে
+	let currentModalPreset = null; // কোন প্রিসেট ('custom' বা 'custom-serial') এর জন্য ইনপুট প্রয়োজন তা ট্র্যাক করে
 	
 document.addEventListener('DOMContentLoaded', () => {
     // Typing Test Tab এর জন্য প্রয়োজনীয় সকল DOM উপাদান নির্বাচন করা
@@ -5792,6 +5864,128 @@ function initializeUnitConverters() {
 				const mapContent = document.getElementById('mapContent');
 				const prayerTimeTab = document.getElementById('prayerTimeTab'); // এই লাইনটি যুক্ত করুন
 				const prayerTimeContent = document.getElementById('prayerTimeContent'); // এই লাইনটি যুক্ত করুন
+
+
+//pest button code start
+// প্রিসেট ড্রপডাউন এবং মোডাল এর উপাদানগুলো সিলেক্ট করুন
+const presetButtonLeft = document.getElementById('presetButtonLeft');
+const dropdownMenuLeft = document.getElementById('dropdownMenuLeft');
+const presetButtonRight = document.getElementById('presetButtonRight');
+const dropdownMenuRight = document.getElementById('dropdownMenuRight');
+const customPresetModal = document.getElementById('customPresetModal');
+const customModalTitle = document.getElementById('customModalTitle');
+const customModalDesc = document.getElementById('customModalDesc');
+const customPresetInput = document.getElementById('customPresetInput');
+const saveCustomPresetBtn = document.getElementById('saveCustomPresetBtn');
+const cancelCustomPresetBtn = document.getElementById('cancelCustomPresetBtn');
+
+// ড্রপডাউন খোলা এবং বন্ধ করার জন্য ফাংশন
+const toggleDropdown = (button, menu) => {
+    menu.classList.toggle('hidden');
+    button.classList.toggle('open');
+};
+
+if (presetButtonLeft) {
+    presetButtonLeft.addEventListener('click', (e) => {
+        e.stopPropagation(); // পেজ-জুড়ে ক্লিক ইভেন্ট প্রতিরোধ করতে
+        toggleDropdown(presetButtonLeft, dropdownMenuLeft);
+        dropdownMenuRight.classList.add('hidden'); // অন্য ড্রপডাউন বন্ধ করুন
+        presetButtonRight.classList.remove('open');
+    });
+}
+
+if (presetButtonRight) {
+    presetButtonRight.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDropdown(presetButtonRight, dropdownMenuRight);
+        dropdownMenuLeft.classList.add('hidden'); // অন্য ড্রপডাউন বন্ধ করুন
+        presetButtonLeft.classList.remove('open');
+    });
+}
+
+// প্রিসেট নির্বাচন হ্যান্ডেল করার জন্য ফাংশন
+const handlePresetSelection = (event, side) => {
+    event.preventDefault();
+    const presetValue = event.target.dataset.preset;
+    const presetText = event.target.textContent.trim();
+
+    if (presetValue === 'custom' || presetValue === 'custom-serial') {
+        currentModalSide = side;
+        currentModalPreset = presetValue;
+        
+        // মোডাল কনফিগার করুন এবং দেখান
+        customModalTitle.textContent = presetValue === 'custom' ? 'কাস্টম প্রিসেট' : 'সিরিয়ালসহ কাস্টম প্রিসেট';
+        customModalDesc.textContent = presetValue === 'custom' 
+            ? 'প্রতিবার পেস্ট করার আগে যে টেক্সট যুক্ত করতে চান তা লিখুন।'
+            : 'এখানে আপনার টেক্সট লিখুন। সিরিয়াল নম্বরের জন্য {serial} ব্যবহার করুন (যেমন: Step {serial}:)।';
+        
+        const currentCustomValue = (side === 'left') ? customPasteValueLeft : customPasteValueRight;
+        customPresetInput.value = currentCustomValue;
+        
+        customPresetModal.classList.remove('hidden');
+    } else {
+        // নির্বাচিত প্রিসেট অনুযায়ী ভেরিয়েবল এবং বাটনের লেখা আপডেট করুন
+        if (side === 'left') {
+            pastePresetLeft = presetValue;
+            presetButtonLeft.childNodes[0].nodeValue = `${presetText} `;
+        } else {
+            pastePresetRight = presetValue;
+            presetButtonRight.childNodes[0].nodeValue = `${presetText} `;
+        }
+    }
+    
+    // ড্রপডাউন বন্ধ করুন
+    const dropdown = (side === 'left') ? dropdownMenuLeft : dropdownMenuRight;
+    const button = (side === 'left') ? presetButtonLeft : presetButtonRight;
+    dropdown.classList.add('hidden');
+    button.classList.remove('open');
+};
+
+// সমস্ত ড্রপডাউন আইটেমের জন্য ইভেন্ট লিসেনার যুক্ত করুন
+document.querySelectorAll('#dropdownMenuLeft a').forEach(item => {
+    item.addEventListener('click', (e) => handlePresetSelection(e, 'left'));
+});
+document.querySelectorAll('#dropdownMenuRight a').forEach(item => {
+    item.addEventListener('click', (e) => handlePresetSelection(e, 'right'));
+});
+
+// মোডাল বাটনের জন্য লিসেনার
+if (saveCustomPresetBtn) {
+    saveCustomPresetBtn.addEventListener('click', () => {
+        const customValue = customPresetInput.value;
+        if (currentModalSide === 'left') {
+            pastePresetLeft = currentModalPreset;
+            customPasteValueLeft = customValue;
+            presetButtonLeft.childNodes[0].nodeValue = 'কাস্টম প্রিসেট ';
+        } else {
+            pastePresetRight = currentModalPreset;
+            customPasteValueRight = customValue;
+            presetButtonRight.childNodes[0].nodeValue = 'কাস্টম প্রিসেট ';
+        }
+        customPresetModal.classList.add('hidden');
+    });
+}
+
+if (cancelCustomPresetBtn) {
+    cancelCustomPresetBtn.addEventListener('click', () => {
+        customPresetModal.classList.add('hidden');
+    });
+}
+
+// বাইরে ক্লিক করলে ড্রপডাউন বন্ধ করার জন্য
+window.addEventListener('click', () => {
+    if (!dropdownMenuLeft.classList.contains('hidden')) {
+        dropdownMenuLeft.classList.add('hidden');
+        presetButtonLeft.classList.remove('open');
+    }
+    if (!dropdownMenuRight.classList.contains('hidden')) {
+        dropdownMenuRight.classList.add('hidden');
+        presetButtonRight.classList.remove('open');
+    }
+});
+
+//paste button code end
+
 
                 // API কী মডেল উপাদান
                 const apiKeyModal = document.getElementById('apiKeyModal');
@@ -8246,47 +8440,98 @@ async function pasteFromClipboard(textareaId) {
     if (!textarea) return;
 
     try {
-        const text = await navigator.clipboard.readText();
-        if (text) {
-            // কার্সরের বর্তমান অবস্থান সংরক্ষণ করুন
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-
-            // কার্সরের অবস্থানে টেক্সট যুক্ত করুন
-            const currentValue = textarea.value;
-            const newValue = currentValue.substring(0, start) + text + currentValue.substring(end);
-            textarea.value = newValue;
-
-            // পেস্ট করা টেক্সটের শেষে কার্সরের অবস্থান আপডেট করুন
-            const newCursorPosition = start + text.length;
-            textarea.selectionStart = newCursorPosition;
-            textarea.selectionEnd = newCursorPosition;
-            
-            // টেক্সটবক্সে ফোকাস করুন
-            textarea.focus();
-
-            // আনডু/রিডু কার্যকারিতার জন্য স্টেট যোগ করুন
-            addState(textareaId);
-            showCustomAlert('টেক্সট পেস্ট করা হয়েছে!');
-        } else {
+        const clipboardText = await navigator.clipboard.readText();
+        if (!clipboardText) {
             showCustomAlert('ক্লিপবোর্ডে কোনো টেক্সট নেই।');
+            return;
         }
+
+        let textToInsert;
+        let preset, customValue, serialCounter;
+        let updateSerialCounter;
+        let resetSerialCounter;
+
+        // কোন টেক্সটএরিয়া ব্যবহার হচ্ছে তার উপর ভিত্তি করে ভেরিয়েবল সেট করুন
+        if (textareaId === 'textAreaLeft') {
+            preset = pastePresetLeft;
+            customValue = customPasteValueLeft;
+            serialCounter = customSerialCounterLeft;
+            updateSerialCounter = (val) => { customSerialCounterLeft = val; };
+            resetSerialCounter = () => { customSerialCounterLeft = 1; };
+        } else { // textAreaRight
+            preset = pastePresetRight;
+            customValue = customPasteValueRight;
+            serialCounter = customSerialCounterRight;
+            updateSerialCounter = (val) => { customSerialCounterRight = val; };
+            resetSerialCounter = () => { customSerialCounterRight = 1; };
+        }
+        
+        // যদি 'custom-serial' প্রিসেট নির্বাচিত না থাকে, তাহলে সিরিয়াল কাউন্টার রিসেট করুন
+        if (preset !== 'custom-serial') {
+            resetSerialCounter();
+        }
+        
+        let prefix = '';
+        switch (preset) {
+            case 'single-space':
+                prefix = ' ';
+                break;
+            case 'double-space':
+                prefix = '  ';
+                break;
+            case 'four-space':
+                prefix = '    ';
+                break;
+            case 'single-enter':
+                prefix = '\n';
+                break;
+            case 'double-enter':
+                prefix = '\n\n';
+                break;
+            case 'custom':
+                prefix = customValue || '';
+                break;
+            case 'custom-serial':
+                // সিরিয়াল নম্বরের জন্য {serial} স্ট্রিংটি প্রতিস্থাপন করুন
+                prefix = customValue ? customValue.replace(/\{serial\}/g, serialCounter) : '';
+                updateSerialCounter(serialCounter + 1);
+                break;
+        }
+        
+        // যদি টেক্সটবক্স খালি না থাকে তবেই শুধুমাত্র প্রিফিক্স যোগ করুন
+        if (textarea.value !== '') {
+            textToInsert = prefix + clipboardText;
+        } else {
+            textToInsert = clipboardText;
+        }
+
+        // --- কার্সরের অবস্থানে টেক্সট যুক্ত করুন ---
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const currentValue = textarea.value;
+
+        const newValue = currentValue.substring(0, start) + textToInsert + currentValue.substring(end);
+        textarea.value = newValue;
+
+        // পেস্ট করা টেক্সটের শেষে কার্সরের অবস্থান আপডেট করুন
+        const newCursorPosition = start + textToInsert.length;
+        textarea.selectionStart = newCursorPosition;
+        textarea.selectionEnd = newCursorPosition;
+        textarea.focus();
+
+        addState(textareaId); // আনডু/রিডু কার্যকারিতার জন্য
+        showCustomAlert('টেক্সট পেস্ট করা হয়েছে!');
+
     } catch (err) {
         console.error('পেস্ট করতে ব্যর্থ:', err);
         showCustomAlert('পেস্ট করতে ব্যর্থ হয়েছে। ব্রাউজার পারমিশন চেক করুন।');
     }
 }
 
-// নতুন পেস্ট বাটনগুলোর জন্য ইভেন্ট লিসেনার (এটি অপরিবর্তিত থাকবে)
-const pasteButtonLeft = document.getElementById('pasteButtonLeft');
-const pasteButtonRight = document.getElementById('pasteButtonRight');
 
-if (pasteButtonLeft) {
-    pasteButtonLeft.addEventListener('click', () => pasteFromClipboard('textAreaLeft'));
-}
-if (pasteButtonRight) {
-    pasteButtonRight.addEventListener('click', () => pasteFromClipboard('textAreaRight'));
-}
+
+
+
 // ====================================================================
 // END: PASTE FROM CLIPBOARD FUNCTIONALITY
 // ====================================================================
@@ -8303,6 +8548,17 @@ if (pasteButtonRight) {
                 // ইউনিট কনভার্টার ইনিশিয়ালাইজ করুন
                 initializeUnitConverters();
 
+// --- ফন্ট কনভার্টার লিসেনার যোগ করুন ---
+const pasteButtonLeft = document.getElementById('pasteButtonLeft');
+const pasteButtonRight = document.getElementById('pasteButtonRight');
+
+if (pasteButtonLeft) {
+    pasteButtonLeft.addEventListener('click', () => pasteFromClipboard('textAreaLeft'));
+}
+
+if (pasteButtonRight) {
+    pasteButtonRight.addEventListener('click', () => pasteFromClipboard('textAreaRight'));
+}
 
             } catch (e) {
                 console.error('DOMContentLoaded এক্সিকিউশনের সময় একটি ত্রুটি ঘটেছে:', e);
