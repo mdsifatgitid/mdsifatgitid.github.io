@@ -17,7 +17,27 @@
             font-weight: normal;
             font-style: normal;
         }
+/* নতুন ফন্ট সেকশন শুরু
+/* নতুন 'Bornomala' ফন্টটি লোড করার জন্য @font-face যুক্ত করা হয়েছে। */
+@font-face {
+    font-family: 'Bornomala';
+    src: url('https://github.com/mdsifatgitid/mdsifatgitid.github.io/raw/refs/heads/main/Bornomala-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
 
+/* body ট্যাগের font-family পরিবর্তন করে Bornomala ফন্টটিকে প্রধান ফন্ট হিসেবে সেট করা হয়েছে। */
+body {
+    font-family: 'Bornomala', 'Inter', 'Hind Siliguri', sans-serif;
+    display: flex;
+    justify-content: center; /* horizontally center */
+    align-items: center;     /* vertically center */
+    min-height: 100vh;
+    background-color: transparent; /* Made transparent for animated background */
+    padding: 5px; /* ছোট স্ক্রিনের জন্য প্যাডিং যোগ করুন */
+}
+
+/* নতুন ফন্ট সেকশন শেষ
         /* Preloader Styles */
         #preloader {
             position: fixed;
