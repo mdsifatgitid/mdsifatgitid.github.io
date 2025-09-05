@@ -5897,6 +5897,7 @@ const presetButtonLeft = document.getElementById('presetButtonLeft');
 const dropdownMenuLeft = document.getElementById('dropdownMenuLeft');
 const presetButtonRight = document.getElementById('presetButtonRight');
 const dropdownMenuRight = document.getElementById('dropdownMenuRight');
+loadSavedPresets();
 const customPresetModal = document.getElementById('customPresetModal');
 const customModalTitle = document.getElementById('customModalTitle');
 const customModalDesc = document.getElementById('customModalDesc');
@@ -5928,17 +5929,57 @@ if (presetButtonRight) {
     });
 }
 
-// প্রিসেট নির্বাচন হ্যান্ডেল করার জন্য ফাংশন
+
+
+// সমস্ত ড্রপডাউন আইটেমের জন্য ইভেন্ট লিসেনার যুক্ত করুন
+document.querySelectorAll('#dropdownMenuLeft a').forEach(item => {
+    item.addEventListener('click', (e) => handlePresetSelection(e, 'left'));
+});
+document.querySelectorAll('#dropdownMenuRight a').forEach(item => {
+    item.addEventListener('click', (e) => handlePresetSelection(e, 'right'));
+});
+
+// নতুন ফাংশন: পেজ লোড হওয়ার সময় localStorage থেকে সেভ করা প্রিসেট লোড করার জন্য।
+function loadSavedPresets() {
+    const presetButtonLeft = document.getElementById('presetButtonLeft');
+    const presetButtonRight = document.getElementById('presetButtonRight');
+
+    // বাম দিকের প্রিসেট লোড করুন
+    const savedPresetLeftValue = localStorage.getItem('presetLeftValue');
+    const savedPresetLeftText = localStorage.getItem('presetLeftText');
+    if (savedPresetLeftValue && savedPresetLeftText && presetButtonLeft) {
+        pastePresetLeft = savedPresetLeftValue;
+        presetButtonLeft.childNodes[0].nodeValue = `${savedPresetLeftText} `;
+        if (savedPresetLeftValue === 'custom' || savedPresetLeftValue === 'custom-serial') {
+            customPasteValueLeft = localStorage.getItem('customPasteValueLeft') || '';
+        }
+    }
+
+    // ডান দিকের প্রিসেট লোড করুন
+    const savedPresetRightValue = localStorage.getItem('presetRightValue');
+    const savedPresetRightText = localStorage.getItem('presetRightText');
+    if (savedPresetRightValue && savedPresetRightText && presetButtonRight) {
+        pastePresetRight = savedPresetRightValue;
+        presetButtonRight.childNodes[0].nodeValue = `${savedPresetRightText} `;
+        if (savedPresetRightValue === 'custom' || savedPresetRightValue === 'custom-serial') {
+            customPasteValueRight = localStorage.getItem('customPasteValueRight') || '';
+        }
+    }
+}
+
+// এই ফাংশনটি আপনার পুরনো handlePresetSelection ফাংশনের পরিবর্তে ব্যবহার করুন।
+// এখানে প্রিসেট সিলেক্ট করার সাথে সাথে localStorage-এ সেভ করার কোড যোগ করা হয়েছে।
 const handlePresetSelection = (event, side) => {
     event.preventDefault();
     const presetValue = event.target.dataset.preset;
     const presetText = event.target.textContent.trim();
+    const presetButtonLeft = document.getElementById('presetButtonLeft');
+    const presetButtonRight = document.getElementById('presetButtonRight');
 
     if (presetValue === 'custom' || presetValue === 'custom-serial') {
         currentModalSide = side;
         currentModalPreset = presetValue;
         
-        // মোডাল কনফিগার করুন এবং দেখান
         customModalTitle.textContent = presetValue === 'custom' ? 'কাস্টম প্রিসেট' : 'সিরিয়ালসহ কাস্টম প্রিসেট';
         customModalDesc.textContent = presetValue === 'custom' 
             ? 'প্রতিবার পেস্ট করার আগে যে টেক্সট যুক্ত করতে চান তা লিখুন।'
@@ -5949,43 +5990,55 @@ const handlePresetSelection = (event, side) => {
         
         customPresetModal.classList.remove('hidden');
     } else {
-        // নির্বাচিত প্রিসেট অনুযায়ী ভেরিয়েবল এবং বাটনের লেখা আপডেট করুন
         if (side === 'left') {
             pastePresetLeft = presetValue;
             presetButtonLeft.childNodes[0].nodeValue = `${presetText} `;
+            // localStorage-এ সেভ করুন
+            localStorage.setItem('presetLeftValue', presetValue);
+            localStorage.setItem('presetLeftText', presetText);
         } else {
             pastePresetRight = presetValue;
             presetButtonRight.childNodes[0].nodeValue = `${presetText} `;
+            // localStorage-এ সেভ করুন
+            localStorage.setItem('presetRightValue', presetValue);
+            localStorage.setItem('presetRightText', presetText);
         }
     }
     
-    // ড্রপডাউন বন্ধ করুন
-    const dropdown = (side === 'left') ? dropdownMenuLeft : dropdownMenuRight;
+    const dropdown = (side === 'left') ? document.getElementById('dropdownMenuLeft') : document.getElementById('dropdownMenuRight');
     const button = (side === 'left') ? presetButtonLeft : presetButtonRight;
     dropdown.classList.add('hidden');
     button.classList.remove('open');
 };
 
-// সমস্ত ড্রপডাউন আইটেমের জন্য ইভেন্ট লিসেনার যুক্ত করুন
-document.querySelectorAll('#dropdownMenuLeft a').forEach(item => {
-    item.addEventListener('click', (e) => handlePresetSelection(e, 'left'));
-});
-document.querySelectorAll('#dropdownMenuRight a').forEach(item => {
-    item.addEventListener('click', (e) => handlePresetSelection(e, 'right'));
-});
-
-// মোডাল বাটনের জন্য লিসেনার
+// আপনার পুরনো saveCustomPresetBtn এর click event listener-এর পরিবর্তে এটি ব্যবহার করুন।
+// এখানে কাস্টম প্রিসেট সেভ করার সাথে সাথে localStorage-এ সেভ করার কোড যোগ করা হয়েছে।
 if (saveCustomPresetBtn) {
     saveCustomPresetBtn.addEventListener('click', () => {
         const customValue = customPresetInput.value;
+        const presetText = currentModalPreset === 'custom-serial' ? 'সিরিয়ালসহ কাস্টম' : 'কাস্টম প্রিসেট';
+        const presetButtonLeft = document.getElementById('presetButtonLeft');
+        const presetButtonRight = document.getElementById('presetButtonRight');
+
         if (currentModalSide === 'left') {
             pastePresetLeft = currentModalPreset;
             customPasteValueLeft = customValue;
-            presetButtonLeft.childNodes[0].nodeValue = 'কাস্টম প্রিসেট ';
+            presetButtonLeft.childNodes[0].nodeValue = `${presetText} `;
+
+            // localStorage-এ সেভ করুন
+            localStorage.setItem('presetLeftValue', currentModalPreset);
+            localStorage.setItem('presetLeftText', presetText);
+            localStorage.setItem('customPasteValueLeft', customValue);
+
         } else {
             pastePresetRight = currentModalPreset;
             customPasteValueRight = customValue;
-            presetButtonRight.childNodes[0].nodeValue = 'কাস্টম প্রিসেট ';
+            presetButtonRight.childNodes[0].nodeValue = `${presetText} `;
+            
+            // localStorage-এ সেভ করুন
+            localStorage.setItem('presetRightValue', currentModalPreset);
+            localStorage.setItem('presetRightText', presetText);
+            localStorage.setItem('customPasteValueRight', customValue);
         }
         customPresetModal.classList.add('hidden');
     });
