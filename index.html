@@ -8282,7 +8282,7 @@ if (wordCounterContent && wordCounterContent.classList.contains('active')) {
 // ====================================================================
 
 // ====================================================================
-// START: WEATHER TAB SCRIPT (NEW)
+// START: WEATHER TAB SCRIPT (UPDATED & FIXED)
 // ====================================================================
 const cityInput = document.getElementById('cityInput');
 const searchWeatherBtn = document.getElementById('searchWeatherBtn');
@@ -8325,6 +8325,8 @@ async function getWeather(city) {
         }
         const data = await response.json();
         displayWeather(data);
+        // সফলভাবে সার্চ করা শহর লোকাল স্টোরেজে সেভ করুন
+        localStorage.setItem('lastSearchedWeatherCity', city); 
     } catch (error) {
         weatherResult.innerHTML = `<p class="text-red-500 font-semibold">${error.message}</p>`;
     } finally {
@@ -8390,9 +8392,17 @@ if (cityInput) {
         }
     });
 }
+
+// পেজ লোড হলে সর্বশেষ সার্চ করা শহরটি লোড করার জন্য এই কোডটি সরাসরি চালানো হবে
+const savedCity = localStorage.getItem('lastSearchedWeatherCity');
+if (savedCity && cityInput) {
+    cityInput.value = savedCity;
+    getWeather(savedCity);
+}
 // ====================================================================
-// END: WEATHER TAB SCRIPT
+// END: WEATHER TAB SCRIPT (UPDATED & FIXED)
 // ====================================================================
+
 
 // ====================================================================
 // START: NOTEPAD / TO-DO LIST SCRIPT
@@ -8752,6 +8762,8 @@ if (pasteButtonRight) {
             }
 			
         });
+		
+//Start Another Weather section
 
 // আবহাওয়া ডেটা আনার জন্য JavaScript কোড
 // আবহাওয়া কোডগুলোকে বাংলায় রূপান্তর করার জন্য একটি ম্যাপ
@@ -8968,6 +8980,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+//End Another Weather Section
 
         window.onload = function() {
             const preloader = document.getElementById('preloader');
