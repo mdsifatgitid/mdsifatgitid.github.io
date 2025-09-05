@@ -8947,6 +8947,8 @@ async function searchLocation(locationName) {
         if (data.results && data.results.length > 0) {
             const firstResult = data.results[0];
             fetchAndDisplayWeather(firstResult.latitude, firstResult.longitude, firstResult.name);
+            // সফলভাবে সার্চ করা শহর লোকাল স্টোরেজে সেভ করুন
+            localStorage.setItem('lastSearchedWeatherLocation', locationName);
         } else {
             locationNameEl.textContent = 'অবস্থান খুঁজে পাওয়া যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।';
             console.warn('অবস্থান খুঁজে পাওয়া যায়নি।');
@@ -8957,15 +8959,18 @@ async function searchLocation(locationName) {
     }
 }
 
-// পেজ লোড হলে ডিফল্ট অবস্থান (ঢাকা) এর জন্য আবহাওয়ার ডেটা লোড করা
+// পেজ লোড হলে সর্বশেষ সার্চ করা শহরটি লোড করা
 document.addEventListener('DOMContentLoaded', () => {
-    searchLocation('Dhaka');
+    // লোকাল স্টোরেজ থেকে সর্বশেষ সার্চ করা শহরটি লোড করুন, না থাকলে ডিফল্ট হিসেবে ঢাকা ব্যবহার করুন
+    const lastSearchedLocation = localStorage.getItem('lastSearchedWeatherLocation') || 'Dhaka';
+    searchLocation(lastSearchedLocation);
+
 
     const searchButton = document.getElementById('search-weather-button');
     const searchInput = document.getElementById('location-search-input');
 
     searchButton.addEventListener('click', () => {
-        const location = searchInput.value;
+        const location = searchInput.value.trim();
         if (location) {
             searchLocation(location);
         }
@@ -8973,7 +8978,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     searchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            const location = searchInput.value;
+            const location = searchInput.value.trim();
             if (location) {
                 searchLocation(location);
             }
