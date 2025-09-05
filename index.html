@@ -4087,26 +4087,28 @@ input:checked + .slider:before {
 	let customSerialCounterRight = 1;
 	let currentModalSide = null; // কোন পাশের ('left' বা 'right') মোডাল খোলা হয়েছে তা ট্র্যাক করে
 	let currentModalPreset = null; // কোন প্রিসেট ('custom' বা 'custom-serial') এর জন্য ইনপুট প্রয়োজন তা ট্র্যাক করে
-	
+
+//Start Typing Script
+
 document.addEventListener('DOMContentLoaded', () => {
     // Typing Test Tab এর জন্য প্রয়োজনীয় সকল DOM উপাদান নির্বাচন করা
     const typingTestTab = document.getElementById('typingTestTab');
     const typingTestContent = document.getElementById('typingTestContent');
-    
-	const notepadTab = document.getElementById('notepadTab');
-	const notepadContent = document.getElementById('notepadContent');
-	const imageToTextTab = document.getElementById('imageToTextTab');
-	const imageToTextContent = document.getElementById('imageToTextContent');
-	const wordCounterTab = document.getElementById('wordCounterTab');
-	const wordCounterContent = document.getElementById('wordCounterContent');
+
+    const notepadTab = document.getElementById('notepadTab');
+    const notepadContent = document.getElementById('notepadContent');
+    const imageToTextTab = document.getElementById('imageToTextTab');
+    const imageToTextContent = document.getElementById('imageToTextContent');
+    const wordCounterTab = document.getElementById('wordCounterTab');
+    const wordCounterContent = document.getElementById('wordCounterContent');
     // নতুন যুক্ত করা উপাদান
     const textSelection = document.getElementById('textSelection');
     const timeSelection = document.getElementById('timeSelection');
     const customTextInputContainer = document.getElementById('custom-text-input');
     const clearTypingBtn = document.getElementById('clearTypingBtn');
     const totalWordsDisplay = document.getElementById('totalWordsDisplay');
-	const weatherTab = document.getElementById('weatherTab');
-	const weatherContent = document.getElementById('weatherContent');
+    const weatherTab = document.getElementById('weatherTab');
+    const weatherContent = document.getElementById('weatherContent');
     // আগের উপাদান
     const typingTextDisplay = document.getElementById('typingTextDisplay');
     const typingInput = document.getElementById('typingInput');
@@ -4136,6 +4138,25 @@ document.addEventListener('DOMContentLoaded', () => {
     let isPaused = false; // টেস্ট পজ করা হয়েছে কিনা তা ট্র্যাক করতে
     let correctChars = 0;
     let incorrectChars = 0;
+
+    // *** নতুন সংযোজন: ক্যারেক্টার রিপ্লেসমেন্টের জন্য হেল্পার ফাংশন ***
+    function replaceTypingCharacters(textareaElement) {
+        const value = textareaElement.value;
+        const selectionStart = textareaElement.selectionStart;
+        const selectionEnd = textareaElement.selectionEnd;
+
+        // decomposed form (letter + nukta) থেকে precomposed form-এ পরিবর্তন করা হচ্ছে
+        let newValue = value
+            .replace(/য়/g, 'য়') // U+09AF + U+09BC -> U+09DF
+            .replace(/ড়/g, 'ড়') // U+09A1 + U+09BC -> U+09DC
+            .replace(/ঢ়/g, 'ঢ়'); // U+09A2 + U+09BC -> U+09DD
+
+        if (newValue !== value) {
+            textareaElement.value = newValue;
+            // কার্সরের অবস্থান ঠিক রাখার জন্য
+            textareaElement.setSelectionRange(selectionStart, selectionEnd);
+        }
+    }
     
     // টেস্ট শুরু বা রিসেট করার ফাংশন
     function initializeTest() {
@@ -4206,10 +4227,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // *** সংশোধিত ফাংশন: handleTypingInput ***
-    // এই ফাংশনটি প্রতিটি ইনপুটের পরে পুরো লেখাটি পুনরায় যাচাই করে,
-    // যা ভুল সংশোধন এবং অক্ষর বাদ পড়ার সমস্যা সমাধান করে।
     function handleTypingInput() {
         if (isPaused) return;
+
+        // *** নতুন সংযোজন: অটোমেটিক অক্ষর রিপ্লেসমেন্ট ***
+        replaceTypingCharacters(typingInput);
+        // *** সংযোজন শেষ ***
 
         // প্রথম অক্ষর টাইপ করার সাথে সাথে টাইমার শুরু করুন
         if (!isTestActive && typingInput.value.length > 0) {
@@ -4227,16 +4250,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // টাইপ করা সমস্ত অক্ষর পুনরায় মূল্যায়ন করুন
         spans.forEach((charSpan, index) => {
-            // পূর্ববর্তী অবস্থা পরিষ্কার করুন
             charSpan.classList.remove('correct', 'incorrect', 'current');
 
             if (index < typedLength) {
                 const originalChar = charSpan.innerText;
                 const typedChar = typedValue[index];
                 
-                // *** সমাধান: তুলনার আগে অক্ষর নরম্যালাইজ করা ***
-                // এটি ইউনিকোডের গঠনগত ভিন্নতার (precomposed vs. decomposed) সমস্যা সমাধান করে।
-                // যেমন: 'ড়' এবং 'ড' + '়' এখন একই হিসাবে বিবেচিত হবে।
                 if (originalChar.normalize('NFC') === typedChar.normalize('NFC')) {
                     charSpan.classList.add('correct');
                     localCorrectChars++;
@@ -4247,21 +4266,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // পরিসংখ্যান গণনার জন্য গ্লোবাল অক্ষরের সংখ্যা আপডেট করুন
         correctChars = localCorrectChars;
         incorrectChars = localIncorrectChars;
 
-        // কার্সার (বর্তমান অক্ষর) সেট করুন
         if (typedLength < spans.length) {
             spans[typedLength].classList.add('current');
         } 
         
-        // টেস্ট শেষ হয়েছে কিনা তা পরীক্ষা করুন
         if (typedLength >= spans.length) {
             endTest();
         }
         
-        updateStats(); // প্রতিটি ইনপুটের পরে পরিসংখ্যান আপডেট করুন
+        updateStats();
     }
 
     // টাইমার শুরু করার ফাংশন
@@ -4279,7 +4295,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // পজ এবং রিজিউম ফাংশন
     function togglePauseResume() {
-        if (!isTestActive) return; // টেস্ট শুরু না হলে পজ করা যাবে না
+        if (!isTestActive) return;
 
         isPaused = !isPaused;
 
@@ -4289,47 +4305,37 @@ document.addEventListener('DOMContentLoaded', () => {
             pauseResumeTypingBtn.innerText = 'চালু করুন';
             showCustomAlert('টেস্ট থামানো হয়েছে।');
         } else {
-            startTimer(); // টাইমার পুনরায় শুরু করুন
+            startTimer();
             typingInput.disabled = false;
-            typingInput.focus(); // ইনপুটে ফোকাস ফিরিয়ে আনুন
+            typingInput.focus();
             pauseResumeTypingBtn.innerText = 'থামান';
             showCustomAlert('টেস্ট পুনরায় শুরু হয়েছে।');
         }
     }
     
     // *** সংশোধিত ফাংশন: updateStats ***
-    // এই ফাংশনটি পরিসংখ্যান গণনার জন্য সঠিক পদ্ধতি ব্যবহার করে।
     function updateStats() {
         const totalTypedChars = correctChars + incorrectChars;
-
-        // Accuracy Calculation
         const accuracy = (totalTypedChars > 0) ? (correctChars / totalTypedChars) * 100 : 100;
         accuracyDisplay.innerText = `${Math.round(accuracy)}%`;
-
-        // WPM Calculation
         const timeElapsedInMinutes = timeElapsed / 60;
         if (timeElapsedInMinutes > 0) {
-            // WPM সঠিকভাবে টাইপ করা অক্ষরের উপর ভিত্তি করে গণনা করা হয়
             const netWPM = (correctChars / 5) / timeElapsedInMinutes;
             wpmDisplay.innerText = Math.round(netWPM > 0 ? netWPM : 0);
         } else {
             wpmDisplay.innerText = '0';
         }
         
-        // Word Count Calculation
         const allOriginalWords = typingTextDisplay.innerText.split(/\s+/).filter(Boolean);
         const typedWordsArray = typingInput.value.trim().split(/\s+/).filter(Boolean);
         
         let correctWordsCount = 0;
-        // ব্যবহারকারী যতগুলো শব্দ টাইপ করেছে, ততগুলো শব্দের তুলনা করুন
         typedWordsArray.forEach((typedWord, index) => {
-            // *** সমাধান: তুলনার আগে শব্দ নরম্যালাইজ করা ***
             if (index < allOriginalWords.length && typedWord.normalize('NFC') === allOriginalWords[index].normalize('NFC')) {
                 correctWordsCount++;
             }
         });
 
-        // যদি ইনপুট খালি থাকে, তাহলে ভুল শব্দ ০ দেখান
         const incorrectWordsCount = typedWordsArray.length > 0 ? typedWordsArray.length - correctWordsCount : 0;
 
         totalWordsDisplay.innerText = typedWordsArray.length;
@@ -4343,9 +4349,9 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(timer);
         isTestActive = false;
         typingInput.disabled = true;
-        if (pauseResumeTypingBtn) pauseResumeTypingBtn.disabled = true; // টেস্ট শেষে বাটন নিষ্ক্রিয় করুন
+        if (pauseResumeTypingBtn) pauseResumeTypingBtn.disabled = true;
         showCustomAlert('টাইপিং টেস্ট শেষ হয়েছে!');
-        updateStats(); // চূড়ান্ত পরিসংখ্যান আপডেট করুন
+        updateStats();
     }
 
     // ইভেন্ট লিসেনার যোগ করা
@@ -4377,6 +4383,18 @@ document.addEventListener('DOMContentLoaded', () => {
         typingInput.addEventListener('input', handleTypingInput);
     }
     
+    // *** নতুন সংযোজন: কাস্টম টেক্সট বক্সের জন্য ইভেন্ট লিসেনার ***
+    if (customTextInputContainer) {
+        customTextInputContainer.addEventListener('input', () => {
+            replaceTypingCharacters(customTextInputContainer);
+            // কাস্টম টেক্সট পরিবর্তন হলে টেস্ট রিসেট করুন
+            if (textSelection.value === 'custom') {
+                 initializeTest();
+            }
+        });
+    }
+    // *** সংযোজন শেষ ***
+
     if (textSelection) {
         textSelection.addEventListener('change', (e) => {
             if (e.target.value === 'custom') {
@@ -4392,12 +4410,11 @@ document.addEventListener('DOMContentLoaded', () => {
         timeSelection.addEventListener('change', initializeTest);
     }
     
-    // যদি টাইপিং টেস্ট ট্যাবটি ডিফল্টভাবে সক্রিয় থাকে, তবে টেস্ট শুরু করুন
     if (typingTestContent && typingTestContent.classList.contains('active')) {
         initializeTest();
     }
  });
-	
+//End Typing Script
 	
         // ====================================================================
         // START: DATE AND TIME BANNER SCRIPT (নতুন যুক্ত করা হয়েছে)
@@ -4718,7 +4735,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		"›U": "ন্ট",	    "«": "্র",	    "…": "ৃ",	    "‚": "ূ", 	     "æ": "ু",      "Ý": "ন্স",      "š^": "ন্ব",    "MÖƒ": "গ্রূ", "cÖƒ": "প্রূ", 
 			"eªƒ": "ব্রূ", "kÖƒ": "শ্রূ",	"_¦": "থ্ব", "˜M": "দ্গ", "˜N": "দ্ঘ", "Ï": "দ্দ", "$": "৳", "K¥": "ক্ম", "òœ": "ক্ষ্ণ", "M&M": "গ্গ", "º": "গ্দ", "˜M": "দ্গ", "O¥": "ঙ্ম", "”T": "চ্ঞ", 
 "Y&X": "ণ্ঢ", "Y¥": "ণ্ম", "Zø": "ত্ল", "Îƒ": "ত্রূ", "_¦": "থ্ব", "_ø": "থ্ল", "™£": "দ্ভ্র", "`ªƒ": "দ্রূ", "Ú": "ন্ঠ", "šÍ¦": "ন্ত্ব", "š’": "ন্থ", "åƒ": "ভ্রূ", "fø": "ভ্ল", "¤£": "ম্ভ্র", "¤ø": "ম্ল",
-"î": "ল্ফ", "ñ": "শ্ছ", "®Œ": "ষ্ক্র", "¯Œ": "স্ক্র", "¯’": "স্থ", "¯ª~": "স্রূ", "¯ø": "স্ল", "—M": "ড়্গ", "aªƒ": "ধ্রূ", "¯úø": "স্প্ল", "¤úø": "ম্প্ল", "•g": "ঙ্ম", 	"mø": "স্ল", "¯": "্স",  "Zz¨": "ত্যু",	"¨~": "্যূ",	"o–": "ড়ু",
+"î": "ল্ফ", "ñ": "শ্ছ", "®Œ": "ষ্ক্র", "¯Œ": "স্ক্র", "¯’": "স্থ", "¯ª~": "স্রূ", "¯ø": "স্ল", "—M": "ড়্গ", "aªƒ": "ধ্রূ", "¯úø": "স্প্ল", "¤úø": "ম্প্ল", "•g": "ঙ্ম", 	"mø": "স্ল", "¯": "্স",  "Zz¨": "ত্যু",	"¨~": "্যূ",	"o–": "ড়ু", "›Ø": "ন্দ্ব",
 				
 		};
         // ====================================================================
