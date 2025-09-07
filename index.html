@@ -8298,128 +8298,6 @@ if (wordCounterContent && wordCounterContent.classList.contains('active')) {
 // END: WORD COUNTER SCRIPT
 // ====================================================================
 
-// ====================================================================
-// START: WEATHER TAB SCRIPT (UPDATED & FIXED)
-// ====================================================================
-const cityInput = document.getElementById('cityInput');
-const searchWeatherBtn = document.getElementById('searchWeatherBtn');
-const weatherResult = document.getElementById('weatherResult');
-const weatherLoading = document.getElementById('weatherLoading');
-
-// অনুগ্রহ করে এখানে আপনার নিজের OpenWeatherMap API কী বসান।
-// আপনি [https://openweathermap.org/api](https://openweathermap.org/api) - এই লিংক থেকে বিনামূল্যে একটি কী পেতে পারেন।
-const weatherApiKey = '4a5a19a6db3c60132629d8bd29949841'; // <--- এখানে আপনার API কী বসাতে হবে
-
-// নতুন: UNIX টাইমস্ট্যাম্পকে লোকাল সময়ে রূপান্তর করার জন্য ফাংশন
-function formatTime(timestamp) {
-    const date = new Date(timestamp * 1000); // সেকেন্ডকে মিলিসেকেন্ডে রূপান্তর করা হয়েছে
-    return date.toLocaleTimeString('bn-BD', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-    });
-}
-
-async function getWeather(city) {
-    if (weatherApiKey === 'YOUR_API_KEY_HERE' || weatherApiKey === '') {
-        weatherResult.innerHTML = '<p class="text-red-500 font-semibold">আবহাওয়া API কী সেট করা হয়নি। অনুগ্রহ করে স্ক্রিপ্টে আপনার কী যোগ করুন।</p>';
-        return;
-    }
-
-    weatherLoading.style.display = 'block';
-    weatherResult.innerHTML = '';
-
-    try {
-        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weatherApiKey}&units=metric&lang=bn`);
-        if (!response.ok) {
-            if (response.status === 404) {
-                throw new Error('শহরটি খুঁজে পাওয়া যায়নি।');
-            } else if (response.status === 401) {
-                throw new Error('API কী টি সঠিক নয়।');
-            } else {
-                throw new Error('একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।');
-            }
-        }
-        const data = await response.json();
-        displayWeather(data);
-        // সফলভাবে সার্চ করা শহর লোকাল স্টোরেজে সেভ করুন
-        localStorage.setItem('lastSearchedWeatherCity', city); 
-    } catch (error) {
-        weatherResult.innerHTML = `<p class="text-red-500 font-semibold">${error.message}</p>`;
-    } finally {
-        weatherLoading.style.display = 'none';
-    }
-}
-
-function displayWeather(data) {
-    const { name, main, weather, wind, sys } = data; // sys যোগ করা হয়েছে
-    const iconUrl = `https://openweathermap.org/img/wn/${weather[0].icon}@4x.png`; // আইকন বড় করা হয়েছে
-
-    weatherResult.innerHTML = `
-        <h4>${name}</h4>
-        <img src="${iconUrl}" alt="${weather[0].description}" class="weather-icon">
-        <p class="temp">${Math.round(main.temp)}&deg;C</p>
-        <p class="description">${weather[0].description}</p>
-        <p class="weather-feels-like"> অনুভূত হচ্ছে: ${Math.round(main.feels_like)}&deg;C</p>
-
-        <div class="weather-extra-details">
-            <div class="detail-item">
-                <strong>সর্বোচ্চ তাপমাত্রা</strong>
-                <span>${Math.round(main.temp_max)}&deg;C</span>
-            </div>
-            <div class="detail-item">
-                <strong>সর্বনিম্ন তাপমাত্রা</strong>
-                <span>${Math.round(main.temp_min)}&deg;C</span>
-            </div>
-             <div class="detail-item">
-                <strong>আর্দ্রতা</strong>
-                <span>${main.humidity}%</span>
-            </div>
-            <div class="detail-item">
-                <strong>বাতাসের গতি</strong>
-                <span>${wind.speed.toFixed(1)} মি/সে</span>
-            </div>
-            <div class="detail-item">
-                <strong>সূর্যোদয়</strong>
-                <span>${formatTime(sys.sunrise)}</span>
-            </div>
-            <div class="detail-item">
-                <strong>সূর্যাস্ত</strong>
-                <span>${formatTime(sys.sunset)}</span>
-            </div>
-        </div>
-    `;
-}
-
-if (searchWeatherBtn) {
-    searchWeatherBtn.addEventListener('click', () => {
-        const city = cityInput.value.trim();
-        if (city) {
-            getWeather(city);
-        } else {
-            showCustomAlert('অনুগ্রহ করে একটি শহরের নাম লিখুন।');
-        }
-    });
-}
-
-if (cityInput) {
-    cityInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            searchWeatherBtn.click();
-        }
-    });
-}
-
-// পেজ লোড হলে সর্বশেষ সার্চ করা শহরটি লোড করার জন্য এই কোডটি সরাসরি চালানো হবে
-const savedCity = localStorage.getItem('lastSearchedWeatherCity');
-if (savedCity && cityInput) {
-    cityInput.value = savedCity;
-    getWeather(savedCity);
-}
-// ====================================================================
-// END: WEATHER TAB SCRIPT (UPDATED & FIXED)
-// ====================================================================
-
 
 // ====================================================================
 // START: NOTEPAD / TO-DO LIST SCRIPT
@@ -8780,158 +8658,115 @@ if (pasteButtonRight) {
 			
         });
 		
-//Start Another Weather section
+// ====================================================================
+// START: COMBINED & UPDATED WEATHER SCRIPT
+// ====================================================================
 
-// আবহাওয়া ডেটা আনার জন্য JavaScript কোড
-// আবহাওয়া কোডগুলোকে বাংলায় রূপান্তর করার জন্য একটি ম্যাপ
+// --- প্রথম আবহাওয়া সেকশনের জন্য উপাদান (OpenWeatherMap) ---
+const cityInput = document.getElementById('cityInput');
+const searchWeatherBtn = document.getElementById('searchWeatherBtn');
+const weatherResult = document.getElementById('weatherResult');
+const weatherLoading = document.getElementById('weatherLoading');
+const weatherApiKey = '4a5a19a6db3c60132629d8bd29949841'; // আপনার OpenWeatherMap API কী
+
+// --- দ্বিতীয় আবহাওয়া সেকশনের জন্য উপাদান (Open-Meteo) ---
+const searchInputForecast = document.getElementById('location-search-input');
+const searchButtonForecast = document.getElementById('search-weather-button');
+const forecastContainer = document.getElementById('forecast-container');
+const weatherSection = document.getElementById('weather-section');
+const locationNameEl = document.getElementById('location-name');
+
+
+// --- প্রথম সেকশনের জন্য হেল্পার ফাংশন ---
+function formatTime(timestamp) {
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleTimeString('bn-BD', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    });
+}
+
+// --- দ্বিতীয় সেকশনের জন্য হেল্পার ফাংশন ---
 const weatherCodes = {
-    0: {
-        text: "পরিষ্কার আকাশ",
-        icon: "☀️"
-    },
-    1: {
-        text: "প্রধানত পরিষ্কার",
-        icon: "🌤️"
-    },
-    2: {
-        text: "আংশিক মেঘলা",
-        icon: "⛅"
-    },
-    3: {
-        text: "মেঘলা",
-        icon: "☁️"
-    },
-    45: {
-        text: "কুয়াশা",
-        icon: "🌫️"
-    },
-    48: {
-        text: "হিম কুয়াশা",
-        icon: "🌫️"
-    },
-    51: {
-        text: "হালকা গুঁড়ি গুঁড়ি বৃষ্টি",
-        icon: "🌧️"
-    },
-    53: {
-        text: "মাঝারি গুঁড়ি গুঁড়ি বৃষ্টি",
-        icon: "🌧️"
-    },
-    55: {
-        text: "ঘন গুঁড়ি গুঁড়ি বৃষ্টি",
-        icon: "🌧️"
-    },
-    56: {
-        text: "হালকা হিমায়িত গুঁড়ি গুঁড়ি বৃষ্টি",
-        icon: "🌧️"
-    },
-    57: {
-        text: "ঘন হিমায়িত গুঁড়ি গুঁড়ি বৃষ্টি",
-        icon: "🌧️"
-    },
-    61: {
-        text: "হালকা বৃষ্টি",
-        icon: "🌧️"
-    },
-    63: {
-        text: "মাঝারি বৃষ্টি",
-        icon: "🌧️"
-    },
-    65: {
-        text: "প্রবল বৃষ্টি",
-        icon: "🌧️"
-    },
-    66: {
-        text: "হালকা হিমায়িত বৃষ্টি",
-        icon: "🌧️"
-    },
-    67: {
-        text: "ঘন হিমায়িত বৃষ্টি",
-        icon: "🌧️"
-    },
-    71: {
-        text: "হালকা তুষারপাত",
-        icon: "🌨️"
-    },
-    73: {
-        text: "মাঝারি তুষারপাত",
-        icon: "🌨️"
-    },
-    75: {
-        text: "প্রবল তুষারপাত",
-        icon: "🌨️"
-    },
-    77: {
-        text: "তুষার দানা",
-        icon: "❄️"
-    },
-    80: {
-        text: "হালকা বৃষ্টি",
-        icon: "🌧️"
-    },
-    81: {
-        text: "মাঝারি বৃষ্টি",
-        icon: "🌧️"
-    },
-    82: {
-        text: "প্রবল বৃষ্টি",
-        icon: "🌧️"
-    },
-    85: {
-        text: "হালকা তুষার বৃষ্টি",
-        icon: "🌨️"
-    },
-    86: {
-        text: "প্রবল তুষার বৃষ্টি",
-        icon: "🌨️"
-    },
-    95: {
-        text: "বজ্রপাতসহ ঝড়",
-        icon: "⛈️"
-    },
-    96: {
-        text: "বজ্রপাতসহ হালকা শিলাবৃষ্টি",
-        icon: "⛈️"
-    },
-    99: {
-        text: "বজ্রপাতসহ প্রবল শিলাবৃষ্টি",
-        icon: "⛈️"
-    }
+    0: { text: "পরিষ্কার আকাশ", icon: "☀️" }, 1: { text: "প্রধানত পরিষ্কার", icon: "🌤️" },
+    2: { text: "আংশিক মেঘলা", icon: "⛅" }, 3: { text: "মেঘলা", icon: "☁️" },
+    45: { text: "কুয়াশা", icon: "🌫️" }, 48: { text: "হিম কুয়াশা", icon: "🌫️" },
+    51: { text: "হালকা গুঁড়ি গুঁড়ি বৃষ্টি", icon: "🌧️" }, 53: { text: "মাঝারি গুঁড়ি গুঁড়ি বৃষ্টি", icon: "🌧️" },
+    55: { text: "ঘন গুঁড়ি গুঁড়ি বৃষ্টি", icon: "🌧️" }, 61: { text: "হালকা বৃষ্টি", icon: "🌧️" },
+    63: { text: "মাঝারি বৃষ্টি", icon: "🌧️" }, 65: { text: "প্রবল বৃষ্টি", icon: "🌧️" },
+    71: { text: "হালকা তুষারপাত", icon: "🌨️" }, 73: { text: "মাঝারি তুষারপাত", icon: "🌨️" },
+    75: { text: "প্রবল তুষারপাত", icon: "🌨️" }, 77: { text: "তুষার দানা", icon: "❄️" },
+    80: { text: "হালকা বৃষ্টি", icon: "🌧️" }, 81: { text: "মাঝারি বৃষ্টি", icon: "🌧️" },
+    82: { text: "প্রবল বৃষ্টি", icon: "🌧️" }, 95: { text: "বজ্রপাতসহ ঝড়", icon: "⛈️" },
+    96: { text: "বজ্রপাতসহ হালকা শিলাবৃষ্টি", icon: "⛈️" }, 99: { text: "বজ্রপাতসহ প্রবল শিলাবৃষ্টি", icon: "⛈️" }
 };
 
-// তারিখকে বাংলায় রূপান্তর করার জন্য ফাংশন
 function getBanglaDay(date) {
     const days = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
     return days[date.getDay()];
 }
 
-// আবহাওয়ার ডেটা আনা এবং রেন্ডার করার জন্য মূল ফাংশন
+// --- প্রথম সেকশনের মূল ফাংশন ---
+async function getWeather(city) {
+    if (weatherApiKey === '') {
+        weatherResult.innerHTML = '<p class="text-red-500 font-semibold">আবহাওয়া API কী সেট করা হয়নি।</p>';
+        return;
+    }
+    weatherLoading.style.display = 'block';
+
+    try {
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weatherApiKey}&units=metric&lang=bn`);
+        if (!response.ok) {
+            throw new Error(response.status === 404 ? 'শহরটি খুঁজে পাওয়া যায়নি।' : 'একটি সমস্যা হয়েছে।');
+        }
+        const data = await response.json();
+        displayWeather(data);
+        localStorage.setItem('lastSearchedWeatherCity', city);
+    } catch (error) {
+        if (weatherResult) weatherResult.innerHTML = `<p class="text-red-500 font-semibold">${error.message}</p>`;
+    } finally {
+        if (weatherLoading) weatherLoading.style.display = 'none';
+    }
+}
+
+function displayWeather(data) {
+    const { name, main, weather, wind, sys } = data;
+    const iconUrl = `https://openweathermap.org/img/wn/${weather[0].icon}@4x.png`;
+    if (weatherResult) {
+        weatherResult.innerHTML = `
+            <h4>${name}</h4>
+            <img src="${iconUrl}" alt="${weather[0].description}" class="weather-icon">
+            <p class="temp">${Math.round(main.temp)}&deg;C</p>
+            <p class="description">${weather[0].description}</p>
+            <p class="weather-feels-like"> অনুভূত হচ্ছে: ${Math.round(main.feels_like)}&deg;C</p>
+            <div class="weather-extra-details">
+                <div class="detail-item"><strong>সর্বোচ্চ তাপমাত্রা</strong><span>${Math.round(main.temp_max)}&deg;C</span></div>
+                <div class="detail-item"><strong>সর্বনিম্ন তাপমাত্রা</strong><span>${Math.round(main.temp_min)}&deg;C</span></div>
+                <div class="detail-item"><strong>আর্দ্রতা</strong><span>${main.humidity}%</span></div>
+                <div class="detail-item"><strong>বাতাসের গতি</strong><span>${wind.speed.toFixed(1)} মি/সে</span></div>
+                <div class="detail-item"><strong>সূর্যোদয়</strong><span>${formatTime(sys.sunrise)}</span></div>
+                <div class="detail-item"><strong>সূর্যাস্ত</strong><span>${formatTime(sys.sunset)}</span></div>
+            </div>
+        `;
+    }
+}
+
+// --- দ্বিতীয় সেকশনের মূল ফাংশন ---
 async function fetchAndDisplayWeather(latitude, longitude, locationName) {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=8`;
-
     try {
         const response = await fetch(url);
         const data = await response.json();
-        const forecastContainer = document.getElementById('forecast-container');
-        const weatherSection = document.getElementById('weather-section');
-        const locationNameEl = document.getElementById('location-name');
-
         if (data.daily) {
-            forecastContainer.innerHTML = ''; // পুরোনো ডেটা মুছে ফেলা
+            forecastContainer.innerHTML = '';
             locationNameEl.textContent = locationName;
-
-            // প্রতিদিনের জন্য কার্ড তৈরি করা
             for (let i = 0; i < data.daily.time.length; i++) {
                 const date = new Date(data.daily.time[i]);
                 const day = i === 0 ? "আজ" : getBanglaDay(date);
                 const maxTemp = Math.round(data.daily.temperature_2m_max[i]);
                 const minTemp = Math.round(data.daily.temperature_2m_min[i]);
-                const weatherCode = data.daily.weathercode[i];
-                const weatherInfo = weatherCodes[weatherCode] || {
-                    text: 'তথ্য নেই',
-                    icon: '❓'
-                };
-
+                const weatherInfo = weatherCodes[data.daily.weathercode[i]] || { text: 'তথ্য নেই', icon: '❓' };
                 const cardHtml = `
                     <div class="bg-gray-700 p-4 rounded-lg text-center text-white shadow-md transform transition-transform hover:scale-105">
                         <p class="text-xl font-bold">${day}</p>
@@ -8939,71 +8774,100 @@ async function fetchAndDisplayWeather(latitude, longitude, locationName) {
                         <p class="text-lg font-semibold">${weatherInfo.text}</p>
                         <p class="text-sm">সর্বোচ্চ: ${maxTemp}°C</p>
                         <p class="text-sm">সর্বনিম্ন: ${minTemp}°C</p>
-                    </div>
-                `;
+                    </div>`;
                 forecastContainer.innerHTML += cardHtml;
             }
-            weatherSection.classList.remove('hidden'); // সেকশন দৃশ্যমান করা
-        } else {
-            console.error('আবহাওয়ার ডেটা লোড করা যায়নি:', data);
+            weatherSection.classList.remove('hidden');
         }
     } catch (error) {
-        console.error('আবহাওয়ার ডেটা আনার সময় ত্রুটি:', error);
+        console.error('Forecast data error:', error);
     }
 }
 
-// জিওকোডিং এপিআই ব্যবহার করে শহরের নাম থেকে অক্ষাংশ ও দ্রাঘিমাংশ খুঁজে বের করার ফাংশন
 async function searchLocation(locationName) {
     const geocodingUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(locationName)}&count=1&language=bn`;
-
     try {
         const response = await fetch(geocodingUrl);
         const data = await response.json();
-        const locationNameEl = document.getElementById('location-name');
-
         if (data.results && data.results.length > 0) {
             const firstResult = data.results[0];
             fetchAndDisplayWeather(firstResult.latitude, firstResult.longitude, firstResult.name);
-            // সফলভাবে সার্চ করা শহর লোকাল স্টোরেজে সেভ করুন
             localStorage.setItem('lastSearchedWeatherLocation', locationName);
         } else {
-            locationNameEl.textContent = 'অবস্থান খুঁজে পাওয়া যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।';
-            console.warn('অবস্থান খুঁজে পাওয়া যায়নি।');
+            locationNameEl.textContent = 'অবস্থান খুঁজে পাওয়া যায়নি।';
         }
     } catch (error) {
-        console.error('অবস্থান অনুসন্ধানের সময় ত্রুটি:', error);
-        document.getElementById('location-name').textContent = 'অবস্থান অনুসন্ধানের সময় একটি ত্রুটি হয়েছে।';
+        console.error('Location search error:', error);
+        locationNameEl.textContent = 'অবস্থান অনুসন্ধানের সময় একটি ত্রুটি হয়েছে।';
     }
 }
 
-// পেজ লোড হলে সর্বশেষ সার্চ করা শহরটি লোড করা
+// --- DOMContentLoaded: ইভেন্ট লিসেনার এবং অটো-রিফ্রেশ সেটআপ ---
 document.addEventListener('DOMContentLoaded', () => {
-    // লোকাল স্টোরেজ থেকে সর্বশেষ সার্চ করা শহরটি লোড করুন, না থাকলে ডিফল্ট হিসেবে ঢাকা ব্যবহার করুন
-    const lastSearchedLocation = localStorage.getItem('lastSearchedWeatherLocation') || 'Dhaka';
-    searchLocation(lastSearchedLocation);
+    // প্রথম সেকশনের ইভেন্ট লিসেনার
+    if (searchWeatherBtn) {
+        searchWeatherBtn.addEventListener('click', () => {
+            const city = cityInput.value.trim();
+            if (city) getWeather(city);
+            else showCustomAlert('অনুগ্রহ করে একটি শহরের নাম লিখুন।');
+        });
+    }
+    if (cityInput) {
+        cityInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') searchWeatherBtn.click();
+        });
+    }
 
-
-    const searchButton = document.getElementById('search-weather-button');
-    const searchInput = document.getElementById('location-search-input');
-
-    searchButton.addEventListener('click', () => {
-        const location = searchInput.value.trim();
-        if (location) {
-            searchLocation(location);
-        }
-    });
-
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const location = searchInput.value.trim();
-            if (location) {
-                searchLocation(location);
+    // দ্বিতীয় সেকশনের ইভেন্ট লিসেনার
+    if (searchButtonForecast) {
+        searchButtonForecast.addEventListener('click', () => {
+            const location = searchInputForecast.value.trim();
+            if (location) searchLocation(location);
+        });
+    }
+    if (searchInputForecast) {
+        searchInputForecast.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const location = searchInputForecast.value.trim();
+                if (location) searchLocation(location);
             }
+        });
+    }
+
+    // পেজ লোড হলে সর্বশেষ সার্চ করা শহরগুলো লোড করা
+    const savedCity1 = localStorage.getItem('lastSearchedWeatherCity');
+    if (savedCity1 && cityInput) {
+        cityInput.value = savedCity1;
+        getWeather(savedCity1);
+    }
+    const savedCity2 = localStorage.getItem('lastSearchedWeatherLocation') || 'Dhaka';
+    if (searchInputForecast) searchInputForecast.value = savedCity2;
+    searchLocation(savedCity2);
+
+    // *** নতুন: প্রতি মিনিটে ডেটা রিফ্রেশ করার জন্য setInterval ***
+    setInterval(() => {
+        console.log("Refreshing weather data...");
+        // প্রথম সেকশন রিফ্রেশ করুন
+        const lastCity1 = localStorage.getItem('lastSearchedWeatherCity');
+        if (lastCity1) {
+            console.log(`Refreshing weather for ${lastCity1}...`);
+            // ডেটা আনার সময় লোডার দেখানোর জন্য weatherResult খালি করা হচ্ছে
+            if(weatherResult) weatherResult.innerHTML = '';
+            getWeather(lastCity1);
         }
-    });
+
+        // দ্বিতীয় সেকশন রিফ্রেশ করুন
+        const lastCity2 = localStorage.getItem('lastSearchedWeatherLocation');
+        if (lastCity2) {
+            console.log(`Refreshing forecast for ${lastCity2}...`);
+            searchLocation(lastCity2);
+        }
+    }, 60000); // 60000 মিলিসেকেন্ড = 1 মিনিট
 });
 
-//End Another Weather Section
+// ====================================================================
+// END: COMBINED & UPDATED WEATHER SCRIPT
+// ====================================================================
 
         window.onload = function() {
             const preloader = document.getElementById('preloader');
