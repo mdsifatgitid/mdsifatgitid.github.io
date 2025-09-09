@@ -2990,37 +2990,62 @@ input:checked + .slider:before {
         <h2 class="text-3xl font-bold text-gray-800 mb-4">বাংলা টুলবক্স</h2>
 
         <div class="tab-buttons">
-            <!-- থিম টগল বাটন এখানে সরানো হয়েছে -->
-            <div class="theme-toggle-container">
-                <button id="theme-toggle" type="button" class="theme-toggle-button" title="লাইট/ডার্ক মোডে পরিবর্তন করুন">
-                    <svg id="sun-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
-                    <svg id="moon-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                </button>
+    <!-- থিম টগল বাটন এখানে সরানো হয়েছে -->
+    <div class="theme-toggle-container">
+        <button id="theme-toggle" type="button" class="theme-toggle-button" title="লাইট/ডার্ক মোডে পরিবর্তন করুন">
+            <svg id="sun-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+            <svg id="moon-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+        </button>
+    </div>
+    <button id="basicCalcTab" class="tab-button active rounded-xl">সাধারণ ক্যালকুলেটর</button>
+    <button id="scientificCalcTab" class="tab-button rounded-xl">সাইন্টিফিক ক্যালকুলেটর</button>
+    <button id="ageCalcTab" class="tab-button rounded-xl">বয়স ক্যালকুলেটর</button>
+    <button id="dateCalcTab" class="tab-button rounded-xl">তারিখ ও সময়</button>
+    <button id="measurementTab" class="tab-button rounded-xl">পরিমাপ</button>
+    <button id="typingTestTab" class="tab-button rounded-xl">টাইপিং টেস্ট</button>
+    <button id="converterTab" class="tab-button rounded-xl">কনভার্টার</button>
+    <button id="translatorTab" class="tab-button rounded-xl">ট্রান্সলেটর</button>
+    <button id="spellCheckTab" class="tab-button rounded-xl">বানান সংশোধন</button>
+    <button id="textBeautifierTab" class="tab-button rounded-xl">লেখা সাজানো</button>
+    <button id="wordMeaningTab" class="tab-button rounded-xl">শব্দের অর্থ</button>
+    <button id="ttsTab" class="tab-button rounded-xl">লেখা থেকে কথা</button>
+    <button id="sttTab" class="tab-button rounded-xl">কথা থেকে লেখা</button>
+    <button id="textAssistantTab" class="tab-button rounded-xl">টেক্সট অ্যাসিস্ট্যান্ট</button>
+    <button id="newsTab" class="tab-button rounded-xl">সাম্প্রতিক খবর</button>
+    <button id="mapTab" class="tab-button rounded-xl">গুগল ম্যাপ</button>
+    <button id="prayerTimeTab" class="tab-button rounded-xl">নামাজের সময়সূচি</button>
+    <button id="imageToTextTab" class="tab-button rounded-xl">ছবি থেকে লেখা</button>
+    <button id="wordCounterTab" class="tab-button rounded-xl">ওয়ার্ড কাউন্টার</button>
+    <button id="weatherTab" class="tab-button rounded-xl">আবহাওয়া</button>
+    <button id="notepadTab" class="tab-button rounded-xl">নোটপ্যাড</button>
+    
+    <!-- নতুন: আরও মেনু (ড্রপডাউন) -->
+    <div class="relative">
+        <button id="moreMenuBtn" class="tab-button rounded-xl flex items-center gap-1">
+            আরও
+            <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        <div id="moreMenuDropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-20 hidden ring-1 ring-black ring-opacity-5">
+            <div class="py-1">
+                <button id="allFeaturesTab" class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">সকল ফিচার</button>
+                <!-- ভবিষ্যতে নতুন ট্যাব এখানে যোগ করা যাবে -->
             </div>
-            <button id="basicCalcTab" class="tab-button active rounded-xl">সাধারণ ক্যালকুলেটর</button>
-            <button id="scientificCalcTab" class="tab-button rounded-xl">সাইন্টিফিক ক্যালকুলেটর</button>
-            <button id="ageCalcTab" class="tab-button rounded-xl">বয়স ক্যালকুলেটর</button>
-            <button id="dateCalcTab" class="tab-button rounded-xl">তারিখ ও সময়</button>
-            <button id="measurementTab" class="tab-button rounded-xl">পরিমাপ</button>
-            <button id="typingTestTab" class="tab-button rounded-xl">টাইপিং টেস্ট</button>
-            <button id="converterTab" class="tab-button rounded-xl">কনভার্টার</button>
-            <button id="translatorTab" class="tab-button rounded-xl">ট্রান্সলেটর</button> <!-- নতুন ট্রান্সলেটর বাটন -->
-            <button id="spellCheckTab" class="tab-button rounded-xl">বানান সংশোধন</button>
-            <button id="textBeautifierTab" class="tab-button rounded-xl">লেখা সাজানো</button>
-            <button id="wordMeaningTab" class="tab-button rounded-xl">শব্দের অর্থ</button>
-            <button id="ttsTab" class="tab-button rounded-xl">লেখা থেকে কথা</button>
-            <button id="sttTab" class="tab-button rounded-xl">কথা থেকে লেখা</button>
-            <button id="textAssistantTab" class="tab-button rounded-xl">টেক্সট অ্যাসিস্ট্যান্ট</button>
-            <button id="newsTab" class="tab-button rounded-xl">সাম্প্রতিক খবর</button>
-			<button id="mapTab" class="tab-button rounded-xl">গুগল ম্যাপ</button>
-			<button id="prayerTimeTab" class="tab-button rounded-xl">নামাজের সময়সূচি</button>
-			<button id="imageToTextTab" class="tab-button rounded-xl">ছবি থেকে লেখা</button>
-			<button id="wordCounterTab" class="tab-button rounded-xl">ওয়ার্ড কাউন্টার</button>
-			<button id="weatherTab" class="tab-button rounded-xl">আবহাওয়া</button>
-			<button id="notepadTab" class="tab-button rounded-xl">নোটপ্যাড</button>
-            <button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
-            <button id="setApiKeyBtn" class="tab-button rounded-xl" style="background-color: #ef5350; color: white;">API কী সেট করুন</button>
         </div>
+    </div>
+
+    <!-- নতুন: সেটিংস মেনু (ড্রপডাউন) -->
+    <div class="relative">
+        <button id="settingsMenuBtn" class="tab-button rounded-xl flex items-center gap-1">
+            সেটিংস
+            <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        <div id="settingsMenuDropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-20 hidden ring-1 ring-black ring-opacity-5">
+            <div class="py-1">
+                <button id="setApiKeyBtn" class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">API কী সেট করুন</button>
+            </div>
+        </div>
+    </div>
+</div>
 
         <!-- মৌলিক ক্যালকুলেটর বিভাগ -->
         <div id="basicCalculatorContent" class="calculator-content active">
@@ -6098,24 +6123,66 @@ window.addEventListener('click', () => {
                 showTab('converter'); // লোডে মৌলিক ক্যালকুলেটরকে সক্রিয় হিসাবে সেট করুন
 
                 // API কী বোতামের স্টাইল আপডেট করার ফাংশন
-                function updateApiKeyButton() {
-                    if (setApiKeyBtn) {
-                        const apiKey = localStorage.getItem('geminiApiKey');
-                        if (apiKey) {
-                            setApiKeyBtn.style.backgroundColor = '#28a745'; // সবুজ
-                            setApiKeyBtn.style.color = 'white';
-                            setApiKeyBtn.innerText = 'API কী সেট করা আছে';
-                        } else {
-                            setApiKeyBtn.style.backgroundColor = '#ef5350'; // লাল
-                            setApiKeyBtn.style.color = 'white';
-                            setApiKeyBtn.innerText = 'API কী সেট করুন';
-                        }
-                    }
-                }
+function updateApiKeyButton() {
+    const settingsMenuBtn = document.getElementById('settingsMenuBtn'); // নতুন মেনু বাটনকে টার্গেট করুন
+    if (settingsMenuBtn) {
+        const apiKey = localStorage.getItem('geminiApiKey');
+        if (apiKey) {
+            settingsMenuBtn.style.backgroundColor = '#28a745'; // সবুজ
+            settingsMenuBtn.style.color = 'white';
+        } else {
+            settingsMenuBtn.style.backgroundColor = '#ef5350'; // লাল
+            settingsMenuBtn.style.color = 'white';
+        }
+    }
+}
 
                 // লোডে কল করুন
                 updateApiKeyButton();
+// ====================================================================
+// START: DROPDOWN MENU LOGIC
+// ====================================================================
+const moreMenuBtn = document.getElementById('moreMenuBtn');
+const moreMenuDropdown = document.getElementById('moreMenuDropdown');
+const settingsMenuBtn = document.getElementById('settingsMenuBtn');
+const settingsMenuDropdown = document.getElementById('settingsMenuDropdown');
 
+if (moreMenuBtn) {
+    moreMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        moreMenuDropdown.classList.toggle('hidden');
+        moreMenuBtn.querySelector('svg').classList.toggle('rotate-180');
+        // অন্য মেনুটি বন্ধ করুন
+        if (settingsMenuDropdown) settingsMenuDropdown.classList.add('hidden');
+        if (settingsMenuBtn) settingsMenuBtn.querySelector('svg').classList.remove('rotate-180');
+    });
+}
+
+if (settingsMenuBtn) {
+    settingsMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        settingsMenuDropdown.classList.toggle('hidden');
+        settingsMenuBtn.querySelector('svg').classList.toggle('rotate-180');
+        // অন্য মেনুটি বন্ধ করুন
+        if (moreMenuDropdown) moreMenuDropdown.classList.add('hidden');
+        if (moreMenuBtn) moreMenuBtn.querySelector('svg').classList.remove('rotate-180');
+    });
+}
+
+// মেনুর বাইরে যেকোনো জায়গায় ক্লিক করলে মেনু বন্ধ হয়ে যাবে
+window.addEventListener('click', (e) => {
+    if (moreMenuDropdown && !moreMenuDropdown.classList.contains('hidden')) {
+        moreMenuDropdown.classList.add('hidden');
+        moreMenuBtn.querySelector('svg').classList.remove('rotate-180');
+    }
+    if (settingsMenuDropdown && !settingsMenuDropdown.classList.contains('hidden')) {
+        settingsMenuDropdown.classList.add('hidden');
+        settingsMenuBtn.querySelector('svg').classList.remove('rotate-180');
+    }
+});
+// ====================================================================
+// END: DROPDOWN MENU LOGIC
+// ====================================================================
 
 function showTab(tabId) {
     // সমস্ত ট্যাব বোতাম এবং কন্টেন্ট বিভাগ নির্বাচন করুন, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয়।
