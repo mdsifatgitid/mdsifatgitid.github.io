@@ -5906,6 +5906,16 @@ function initializeUnitConverters() {
                 historyIndexRight = historyIndex;
             }
             updateButtonStates(textareaId);
+
+            // নতুন সংযোজন: লাইভ কনভার্ট চালু থাকলে আনডু করার পরেও কনভার্ট হবে
+            const liveConvertToggle = document.getElementById('live-convert-toggle');
+            if (liveConvertToggle && liveConvertToggle.checked) {
+                if (textareaId === 'textAreaLeft') {
+                    setTimeout(convertLeftToRight, 0);
+                } else if (textareaId === 'textAreaRight') {
+                    setTimeout(convertRightToLeft, 0);
+                }
+            }
         }
 
         function redoText(textareaId) {
@@ -5924,6 +5934,16 @@ function initializeUnitConverters() {
                 historyIndexRight = historyIndex;
             }
             updateButtonStates(textareaId);
+
+            // নতুন সংযোজন: লাইভ কনভার্ট চালু থাকলে রিডু করার পরেও কনভার্ট হবে
+            const liveConvertToggle = document.getElementById('live-convert-toggle');
+            if (liveConvertToggle && liveConvertToggle.checked) {
+                if (textareaId === 'textAreaLeft') {
+                    setTimeout(convertLeftToRight, 0);
+                } else if (textareaId === 'textAreaRight') {
+                    setTimeout(convertRightToLeft, 0);
+                }
+            }
         }
 
         function clearTextarea(textareaId) {
