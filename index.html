@@ -5913,7 +5913,14 @@ function initializeUnitConverters() {
                 if (textareaId === 'textAreaLeft') {
                     setTimeout(convertLeftToRight, 0);
                 } else if (textareaId === 'textAreaRight') {
-                    setTimeout(convertRightToLeft, 0);
+                    // ডানপাশের বক্সের জন্য, কনভার্সনের সময় স্বয়ংক্রিয় 'fixAnsiText' কলটি সাময়িকভাবে প্রতিরোধ করুন
+                    // যাতে আনডু করা টেক্সট পরিবর্তিত না হয়ে যায়।
+                    const originalFixAnsiText = window.fixAnsiText;
+                    window.fixAnsiText = () => {}; // ফাংশনটিকে নিষ্ক্রিয় করুন
+                    setTimeout(() => {
+                        convertRightToLeft();
+                        window.fixAnsiText = originalFixAnsiText; // মূল ফাংশনটি পুনরুদ্ধার করুন
+                    }, 0);
                 }
             }
         }
@@ -5941,7 +5948,14 @@ function initializeUnitConverters() {
                 if (textareaId === 'textAreaLeft') {
                     setTimeout(convertLeftToRight, 0);
                 } else if (textareaId === 'textAreaRight') {
-                    setTimeout(convertRightToLeft, 0);
+                    // ডানপাশের বক্সের জন্য, কনভার্সনের সময় স্বয়ংক্রিয় 'fixAnsiText' কলটি সাময়িকভাবে প্রতিরোধ করুন
+                    // যাতে রিডু করা টেক্সট পরিবর্তিত না হয়ে যায়।
+                    const originalFixAnsiText = window.fixAnsiText;
+                    window.fixAnsiText = () => {}; // ফাংশনটিকে নিষ্ক্রিয় করুন
+                    setTimeout(() => {
+                        convertRightToLeft();
+                        window.fixAnsiText = originalFixAnsiText; // মূল ফাংশনটি পুনরুদ্ধার করুন
+                    }, 0);
                 }
             }
         }
