@@ -2165,12 +2165,12 @@
         color: #e2e8f0;
     }
 	
-	/* টগল সুইচের জন্য CSS */
+/* টগল সুইচের জন্য CSS (ছোট আকারের জন্য আপডেট করা হয়েছে) */
 .switch {
     position: relative;
     display: inline-block;
-    width: 60px;
-    height: 34px;
+    width: 40px;  /* কমানো হয়েছে */
+    height: 20px; /* কমানো হয়েছে */
 }
 
 .switch input {
@@ -2194,10 +2194,10 @@
 .slider:before {
     position: absolute;
     content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
+    height: 14px; /* কমানো হয়েছে */
+    width: 14px;  /* কমানো হয়েছে */
+    left: 3px;    /* সামঞ্জস্য করা হয়েছে */
+    bottom: 3px;  /* সামঞ্জস্য করা হয়েছে */
     background-color: white;
     -webkit-transition: .4s;
     transition: .4s;
@@ -2212,14 +2212,14 @@ input:focus + .slider {
 }
 
 input:checked + .slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
+    -webkit-transform: translateX(20px); /* সামঞ্জস্য করা হয়েছে */
+    -ms-transform: translateX(20px);    /* সামঞ্জস্য করা হয়েছে */
+    transform: translateX(20px);       /* সামঞ্জস্য করা হয়েছে */
 }
 
 /* Rounded sliders */
 .slider.round {
-    border-radius: 34px;
+    border-radius: 20px; /* সামঞ্জস্য করা হয়েছে */
 }
 
 .slider.round:before {
@@ -3503,6 +3503,15 @@ input:checked + .slider:before {
 <div id="converterContent" class="calculator-content">
     <h1 style="color:green">যেকোনো ভাঙ্গা বিজয় লেখা বিজয় টেক্সট বক্সে রেখে ফিক্স করুন বাটনে ক্লিক করলে অথবা ইউনিকোড করে আবার বিজয় করলেও ঠিক হবে।</h1>
     <div class="font-converter-content">
+	<!-- নতুন: লাইভ কনভার্ট টগল সুইচ -->
+<div id="converter-options" class="flex justify-center items-center gap-3">
+    <span class="font-semibold text-gray-700 dark:text-gray-300">ম্যানুয়াল কনভার্ট</span>
+    <label class="switch">
+        <input type="checkbox" id="live-convert-toggle">
+        <span class="slider round"></span>
+    </label>
+    <span class="font-semibold text-gray-700 dark:text-gray-300">লাইভ কনভার্ট</span>
+</div>
         <div class="font-converter-sections-wrapper">
             <!-- বাম টেক্সটএরিয়া -->
             <div class="font-converter-section">
@@ -4103,6 +4112,43 @@ input:checked + .slider:before {
 
     <script>
 	
+	// ====================================================================
+        // START: LocalStorage with Expiry
+        // ====================================================================
+        const SEVEN_DAYS_IN_MS = 7 * 24 * 60 * 60 * 1000;
+
+        function saveWithExpiry(key, value, ttl = SEVEN_DAYS_IN_MS) {
+            const now = new Date();
+            const item = {
+                value: value,
+                expiry: now.getTime() + ttl,
+            };
+            localStorage.setItem(key, JSON.stringify(item));
+        }
+
+        function getWithExpiry(key) {
+            const itemStr = localStorage.getItem(key);
+            if (!itemStr) {
+                return null;
+            }
+            try {
+                const item = JSON.parse(itemStr);
+                const now = new Date();
+                if (now.getTime() > item.expiry) {
+                    localStorage.removeItem(key);
+                    return null;
+                }
+                return item.value;
+            } catch (e) {
+                console.error("Error parsing item from localStorage", e);
+                localStorage.removeItem(key);
+                return null;
+            }
+        }
+        // ====================================================================
+        // END: LocalStorage with Expiry
+        // ====================================================================
+		
 	// Paste Preset Functionality Variables
 	let pastePresetLeft = 'default';
 	let customPasteValueLeft = '';
@@ -5810,8 +5856,15 @@ function initializeUnitConverters() {
 
         function addState(textareaId) {
             const textarea = document.getElementById(textareaId);
-            let history = textareaId === 'textAreaLeft' ? historyLeft : historyRight;
-            let historyIndex = textareaId === 'textAreaLeft' ? historyIndexLeft : historyIndexRight;
+            let history, historyIndex;
+
+            if (textareaId === 'textAreaLeft') {
+                history = historyLeft;
+                historyIndex = historyIndexLeft;
+            } else {
+                history = historyRight;
+                historyIndex = historyIndexRight;
+            }
 
             // যদি আমরা ইতিহাসের শেষে না থাকি, তবে পরবর্তী স্টেটগুলি পরিষ্কার করুন
             if (historyIndex < history.length - 1) {
@@ -5824,9 +5877,15 @@ function initializeUnitConverters() {
             if (textareaId === 'textAreaLeft') {
                 historyLeft = history;
                 historyIndexLeft = historyIndex;
+                // Save state to localStorage
+                saveWithExpiry('converterTextLeft', textarea.value);
+                saveWithExpiry('converterHistoryLeft', { history: historyLeft, index: historyIndexLeft });
             } else {
                 historyRight = history;
                 historyIndexRight = historyIndex;
+                // Save state to localStorage
+                saveWithExpiry('converterTextRight', textarea.value);
+                saveWithExpiry('converterHistoryRight', { history: historyRight, index: historyIndexRight });
             }
             updateButtonStates(textareaId);
         }
@@ -5892,6 +5951,63 @@ function initializeUnitConverters() {
 
 
         document.addEventListener('DOMContentLoaded', () => {
+		
+		// ====================================================================
+            // START: Load Converter Data from LocalStorage on page load
+            // ====================================================================
+            try {
+                const textAreaLeft = document.getElementById('textAreaLeft');
+                const textAreaRight = document.getElementById('textAreaRight');
+
+                // Load text for Left Textarea
+                const savedTextLeft = getWithExpiry('converterTextLeft');
+                if (savedTextLeft && textAreaLeft) {
+                    textAreaLeft.value = savedTextLeft;
+                }
+
+                // Load text for Right Textarea
+                const savedTextRight = getWithExpiry('converterTextRight');
+                if (savedTextRight && textAreaRight) {
+                    textAreaRight.value = savedTextRight;
+                }
+
+                // Load history for Left Textarea
+                const savedHistoryLeft = getWithExpiry('converterHistoryLeft');
+                if (savedHistoryLeft) {
+                    historyLeft = savedHistoryLeft.history || [textAreaLeft.value];
+                    historyIndexLeft = savedHistoryLeft.index !== undefined ? savedHistoryLeft.index : historyLeft.length - 1;
+                } else {
+                    // Initialize if no history found
+                    historyLeft = [textAreaLeft.value];
+                    historyIndexLeft = 0;
+                }
+
+                // Load history for Right Textarea
+                const savedHistoryRight = getWithExpiry('converterHistoryRight');
+                if (savedHistoryRight) {
+                    historyRight = savedHistoryRight.history || [textAreaRight.value];
+                    historyIndexRight = savedHistoryRight.index !== undefined ? savedHistoryRight.index : historyRight.length - 1;
+                } else {
+                    // Initialize if no history found
+                    historyRight = [textAreaRight.value];
+                    historyIndexRight = 0;
+                }
+
+                // Update button states after loading history
+                updateButtonStates('textAreaLeft');
+                updateButtonStates('textAreaRight');
+            } catch (e) {
+                console.error("Error loading converter data from localStorage:", e);
+                // Reset in case of corrupted data
+                localStorage.removeItem('converterTextLeft');
+                localStorage.removeItem('converterTextRight');
+                localStorage.removeItem('converterHistoryLeft');
+                localStorage.removeItem('converterHistoryRight');
+            }
+            // ====================================================================
+            // END: Load Converter Data from LocalStorage
+            // ====================================================================
+			
             console.log('DOMContentLoaded ইভেন্ট চালু হয়েছে। স্ক্রিপ্ট চলছে।');
             try {
                 // --- ট্যাব পরিবর্তন লজিক ---
@@ -8585,7 +8701,7 @@ function initializeNotepad() {
                 // --- ফন্ট কনভার্টার লিসেনার যোগ করুন ---
 				// ====================================================================
 // ====================================================================
-// START: PASTE FROM CLIPBOARD FUNCTIONALITY (আপডেট করা হয়েছে)
+// START: PASTE FROM CLIPBOARD FUNCTIONALITY (লাইভ কনভার্টসহ আপডেট করা হয়েছে)
 // ====================================================================
 async function pasteFromClipboard(textareaId) {
     const textarea = document.getElementById(textareaId);
@@ -8603,14 +8719,13 @@ async function pasteFromClipboard(textareaId) {
         let updateSerialCounter;
         let resetSerialCounter;
 
-        // কোন টেক্সটএরিয়া ব্যবহার হচ্ছে তার উপর ভিত্তি করে ভেরিয়েবল সেট করুন
         if (textareaId === 'textAreaLeft') {
             preset = pastePresetLeft;
             customValue = customPasteValueLeft;
             serialCounter = customSerialCounterLeft;
             updateSerialCounter = (val) => { customSerialCounterLeft = val; };
             resetSerialCounter = () => { customSerialCounterLeft = 1; };
-        } else { // textAreaRight
+        } else {
             preset = pastePresetRight;
             customValue = customPasteValueRight;
             serialCounter = customSerialCounterRight;
@@ -8618,61 +8733,54 @@ async function pasteFromClipboard(textareaId) {
             resetSerialCounter = () => { customSerialCounterRight = 1; };
         }
         
-        // যদি 'custom-serial' প্রিসেট নির্বাচিত না থাকে, তাহলে সিরিয়াল কাউন্টার রিসেট করুন
         if (preset !== 'custom-serial') {
             resetSerialCounter();
         }
         
         let prefix = '';
         switch (preset) {
-            case 'single-space':
-                prefix = ' ';
-                break;
-            case 'double-space':
-                prefix = '  ';
-                break;
-            case 'four-space':
-                prefix = '    ';
-                break;
-            case 'single-enter':
-                prefix = '\n';
-                break;
-            case 'double-enter':
-                prefix = '\n\n';
-                break;
-            case 'custom':
-                prefix = customValue || '';
-                break;
+            case 'single-space': prefix = ' '; break;
+            case 'double-space': prefix = '  '; break;
+            case 'four-space': prefix = '    '; break;
+            case 'single-enter': prefix = '\n'; break;
+            case 'double-enter': prefix = '\n\n'; break;
+            case 'custom': prefix = customValue || ''; break;
             case 'custom-serial':
-                // সিরিয়াল নম্বরের জন্য {serial} স্ট্রিংটি প্রতিস্থাপন করুন
                 prefix = customValue ? customValue.replace(/\{serial\}/g, serialCounter) : '';
                 updateSerialCounter(serialCounter + 1);
                 break;
         }
         
-        // যদি টেক্সটবক্স খালি না থাকে তবেই শুধুমাত্র প্রিফিক্স যোগ করুন
         if (textarea.value !== '') {
             textToInsert = prefix + clipboardText;
         } else {
             textToInsert = clipboardText;
         }
 
-        // --- কার্সরের অবস্থানে টেক্সট যুক্ত করুন ---
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
         const currentValue = textarea.value;
-
         const newValue = currentValue.substring(0, start) + textToInsert + currentValue.substring(end);
         textarea.value = newValue;
 
-        // পেস্ট করা টেক্সটের শেষে কার্সরের অবস্থান আপডেট করুন
         const newCursorPosition = start + textToInsert.length;
         textarea.selectionStart = newCursorPosition;
         textarea.selectionEnd = newCursorPosition;
         textarea.focus();
 
-        addState(textareaId); // আনডু/রিডু কার্যকারিতার জন্য
+        addState(textareaId);
         showCustomAlert('টেক্সট পেস্ট করা হয়েছে!');
+
+        // *** নতুন সংযোজন: পেস্ট করার পর লাইভ কনভার্সন ট্রিগার করা ***
+        const liveConvertToggle = document.getElementById('live-convert-toggle');
+        if (liveConvertToggle && liveConvertToggle.checked) {
+            if (textareaId === 'textAreaLeft') {
+                setTimeout(convertLeftToRight, 0); // ডিলেসহ কনভার্ট ফাংশন কল
+            } else if (textareaId === 'textAreaRight') {
+                setTimeout(convertRightToLeft, 0); // ডিলেসহ কনভার্ট ফাংশন কল
+            }
+        }
+        // *** সংযোজন শেষ ***
 
     } catch (err) {
         console.error('পেস্ট করতে ব্যর্থ:', err);
@@ -8704,6 +8812,56 @@ async function pasteFromClipboard(textareaId) {
 const pasteButtonLeft = document.getElementById('pasteButtonLeft');
 const pasteButtonRight = document.getElementById('pasteButtonRight');
 
+// ====================================================================
+// START: LIVE CONVERT TOGGLE FUNCTIONALITY (রিফ্রেশ-সহ আপডেট করা হয়েছে)
+// ====================================================================
+
+const liveConvertToggle = document.getElementById('live-convert-toggle');
+const textAreaLeftForLive = document.getElementById('textAreaLeft');
+const textAreaRightForLive = document.getElementById('textAreaRight');
+
+if (liveConvertToggle && textAreaLeftForLive && textAreaRightForLive) {
+
+    // --- নতুন: পেইজ লোড হওয়ার সময় সেভ করা মোড লোড করুন ---
+    const savedLiveConvertMode = localStorage.getItem('liveConvertMode');
+    if (savedLiveConvertMode === 'true') {
+        liveConvertToggle.checked = true;
+    } else {
+        liveConvertToggle.checked = false; // ডিফল্ট 'false'
+    }
+
+    // --- নতুন: টগল করার সময় মোড সেভ করুন ---
+    liveConvertToggle.addEventListener('change', () => {
+        localStorage.setItem('liveConvertMode', liveConvertToggle.checked);
+    });
+    
+    // ইউনিকোড টেক্সটবক্সে লাইভ টাইপিং এবং পেস্ট হ্যান্ডেল করা
+    const handleUnicodeInput = () => {
+        if (liveConvertToggle.checked) {
+            // সামান্য ডিলে দেওয়া হয় যাতে পেস্ট হওয়া টেক্সট ঠিকভাবে প্রসেস হয়
+            setTimeout(() => convertLeftToRight(), 0);
+        }
+    };
+
+    // বিজয় টেক্সটবক্সে লাইভ টাইপিং এবং পেস্ট হ্যান্ডেল করা
+    const handleBijoyInput = () => {
+        if (liveConvertToggle.checked) {
+            // সামান্য ডিলে দেওয়া হয় যাতে যুক্তবর্ণ লেখার সময় অক্ষর হারিয়ে না যায়
+            setTimeout(() => convertRightToLeft(), 0);
+        }
+    };
+
+    // 'input' ইভেন্টটি টাইপিং এবং পেস্ট উভয় ক্ষেত্রেই কাজ করবে
+    textAreaLeftForLive.addEventListener('input', handleUnicodeInput);
+    textAreaRightForLive.addEventListener('input', handleBijoyInput);
+
+} else {
+    console.error("Live convert elements could not be found.");
+}
+
+// ====================================================================
+// END: LIVE CONVERT TOGGLE FUNCTIONALITY
+// ====================================================================
 if (pasteButtonLeft) {
     pasteButtonLeft.addEventListener('click', () => pasteFromClipboard('textAreaLeft'));
 }
