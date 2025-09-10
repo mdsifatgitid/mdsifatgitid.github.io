@@ -4115,9 +4115,9 @@ input:checked + .slider:before {
 	// ====================================================================
         // START: LocalStorage with Expiry
         // ====================================================================
-        const THREE_DAYS_IN_MS = 3 * 24 * 60 * 60 * 1000;
+        const FOUR_DAYS_IN_MS = 4 * 24 * 60 * 60 * 1000;
 
-        function saveWithExpiry(key, value, ttl = THREE_DAYS_IN_MS) {
+        function saveWithExpiry(key, value, ttl = FOUR_DAYS_IN_MS) {
             const now = new Date();
             const item = {
                 value: value,
