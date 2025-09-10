@@ -6570,9 +6570,9 @@ function showTab(tabId) {
 				if (imageToTextTab) imageToTextTab.addEventListener('click', () => showTab('imageToText'));
 				if (wordCounterTab) wordCounterTab.addEventListener('click', () => showTab('wordCounter'));
 				if (weatherTab) weatherTab.addEventListener('click', () => showTab('weather'));
-				if (notepadTab) notepadTab.addEventListener('click', () => {
+				if (notepadTab) notepadTab.addEventListener('click', async () => {
 					showTab('notepad');
-					initializeNotepad(); // Notepad চালু করার জন্য এই ফাংশন কল করুন
+					await initializeNotepad(); // Notepad চালু করার জন্য এই ফাংশন কল করুন
 					});
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
                 if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
@@ -8604,46 +8604,46 @@ if (wordCounterContent && wordCounterContent.classList.contains('active')) {
 
 
 // ====================================================================
-// START: NOTEPAD / TO-DO LIST SCRIPT
+// START: NOTEPAD / TO-DO LIST SCRIPT (UPDATED WITH INDEXEDDB)
 // ====================================================================
-function initializeNotepad() {
+async function initializeNotepad() { // ফাংশনটিকে async করা হয়েছে
     const taskInput = document.getElementById('taskInput');
     const addTaskBtn = document.getElementById('addTaskBtn');
     const taskList = document.getElementById('taskList');
 
     if (!taskInput || !addTaskBtn || !taskList) return;
 
+    // IndexedDB থেকে কাজগুলো লোড করুন
+    await loadTasks(); // async loadTasks ফাংশনের জন্য অপেক্ষা করুন
+
     // কাজ যোগ বা আপডেট করার ফাংশন
-    function addTask() {
+    async function addTask() { // ফাংশনটিকে async করা হয়েছে
         const text = taskInput.value.trim();
         if (text === '') {
             showCustomAlert('অনুগ্রহ করে একটি কাজ বা নোট লিখুন।');
             return;
         }
 
-        // আমরা নতুন কাজ যোগ করছি নাকি আপডেট করছি তা বোতামের লেখা দেখে পরীক্ষা করুন
         if (addTaskBtn.textContent === 'আপডেট করুন') {
-            // এটি একটি আপডেট
-            createTaskElement(text); // নতুন লেখা দিয়ে এলিমেন্টটি আবার তৈরি করুন
-            addTaskBtn.textContent = 'যোগ করুন'; // বোতামের লেখা রিসেট করুন
+            createTaskElement(text);
+            addTaskBtn.textContent = 'যোগ করুন';
         } else {
-            // এটি একটি নতুন কাজ
             createTaskElement(text);
         }
 
         taskInput.value = '';
-        saveTasks();
+        await saveTasks(); // async saveTasks ফাংশনের জন্য অপেক্ষা করুন
         updateTaskNumbers();
     }
     
-    function loadTasks() {
-        const tasks = JSON.parse(localStorage.getItem('notepadTasks')) || [];
+    async function loadTasks() { // ফাংশনটিকে async করা হয়েছে
+        const tasks = await idbGet('notepadTasks') || []; // localStorage এর পরিবর্তে idbGet ব্যবহার করা হয়েছে
         taskList.innerHTML = '';
         tasks.forEach(task => createTaskElement(task.text, task.completed));
         updateTaskNumbers();
     }
 
-    function saveTasks() {
+    async function saveTasks() { // ফাংশনটিকে async করা হয়েছে
         const tasks = [];
         document.querySelectorAll('.task-item').forEach(item => {
             const taskTextSpan = item.querySelector('.task-text');
@@ -8654,7 +8654,7 @@ function initializeNotepad() {
                 });
             }
         });
-        localStorage.setItem('notepadTasks', JSON.stringify(tasks));
+        await idbSet('notepadTasks', tasks); // localStorage এর পরিবর্তে idbSet ব্যবহার করা হয়েছে
     }
 
     function createTaskElement(text, isCompleted = false) {
@@ -8672,37 +8672,35 @@ function initializeNotepad() {
         textSpan.className = 'task-text';
         textSpan.textContent = text;
         
-        // সিംഗেল ক্লিকে কাজ সম্পন্ন/অসম্পন্ন টগল করুন
-        textSpan.addEventListener('click', () => {
+        // সিঙ্গেল ক্লিকে কাজ সম্পন্ন/অসম্পন্ন টগল করুন
+        textSpan.addEventListener('click', async () => { // listener-কে async করা হয়েছে
             li.classList.toggle('completed');
-            saveTasks();
+            await saveTasks();
         });
 
-        // ডাবল ক্লিকে এডিটের জন্য হ্যান্ডেল করুন (নতুন যুক্ত করা হয়েছে)
+        // ডাবল ক্লিকে এডিটের জন্য হ্যান্ডেল করুন
         textSpan.addEventListener('dblclick', () => {
-            // যদি ইতোমধ্যে কোনো আইটেম এডিট করা হয়, তবে নতুন এডিট শুরু করতে বাধা দিন
             if (addTaskBtn.textContent === 'আপডেট করুন') {
                 showCustomAlert('অনুগ্রহ করে বর্তমান সম্পাদনা শেষ করুন।');
                 return;
             }
-            taskInput.value = textSpan.textContent; // ইনপুট ফিল্ডে লেখাটি পাঠান
-            addTaskBtn.textContent = 'আপডেট করুন'; // বোতামের লেখা পরিবর্তন করুন
-            taskList.removeChild(li); // তালিকা থেকে আইটেমটি সরিয়ে ফেলুন
-            updateTaskNumbers(); // নম্বর আপডেট করুন
-            taskInput.focus(); // ইনপুট ফিল্ডে ফোকাস করুন
+            taskInput.value = textSpan.textContent;
+            addTaskBtn.textContent = 'আপডেট করুন';
+            taskList.removeChild(li);
+            updateTaskNumbers();
+            taskInput.focus();
         });
 
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-task-btn';
         deleteBtn.innerHTML = '×';
-        deleteBtn.addEventListener('click', () => {
-            // যদি কোনো আইটেম এডিট করার সময় ডিলিট করা হয়, তাহলে বোতামটি রিসেট করুন
+        deleteBtn.addEventListener('click', async () => { // listener-কে async করা হয়েছে
             if (addTaskBtn.textContent === 'আপডেট করুন' && taskInput.value === textSpan.textContent) {
                  taskInput.value = '';
                  addTaskBtn.textContent = 'যোগ করুন';
             }
             li.remove();
-            saveTasks();
+            await saveTasks();
             updateTaskNumbers();
         });
 
@@ -8711,9 +8709,6 @@ function initializeNotepad() {
         li.appendChild(deleteBtn);
         taskList.appendChild(li);
     }
-    
-    // localStorage থেকে কাজগুলো লোড করুন
-    loadTasks();
 
     // Event Listeners
     addTaskBtn.addEventListener('click', addTask);
@@ -8731,10 +8726,10 @@ function initializeNotepad() {
         }
     });
 
-    taskList.addEventListener('dragend', e => {
+    taskList.addEventListener('dragend', async e => { // listener-কে async করা হয়েছে
         if (e.target.classList.contains('task-item')) {
             e.target.classList.remove('dragging');
-            saveTasks();
+            await saveTasks();
             updateTaskNumbers();
         }
     });
