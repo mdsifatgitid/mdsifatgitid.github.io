@@ -5892,34 +5892,44 @@ function initializeUnitConverters() {
 
         function undoText(textareaId) {
             const textarea = document.getElementById(textareaId);
-            let history = textareaId === 'textAreaLeft' ? historyLeft : historyRight;
-            let historyIndex = textareaId === 'textAreaLeft' ? historyIndexLeft : historyIndexRight;
-
-            if (historyIndex > 0) {
-                historyIndex--;
-                textarea.value = history[historyIndex];
-            }
-
-            if (textareaId === 'textAreaLeft') {
-                historyIndexLeft = historyIndex;
-            } else {
-                historyIndexRight = historyIndex;
-            }
-            updateButtonStates(textareaId);
-
-            // নতুন সংযোজন: লাইভ কনভার্ট চালু থাকলে আনডু করার পরেও কনভার্ট হবে
             const liveConvertToggle = document.getElementById('live-convert-toggle');
+            
+            // মূল আনডু লজিক, যা পুনরায় ব্যবহার করা যাবে
+            const performUndo = () => {
+                let history = textareaId === 'textAreaLeft' ? historyLeft : historyRight;
+                let historyIndex = textareaId === 'textAreaLeft' ? historyIndexLeft : historyIndexRight;
+
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    textarea.value = history[historyIndex];
+                }
+
+                if (textareaId === 'textAreaLeft') {
+                    historyIndexLeft = historyIndex;
+                } else {
+                    historyIndexRight = historyIndex;
+                }
+                updateButtonStates(textareaId);
+            };
+
+            // একবার আনডু করুন
+            performUndo();
+
+            // যদি লাইভ মোড চালু থাকে এবং এটি ডানদিকের টেক্সটবক্স হয়, তবে আবার আনডু করুন
+            if (liveConvertToggle && liveConvertToggle.checked && textareaId === 'textAreaRight') {
+                performUndo();
+            }
+
+            // লাইভ কনভার্ট টগল চালু থাকলে কনভার্সন ট্রিগার করুন
             if (liveConvertToggle && liveConvertToggle.checked) {
                 if (textareaId === 'textAreaLeft') {
                     setTimeout(convertLeftToRight, 0);
                 } else if (textareaId === 'textAreaRight') {
-                    // ডানপাশের বক্সের জন্য, কনভার্সনের সময় স্বয়ংক্রিয় 'fixAnsiText' কলটি সাময়িকভাবে প্রতিরোধ করুন
-                    // যাতে আনডু করা টেক্সট পরিবর্তিত না হয়ে যায়।
                     const originalFixAnsiText = window.fixAnsiText;
-                    window.fixAnsiText = () => {}; // ফাংশনটিকে নিষ্ক্রিয় করুন
+                    window.fixAnsiText = () => {}; // সাময়িকভাবে নিষ্ক্রিয় করুন
                     setTimeout(() => {
                         convertRightToLeft();
-                        window.fixAnsiText = originalFixAnsiText; // মূল ফাংশনটি পুনরুদ্ধার করুন
+                        window.fixAnsiText = originalFixAnsiText; // আবার সক্রিয় করুন
                     }, 0);
                 }
             }
@@ -5927,34 +5937,44 @@ function initializeUnitConverters() {
 
         function redoText(textareaId) {
             const textarea = document.getElementById(textareaId);
-            let history = textareaId === 'textAreaLeft' ? historyLeft : historyRight;
-            let historyIndex = textareaId === 'textAreaLeft' ? historyIndexLeft : historyIndexRight;
-
-            if (historyIndex < history.length - 1) {
-                historyIndex++;
-                textarea.value = history[historyIndex];
-            }
-
-            if (textareaId === 'textAreaLeft') {
-                historyIndexLeft = historyIndex;
-            } else {
-                historyIndexRight = historyIndex;
-            }
-            updateButtonStates(textareaId);
-
-            // নতুন সংযোজন: লাইভ কনভার্ট চালু থাকলে রিডু করার পরেও কনভার্ট হবে
             const liveConvertToggle = document.getElementById('live-convert-toggle');
+
+            // মূল রিডু লজিক, যা পুনরায় ব্যবহার করা যাবে
+            const performRedo = () => {
+                 let history = textareaId === 'textAreaLeft' ? historyLeft : historyRight;
+                 let historyIndex = textareaId === 'textAreaLeft' ? historyIndexLeft : historyIndexRight;
+
+                if (historyIndex < history.length - 1) {
+                    historyIndex++;
+                    textarea.value = history[historyIndex];
+                }
+
+                if (textareaId === 'textAreaLeft') {
+                    historyIndexLeft = historyIndex;
+                } else {
+                    historyIndexRight = historyIndex;
+                }
+                updateButtonStates(textareaId);
+            };
+
+            // একবার রিডু করুন
+            performRedo();
+
+            // যদি লাইভ মোড চালু থাকে এবং এটি ডানদিকের টেক্সটবক্স হয়, তবে আবার রিডু করুন
+            if (liveConvertToggle && liveConvertToggle.checked && textareaId === 'textAreaRight') {
+                performRedo();
+            }
+
+            // লাইভ কনভার্ট টগল চালু থাকলে কনভার্সন ট্রিগার করুন
             if (liveConvertToggle && liveConvertToggle.checked) {
                 if (textareaId === 'textAreaLeft') {
                     setTimeout(convertLeftToRight, 0);
                 } else if (textareaId === 'textAreaRight') {
-                    // ডানপাশের বক্সের জন্য, কনভার্সনের সময় স্বয়ংক্রিয় 'fixAnsiText' কলটি সাময়িকভাবে প্রতিরোধ করুন
-                    // যাতে রিডু করা টেক্সট পরিবর্তিত না হয়ে যায়।
-                    const originalFixAnsiText = window.fixAnsiText;
-                    window.fixAnsiText = () => {}; // ফাংশনটিকে নিষ্ক্রিয় করুন
+                     const originalFixAnsiText = window.fixAnsiText;
+                    window.fixAnsiText = () => {}; // সাময়িকভাবে নিষ্ক্রিয় করুন
                     setTimeout(() => {
                         convertRightToLeft();
-                        window.fixAnsiText = originalFixAnsiText; // মূল ফাংশনটি পুনরুদ্ধার করুন
+                        window.fixAnsiText = originalFixAnsiText; // আবার সক্রিয় করুন
                     }, 0);
                 }
             }
