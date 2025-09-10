@@ -3756,23 +3756,6 @@ input:checked + .slider:before {
         <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">দ্রষ্টব্য: রেকর্ডিং শেষ হলে 'পাঠান' বাটনে ক্লিক করে লেখাটি পেতে কিছুক্ষণ অপেক্ষা করুন।</p>
     </div>
 </div>
-<!-- নতুন: স্পিচ টু টেক্সট বিভাগ -->
-<div id="speechToTextContent" class="calculator-content">
-    <div class="stt-content">
-        <h3 class="text-xl font-bold text-gray-700 mb-4">বাংলা স্পিচ টু টেক্সট (Gemini API)</h3>
-        <div id="sttStatus" class="stt-status mb-4">অবস্থা: নিষ্ক্রিয়</div>
-        <textarea id="sttOutput" rows="8" class="rounded-lg" placeholder="রেকর্ড করুন বা অডিও আপলোড করে কথাকে লেখায় রূপান্তর করুন..."></textarea>
-        <!-- অডিও আপলোডের জন্য লুকানো ফাইল ইনপুট -->
-        <input type="file" id="audioFileInput" class="hidden" accept="audio/*">
-        <div class="stt-buttons mt-4">
-            <button id="startSttBtn" data-state="record" class="stt-button start rounded-lg">রেকর্ড করুন</button>
-            <button id="uploadAudioBtn" class="stt-button copy rounded-lg">আপলোড করুন</button>
-            <button id="copySttBtn" class="stt-button copy rounded-lg">কপি করুন</button>
-            <button id="clearSttBtn" class="stt-button clear-input rounded-lg">মুছুন</button>
-        </div>
-        <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">দ্রষ্টব্য: রেকর্ডিং শেষ হলে 'পাঠান' বাটনে ক্লিক করে লেখাটি পেতে কিছুক্ষণ অপেক্ষা করুন।</p>
-    </div>
-</div>
 
 
         <!-- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগ -->
