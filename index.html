@@ -4112,42 +4112,109 @@ input:checked + .slider:before {
 
     <script>
 	
-	// ====================================================================
-        // START: LocalStorage with Expiry
-        // ====================================================================
-        const FOUR_DAYS_IN_MS = 4 * 24 * 60 * 60 * 1000;
+// ====================================================================
+// START: IndexedDB with Expiry
+// ====================================================================
+const DB_NAME = 'BanglaToolboxDB';
+const STORE_NAME = 'converterStore';
+const DB_VERSION = 1;
+const FOUR_DAYS_IN_MS = 4 * 24 * 60 * 60 * 1000;
 
-        function saveWithExpiry(key, value, ttl = FOUR_DAYS_IN_MS) {
-            const now = new Date();
-            const item = {
-                value: value,
-                expiry: now.getTime() + ttl,
+let dbPromise;
+
+function getDb() {
+    if (!dbPromise) {
+        dbPromise = new Promise((resolve, reject) => {
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+            request.onerror = (event) => {
+                console.error("IndexedDB error:", request.error);
+                reject("IndexedDB error: " + request.error);
             };
-            localStorage.setItem(key, JSON.stringify(item));
-        }
 
-        function getWithExpiry(key) {
-            const itemStr = localStorage.getItem(key);
-            if (!itemStr) {
-                return null;
-            }
-            try {
-                const item = JSON.parse(itemStr);
-                const now = new Date();
-                if (now.getTime() > item.expiry) {
-                    localStorage.removeItem(key);
-                    return null;
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains(STORE_NAME)) {
+                    db.createObjectStore(STORE_NAME, { keyPath: 'key' });
                 }
-                return item.value;
-            } catch (e) {
-                console.error("Error parsing item from localStorage", e);
-                localStorage.removeItem(key);
-                return null;
+            };
+
+            request.onsuccess = (event) => {
+                resolve(event.target.result);
+            };
+        });
+    }
+    return dbPromise;
+}
+
+async function idbSet(key, value, ttl = FOUR_DAYS_IN_MS) {
+    const db = await getDb();
+    const transaction = db.transaction(STORE_NAME, 'readwrite');
+    const store = transaction.objectStore(STORE_NAME);
+    const now = new Date();
+    const item = {
+        key: key,
+        value: value,
+        expiry: now.getTime() + ttl,
+    };
+    store.put(item);
+    return transaction.complete;
+}
+
+async function idbGet(key) {
+    const db = await getDb();
+    const transaction = db.transaction(STORE_NAME, 'readonly');
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.get(key);
+
+    return new Promise((resolve, reject) => {
+        request.onsuccess = () => {
+            const item = request.result;
+            if (!item) {
+                resolve(null);
+                return;
             }
-        }
-        // ====================================================================
-        // END: LocalStorage with Expiry
-        // ====================================================================
+            const now = new Date();
+            if (now.getTime() > item.expiry) {
+                // Expired, delete it and resolve null
+                const deleteTransaction = db.transaction(STORE_NAME, 'readwrite');
+                deleteTransaction.objectStore(STORE_NAME).delete(key);
+                resolve(null);
+            } else {
+                resolve(item.value);
+            }
+        };
+        request.onerror = (event) => {
+            console.error("idbGet error:", event.target.error);
+            reject(event.target.error);
+        };
+    });
+}
+
+async function clearExpiredItems() {
+    try {
+        const db = await getDb();
+        const transaction = db.transaction(STORE_NAME, 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+        const request = store.openCursor();
+        const now = new Date().getTime();
+
+        request.onsuccess = event => {
+            const cursor = event.target.result;
+            if (cursor) {
+                if (cursor.value.expiry < now) {
+                    cursor.delete();
+                }
+                cursor.continue();
+            }
+        };
+    } catch (error) {
+        console.error("Error clearing expired items:", error);
+    }
+}
+// ====================================================================
+// END: IndexedDB with Expiry
+// ====================================================================
 		
 	// Paste Preset Functionality Variables
 	let pastePresetLeft = 'default';
@@ -5854,41 +5921,41 @@ function initializeUnitConverters() {
         let historyRight = [];
         let historyIndexRight = -1;
 
-        function addState(textareaId) {
-            const textarea = document.getElementById(textareaId);
-            let history, historyIndex;
+        async function addState(textareaId) {
+    const textarea = document.getElementById(textareaId);
+    let history, historyIndex;
 
-            if (textareaId === 'textAreaLeft') {
-                history = historyLeft;
-                historyIndex = historyIndexLeft;
-            } else {
-                history = historyRight;
-                historyIndex = historyIndexRight;
-            }
+    if (textareaId === 'textAreaLeft') {
+        history = historyLeft;
+        historyIndex = historyIndexLeft;
+    } else {
+        history = historyRight;
+        historyIndex = historyIndexRight;
+    }
 
-            // যদি আমরা ইতিহাসের শেষে না থাকি, তবে পরবর্তী স্টেটগুলি পরিষ্কার করুন
-            if (historyIndex < history.length - 1) {
-                history.splice(historyIndex + 1);
-            }
+    // If we are not at the end of history, clear subsequent states
+    if (historyIndex < history.length - 1) {
+        history.splice(historyIndex + 1);
+    }
 
-            history.push(textarea.value);
-            historyIndex = history.length - 1;
+    history.push(textarea.value);
+    historyIndex = history.length - 1;
 
-            if (textareaId === 'textAreaLeft') {
-                historyLeft = history;
-                historyIndexLeft = historyIndex;
-                // Save state to localStorage
-                saveWithExpiry('converterTextLeft', textarea.value);
-                saveWithExpiry('converterHistoryLeft', { history: historyLeft, index: historyIndexLeft });
-            } else {
-                historyRight = history;
-                historyIndexRight = historyIndex;
-                // Save state to localStorage
-                saveWithExpiry('converterTextRight', textarea.value);
-                saveWithExpiry('converterHistoryRight', { history: historyRight, index: historyIndexRight });
-            }
-            updateButtonStates(textareaId);
-        }
+    if (textareaId === 'textAreaLeft') {
+        historyLeft = history;
+        historyIndexLeft = historyIndex;
+        // Save state to IndexedDB
+        await idbSet('converterTextLeft', textarea.value);
+        await idbSet('converterHistoryLeft', { history: historyLeft, index: historyIndexLeft });
+    } else {
+        historyRight = history;
+        historyIndexRight = historyIndex;
+        // Save state to IndexedDB
+        await idbSet('converterTextRight', textarea.value);
+        await idbSet('converterHistoryRight', { history: historyRight, index: historyIndexRight });
+    }
+    updateButtonStates(textareaId);
+}
 
         function undoText(textareaId) {
             const textarea = document.getElementById(textareaId);
@@ -6004,63 +6071,63 @@ function initializeUnitConverters() {
         }
 
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
 		
 		// ====================================================================
-            // START: Load Converter Data from LocalStorage on page load
-            // ====================================================================
-            try {
-                const textAreaLeft = document.getElementById('textAreaLeft');
-                const textAreaRight = document.getElementById('textAreaRight');
+// START: Load Converter Data from IndexedDB on page load
+// ====================================================================
+try {
+    // Clear expired items on startup
+    await clearExpiredItems();
 
-                // Load text for Left Textarea
-                const savedTextLeft = getWithExpiry('converterTextLeft');
-                if (savedTextLeft && textAreaLeft) {
-                    textAreaLeft.value = savedTextLeft;
-                }
+    const textAreaLeft = document.getElementById('textAreaLeft');
+    const textAreaRight = document.getElementById('textAreaRight');
 
-                // Load text for Right Textarea
-                const savedTextRight = getWithExpiry('converterTextRight');
-                if (savedTextRight && textAreaRight) {
-                    textAreaRight.value = savedTextRight;
-                }
+    // Load text for Left Textarea
+    const savedTextLeft = await idbGet('converterTextLeft');
+    if (savedTextLeft && textAreaLeft) {
+        textAreaLeft.value = savedTextLeft;
+    }
 
-                // Load history for Left Textarea
-                const savedHistoryLeft = getWithExpiry('converterHistoryLeft');
-                if (savedHistoryLeft) {
-                    historyLeft = savedHistoryLeft.history || [textAreaLeft.value];
-                    historyIndexLeft = savedHistoryLeft.index !== undefined ? savedHistoryLeft.index : historyLeft.length - 1;
-                } else {
-                    // Initialize if no history found
-                    historyLeft = [textAreaLeft.value];
-                    historyIndexLeft = 0;
-                }
+    // Load text for Right Textarea
+    const savedTextRight = await idbGet('converterTextRight');
+    if (savedTextRight && textAreaRight) {
+        textAreaRight.value = savedTextRight;
+    }
 
-                // Load history for Right Textarea
-                const savedHistoryRight = getWithExpiry('converterHistoryRight');
-                if (savedHistoryRight) {
-                    historyRight = savedHistoryRight.history || [textAreaRight.value];
-                    historyIndexRight = savedHistoryRight.index !== undefined ? savedHistoryRight.index : historyRight.length - 1;
-                } else {
-                    // Initialize if no history found
-                    historyRight = [textAreaRight.value];
-                    historyIndexRight = 0;
-                }
+    // Load history for Left Textarea
+    const savedHistoryLeft = await idbGet('converterHistoryLeft');
+    if (savedHistoryLeft) {
+        historyLeft = savedHistoryLeft.history || [textAreaLeft.value];
+        historyIndexLeft = savedHistoryLeft.index !== undefined ? savedHistoryLeft.index : historyLeft.length - 1;
+    } else {
+        // Initialize if no history found
+        historyLeft = [textAreaLeft ? textAreaLeft.value : ''];
+        historyIndexLeft = 0;
+    }
 
-                // Update button states after loading history
-                updateButtonStates('textAreaLeft');
-                updateButtonStates('textAreaRight');
-            } catch (e) {
-                console.error("Error loading converter data from localStorage:", e);
-                // Reset in case of corrupted data
-                localStorage.removeItem('converterTextLeft');
-                localStorage.removeItem('converterTextRight');
-                localStorage.removeItem('converterHistoryLeft');
-                localStorage.removeItem('converterHistoryRight');
-            }
-            // ====================================================================
-            // END: Load Converter Data from LocalStorage
-            // ====================================================================
+    // Load history for Right Textarea
+    const savedHistoryRight = await idbGet('converterHistoryRight');
+    if (savedHistoryRight) {
+        historyRight = savedHistoryRight.history || [textAreaRight.value];
+        historyIndexRight = savedHistoryRight.index !== undefined ? savedHistoryRight.index : historyRight.length - 1;
+    } else {
+        // Initialize if no history found
+        historyRight = [textAreaRight ? textAreaRight.value : ''];
+        historyIndexRight = 0;
+    }
+
+    // Update button states after loading history
+    updateButtonStates('textAreaLeft');
+    updateButtonStates('textAreaRight');
+} catch (e) {
+    console.error("Error loading converter data from IndexedDB:", e);
+    // In case of error, you might want to clear the store, but for now, just log it.
+}
+// ====================================================================
+// END: Load Converter Data from IndexedDB
+// ====================================================================
+
 			
             console.log('DOMContentLoaded ইভেন্ট চালু হয়েছে। স্ক্রিপ্ট চলছে।');
             try {
