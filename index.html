@@ -3546,8 +3546,8 @@ input:checked + .slider:before {
                 <textarea id="textAreaLeft" placeholder="এখানে ইউনিকোড টেক্সট লিখুন"></textarea>
                 <div class="font-button-group">
                     <button class="font-conversion-button rounded-lg" onclick="convertLeftToRight()">ইউনিকোড থেকে বিজয়</button>
-                    <button id="undoButtonLeft" class="font-undo-redo-button rounded-lg" onclick="undoText('textAreaLeft')">আনডু</button>
-                    <button id="redoButtonLeft" class="font-undo-redo-button rounded-lg" onclick="redoText('textAreaLeft')">রিডু</button>
+					<button id="undoButtonLeft" class="font-undo-redo-button rounded-lg">আনডু</button>
+					<button id="redoButtonLeft" class="font-undo-redo-button rounded-lg">রিডু</button>
                     <button class="font-clear-button rounded-lg" onclick="clearTextarea('textAreaLeft')">মুছুন</button>
                 </div>
             </div>
@@ -3585,8 +3585,8 @@ input:checked + .slider:before {
                 <textarea id="textAreaRight" placeholder="এখানে বিজয় টেক্সট লিখুন"></textarea>
                 <div class="font-button-group">
                     <button class="font-conversion-button rounded-lg" onclick="convertRightToLeft()">বিজয় থেকে ইউনিকোড</button>
-                    <button id="undoButtonRight" class="font-undo-redo-button rounded-lg" onclick="undoText('textAreaRight')">আনডু</button>
-                    <button id="redoButtonRight" class="font-undo-redo-button rounded-lg" onclick="redoText('textAreaRight')">রিডু</button>
+                    <button id="undoButtonRight" class="font-undo-redo-button rounded-lg">আনডু</button>
+					<button id="redoButtonRight" class="font-undo-redo-button rounded-lg">রিডু</button>
                     <button class="font-clear-button rounded-lg" onclick="clearTextarea('textAreaRight')">মুছুন</button>
                 </div>
             </div>
@@ -9191,6 +9191,80 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ====================================================================
 // END: COMBINED & UPDATED WEATHER SCRIPT
+// ====================================================================
+
+// ====================================================================
+// START: RAPID UNDO/REDO ON HOLD SCRIPT (নতুন যুক্ত করা হয়েছে)
+// ====================================================================
+
+/**
+ * বাটন চেপে ধরে রাখলে দ্রুত কাজ করার ফাংশন সেটআপ করে।
+ * @param {string} buttonId - বাটনের আইডি।
+ * @param {function} actionFunction - যে ফাংশনটি বারবার কল করা হবে (যেমন: undoText)।
+ * @param {string} textareaId - যে টেক্সটএরিয়ার ওপর কাজটি হবে।
+ */
+function setupHoldableButton(buttonId, actionFunction, textareaId) {
+    const button = document.getElementById(buttonId);
+    if (!button) return;
+
+    let holdTimeoutId = null;
+    let repeatIntervalId = null;
+
+    const startRepeating = () => {
+        // আগের কোনো ইন্টারভ্যাল থাকলে তা পরিষ্কার করুন
+        if (repeatIntervalId) clearInterval(repeatIntervalId);
+        
+        // কাজটি রিপিট করা শুরু করুন
+        repeatIntervalId = setInterval(() => {
+            actionFunction(textareaId);
+            // যদি বাটনটি নিষ্ক্রিয় হয়ে যায়, তাহলে রিপিট করা বন্ধ করুন
+            if (button.disabled) {
+                stopRepeating();
+            }
+        }, 120); // প্রতি 120 মিলিসেকেন্ডে কাজটি রিপিট করুন
+    };
+
+    const stopRepeating = () => {
+        clearTimeout(holdTimeoutId);
+        clearInterval(repeatIntervalId);
+        holdTimeoutId = null;
+        repeatIntervalId = null;
+    };
+
+    const handlePress = (e) => {
+        // টেক্সট সিলেকশন বা অন্যান্য ডিফল্ট আচরণ বন্ধ করুন
+        if (e.cancelable) {
+            e.preventDefault();
+        }
+
+        // প্রেস করার সাথে সাথে একবার কাজটি করুন
+        actionFunction(textareaId);
+        
+        // একটি নির্দিষ্ট সময় পর কাজটি রিপিট করা শুরু করুন
+        holdTimeoutId = setTimeout(startRepeating, 400); // 400ms পর রিপিট শুরু হবে
+    };
+
+    // মাউসের জন্য ইভেন্ট লিসেনার
+    button.addEventListener('mousedown', handlePress);
+    button.addEventListener('mouseup', stopRepeating);
+    button.addEventListener('mouseleave', stopRepeating);
+    
+    // মোবাইলের টাচ ইভেন্টের জন্য লিসেনার
+    button.addEventListener('touchstart', handlePress, { passive: false });
+    button.addEventListener('touchend', stopRepeating);
+    button.addEventListener('touchcancel', stopRepeating);
+}
+
+// DOMContentLoaded এর মধ্যে এই সেটআপ ফাংশনগুলো কল করুন যাতে বাটনগুলো লোড হওয়ার পর ইভেন্ট যুক্ত হয়।
+document.addEventListener('DOMContentLoaded', () => {
+    setupHoldableButton('undoButtonLeft', undoText, 'textAreaLeft');
+    setupHoldableButton('redoButtonLeft', redoText, 'textAreaLeft');
+    setupHoldableButton('undoButtonRight', undoText, 'textAreaRight');
+    setupHoldableButton('redoButtonRight', redoText, 'textAreaRight');
+});
+
+// ====================================================================
+// END: RAPID UNDO/REDO ON HOLD SCRIPT
 // ====================================================================
 
         window.onload = function() {
