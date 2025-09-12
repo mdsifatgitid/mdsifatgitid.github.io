@@ -2855,7 +2855,7 @@ input:checked + .slider:before {
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color: 0.3s ease;
+    transition: background-color 0.3s ease;
 }
 .add-task-btn:hover {
     background-color: #218838;
@@ -2866,84 +2866,150 @@ input:checked + .slider:before {
     max-height: 400px;
     overflow-y: auto;
 }
+
+/* টাস্ক আইটেম এবং এর বিভিন্ন অবস্থার স্টাইল */
 .task-item {
     display: flex;
-    align-items: center; /* উল্লম্বভাবে মাঝখানে রাখার জন্য */
-    gap: 10px; /* আইটেমগুলোর মধ্যে ফাঁক */
+    align-items: center;
+    gap: 10px;
     padding: 12px;
     background-color: #ffffff;
     border-radius: 8px;
     margin-bottom: 10px;
     border: 1px solid #e2e8f0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     word-break: break-word;
+    position: relative;
+    overflow: hidden;
+    padding-right: 120px;
 }
 .dark .task-item {
     background-color: #1a202c;
     border-color: #4a5568;
 }
-.task-item.completed .task-text { /* Selector updated */
+.task-item.pinned {
+    background-color: #fef3c7; /* হালকা হলুদ */
+    border-left: 4px solid #f59e0b; /* হলুদ বর্ডার */
+}
+.dark .task-item.pinned {
+    background-color: #3f331a;
+    border-left-color: #fcd34d;
+}
+.task-item.completed .task-text {
     text-decoration: line-through;
     color: #6c757d;
 }
-.dark .task-item.completed .task-text { /* Dark mode selector updated */
+.dark .task-item.completed .task-text {
     color: #a0aec0;
 }
-.task-item .task-text { /* New class for text span */
-    flex-grow: 1;
-    text-align: justify; /* Justify can look weird for short text */
-    cursor: pointer;
+.task-item.dragging {
+    opacity: 0.5;
+    background-color: #cce7ff;
 }
-.dark .task-item .task-text {
-    color: #f4f4f4; /* এটি একটি হালকা ধূসর রং যা কালো ব্যাকগ্রাউন্ডে ভালোভাবে দেখা যাবে */
-}
-.delete-task-btn {
-    background-color: #ef5350;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin-left: auto; /* ডিলিট বাটন ডানদিকে ঠেলে দেওয়ার জন্য */
-    flex-shrink: 0;
-    line-height: 1;
-    transition: background-color 0.2s ease;
-}
-.delete-task-btn:hover {
-    background-color: #d32f2f;
+.dark .task-item.dragging {
+    background-color: #2c3748;
 }
 
-/* নতুন: টাস্ক আইটেমের নাম্বারিং স্টাইল (আপডেট করা) */
+/* টাস্ক টেক্সট এবং নাম্বারিং স্টাইল */
+.task-item .task-text {
+    flex-grow: 1;
+    text-align: justify;
+    cursor: pointer;
+    white-space: pre-wrap; /* নতুন: এন্টার কী/লাইন ব্রেক সমর্থন করার জন্য যোগ করা হয়েছে */
+}
+.dark .task-item .task-text {
+    color: #f4f4f4;
+}
+.task-item .task-text:focus {
+    outline: 2px solid #3b82f6;
+    background-color: #ffffff;
+    padding: 2px 4px;
+    margin: -3px -5px;
+    border-radius: 4px;
+}
+.dark .task-item .task-text:focus {
+    background-color: #2c3748;
+}
 .task-number {
     font-weight: bold;
     color: #3f51b5;
     background-color: #e0e7ff;
     border-radius: 50%;
-    width: 24px;       /* সাইজ কমানো হয়েছে */
-    height: 24px;      /* সাইজ কমানো হয়েছে */
-    font-size: 0.85rem;  /* ফন্ট সাইজ কমানো হয়েছে */
+    width: 24px;
+    height: 24px;
+    font-size: 0.85rem;
     display: flex;
     align-items: center;
     justify-content: center;
     user-select: none;
     flex-shrink: 0;
 }
-
 .dark .task-number {
     color: #90cdf4;
     background-color: #4a5568;
 }
 
-/* নতুন: ড্র্যাগ করার সময় টাস্ক আইটেমের স্টাইল */
-.task-item.dragging {
-    opacity: 0.5;
-    background-color: #cce7ff;
+/* টাস্ক আইটেমের অ্যাকশন বাটন স্টাইল */
+.task-item .actions {
+    display: flex;
+    gap: 8px;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%) translateX(125%);
+    transition: transform 0.2s ease-in-out;
+    background: rgba(241, 245, 249, 0.9);
+    padding: 5px;
+    border-radius: 20px;
+    z-index: 2;
+}
+.dark .task-item .actions {
+    background: rgba(45, 55, 72, 0.9);
+}
+.task-item:hover .actions {
+    transform: translateY(-50%) translateX(0);
+}
+.task-item .action-btn {
+    border: none;
+    background: #e2e8f0;
+    color: #475569;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, color 0.2s, transform 0.2s;
+    flex-shrink: 0;
+}
+.dark .task-item .action-btn {
+    background-color: #4a5568;
+    color: #e2e8f0;
+}
+.task-item .action-btn:hover {
+    transform: scale(1.1);
+}
+.task-item .action-btn.copy:hover {
+    background-color: #3b82f6;
+    color: white;
+}
+.task-item .action-btn.delete:hover {
+    background-color: #ef4444;
+    color: white;
+}
+.task-item .action-btn.pin:hover {
+    background-color: #f59e0b;
+    color: white;
+}
+.task-item .action-btn.pin.active {
+    background-color: #f59e0b;
+    color: white;
 }
 
-.dark .task-item.dragging {
-    background-color: #2c3748;
+/* আগের ডিলিট বাটন স্টাইল অপ্রয়োজনীয়, তাই লুকানো হলো */
+.delete-task-btn {
+    display: none;
 }
 
 
@@ -8587,113 +8653,145 @@ if (wordCounterContent && wordCounterContent.classList.contains('active')) {
 
 
 // ====================================================================
-// START: NOTEPAD / TO-DO LIST SCRIPT (UPDATED WITH INDEXEDDB)
+// START: NOTEPAD / TO-DO LIST SCRIPT (UPDATED WITH ALL NEW FEATURES)
 // ====================================================================
-async function initializeNotepad() { // ফাংশনটিকে async করা হয়েছে
+async function initializeNotepad() {
     const taskInput = document.getElementById('taskInput');
     const addTaskBtn = document.getElementById('addTaskBtn');
     const taskList = document.getElementById('taskList');
 
     if (!taskInput || !addTaskBtn || !taskList) return;
 
-    // IndexedDB থেকে কাজগুলো লোড করুন
-    await loadTasks(); // async loadTasks ফাংশনের জন্য অপেক্ষা করুন
+    await loadTasks();
 
-    // কাজ যোগ বা আপডেট করার ফাংশন
-    async function addTask() { // ফাংশনটিকে async করা হয়েছে
+    async function addTask() {
         const text = taskInput.value.trim();
         if (text === '') {
             showCustomAlert('অনুগ্রহ করে একটি কাজ বা নোট লিখুন।');
             return;
         }
-
-        if (addTaskBtn.textContent === 'আপডেট করুন') {
-            createTaskElement(text);
-            addTaskBtn.textContent = 'যোগ করুন';
-        } else {
-            createTaskElement(text);
-        }
-
+        createTaskElement(text, false, false); // নতুন কাজ সবসময় আনপিনড থাকবে
         taskInput.value = '';
-        await saveTasks(); // async saveTasks ফাংশনের জন্য অপেক্ষা করুন
-        updateTaskNumbers();
+        await saveTasks();
+        await loadTasks(); // পিন করা আইটেমগুলো ওপরে রাখার জন্য তালিকা পুনরায় লোড করুন
     }
-    
-    async function loadTasks() { // ফাংশনটিকে async করা হয়েছে
-        const tasks = await idbGet('notepadTasks') || []; // localStorage এর পরিবর্তে idbGet ব্যবহার করা হয়েছে
+
+    async function loadTasks() {
+        let tasks = await idbGet('notepadTasks') || [];
+        // কাজগুলো সাজান: প্রথমে পিন করা, তারপর বাকিগুলো
+        tasks.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
         taskList.innerHTML = '';
-        tasks.forEach(task => createTaskElement(task.text, task.completed));
+        tasks.forEach(task => createTaskElement(task.text, task.completed, task.pinned));
         updateTaskNumbers();
     }
 
-    async function saveTasks() { // ফাংশনটিকে async করা হয়েছে
+async function saveTasks() {
         const tasks = [];
         document.querySelectorAll('.task-item').forEach(item => {
             const taskTextSpan = item.querySelector('.task-text');
             if (taskTextSpan) {
-                 tasks.push({
-                    text: taskTextSpan.textContent,
-                    completed: item.classList.contains('completed')
+                tasks.push({
+                    text: taskTextSpan.innerText, // পরিবর্তন: textContent এর পরিবর্তে innerText ব্যবহার করা হয়েছে
+                    completed: item.classList.contains('completed'),
+                    pinned: item.classList.contains('pinned')
                 });
             }
         });
-        await idbSet('notepadTasks', tasks); // localStorage এর পরিবর্তে idbSet ব্যবহার করা হয়েছে
+        await idbSet('notepadTasks', tasks);
     }
 
-    function createTaskElement(text, isCompleted = false) {
+    function createTaskElement(text, isCompleted = false, isPinned = false) {
         const li = document.createElement('li');
         li.className = 'task-item';
         li.setAttribute('draggable', 'true');
-        if (isCompleted) {
-            li.classList.add('completed');
-        }
+        if (isCompleted) li.classList.add('completed');
+        if (isPinned) li.classList.add('pinned');
 
         const numberSpan = document.createElement('span');
         numberSpan.className = 'task-number';
 
         const textSpan = document.createElement('span');
         textSpan.className = 'task-text';
-        textSpan.textContent = text;
-        
-        // সিঙ্গেল ক্লিকে কাজ সম্পন্ন/অসম্পন্ন টগল করুন
-        textSpan.addEventListener('click', async () => { // listener-কে async করা হয়েছে
+        textSpan.innerText = text; // পরিবর্তন: textContent এর পরিবর্তে innerText
+
+        textSpan.addEventListener('click', async () => {
+            if (textSpan.isContentEditable) return; // এডিট মোডে থাকলে কাজ করবে না
             li.classList.toggle('completed');
             await saveTasks();
         });
 
-        // ডাবল ক্লিকে এডিটের জন্য হ্যান্ডেল করুন
         textSpan.addEventListener('dblclick', () => {
-            if (addTaskBtn.textContent === 'আপডেট করুন') {
-                showCustomAlert('অনুগ্রহ করে বর্তমান সম্পাদনা শেষ করুন।');
-                return;
-            }
-            taskInput.value = textSpan.textContent;
-            addTaskBtn.textContent = 'আপডেট করুন';
-            taskList.removeChild(li);
-            updateTaskNumbers();
-            taskInput.focus();
+            textSpan.contentEditable = true;
+            textSpan.focus();
+            const originalText = textSpan.innerText; // পরিবর্তন: textContent এর পরিবর্তে innerText
+
+            const saveOnBlur = async () => {
+                textSpan.contentEditable = false;
+                if (textSpan.innerText.trim() === '') {
+                    textSpan.innerText = originalText; // খালি রাখলে আগের লেখা ফেরত আসবে
+                }
+                if (textSpan.innerText !== originalText) {
+                    await saveTasks();
+                }
+            };
+
+            textSpan.addEventListener('blur', saveOnBlur, { once: true });
+
+            textSpan.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    textSpan.blur();
+                } else if (e.key === 'Escape') {
+                    textSpan.innerText = originalText; // পরিবর্তন: textContent এর পরিবর্তে innerText
+                    textSpan.blur();
+                }
+            });
+        });
+
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'actions';
+
+        const pinBtn = document.createElement('button');
+        pinBtn.className = 'action-btn pin';
+        if (isPinned) pinBtn.classList.add('active');
+        pinBtn.title = 'পিন/আনপিন করুন';
+        pinBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4.146.146A.5.5 0 0 1 4.5 0h7a.5.5 0 0 1 .5.5c0 .68-.342 1.174-.646 1.479-.126.125-.25.224-.354.298v4.431l.078.048c.203.127.476.314.751.555C12.36 7.775 13 8.527 13 9.5a.5.5 0 0 1-.5.5h-4v4.5c0 .276-.224 1.5-.5 1.5s-.5-1.224-.5-1.5V10h-4a.5.5 0 0 1-.5-.5c0-.973.64-1.725 1.17-2.176a6 6 0 0 1 .751-.555l.078-.048V2.147a3.2 3.2 0 0 1-.354-.298C3.842 1.674 3.5 1.18 3.5.5a.5.5 0 0 1 .646-.354m.354 1.354a.5.5 0 0 0-.708 0l-.5.5A.5.5 0 0 0 3 2.5V3h10V2.5a.5.5 0 0 0-.293-.45l-.5-.5a.5.5 0 0 0-.707 0l-.001.002-.002.001-.002.001a.5.5 0 0 1-.17.036H5.02a.5.5 0 0 1-.17-.036l-.002-.001-.002-.001L4.5 1.5z"/></svg>`;
+        pinBtn.addEventListener('click', async () => {
+            li.classList.toggle('pinned'); // DOM-এ পিন অবস্থা পরিবর্তন করুন
+            await saveTasks(); // নতুন অবস্থা সেভ করুন
+            await loadTasks(); // তালিকা পুনরায় লোড এবং সাজান
+        });
+
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'action-btn copy';
+        copyBtn.title = 'কপি করুন';
+        copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>`;
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(textSpan.innerText).then(() => { // পরিবর্তন: textContent এর পরিবর্তে innerText
+                showCustomAlert('নোট কপি করা হয়েছে!');
+            });
         });
 
         const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'delete-task-btn';
-        deleteBtn.innerHTML = '×';
-        deleteBtn.addEventListener('click', async () => { // listener-কে async করা হয়েছে
-            if (addTaskBtn.textContent === 'আপডেট করুন' && taskInput.value === textSpan.textContent) {
-                 taskInput.value = '';
-                 addTaskBtn.textContent = 'যোগ করুন';
-            }
+        deleteBtn.className = 'action-btn delete';
+        deleteBtn.title = 'মুছে ফেলুন';
+        deleteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>`;
+        deleteBtn.addEventListener('click', async () => {
             li.remove();
             await saveTasks();
             updateTaskNumbers();
         });
 
+        actionsDiv.appendChild(pinBtn);
+        actionsDiv.appendChild(copyBtn);
+        actionsDiv.appendChild(deleteBtn);
+
         li.appendChild(numberSpan);
         li.appendChild(textSpan);
-        li.appendChild(deleteBtn);
+        li.appendChild(actionsDiv);
         taskList.appendChild(li);
     }
 
-    // Event Listeners
     addTaskBtn.addEventListener('click', addTask);
     taskInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
@@ -8702,14 +8800,13 @@ async function initializeNotepad() { // ফাংশনটিকে async কর
         }
     });
 
-    // Drag-and-drop event listeners
     taskList.addEventListener('dragstart', e => {
         if (e.target.classList.contains('task-item')) {
             e.target.classList.add('dragging');
         }
     });
 
-    taskList.addEventListener('dragend', async e => { // listener-কে async করা হয়েছে
+    taskList.addEventListener('dragend', async e => {
         if (e.target.classList.contains('task-item')) {
             e.target.classList.remove('dragging');
             await saveTasks();
