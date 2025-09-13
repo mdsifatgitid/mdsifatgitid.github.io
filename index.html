@@ -8708,6 +8708,7 @@ async function initializeNotepad() {
             pinned: false
         };
         createTaskElement(taskObject);
+		showCustomAlert('ছবি সফলভাবে যোগ করা হয়েছে!'); // কাস্টম অ্যালার্ট যোগ করা হয়েছে
         await saveTasks();
         await loadTasks(); // পিন করা আইটেমের ক্রম ঠিক রাখতে রিলোড করুন
     }
