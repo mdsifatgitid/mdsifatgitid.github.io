@@ -2881,8 +2881,8 @@ input:checked + .slider:before {
     word-break: break-word;
     position: relative;
     overflow: hidden;
-    padding-right: 120px;
 }
+
 .dark .task-item {
     background-color: #1a202c;
     border-color: #4a5568;
@@ -2913,9 +2913,9 @@ input:checked + .slider:before {
 /* টাস্ক টেক্সট এবং নাম্বারিং স্টাইল */
 .task-item .task-text {
     flex-grow: 1;
-    text-align: justify;
+    text-align: justify; /* আপনার অনুরোধ অনুযায়ী লেখা জাস্টিফাই করা হয়েছে */
     cursor: pointer;
-    white-space: pre-wrap; /* নতুন: এন্টার কী/লাইন ব্রেক সমর্থন করার জন্য যোগ করা হয়েছে */
+    white-space: pre-wrap; /* এন্টার কী/লাইন ব্রেক সমর্থন করার জন্য */
 }
 .dark .task-item .task-text {
     color: #f4f4f4;
@@ -3011,6 +3011,8 @@ input:checked + .slider:before {
 .delete-task-btn {
     display: none;
 }
+
+
 
 
  /* প্রিসেট ড্রপডাউন বাটনের জন্য নতুন CSS */
