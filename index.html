@@ -8653,7 +8653,7 @@ if (wordCounterContent && wordCounterContent.classList.contains('active')) {
 
 
 // ====================================================================
-// START: NOTEPAD / TO-DO LIST SCRIPT (UPDATED WITH ALL NEW FEATURES)
+// START: NOTEPAD / TO-DO LIST SCRIPT (UPDATED WITH IMAGE SUPPORT)
 // ====================================================================
 async function initializeNotepad() {
     const taskInput = document.getElementById('taskInput');
@@ -8662,36 +8662,75 @@ async function initializeNotepad() {
 
     if (!taskInput || !addTaskBtn || !taskList) return;
 
+    // IndexedDB থেকে টাস্ক লোড করে ট্যাবটি চালু করুন
     await loadTasks();
 
-    async function addTask() {
+    // নতুন টেক্সট টাস্ক যোগ করার ফাংশন
+    async function addTextTask() {
         const text = taskInput.value.trim();
         if (text === '') {
             showCustomAlert('অনুগ্রহ করে একটি কাজ বা নোট লিখুন।');
             return;
         }
-        createTaskElement(text, false, false); // নতুন কাজ সবসময় আনপিনড থাকবে
+        // নতুন টেক্সট নোটের জন্য একটি টাস্ক অবজেক্ট তৈরি করুন
+        const taskObject = {
+            type: 'text',
+            content: text,
+            completed: false,
+            pinned: false
+        };
+        createTaskElement(taskObject);
         taskInput.value = '';
         await saveTasks();
-        await loadTasks(); // পিন করা আইটেমগুলো ওপরে রাখার জন্য তালিকা পুনরায় লোড করুন
+        await loadTasks(); // পিন করা আইটেমের ক্রম ঠিক রাখতে রিলোড করুন
     }
 
+    // নতুন ইমেজ টাস্ক যোগ করার ফাংশন
+    async function addImageTask(base64Image) {
+        if (!base64Image) return;
+        const taskObject = {
+            type: 'image',
+            content: base64Image,
+            caption: '', // ছবির জন্য ক্যাপশন যোগ করা হয়েছে
+            completed: false,
+            pinned: false
+        };
+        createTaskElement(taskObject);
+        await saveTasks();
+        await loadTasks(); // পিন করা আইটেমের ক্রম ঠিক রাখতে রিলোড করুন
+    }
+
+    // IndexedDB থেকে সমস্ত টাস্ক লোড করে প্রদর্শন করুন
     async function loadTasks() {
         let tasks = await idbGet('notepadTasks') || [];
-        // কাজগুলো সাজান: প্রথমে পিন করা, তারপর বাকিগুলো
+        // টাস্কগুলো সাজান: প্রথমে পিন করা আইটেম
         tasks.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
-        taskList.innerHTML = '';
-        tasks.forEach(task => createTaskElement(task.text, task.completed, task.pinned));
+        taskList.innerHTML = ''; // বর্তমান তালিকা পরিষ্কার করুন
+        tasks.forEach(task => createTaskElement(task));
         updateTaskNumbers();
     }
 
-async function saveTasks() {
+    // বর্তমান টাস্কের তালিকা IndexedDB-তে সেভ করুন
+    async function saveTasks() {
         const tasks = [];
         document.querySelectorAll('.task-item').forEach(item => {
-            const taskTextSpan = item.querySelector('.task-text');
-            if (taskTextSpan) {
+            const textSpan = item.querySelector('.task-text');
+            const imageEl = item.querySelector('.task-image');
+
+            if (textSpan) {
                 tasks.push({
-                    text: taskTextSpan.innerText, // পরিবর্তন: textContent এর পরিবর্তে innerText ব্যবহার করা হয়েছে
+                    type: 'text',
+                    content: textSpan.innerText,
+                    completed: item.classList.contains('completed'),
+                    pinned: item.classList.contains('pinned')
+                });
+            } else if (imageEl) {
+                // ছবির ক্যাপশন সেভ করা হচ্ছে
+                const captionEl = item.querySelector('.task-image-caption');
+                tasks.push({
+                    type: 'image',
+                    content: imageEl.src,
+                    caption: captionEl ? captionEl.innerText : '',
                     completed: item.classList.contains('completed'),
                     pinned: item.classList.contains('pinned')
                 });
@@ -8700,78 +8739,164 @@ async function saveTasks() {
         await idbSet('notepadTasks', tasks);
     }
 
-    function createTaskElement(text, isCompleted = false, isPinned = false) {
+    // একটি টাস্ক এলিমেন্ট (টেক্সট বা ছবি) তৈরি করে তালিকায় যোগ করুন
+    function createTaskElement(task) {
+        const { type, content, completed, pinned } = task;
+        const caption = task.caption; // ক্যাপশন ভ্যারিয়েবল
+
         const li = document.createElement('li');
         li.className = 'task-item';
         li.setAttribute('draggable', 'true');
-        if (isCompleted) li.classList.add('completed');
-        if (isPinned) li.classList.add('pinned');
+        if (completed) li.classList.add('completed');
+        if (pinned) li.classList.add('pinned');
 
         const numberSpan = document.createElement('span');
         numberSpan.className = 'task-number';
 
-        const textSpan = document.createElement('span');
-        textSpan.className = 'task-text';
-        textSpan.innerText = text; // পরিবর্তন: textContent এর পরিবর্তে innerText
+        const contentWrapper = document.createElement('div');
+        contentWrapper.style.flexGrow = '1';
+        contentWrapper.style.cursor = 'pointer';
 
-        textSpan.addEventListener('click', async () => {
-            if (textSpan.isContentEditable) return; // এডিট মোডে থাকলে কাজ করবে না
-            li.classList.toggle('completed');
-            await saveTasks();
-        });
+        if (type === 'image') {
+            const imageContainer = document.createElement('div');
+            imageContainer.style.textAlign = 'center';
 
-        textSpan.addEventListener('dblclick', () => {
-            textSpan.contentEditable = true;
-            textSpan.focus();
-            const originalText = textSpan.innerText; // পরিবর্তন: textContent এর পরিবর্তে innerText
+            const imageEl = document.createElement('img');
+            imageEl.src = content;
+            imageEl.className = 'task-image';
+            imageEl.style.maxWidth = '100%';
+            imageEl.style.maxHeight = '300px';
+            imageEl.style.borderRadius = '8px';
+            imageEl.style.objectFit = 'contain';
+            imageEl.style.marginTop = '5px';
 
-            const saveOnBlur = async () => {
-                textSpan.contentEditable = false;
-                if (textSpan.innerText.trim() === '') {
-                    textSpan.innerText = originalText; // খালি রাখলে আগের লেখা ফেরত আসবে
+            const captionEl = document.createElement('p');
+            captionEl.className = 'task-image-caption';
+            captionEl.innerText = caption || 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...';
+            captionEl.style.fontSize = '0.9em';
+            captionEl.style.color = 'grey';
+            captionEl.style.marginTop = '8px';
+            captionEl.style.padding = '4px';
+            captionEl.style.borderRadius = '4px';
+            captionEl.style.wordBreak = 'break-word';
+
+            // ক্যাপশন এডিট করার ফাংশন
+            const enableCaptionEdit = (e) => {
+                e.stopPropagation();
+                if (captionEl.innerText === 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...') {
+                    captionEl.innerText = '';
                 }
-                if (textSpan.innerText !== originalText) {
-                    await saveTasks();
-                }
+                captionEl.contentEditable = true;
+                captionEl.focus();
+                captionEl.style.outline = '2px solid #3b82f6';
+                const originalCaption = captionEl.innerText;
+
+                const saveOnBlur = async () => {
+                    captionEl.contentEditable = false;
+                    captionEl.style.outline = 'none';
+                    if (captionEl.innerText.trim() === '') {
+                        captionEl.innerText = 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...';
+                    }
+                    if (captionEl.innerText !== originalCaption) {
+                        await saveTasks();
+                    }
+                };
+                captionEl.addEventListener('blur', saveOnBlur, { once: true });
+                captionEl.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        captionEl.blur();
+                    } else if (e.key === 'Escape') {
+                        captionEl.innerText = originalCaption;
+                        captionEl.blur();
+                    }
+                });
             };
 
-            textSpan.addEventListener('blur', saveOnBlur, { once: true });
+            imageEl.addEventListener('dblclick', enableCaptionEdit);
+            captionEl.addEventListener('dblclick', enableCaptionEdit);
+            
+            imageContainer.appendChild(imageEl);
+            imageContainer.appendChild(captionEl);
+            contentWrapper.appendChild(imageContainer);
+            
+        } else { // ডিফল্ট হিসেবে টেক্সট
+            const textSpan = document.createElement('span');
+            textSpan.className = 'task-text';
+            textSpan.innerText = content;
 
-            textSpan.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    textSpan.blur();
-                } else if (e.key === 'Escape') {
-                    textSpan.innerText = originalText; // পরিবর্তন: textContent এর পরিবর্তে innerText
-                    textSpan.blur();
-                }
+            // টেক্সট নোট এডিট করার জন্য ডাবল-ক্লিক করুন
+            textSpan.addEventListener('dblclick', (e) => {
+                e.stopPropagation(); // li-এর ক্লিক ইভেন্ট প্রতিরোধ করুন
+                textSpan.contentEditable = true;
+                textSpan.focus();
+                const originalText = textSpan.innerText;
+
+                const saveOnBlur = async () => {
+                    textSpan.contentEditable = false;
+                    if (textSpan.innerText.trim() === '') {
+                        textSpan.innerText = originalText;
+                    }
+                    if (textSpan.innerText !== originalText) {
+                        await saveTasks();
+                    }
+                };
+
+                textSpan.addEventListener('blur', saveOnBlur, { once: true });
+                textSpan.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        textSpan.blur();
+                    } else if (e.key === 'Escape') {
+                        textSpan.innerText = originalText;
+                        textSpan.blur();
+                    }
+                });
             });
+            contentWrapper.appendChild(textSpan);
+        }
+
+        // কন্টেন্ট অংশে ক্লিক করলে (বাটন ছাড়া) কাজ সম্পন্ন বা অসম্পন্ন হিসেবে টগল করুন
+        contentWrapper.addEventListener('click', async (e) => {
+             if (e.target.isContentEditable) return;
+             li.classList.toggle('completed');
+             await saveTasks();
         });
 
         const actionsDiv = document.createElement('div');
         actionsDiv.className = 'actions';
 
+        // পিন বাটন
         const pinBtn = document.createElement('button');
         pinBtn.className = 'action-btn pin';
-        if (isPinned) pinBtn.classList.add('active');
+        if (pinned) pinBtn.classList.add('active');
         pinBtn.title = 'পিন/আনপিন করুন';
         pinBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4.146.146A.5.5 0 0 1 4.5 0h7a.5.5 0 0 1 .5.5c0 .68-.342 1.174-.646 1.479-.126.125-.25.224-.354.298v4.431l.078.048c.203.127.476.314.751.555C12.36 7.775 13 8.527 13 9.5a.5.5 0 0 1-.5.5h-4v4.5c0 .276-.224 1.5-.5 1.5s-.5-1.224-.5-1.5V10h-4a.5.5 0 0 1-.5-.5c0-.973.64-1.725 1.17-2.176a6 6 0 0 1 .751-.555l.078-.048V2.147a3.2 3.2 0 0 1-.354-.298C3.842 1.674 3.5 1.18 3.5.5a.5.5 0 0 1 .646-.354m.354 1.354a.5.5 0 0 0-.708 0l-.5.5A.5.5 0 0 0 3 2.5V3h10V2.5a.5.5 0 0 0-.293-.45l-.5-.5a.5.5 0 0 0-.707 0l-.001.002-.002.001-.002.001a.5.5 0 0 1-.17.036H5.02a.5.5 0 0 1-.17-.036l-.002-.001-.002-.001L4.5 1.5z"/></svg>`;
         pinBtn.addEventListener('click', async () => {
-            li.classList.toggle('pinned'); // DOM-এ পিন অবস্থা পরিবর্তন করুন
-            await saveTasks(); // নতুন অবস্থা সেভ করুন
-            await loadTasks(); // তালিকা পুনরায় লোড এবং সাজান
+            li.classList.toggle('pinned');
+            await saveTasks();
+            await loadTasks();
         });
 
+        // কপি বাটন
         const copyBtn = document.createElement('button');
         copyBtn.className = 'action-btn copy';
         copyBtn.title = 'কপি করুন';
         copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>`;
         copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(textSpan.innerText).then(() => { // পরিবর্তন: textContent এর পরিবর্তে innerText
-                showCustomAlert('নোট কপি করা হয়েছে!');
-            });
+            if (type === 'text') {
+                navigator.clipboard.writeText(content).then(() => showCustomAlert('নোট কপি করা হয়েছে!'));
+            } else if (type === 'image') {
+                const captionEl = li.querySelector('.task-image-caption');
+                if (captionEl && captionEl.innerText && captionEl.innerText !== 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...') {
+                    navigator.clipboard.writeText(captionEl.innerText).then(() => showCustomAlert('ছবির ক্যাপশন কপি করা হয়েছে!'));
+                } else {
+                    showCustomAlert('ছবি সরাসরি কপি করা যায় না এবং কোনো ক্যাপশন নেই।');
+                }
+            }
         });
 
+        // ডিলেট বাটন
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'action-btn delete';
         deleteBtn.title = 'মুছে ফেলুন';
@@ -8787,28 +8912,51 @@ async function saveTasks() {
         actionsDiv.appendChild(deleteBtn);
 
         li.appendChild(numberSpan);
-        li.appendChild(textSpan);
+        li.appendChild(contentWrapper);
         li.appendChild(actionsDiv);
         taskList.appendChild(li);
     }
 
-    addTaskBtn.addEventListener('click', addTask);
+    // --- ইভেন্ট লিসেনার ---
+    addTaskBtn.addEventListener('click', addTextTask);
+
     taskInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            addTask();
+            addTextTask();
         }
     });
 
+    // ছবি পেস্ট করার জন্য ইভেন্ট লিসেনার
+    taskInput.addEventListener('paste', (event) => {
+        const items = (event.clipboardData || window.clipboardData).items;
+        for (const item of items) {
+            if (item.type.indexOf('image') !== -1) {
+                event.preventDefault(); // ডিফল্ট পেস্ট আচরণ বন্ধ করুন
+                const blob = item.getAsFile();
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    addImageTask(e.target.result); // নতুন টাস্ক হিসেবে ছবিটি যোগ করুন
+                };
+                reader.readAsDataURL(blob);
+                return; // শুধুমাত্র প্রথম ছবিটি হ্যান্ডেল করুন
+            }
+        }
+    });
+
+    // ড্র্যাগ এবং ড্রপ করার সুবিধা
+    let draggingItem = null;
     taskList.addEventListener('dragstart', e => {
         if (e.target.classList.contains('task-item')) {
-            e.target.classList.add('dragging');
+            draggingItem = e.target;
+            setTimeout(() => e.target.classList.add('dragging'), 0);
         }
     });
 
     taskList.addEventListener('dragend', async e => {
-        if (e.target.classList.contains('task-item')) {
-            e.target.classList.remove('dragging');
+        if (draggingItem) {
+            draggingItem.classList.remove('dragging');
+            draggingItem = null;
             await saveTasks();
             updateTaskNumbers();
         }
@@ -8817,12 +8965,11 @@ async function saveTasks() {
     taskList.addEventListener('dragover', e => {
         e.preventDefault();
         const afterElement = getDragAfterElement(taskList, e.clientY);
-        const dragging = document.querySelector('.dragging');
-        if (dragging) {
+        if (draggingItem) {
             if (afterElement == null) {
-                taskList.appendChild(dragging);
+                taskList.appendChild(draggingItem);
             } else {
-                taskList.insertBefore(dragging, afterElement);
+                taskList.insertBefore(draggingItem, afterElement);
             }
         }
     });
@@ -8853,6 +9000,7 @@ async function saveTasks() {
 // ====================================================================
 // END: NOTEPAD / TO-DO LIST SCRIPT
 // ====================================================================
+
 
 
 //নতুন কোনো ট্যাব যুক্ত করলে তার স্ক্রিপ্ট এটির আগে অ্যাড করতে হবে।
