@@ -8769,70 +8769,76 @@ async function initializeNotepad() {
         contentWrapper.style.flexGrow = '1';
         contentWrapper.style.cursor = 'pointer';
 
-        if (type === 'image') {
-            const imageContainer = document.createElement('div');
-            imageContainer.style.textAlign = 'justify';
+if (type === 'image') {
+    const imageContainer = document.createElement('div');
+    // textAlign স্টাইলের কোনো প্রয়োজন নেই, তাই এটি সরানো হয়েছে।
 
-            const imageEl = document.createElement('img');
-            imageEl.src = content;
-            imageEl.className = 'task-image';
-            imageEl.style.maxWidth = '100%';
-            imageEl.style.maxHeight = '300px';
-            imageEl.style.borderRadius = '8px';
-            imageEl.style.objectFit = 'contain';
-            imageEl.style.marginTop = '5px';
+    const imageEl = document.createElement('img');
+    imageEl.src = content;
+    imageEl.className = 'task-image';
+    
+    // --- পরিবর্তন শুরু ---
+    imageEl.style.width = '100%'; // ছবির প্রস্থকে কন্টেইনারের ১০০% করা হয়েছে।
+    imageEl.style.height = 'auto'; // ছবির আসল অনুপাত ঠিক রাখার জন্য উচ্চতা অটো করা হয়েছে।
+    imageEl.style.maxHeight = '300px'; // ছবিটি যেন অতিরিক্ত লম্বা না হয়, তার জন্য সর্বোচ্চ উচ্চতা ঠিক রাখা হয়েছে।
+    imageEl.style.objectFit = 'cover'; // ছবিটি যেন সুন্দরভাবে পুরো জায়গা জুড়ে থাকে।
+    // --- পরিবর্তন শেষ ---
 
-            const captionEl = document.createElement('p');
-            captionEl.className = 'task-image-caption';
-            captionEl.innerText = caption || 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...';
-            captionEl.style.fontSize = '0.9em';
-            captionEl.style.color = 'grey';
-            captionEl.style.marginTop = '8px';
-            captionEl.style.padding = '4px';
-            captionEl.style.borderRadius = '4px';
-            captionEl.style.wordBreak = 'break-word';
+    imageEl.style.borderRadius = '8px';
+    imageEl.style.marginTop = '5px';
 
-            // ক্যাপশন এডিট করার ফাংশন
-            const enableCaptionEdit = (e) => {
-                e.stopPropagation();
-                if (captionEl.innerText === 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...') {
-                    captionEl.innerText = '';
-                }
-                captionEl.contentEditable = true;
-                captionEl.focus();
-                captionEl.style.outline = '2px solid #3b82f6';
-                const originalCaption = captionEl.innerText;
+    const captionEl = document.createElement('p');
+    captionEl.className = 'task-image-caption';
+    captionEl.innerText = caption || 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...';
+    captionEl.style.fontSize = '0.9em';
+    captionEl.style.color = 'grey';
+    captionEl.style.marginTop = '8px';
+    captionEl.style.padding = '4px';
+    captionEl.style.borderRadius = '4px';
+    captionEl.style.wordBreak = 'break-word';
+	captionEl.style.textAlign = 'justify'; // এই লাইনটি যোগ করা হয়েছে
 
-                const saveOnBlur = async () => {
-                    captionEl.contentEditable = false;
-                    captionEl.style.outline = 'none';
-                    if (captionEl.innerText.trim() === '') {
-                        captionEl.innerText = 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...';
-                    }
-                    if (captionEl.innerText !== originalCaption) {
-                        await saveTasks();
-                    }
-                };
-                captionEl.addEventListener('blur', saveOnBlur, { once: true });
-                captionEl.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        captionEl.blur();
-                    } else if (e.key === 'Escape') {
-                        captionEl.innerText = originalCaption;
-                        captionEl.blur();
-                    }
-                });
-            };
+    // ক্যাপশন এডিট করার ফাংশন
+    const enableCaptionEdit = (e) => {
+        e.stopPropagation();
+        if (captionEl.innerText === 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...') {
+            captionEl.innerText = '';
+        }
+        captionEl.contentEditable = true;
+        captionEl.focus();
+        captionEl.style.outline = '2px solid #3b82f6';
+        const originalCaption = captionEl.innerText;
 
-            imageEl.addEventListener('dblclick', enableCaptionEdit);
-            captionEl.addEventListener('dblclick', enableCaptionEdit);
-            
-            imageContainer.appendChild(imageEl);
-            imageContainer.appendChild(captionEl);
-            contentWrapper.appendChild(imageContainer);
-            
-        } else { // ডিফল্ট হিসেবে টেক্সট
+        const saveOnBlur = async () => {
+            captionEl.contentEditable = false;
+            captionEl.style.outline = 'none';
+            if (captionEl.innerText.trim() === '') {
+                captionEl.innerText = 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...';
+            }
+            if (captionEl.innerText !== originalCaption) {
+                await saveTasks();
+            }
+        };
+        captionEl.addEventListener('blur', saveOnBlur, { once: true });
+        captionEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                captionEl.blur();
+            } else if (e.key === 'Escape') {
+                captionEl.innerText = originalCaption;
+                captionEl.blur();
+            }
+        });
+    };
+
+    imageEl.addEventListener('dblclick', enableCaptionEdit);
+    captionEl.addEventListener('dblclick', enableCaptionEdit);
+    
+    imageContainer.appendChild(imageEl);
+    imageContainer.appendChild(captionEl);
+    contentWrapper.appendChild(imageContainer);
+    
+} else { // ডিফল্ট হিসেবে টেক্সট
             const textSpan = document.createElement('span');
             textSpan.className = 'task-text';
             textSpan.innerText = content;
