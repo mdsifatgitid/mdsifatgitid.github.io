@@ -8825,15 +8825,16 @@ async function initializeNotepad() {
     
     // ফরম্যাটিং কমান্ড প্রয়োগ করার ফাংশন (আপডেট করা)
     const applyFormat = (command) => {
-        // সেভ করা সিলেকশন পুনরুদ্ধার করুন
         const selection = window.getSelection();
-        if (savedRange) {
-            selection.removeAllRanges();
-            selection.addRange(savedRange);
+        if (savedRange && selection.rangeCount === 0) {
+             selection.addRange(savedRange);
+        } else if (selection.rangeCount > 0) {
+             savedRange = selection.getRangeAt(0).cloneRange();
         }
 
+
         if (command === 'increaseFontSize' || command === 'decreaseFontSize') {
-            document.execCommand("fontSize", false, "1");
+            document.execCommand("fontSize", false, "1"); // একটি অস্থায়ী ফন্ট সাইজ প্রয়োগ করা হয়
             const fontElements = (currentTargetElement || document).getElementsByTagName("font");
             Array.from(fontElements).forEach(fontElement => {
                 if (fontElement.size == "1") {
@@ -8849,12 +8850,34 @@ async function initializeNotepad() {
             });
 
         } else if (command === 'removeFormat') {
-             document.execCommand('removeFormat', false, null);
-             document.execCommand('unlink', false, null);
+            if (!selection || selection.rangeCount === 0) return;
+
+            const range = selection.getRangeAt(0);
+            const contentFragment = range.extractContents();
+
+            const tempDiv = document.createElement('div');
+            tempDiv.appendChild(contentFragment);
+            
+            // শুধুমাত্র <br> ট্যাগ বাদে বাকি সব HTML ট্যাগ মুছে ফেলা হচ্ছে
+            const cleanedHtml = tempDiv.innerHTML.replace(/<\/?(?!(br|BR)\s*\/?)[^>]+>/g, '');
+            
+            // আগের সিলেকশনের জায়গায় পরিষ্কার করা HTML কোডটি বসানো হচ্ছে
+            // এটি লাইন ব্রেক (এন্টার কী) ঠিক রাখতে সাহায্য করবে
+            document.execCommand('insertHTML', false, cleanedHtml);
+            
+            saveTasks(); // পরিবর্তন সেভ করা হচ্ছে
+
         } else {
             document.execCommand(command, false, null);
         }
-        if(currentTargetElement) currentTargetElement.focus();
+
+        if(currentTargetElement) {
+            currentTargetElement.focus();
+            const currentSelection = window.getSelection();
+            if (currentSelection.rangeCount > 0) {
+                savedRange = currentSelection.getRangeAt(0).cloneRange();
+            }
+        }
     };
 
     actionToolbar.addEventListener('mousedown', (e) => {
@@ -8993,11 +9016,42 @@ async function initializeNotepad() {
         `;
 
         actionsDiv.querySelector('.pin').addEventListener('click', async () => { li.classList.toggle('pinned'); await saveTasks(); await loadTasks(); });
+        
         actionsDiv.querySelector('.copy').addEventListener('click', () => {
              if (type === 'text') {
+                const contentToCopy = li.querySelector('.task-text').innerHTML;
+                
+                // Create a temporary element to hold the rich text content
                 const tempEl = document.createElement('div');
-                tempEl.innerHTML = li.querySelector('.task-text').innerHTML;
-                navigator.clipboard.writeText(tempEl.innerText).then(() => showCustomAlert('নোটের লেখা কপি করা হয়েছে!'));
+                tempEl.style.position = 'absolute';
+                tempEl.style.left = '-9999px'; // Move it off-screen
+                tempEl.innerHTML = contentToCopy;
+                document.body.appendChild(tempEl);
+
+                try {
+                    // Select the content of the temporary element
+                    const range = document.createRange();
+                    range.selectNodeContents(tempEl);
+                    const selection = window.getSelection();
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+
+                    // Execute the copy command
+                    const successful = document.execCommand('copy');
+                    if (successful) {
+                        showCustomAlert('নোটের লেখা ফরম্যাটিং সহ কপি করা হয়েছে!');
+                    } else {
+                        showCustomAlert('কপি করতে ব্যর্থ হয়েছে।');
+                    }
+                } catch (err) {
+                    console.error('কপি করতে ব্যর্থ:', err);
+                    showCustomAlert('কপি করতে ব্যর্থ হয়েছে। অনুগ্রহ করে ম্যানুয়ালি কপি করুন।');
+                } finally {
+                    // Clean up: remove the temporary element and clear selection
+                    document.body.removeChild(tempEl);
+                    window.getSelection().removeAllRanges();
+                }
+
             } else if (type === 'image') {
                 const capEl = li.querySelector('.task-image-caption');
                 if (capEl && capEl.innerText && capEl.innerText !== 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...') {
@@ -9007,6 +9061,7 @@ async function initializeNotepad() {
                 }
             }
         });
+
         actionsDiv.querySelector('.delete').addEventListener('click', async () => { li.remove(); await saveTasks(); updateTaskNumbers(); });
 
         li.appendChild(numberSpan);
@@ -9017,11 +9072,10 @@ async function initializeNotepad() {
     
     addTaskBtn.addEventListener('click', addTextTask);
 
-    // ইনপুট বক্সের জন্য এন্টার কী-এর আচরণ পরিবর্তন করা হয়েছে
     taskInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault(); // ডিফল্ট নতুন <p> বা <div> ট্যাগ তৈরি করা বন্ধ করুন
-            document.execCommand('insertLineBreak'); // এর পরিবর্তে একটি <br> ট্যাগ যুক্ত করুন
+            e.preventDefault();
+            document.execCommand('insertLineBreak');
         }
     });
 
