@@ -2815,6 +2815,11 @@ input:checked + .slider:before {
     color: #90cdf4;
 }
 
+ /* প্রিসেট ড্রপডাউন বাটনের জন্য নতুন CSS */
+    #presetButtonLeft.open svg, #presetButtonRight.open svg {
+        transform: rotate(180deg);
+    }
+
 /* নতুন: নোটপ্যাড / টু-ডু লিস্ট স্টাইল (আপডেট করা) */
 .notepad-container {
     padding: 20px;
@@ -3021,13 +3026,83 @@ input:checked + .slider:before {
     display: none;
 }
 
+/* নতুন: নোটপ্যাড টেক্সট ফরম্যাটিং অ্যাকশন বার */
+.notepad-action-toolbar {
+    position: absolute;
+    z-index: 10;
+    background-color: #374151; /* bg-gray-700 */
+    color: white;
+    border-radius: 8px;
+    padding: 4px;
+    display: none; /* প্রাথমিকভাবে লুকানো থাকবে */
+    gap: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
+}
 
+.toolbar-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
 
+.toolbar-btn:hover {
+    background-color: #4b5563; /* bg-gray-600 */
+}
 
- /* প্রিসেট ড্রপডাউন বাটনের জন্য নতুন CSS */
-    #presetButtonLeft.open svg, #presetButtonRight.open svg {
-        transform: rotate(180deg);
-    }
+/* ইনপুট বক্সকে div হিসাবে স্টাইল করা */
+.task-input[contenteditable="true"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #eaf6ff;
+    border: 1px solid #cce7ff;
+    border-radius: 10px;
+    color: #333;
+    flex-grow: 1;
+    font-size: 1rem;
+    line-height: 1.5;
+    min-height: 80px;
+    padding: 12px;
+    resize: vertical;
+    overflow-y: auto; /* textarea-এর মতো স্ক্রোল যুক্ত করা */
+    text-align: justify;
+}
+.dark .task-input[contenteditable="true"] {
+    background-color: #4a5568;
+    border-color: #718096;
+    color: #f7fafc;
+}
+
+/* প্লেসহোল্ডার সিমুলেশন */
+.task-input[contenteditable="true"]:empty::before {
+    content: attr(data-placeholder);
+    color: #6b7280; /* text-gray-500 */
+    pointer-events: none;
+}
+.dark .task-input[contenteditable="true"]:empty::before {
+    color: #9ca3af; /* text-gray-400 */
+}
+
+/* task-text এর জন্য overflow-wrap property যোগ করা হয়েছে */
+.task-item .task-text {
+    flex-grow: 1;
+    text-align: justify;
+    cursor: pointer;
+    white-space: pre-wrap;
+    display: block;
+    overflow-wrap: break-word; /* লম্বা শব্দ ভাঙার জন্য */
+    word-break: break-word;    /* অতিরিক্ত সুরক্ষার জন্য */
+}
 
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে -->
@@ -4135,13 +4210,33 @@ input:checked + .slider:before {
 <!-- আবহাওয়া সেকশন শেষ -->
 </div>
 
-<!-- নতুন: নোটপ্যাড / টু-ডু লিস্ট বিভাগ -->
+<!-- নতুন: নোটপ্যাড / টু-ডু লিস্ট বিভাগ (ফরম্যাটিং বার সহ) -->
 <div id="notepadContent" class="calculator-content">
-    <div class="notepad-container">
+    <div class="notepad-container relative"> <!-- Toolbar-এর পজিশনের জন্য relative ক্লাস যুক্ত করা হয়েছে -->
         <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">নোটপ্যাড / টু-ডু লিস্ট</h3>
         <p class="text-gray-600 dark:text-gray-400 mb-4">আপনার কাজ বা নোট যোগ করুন অথবা ছবি পেস্ট করুন। ব্রাউজার বন্ধ করলেও আপনার ডেটা সেভ থাকবে। কাজ শেষ হলে লেখার ওপর ক্লিক করুন।</p>
+        
+        <!-- ফরম্যাটিং অ্যাকশন বার -->
+        <div id="notepadActionToolbar" class="notepad-action-toolbar flex">
+            <button class="toolbar-btn" data-command="bold" title="বোল্ড (Ctrl+B)"><b>B</b></button>
+            <button class="toolbar-btn" data-command="italic" title="ইটালিক (Ctrl+I)"><i>I</i></button>
+            <button class="toolbar-btn" data-command="underline" title="আন্ডারলাইন (Ctrl+U)"><u>U</u></button>
+            <button class="toolbar-btn" data-command="increaseFontSize" title="ফন্ট বড় করুন">A+</button>
+            <button class="toolbar-btn" data-command="decreaseFontSize" title="ফন্ট ছোট করুন">A-</button>
+            <button class="toolbar-btn" data-command="justifyLeft" title="বামে অ্যালাইন">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18v2H3V4zm0 14h12v2H3v-2zm0-7h18v2H3v-2z"></path></svg>
+            </button>
+            <button class="toolbar-btn" data-command="justifyCenter" title="মাঝে অ্যালাইন">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18v2H3V4zm3 14h12v2H6v-2zm-3-7h18v2H3v-2z"></path></svg>
+            </button>
+            <button class="toolbar-btn" data-command="justifyRight" title="ডানে অ্যালাইন">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18v2H3V4zm9 14h9v2h-9v-2zm-9-7h18v2H3v-2z"></path></svg>
+            </button>
+        </div>
+
         <div class="notepad-input-area">
-            <textarea id="taskInput" placeholder="এখানে নতুন কাজ বা নোট লিখুন..." class="task-input" rows="4"></textarea>
+            <!-- Textarea-কে contenteditable div দিয়ে প্রতিস্থাপন করা হয়েছে -->
+            <div id="taskInput" class="task-input" contenteditable="true" data-placeholder="এখানে নতুন কাজ বা নোট লিখুন..."></div>
             <button id="addTaskBtn" class="add-task-btn">যোগ করুন</button>
         </div>
         <ul id="taskList" class="task-list">
@@ -8664,359 +8759,280 @@ if (wordCounterContent && wordCounterContent.classList.contains('active')) {
 
 
 // ====================================================================
-// START: NOTEPAD / TO-DO LIST SCRIPT (UPDATED WITH IMAGE SUPPORT)
+// START: NOTEPAD / TO-DO LIST SCRIPT (UPDATED WITH FORMATTING TOOLBAR)
 // ====================================================================
 async function initializeNotepad() {
-    const taskInput = document.getElementById('taskInput');
+    const taskInput = document.getElementById('taskInput'); // now a div
     const addTaskBtn = document.getElementById('addTaskBtn');
     const taskList = document.getElementById('taskList');
+    const actionToolbar = document.getElementById('notepadActionToolbar');
 
-    if (!taskInput || !addTaskBtn || !taskList) return;
+    if (!taskInput || !addTaskBtn || !taskList || !actionToolbar) return;
 
-    // IndexedDB থেকে টাস্ক লোড করে ট্যাবটি চালু করুন
+    // --- Action Toolbar Logic ---
+    let currentTargetElement = null; // কোন এলিমেন্ট এডিট করা হচ্ছে তা ট্র্যাক করার জন্য
+
+    const showToolbar = () => {
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0 && !selection.isCollapsed) { // শুধু টেক্সট সিলেক্ট করা থাকলেই দেখাবে
+            const range = selection.getRangeAt(0);
+            const rect = range.getBoundingClientRect();
+            const containerRect = taskList.closest('.notepad-container').getBoundingClientRect();
+
+            actionToolbar.style.display = 'flex';
+            
+            // সামান্য ডিলে দিয়ে অপাসিটি পরিবর্তন করা হয় যাতে ট্রানজিশন কাজ করে
+            setTimeout(() => {
+                actionToolbar.style.opacity = '1';
+                actionToolbar.style.transform = 'translateY(0)';
+            }, 10);
+            
+            // টুলবারকে সিলেকশনের ওপরে পজিশন করা
+            let top = rect.top - containerRect.top - actionToolbar.offsetHeight - 8;
+            let left = rect.left - containerRect.left + (rect.width / 2) - (actionToolbar.offsetWidth / 2);
+
+            // টুলবার যেন কন্টেইনারের বাইরে না যায় তা নিশ্চিত করা
+            if (top < 0) {
+                top = rect.bottom - containerRect.top + 8; // ওপরে জায়গা না থাকলে নিচে দেখানো
+            }
+            if (left < 0) left = 5;
+            if (left + actionToolbar.offsetWidth > containerRect.width) {
+                left = containerRect.width - actionToolbar.offsetWidth - 5;
+            }
+
+            actionToolbar.style.top = `${top}px`;
+            actionToolbar.style.left = `${left}px`;
+        } else {
+            hideToolbar();
+        }
+    };
+
+    const hideToolbar = () => {
+        actionToolbar.style.opacity = '0';
+        actionToolbar.style.transform = 'translateY(-10px)';
+        setTimeout(() => {
+            if (actionToolbar.style.opacity === '0') {
+                actionToolbar.style.display = 'none';
+            }
+        }, 150); // ট্রানজিশন শেষ হওয়ার জন্য অপেক্ষা
+    };
+    
+    // ফরম্যাটিং কমান্ড প্রয়োগ করার ফাংশন
+    const applyFormat = (command) => {
+        // ফন্ট সাইজ পরিবর্তনের জন্য বিশেষ ব্যবস্থা
+        if (command === 'increaseFontSize' || command === 'decreaseFontSize') {
+            document.execCommand('fontSize', false, '1'); // একটি অস্থায়ী ফন্ট সাইজ প্রয়োগ করা হয়
+            const fontElements = currentTargetElement.getElementsByTagName('font');
+            Array.from(fontElements).forEach(font => {
+                // শুধু আমাদের অস্থায়ী সাইজযুক্ত ফন্ট ট্যাগ পরিবর্তন করা হবে
+                if (font.size === '1') {
+                    const parent = font.parentNode;
+                    const currentSize = parseFloat(window.getComputedStyle(parent, null).getPropertyValue('font-size'));
+                    let newSize = currentSize + (command === 'increaseFontSize' ? 2 : -2);
+                    if (newSize < 10) newSize = 10;
+                    if (newSize > 48) newSize = 48;
+                    
+                    const span = document.createElement('span');
+                    span.style.fontSize = `${newSize}px`;
+                    span.innerHTML = font.innerHTML;
+                    font.parentNode.replaceChild(span, font);
+                }
+            });
+        } else {
+            document.execCommand(command, false, null);
+        }
+        if(currentTargetElement) currentTargetElement.focus();
+    };
+
+    actionToolbar.addEventListener('mousedown', (e) => {
+        e.preventDefault(); // সিলেকশন হারানো থেকে বিরত রাখতে
+        const button = e.target.closest('.toolbar-btn');
+        if (button) {
+            const command = button.dataset.command;
+            applyFormat(command);
+        }
+    });
+    
+    // সিলেকশন পরিবর্তন হলে টুলবার দেখানো বা লুকানো
+    document.addEventListener('selectionchange', () => {
+        const selection = window.getSelection();
+        const parent = selection.anchorNode ? (selection.anchorNode.nodeType === 3 ? selection.anchorNode.parentNode : selection.anchorNode) : null;
+        if(parent && parent.closest('.notepad-container [contenteditable="true"]')){
+             currentTargetElement = parent.closest('[contenteditable="true"]');
+             showToolbar();
+        } else {
+            hideToolbar();
+        }
+    });
+
+    // বাইরে ক্লিক করলে টুলবার লুকানো
+    document.addEventListener('mousedown', (e) => {
+        if (!e.target.closest('.notepad-action-toolbar') && !e.target.closest('[contenteditable="true"]')) {
+            hideToolbar();
+        }
+    });
+
+    // --- Core Notepad Logic (Updated for contenteditable) ---
     await loadTasks();
 
-    // নতুন টেক্সট টাস্ক যোগ করার ফাংশন
     async function addTextTask() {
-        const text = taskInput.value.trim();
-        if (text === '') {
+        const content = taskInput.innerHTML.trim();
+        if (content === '') {
             showCustomAlert('অনুগ্রহ করে একটি কাজ বা নোট লিখুন।');
             return;
         }
-        // নতুন টেক্সট নোটের জন্য একটি টাস্ক অবজেক্ট তৈরি করুন
-        const taskObject = {
-            type: 'text',
-            content: text,
-            completed: false,
-            pinned: false
-        };
-        createTaskElement(taskObject);
-        taskInput.value = '';
+        createTaskElement({ type: 'text', content, completed: false, pinned: false });
+        taskInput.innerHTML = '';
         await saveTasks();
-        await loadTasks(); // পিন করা আইটেমের ক্রম ঠিক রাখতে রিলোড করুন
+        await loadTasks();
     }
 
-    // নতুন ইমেজ টাস্ক যোগ করার ফাংশন
     async function addImageTask(base64Image) {
         if (!base64Image) return;
-        const taskObject = {
-            type: 'image',
-            content: base64Image,
-            caption: '', // ছবির জন্য ক্যাপশন যোগ করা হয়েছে
-            completed: false,
-            pinned: false
-        };
-        createTaskElement(taskObject);
-		showCustomAlert('ছবি সফলভাবে যোগ করা হয়েছে!'); // কাস্টম অ্যালার্ট যোগ করা হয়েছে
+        createTaskElement({ type: 'image', content: base64Image, caption: '', completed: false, pinned: false });
+        showCustomAlert('ছবি সফলভাবে যোগ করা হয়েছে!');
         await saveTasks();
-        await loadTasks(); // পিন করা আইটেমের ক্রম ঠিক রাখতে রিলোড করুন
+        await loadTasks();
     }
 
-    // IndexedDB থেকে সমস্ত টাস্ক লোড করে প্রদর্শন করুন
     async function loadTasks() {
         let tasks = await idbGet('notepadTasks') || [];
-        // টাস্কগুলো সাজান: প্রথমে পিন করা আইটেম
         tasks.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
-        taskList.innerHTML = ''; // বর্তমান তালিকা পরিষ্কার করুন
+        taskList.innerHTML = '';
         tasks.forEach(task => createTaskElement(task));
         updateTaskNumbers();
     }
 
-    // বর্তমান টাস্কের তালিকা IndexedDB-তে সেভ করুন
     async function saveTasks() {
-        const tasks = [];
-        document.querySelectorAll('.task-item').forEach(item => {
+        const tasks = Array.from(document.querySelectorAll('.task-item')).map(item => {
             const textSpan = item.querySelector('.task-text');
             const imageEl = item.querySelector('.task-image');
-
             if (textSpan) {
-                tasks.push({
-                    type: 'text',
-                    content: textSpan.innerText,
-                    completed: item.classList.contains('completed'),
-                    pinned: item.classList.contains('pinned')
-                });
+                return { type: 'text', content: textSpan.innerHTML, completed: item.classList.contains('completed'), pinned: item.classList.contains('pinned') };
             } else if (imageEl) {
-                // ছবির ক্যাপশন সেভ করা হচ্ছে
                 const captionEl = item.querySelector('.task-image-caption');
-                tasks.push({
-                    type: 'image',
-                    content: imageEl.src,
-                    caption: captionEl ? captionEl.innerText : '',
-                    completed: item.classList.contains('completed'),
-                    pinned: item.classList.contains('pinned')
-                });
+                return { type: 'image', content: imageEl.src, caption: captionEl ? captionEl.innerText : '', completed: item.classList.contains('completed'), pinned: item.classList.contains('pinned') };
             }
-        });
+            return null;
+        }).filter(Boolean);
         await idbSet('notepadTasks', tasks);
     }
-
-    // একটি টাস্ক এলিমেন্ট (টেক্সট বা ছবি) তৈরি করে তালিকায় যোগ করুন
+    
     function createTaskElement(task) {
-        const { type, content, completed, pinned } = task;
-        const caption = task.caption; // ক্যাপশন ভ্যারিয়েবল
+        const { type, content, completed, pinned, caption } = task;
 
         const li = document.createElement('li');
-        li.className = 'task-item';
+        li.className = `task-item ${completed ? 'completed' : ''} ${pinned ? 'pinned' : ''}`;
         li.setAttribute('draggable', 'true');
-        if (completed) li.classList.add('completed');
-        if (pinned) li.classList.add('pinned');
 
         const numberSpan = document.createElement('span');
         numberSpan.className = 'task-number';
 
         const contentWrapper = document.createElement('div');
         contentWrapper.style.flexGrow = '1';
-        contentWrapper.style.cursor = 'pointer';
 
-if (type === 'image') {
-    const imageContainer = document.createElement('div');
-    // textAlign স্টাইলের কোনো প্রয়োজন নেই, তাই এটি সরানো হয়েছে।
-
-    const imageEl = document.createElement('img');
-    imageEl.src = content;
-    imageEl.className = 'task-image';
-    
-    // --- পরিবর্তন শুরু ---
-    imageEl.style.width = '100%'; // ছবির প্রস্থকে কন্টেইনারের ১০০% করা হয়েছে।
-    imageEl.style.height = 'auto'; // ছবির আসল অনুপাত ঠিক রাখার জন্য উচ্চতা অটো করা হয়েছে।
-    imageEl.style.maxHeight = '300px'; // ছবিটি যেন অতিরিক্ত লম্বা না হয়, তার জন্য সর্বোচ্চ উচ্চতা ঠিক রাখা হয়েছে।
-    imageEl.style.objectFit = 'cover'; // ছবিটি যেন সুন্দরভাবে পুরো জায়গা জুড়ে থাকে।
-    // --- পরিবর্তন শেষ ---
-
-    imageEl.style.borderRadius = '8px';
-    imageEl.style.marginTop = '5px';
-
-    const captionEl = document.createElement('p');
-    captionEl.className = 'task-image-caption';
-    captionEl.innerText = caption || 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...';
-    captionEl.style.fontSize = '0.9em';
-    captionEl.style.color = 'grey';
-    captionEl.style.marginTop = '8px';
-    captionEl.style.padding = '4px';
-    captionEl.style.borderRadius = '4px';
-    captionEl.style.wordBreak = 'break-word';
-	captionEl.style.textAlign = 'justify'; // এই লাইনটি যোগ করা হয়েছে
-
-    // ক্যাপশন এডিট করার ফাংশন
-    const enableCaptionEdit = (e) => {
-        e.stopPropagation();
-        if (captionEl.innerText === 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...') {
-            captionEl.innerText = '';
-        }
-        captionEl.contentEditable = true;
-        captionEl.focus();
-        captionEl.style.outline = '2px solid #3b82f6';
-        const originalCaption = captionEl.innerText;
-
-        const saveOnBlur = async () => {
-            captionEl.contentEditable = false;
-            captionEl.style.outline = 'none';
-            if (captionEl.innerText.trim() === '') {
-                captionEl.innerText = 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...';
-            }
-            if (captionEl.innerText !== originalCaption) {
-                await saveTasks();
-            }
-        };
-        captionEl.addEventListener('blur', saveOnBlur, { once: true });
-        captionEl.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                captionEl.blur();
-            } else if (e.key === 'Escape') {
-                captionEl.innerText = originalCaption;
-                captionEl.blur();
-            }
-        });
-    };
-
-    imageEl.addEventListener('dblclick', enableCaptionEdit);
-    captionEl.addEventListener('dblclick', enableCaptionEdit);
-    
-    imageContainer.appendChild(imageEl);
-    imageContainer.appendChild(captionEl);
-    contentWrapper.appendChild(imageContainer);
-    
-} else { // ডিফল্ট হিসেবে টেক্সট
-            const textSpan = document.createElement('span');
-            textSpan.className = 'task-text';
-            textSpan.innerText = content;
-
-            // টেক্সট নোট এডিট করার জন্য ডাবল-ক্লিক করুন
-            textSpan.addEventListener('dblclick', (e) => {
-                e.stopPropagation(); // li-এর ক্লিক ইভেন্ট প্রতিরোধ করুন
-                textSpan.contentEditable = true;
-                textSpan.focus();
-                const originalText = textSpan.innerText;
-
+        if (type === 'image') {
+             contentWrapper.innerHTML = `
+                <div>
+                    <img src="${content}" class="task-image" style="width: 100%; height: auto; max-height: 300px; object-fit: cover; border-radius: 8px; margin-top: 5px;">
+                    <p class="task-image-caption" style="font-size: 0.9em; color: grey; margin-top: 8px; padding: 4px; border-radius: 4px; word-break: break-word; text-align: justify;">${caption || 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...'}</p>
+                </div>
+            `;
+            const captionEl = contentWrapper.querySelector('.task-image-caption');
+            const enableCaptionEdit = (e) => {
+                e.stopPropagation();
+                if (captionEl.innerText === 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...') captionEl.innerText = '';
+                captionEl.contentEditable = true;
+                captionEl.focus();
+                captionEl.style.outline = '2px solid #3b82f6';
+                const originalCaption = captionEl.innerText;
                 const saveOnBlur = async () => {
-                    textSpan.contentEditable = false;
-                    if (textSpan.innerText.trim() === '') {
-                        textSpan.innerText = originalText;
-                    }
-                    if (textSpan.innerText !== originalText) {
-                        await saveTasks();
-                    }
+                    captionEl.contentEditable = false;
+                    captionEl.style.outline = 'none';
+                    if (captionEl.innerText.trim() === '') captionEl.innerText = 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...';
+                    if (captionEl.innerText !== originalCaption) await saveTasks();
                 };
-
-                textSpan.addEventListener('blur', saveOnBlur, { once: true });
-                textSpan.addEventListener('keydown', (e) => {
-                    // সেভ করার জন্য Ctrl+Enter ব্যবহার করুন
-                    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                        e.preventDefault();
-                        textSpan.blur(); // এডিটিং মোড থেকে বের হতে ব্লার করুন
-                    } 
-                    // এস্কেপ চাপলে পরিবর্তন বাতিল করুন
-                    else if (e.key === 'Escape') {
-                        textSpan.innerText = originalText;
-                        textSpan.blur();
-                    }
-                    // সাধারণ Enter চাপলে নতুন লাইন তৈরি হবে (ডিফল্ট আচরণ)
-                });
-            });
+                captionEl.addEventListener('blur', saveOnBlur, { once: true });
+            };
+            contentWrapper.querySelector('.task-image').addEventListener('dblclick', enableCaptionEdit);
+            captionEl.addEventListener('dblclick', enableCaptionEdit);
+        } else {
+            const textSpan = document.createElement('div');
+            textSpan.className = 'task-text';
+            textSpan.innerHTML = content;
+            textSpan.contentEditable = true;
+            textSpan.spellcheck = false;
+            textSpan.addEventListener('blur', saveTasks);
             contentWrapper.appendChild(textSpan);
         }
 
-        // কন্টেন্ট অংশে ক্লিক করলে (বাটন ছাড়া) কাজ সম্পন্ন বা অসম্পন্ন হিসেবে টগল করুন
         contentWrapper.addEventListener('click', async (e) => {
-             if (e.target.isContentEditable) return;
-             li.classList.toggle('completed');
-             await saveTasks();
+            if (e.target.closest('[contenteditable="true"]')) return;
+            li.classList.toggle('completed');
+            await saveTasks();
         });
 
         const actionsDiv = document.createElement('div');
         actionsDiv.className = 'actions';
+        actionsDiv.innerHTML = `
+            <button class="action-btn pin ${pinned ? 'active' : ''}" title="পিন/আনপিন করুন"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4.146.146A.5.5 0 0 1 4.5 0h7a.5.5 0 0 1 .5.5c0 .68-.342 1.174-.646 1.479-.126.125-.25.224-.354.298v4.431l.078.048c.203.127.476.314.751.555C12.36 7.775 13 8.527 13 9.5a.5.5 0 0 1-.5.5h-4v4.5c0 .276-.224 1.5-.5 1.5s-.5-1.224-.5-1.5V10h-4a.5.5 0 0 1-.5-.5c0-.973.64-1.725 1.17-2.176a6 6 0 0 1 .751-.555l.078-.048V2.147a3.2 3.2 0 0 1-.354-.298C3.842 1.674 3.5 1.18 3.5.5a.5.5 0 0 1 .646-.354m.354 1.354a.5.5 0 0 0-.708 0l-.5.5A.5.5 0 0 0 3 2.5V3h10V2.5a.5.5 0 0 0-.293-.45l-.5-.5a.5.5 0 0 0-.707 0l-.001.002-.002.001-.002.001a.5.5 0 0 1-.17.036H5.02a.5.5 0 0 1-.17-.036l-.002-.001-.002-.001L4.5 1.5z"/></svg></button>
+            <button class="action-btn copy" title="কপি করুন"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg></button>
+            <button class="action-btn delete" title="মুছে ফেলুন"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>
+        `;
 
-        // পিন বাটন
-        const pinBtn = document.createElement('button');
-        pinBtn.className = 'action-btn pin';
-        if (pinned) pinBtn.classList.add('active');
-        pinBtn.title = 'পিন/আনপিন করুন';
-        pinBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4.146.146A.5.5 0 0 1 4.5 0h7a.5.5 0 0 1 .5.5c0 .68-.342 1.174-.646 1.479-.126.125-.25.224-.354.298v4.431l.078.048c.203.127.476.314.751.555C12.36 7.775 13 8.527 13 9.5a.5.5 0 0 1-.5.5h-4v4.5c0 .276-.224 1.5-.5 1.5s-.5-1.224-.5-1.5V10h-4a.5.5 0 0 1-.5-.5c0-.973.64-1.725 1.17-2.176a6 6 0 0 1 .751-.555l.078-.048V2.147a3.2 3.2 0 0 1-.354-.298C3.842 1.674 3.5 1.18 3.5.5a.5.5 0 0 1 .646-.354m.354 1.354a.5.5 0 0 0-.708 0l-.5.5A.5.5 0 0 0 3 2.5V3h10V2.5a.5.5 0 0 0-.293-.45l-.5-.5a.5.5 0 0 0-.707 0l-.001.002-.002.001-.002.001a.5.5 0 0 1-.17.036H5.02a.5.5 0 0 1-.17-.036l-.002-.001-.002-.001L4.5 1.5z"/></svg>`;
-        pinBtn.addEventListener('click', async () => {
-            li.classList.toggle('pinned');
-            await saveTasks();
-            await loadTasks();
-        });
-
-        // কপি বাটন
-        const copyBtn = document.createElement('button');
-        copyBtn.className = 'action-btn copy';
-        copyBtn.title = 'কপি করুন';
-        copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>`;
-        copyBtn.addEventListener('click', () => {
-            if (type === 'text') {
-                navigator.clipboard.writeText(content).then(() => showCustomAlert('নোট কপি করা হয়েছে!'));
+        actionsDiv.querySelector('.pin').addEventListener('click', async () => { li.classList.toggle('pinned'); await saveTasks(); await loadTasks(); });
+        actionsDiv.querySelector('.copy').addEventListener('click', () => {
+             if (type === 'text') {
+                const tempEl = document.createElement('div');
+                tempEl.innerHTML = li.querySelector('.task-text').innerHTML;
+                navigator.clipboard.writeText(tempEl.innerText).then(() => showCustomAlert('নোটের লেখা কপি করা হয়েছে!'));
             } else if (type === 'image') {
-                const captionEl = li.querySelector('.task-image-caption');
-                if (captionEl && captionEl.innerText && captionEl.innerText !== 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...') {
-                    navigator.clipboard.writeText(captionEl.innerText).then(() => showCustomAlert('ছবির ক্যাপশন কপি করা হয়েছে!'));
+                const capEl = li.querySelector('.task-image-caption');
+                if (capEl && capEl.innerText && capEl.innerText !== 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...') {
+                    navigator.clipboard.writeText(capEl.innerText).then(() => showCustomAlert('ছবির ক্যাপশন কপি করা হয়েছে!'));
                 } else {
                     showCustomAlert('ছবি সরাসরি কপি করা যায় না এবং কোনো ক্যাপশন নেই।');
                 }
             }
         });
-
-        // ডিলেট বাটন
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'action-btn delete';
-        deleteBtn.title = 'মুছে ফেলুন';
-        deleteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>`;
-        deleteBtn.addEventListener('click', async () => {
-            li.remove();
-            await saveTasks();
-            updateTaskNumbers();
-        });
-
-        actionsDiv.appendChild(pinBtn);
-        actionsDiv.appendChild(copyBtn);
-        actionsDiv.appendChild(deleteBtn);
+        actionsDiv.querySelector('.delete').addEventListener('click', async () => { li.remove(); await saveTasks(); updateTaskNumbers(); });
 
         li.appendChild(numberSpan);
         li.appendChild(contentWrapper);
         li.appendChild(actionsDiv);
         taskList.appendChild(li);
     }
-
-    // --- ইভেন্ট লিসেনার ---
+    
     addTaskBtn.addEventListener('click', addTextTask);
 
-    // keydown listener টি সরানো হয়েছে যাতে Enter চাপলে নতুন লাইন তৈরি হয়
+    taskInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addTextTask(); } });
 
-    // ছবি পেস্ট করার জন্য ইভেন্ট লিসেনার
     taskInput.addEventListener('paste', (event) => {
         const items = (event.clipboardData || window.clipboardData).items;
-        for (const item of items) {
-            if (item.type.indexOf('image') !== -1) {
-                event.preventDefault(); // ডিফল্ট পেস্ট আচরণ বন্ধ করুন
-                const blob = item.getAsFile();
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    addImageTask(e.target.result); // নতুন টাস্ক হিসেবে ছবিটি যোগ করুন
-                };
-                reader.readAsDataURL(blob);
-                return; // শুধুমাত্র প্রথম ছবিটি হ্যান্ডেল করুন
-            }
-        }
+        for (const item of items) { if (item.type.includes('image')) { event.preventDefault(); const blob = item.getAsFile(); const reader = new FileReader(); reader.onload = (e) => addImageTask(e.target.result); reader.readAsDataURL(blob); return; } }
     });
 
-    // ড্র্যাগ এবং ড্রপ করার সুবিধা
     let draggingItem = null;
-    taskList.addEventListener('dragstart', e => {
-        if (e.target.classList.contains('task-item')) {
-            draggingItem = e.target;
-            setTimeout(() => e.target.classList.add('dragging'), 0);
-        }
-    });
-
-    taskList.addEventListener('dragend', async e => {
-        if (draggingItem) {
-            draggingItem.classList.remove('dragging');
-            draggingItem = null;
-            await saveTasks();
-            updateTaskNumbers();
-        }
-    });
-
-    taskList.addEventListener('dragover', e => {
-        e.preventDefault();
-        const afterElement = getDragAfterElement(taskList, e.clientY);
-        if (draggingItem) {
-            if (afterElement == null) {
-                taskList.appendChild(draggingItem);
-            } else {
-                taskList.insertBefore(draggingItem, afterElement);
-            }
-        }
-    });
+    taskList.addEventListener('dragstart', e => { if (e.target.classList.contains('task-item')) { draggingItem = e.target; setTimeout(() => e.target.classList.add('dragging'), 0); } });
+    taskList.addEventListener('dragend', async () => { if (draggingItem) { draggingItem.classList.remove('dragging'); draggingItem = null; await saveTasks(); updateTaskNumbers(); } });
+    taskList.addEventListener('dragover', e => { e.preventDefault(); if (draggingItem) { const afterElement = getDragAfterElement(taskList, e.clientY); taskList.insertBefore(draggingItem, afterElement); } });
 
     function updateTaskNumbers() {
-        const taskItems = taskList.querySelectorAll('.task-item');
-        taskItems.forEach((task, index) => {
-            const numberEl = task.querySelector('.task-number');
-            if (numberEl) {
-                numberEl.textContent = index + 1;
-            }
-        });
+        taskList.querySelectorAll('.task-item').forEach((task, index) => { task.querySelector('.task-number').textContent = index + 1; });
     }
 
     function getDragAfterElement(container, y) {
-        const draggableElements = [...container.querySelectorAll('.task-item:not(.dragging)')];
-        return draggableElements.reduce((closest, child) => {
+        return [...container.querySelectorAll('.task-item:not(.dragging)')].reduce((closest, child) => {
             const box = child.getBoundingClientRect();
             const offset = y - box.top - box.height / 2;
-            if (offset < 0 && offset > closest.offset) {
-                return { offset: offset, element: child };
-            } else {
-                return closest;
-            }
+            return (offset < 0 && offset > closest.offset) ? { offset, element: child } : closest;
         }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 }
 // ====================================================================
-// END: NOTEPAD / TO-DO LIST SCRIPT
+// END: NOTEPAD SCRIPT
 // ====================================================================
+
 
 
 
