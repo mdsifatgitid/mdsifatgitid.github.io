@@ -4214,7 +4214,7 @@ input:checked + .slider:before {
 <div id="notepadContent" class="calculator-content">
     <div class="notepad-container relative"> <!-- Toolbar-এর পজিশনের জন্য relative ক্লাস যুক্ত করা হয়েছে -->
         <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">নোটপ্যাড / টু-ডু লিস্ট</h3>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">আপনার কাজ বা নোট যোগ করুন অথবা ছবি পেস্ট করুন। ব্রাউজার বন্ধ করলেও আপনার ডেটা সেভ থাকবে। কাজ শেষ হলে লেখার ওপর ক্লিক করুন।</p>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">আপনার কাজ বা নোট যোগ করুন। ব্রাউজার বন্ধ করলেও আপনার ডেটা সেভ থাকবে। ছবিও পেস্ট করে যুক্ত করা যাবে।</p>
         
         <!-- ফরম্যাটিং অ্যাকশন বার -->
         <div id="notepadActionToolbar" class="notepad-action-toolbar flex">
@@ -8857,12 +8857,18 @@ async function initializeNotepad() {
 
             const tempDiv = document.createElement('div');
             tempDiv.appendChild(contentFragment);
+            let processedHtml = tempDiv.innerHTML;
             
+            // অনুচ্ছেদ বা প্যারাগ্রাফের জন্য ব্যবহৃত div বা p ট্যাগের শেষে একটি লাইন ব্রেক (<br>) যোগ করা হচ্ছে
+            processedHtml = processedHtml.replace(/<\/(div|p)>/gi, '<br>');
+            
+            // যদি অতিরিক্ত লাইন ব্রেক তৈরি হয়, তবে সেগুলো একটিতে নামিয়ে আনা হচ্ছে
+            processedHtml = processedHtml.replace(/(<br\s*\/?>\s*){2,}/gi, '<br>');
+
             // শুধুমাত্র <br> ট্যাগ বাদে বাকি সব HTML ট্যাগ মুছে ফেলা হচ্ছে
-            const cleanedHtml = tempDiv.innerHTML.replace(/<\/?(?!(br|BR)\s*\/?)[^>]+>/g, '');
+            const cleanedHtml = processedHtml.replace(/<\/?(?!(br|BR)\s*\/?)[^>]+>/g, '');
             
             // আগের সিলেকশনের জায়গায় পরিষ্কার করা HTML কোডটি বসানো হচ্ছে
-            // এটি লাইন ব্রেক (এন্টার কী) ঠিক রাখতে সাহায্য করবে
             document.execCommand('insertHTML', false, cleanedHtml);
             
             saveTasks(); // পরিবর্তন সেভ করা হচ্ছে
