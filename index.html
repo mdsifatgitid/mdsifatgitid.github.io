@@ -4221,6 +4221,7 @@ input:checked + .slider:before {
             <button class="toolbar-btn" data-command="bold" title="বোল্ড (Ctrl+B)"><b>B</b></button>
             <button class="toolbar-btn" data-command="italic" title="ইটালিক (Ctrl+I)"><i>I</i></button>
             <button class="toolbar-btn" data-command="underline" title="আন্ডারলাইন (Ctrl+U)"><u>U</u></button>
+            <button class="toolbar-btn" data-command="strikeThrough" title="স্ট্রাইকথ্রু"><s>S</s></button>
             <button class="toolbar-btn" data-command="increaseFontSize" title="ফন্ট বড় করুন">A+</button>
             <button class="toolbar-btn" data-command="decreaseFontSize" title="ফন্ট ছোট করুন">A-</button>
             <button class="toolbar-btn" data-command="justifyLeft" title="বামে অ্যালাইন">
@@ -4231,6 +4232,14 @@ input:checked + .slider:before {
             </button>
             <button class="toolbar-btn" data-command="justifyRight" title="ডানে অ্যালাইন">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18v2H3V4zm9 14h9v2h-9v-2zm-9-7h18v2H3v-2z"></path></svg>
+            </button>
+            <button class="toolbar-btn" data-command="justifyFull" title="জাস্টিফাই">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18v2H3V4zm0 14h18v2H3v-2zm0-7h18v2H3v-2z"></path></svg>
+            </button>
+            <button class="toolbar-btn" data-command="removeFormat" title="ফরম্যাটিং মুছুন">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M9.134 11.634 6.866 4.366l1.23-.41L10.366 11.225zm-4.32-2.52- kullanılan.627-1.88L6.072 6.82l.627 1.884-1.885.63zm5.66-2.532.63-1.882 1.884.627-.629 1.883zM4.746 4.366l-1.23.41L1.28 11.225l1.23.41L4.746 4.366zM13.68 11.225l-2.234-6.699 1.23-.41 2.234 6.7zM2.58 12.04l.34-1.018H6.6l.339 1.018H2.58zM10.02 6.82l.63-1.882L12.532 5.57l-.63 1.883z"/>
+                </svg>
             </button>
         </div>
 
@@ -8771,30 +8780,27 @@ async function initializeNotepad() {
 
     // --- Action Toolbar Logic ---
     let currentTargetElement = null; // কোন এলিমেন্ট এডিট করা হচ্ছে তা ট্র্যাক করার জন্য
+    let savedRange = null; // সিলেকশন সেভ করার জন্য
 
     const showToolbar = () => {
         const selection = window.getSelection();
         if (selection.rangeCount > 0 && !selection.isCollapsed) { // শুধু টেক্সট সিলেক্ট করা থাকলেই দেখাবে
+            savedRange = selection.getRangeAt(0).cloneRange(); // সিলেকশন সেভ করুন
             const range = selection.getRangeAt(0);
             const rect = range.getBoundingClientRect();
             const containerRect = taskList.closest('.notepad-container').getBoundingClientRect();
 
             actionToolbar.style.display = 'flex';
             
-            // সামান্য ডিলে দিয়ে অপাসিটি পরিবর্তন করা হয় যাতে ট্রানজিশন কাজ করে
             setTimeout(() => {
                 actionToolbar.style.opacity = '1';
                 actionToolbar.style.transform = 'translateY(0)';
             }, 10);
             
-            // টুলবারকে সিলেকশনের ওপরে পজিশন করা
             let top = rect.top - containerRect.top - actionToolbar.offsetHeight - 8;
             let left = rect.left - containerRect.left + (rect.width / 2) - (actionToolbar.offsetWidth / 2);
 
-            // টুলবার যেন কন্টেইনারের বাইরে না যায় তা নিশ্চিত করা
-            if (top < 0) {
-                top = rect.bottom - containerRect.top + 8; // ওপরে জায়গা না থাকলে নিচে দেখানো
-            }
+            if (top < 0) top = rect.bottom - containerRect.top + 8;
             if (left < 0) left = 5;
             if (left + actionToolbar.offsetWidth > containerRect.width) {
                 left = containerRect.width - actionToolbar.offsetWidth - 5;
@@ -8814,30 +8820,37 @@ async function initializeNotepad() {
             if (actionToolbar.style.opacity === '0') {
                 actionToolbar.style.display = 'none';
             }
-        }, 150); // ট্রানজিশন শেষ হওয়ার জন্য অপেক্ষা
+        }, 150); 
     };
     
-    // ফরম্যাটিং কমান্ড প্রয়োগ করার ফাংশন
+    // ফরম্যাটিং কমান্ড প্রয়োগ করার ফাংশন (আপডেট করা)
     const applyFormat = (command) => {
-        // ফন্ট সাইজ পরিবর্তনের জন্য বিশেষ ব্যবস্থা
+        // সেভ করা সিলেকশন পুনরুদ্ধার করুন
+        const selection = window.getSelection();
+        if (savedRange) {
+            selection.removeAllRanges();
+            selection.addRange(savedRange);
+        }
+
         if (command === 'increaseFontSize' || command === 'decreaseFontSize') {
-            document.execCommand('fontSize', false, '1'); // একটি অস্থায়ী ফন্ট সাইজ প্রয়োগ করা হয়
-            const fontElements = currentTargetElement.getElementsByTagName('font');
-            Array.from(fontElements).forEach(font => {
-                // শুধু আমাদের অস্থায়ী সাইজযুক্ত ফন্ট ট্যাগ পরিবর্তন করা হবে
-                if (font.size === '1') {
-                    const parent = font.parentNode;
-                    const currentSize = parseFloat(window.getComputedStyle(parent, null).getPropertyValue('font-size'));
+            document.execCommand("fontSize", false, "1");
+            const fontElements = (currentTargetElement || document).getElementsByTagName("font");
+            Array.from(fontElements).forEach(fontElement => {
+                if (fontElement.size == "1") {
+                    const parent = fontElement.parentElement;
+                    const currentSize = parseFloat(window.getComputedStyle(parent, null).getPropertyValue('font-size')) || 16;
                     let newSize = currentSize + (command === 'increaseFontSize' ? 2 : -2);
                     if (newSize < 10) newSize = 10;
-                    if (newSize > 48) newSize = 48;
+                    if (newSize > 72) newSize = 72;
                     
-                    const span = document.createElement('span');
-                    span.style.fontSize = `${newSize}px`;
-                    span.innerHTML = font.innerHTML;
-                    font.parentNode.replaceChild(span, font);
+                    fontElement.removeAttribute("size");
+                    fontElement.style.fontSize = newSize + "px";
                 }
             });
+
+        } else if (command === 'removeFormat') {
+             document.execCommand('removeFormat', false, null);
+             document.execCommand('unlink', false, null);
         } else {
             document.execCommand(command, false, null);
         }
@@ -8845,7 +8858,7 @@ async function initializeNotepad() {
     };
 
     actionToolbar.addEventListener('mousedown', (e) => {
-        e.preventDefault(); // সিলেকশন হারানো থেকে বিরত রাখতে
+        e.preventDefault(); 
         const button = e.target.closest('.toolbar-btn');
         if (button) {
             const command = button.dataset.command;
@@ -8853,19 +8866,18 @@ async function initializeNotepad() {
         }
     });
     
-    // সিলেকশন পরিবর্তন হলে টুলবার দেখানো বা লুকানো
     document.addEventListener('selectionchange', () => {
         const selection = window.getSelection();
         const parent = selection.anchorNode ? (selection.anchorNode.nodeType === 3 ? selection.anchorNode.parentNode : selection.anchorNode) : null;
-        if(parent && parent.closest('.notepad-container [contenteditable="true"]')){
-             currentTargetElement = parent.closest('[contenteditable="true"]');
+        const editableParent = parent ? parent.closest('.notepad-container [contenteditable="true"]') : null;
+        if(editableParent){
+             currentTargetElement = editableParent;
              showToolbar();
         } else {
             hideToolbar();
         }
     });
 
-    // বাইরে ক্লিক করলে টুলবার লুকানো
     document.addEventListener('mousedown', (e) => {
         if (!e.target.closest('.notepad-action-toolbar') && !e.target.closest('[contenteditable="true"]')) {
             hideToolbar();
@@ -8877,7 +8889,7 @@ async function initializeNotepad() {
 
     async function addTextTask() {
         const content = taskInput.innerHTML.trim();
-        if (content === '') {
+        if (content === '' || content === '<br>') {
             showCustomAlert('অনুগ্রহ করে একটি কাজ বা নোট লিখুন।');
             return;
         }
@@ -9005,7 +9017,13 @@ async function initializeNotepad() {
     
     addTaskBtn.addEventListener('click', addTextTask);
 
-    taskInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addTextTask(); } });
+    // ইনপুট বক্সের জন্য এন্টার কী-এর আচরণ পরিবর্তন করা হয়েছে
+    taskInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault(); // ডিফল্ট নতুন <p> বা <div> ট্যাগ তৈরি করা বন্ধ করুন
+            document.execCommand('insertLineBreak'); // এর পরিবর্তে একটি <br> ট্যাগ যুক্ত করুন
+        }
+    });
 
     taskInput.addEventListener('paste', (event) => {
         const items = (event.clipboardData || window.clipboardData).items;
