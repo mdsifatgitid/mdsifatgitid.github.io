@@ -1189,6 +1189,97 @@
             transform: rotate(180deg);
         }
 
+/* BMI Calculator Styles - শুরু */
+.bmi-calculator {
+    font-family: 'Inter', sans-serif;
+    max-width: 450px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #f9fafb;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e7eb;
+}
+
+.bmi-title {
+    text-align: center;
+    color: #111827;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.bmi-subtitle {
+    text-align: center;
+    color: #6b7280;
+    margin-bottom: 2rem;
+}
+
+.bmi-input-group {
+    margin-bottom: 1.25rem;
+}
+
+.bmi-input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #374151;
+    font-weight: 500;
+}
+
+.bmi-input-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.bmi-input-group input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.bmi-height-inputs {
+    display: flex;
+    gap: 1rem;
+}
+
+#bmi-calculate-btn {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#bmi-calculate-btn:hover {
+    background-color: #1d4ed8;
+}
+
+.bmi-result-section {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    display: none; /* Initially hidden */
+}
+
+/* Result category styles */
+.bmi-underweight { background-color: #e0f2fe; color: #0c4a6e; border: 1px solid #bae6fd; }
+.bmi-normal { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.bmi-overweight { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.bmi-obese { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+/* BMI Calculator Styles - শেষ */
 
         /* টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগের নতুন স্টাইল */
         .text-assistant-content {
@@ -3550,6 +3641,33 @@ input:checked + .slider:before {
                     </div>
                 </div>
             </div>
+			<!-- BMI ক্যালকুলেটরের শুরু -->
+<div id="bmi-calculator-container" class="bmi-calculator">
+    <h3 class="bmi-title">বিএমআই (BMI) ক্যালকুলেটর</h3>
+    <p class="bmi-subtitle">আপনার ওজন ও উচ্চতা নিচের ঘরে লিখুন।</p>
+    
+    <!-- ওজন ইনপুট -->
+    <div class="bmi-input-group">
+        <label for="bmi-weight">ওজন (কেজি)</label>
+        <input type="number" id="bmi-weight" placeholder="যেমন: 70">
+    </div>
+    
+    <!-- উচ্চতা ইনপুট -->
+    <div class="bmi-input-group">
+        <label>উচ্চতা (ফিট ও ইঞ্চি)</label>
+        <div class="bmi-height-inputs">
+            <input type="number" id="bmi-height-feet" placeholder="ফিট">
+            <input type="number" id="bmi-height-inches" placeholder="ইঞ্চি">
+        </div>
+    </div>
+    
+    <!-- হিসাব করার বাটন -->
+    <button id="bmi-calculate-btn">হিসাব করুন</button>
+    
+    <!-- ফলাফল দেখানোর স্থান -->
+    <div id="bmi-result" class="bmi-result-section"></div>
+</div>
+<!-- BMI ক্যালকুলেটরের শেষ -->
         </div>
     </div>
 </div>
@@ -6052,6 +6170,76 @@ function initializeUnitConverters() {
         }
     });
 }
+// BMI Calculator Script - শুরু
+const weightInput = document.getElementById('bmi-weight');
+const heightFeetInput = document.getElementById('bmi-height-feet');
+const heightInchesInput = document.getElementById('bmi-height-inches');
+const calculateBtn = document.getElementById('bmi-calculate-btn');
+const resultDiv = document.getElementById('bmi-result');
+
+if (calculateBtn) {
+    calculateBtn.addEventListener('click', () => {
+        const weight = parseFloat(weightInput.value);
+        const feet = parseFloat(heightFeetInput.value) || 0;
+        const inches = parseFloat(heightInchesInput.value) || 0;
+
+        if (isNaN(weight) || weight <= 0) {
+            showResult('অনুগ্রহ করে সঠিক ওজন লিখুন।', 'bmi-obese');
+            return;
+        }
+
+        if ((isNaN(feet) && isNaN(inches)) || (feet <= 0 && inches <= 0)) {
+            showResult('অনুগ্রহ করে সঠিক উচ্চতা লিখুন।', 'bmi-obese');
+            return;
+        }
+
+        // Convert height to meters
+        const totalInches = (feet * 12) + inches;
+        const heightInMeters = totalInches * 0.0254;
+
+        if (heightInMeters <= 0) {
+            showResult('অনুগ্রহ করে সঠিক উচ্চতা লিখুন।', 'bmi-obese');
+            return;
+        }
+
+        // Calculate BMI
+        const bmi = weight / (heightInMeters * heightInMeters);
+        const bmiFormatted = bmi.toFixed(2);
+
+        // Determine BMI category
+        let category = '';
+        let categoryClass = '';
+        if (bmi < 18.5) {
+            category = 'কম ওজন (Underweight)';
+            categoryClass = 'bmi-underweight';
+        } else if (bmi >= 18.5 && bmi <= 24.9) {
+            category = 'স্বাভাবিক ওজন (Normal)';
+            categoryClass = 'bmi-normal';
+        } else if (bmi >= 25 && bmi <= 29.9) {
+            category = 'অতিরিক্ত ওজন (Overweight)';
+            categoryClass = 'bmi-overweight';
+        } else {
+            category = 'স্থূলতা (Obese)';
+            categoryClass = 'bmi-obese';
+        }
+
+        const resultText = `আপনার BMI: <strong>${bmiFormatted}</strong><br>আপনি '${category}' শ্রেণীতে আছেন।`;
+        showResult(resultText, categoryClass);
+    });
+}
+
+
+function showResult(message, className) {
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = message;
+    // Reset classes
+    resultDiv.className = 'bmi-result-section';
+    // Add new class
+    if(className) {
+        resultDiv.classList.add(className);
+    }
+}
+// BMI Calculator Script - শেষ
 // ====================================================================
 // END: UNIT CONVERTER (MEASUREMENT) SCRIPT (CORRECTED)
 // ====================================================================
