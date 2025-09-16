@@ -9150,6 +9150,7 @@ async function initializeNotepad() {
             return;
         }
         createTaskElement({ type: 'text', content, completed: false, pinned: false });
+		showCustomAlert('নোট সফলভাবে যোগ করা হয়েছে!'); // এই লাইনটি যোগ করুন
         taskInput.innerHTML = '';
         await saveTasks();
         await loadTasks();
