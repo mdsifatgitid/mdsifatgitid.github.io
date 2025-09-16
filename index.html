@@ -3230,6 +3230,212 @@ input:checked + .slider:before {
     word-break: break-word;    /* অতিরিক্ত সুরক্ষার জন্য */
 }
 
+/* নতুন: ঘড়ি ট্যাবের জন্য স্টাইল */
+.clock-container {
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 900px;
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+}
+.dark .clock-container {
+    background-color: #2d3748;
+}
+
+@media (min-width: 768px) {
+    .clock-container {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-areas:
+            "stopwatch alarm"
+            "world-clock world-clock";
+    }
+    .stopwatch { grid-area: stopwatch; }
+    .alarm { grid-area: alarm; }
+    .world-clock { grid-area: world-clock; }
+}
+
+.clock-section {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+.dark .clock-section {
+    background-color: #1a202c;
+    border-color: #4a5568;
+}
+
+.section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #3f51b5;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.dark .section-title {
+    color: #90cdf4;
+}
+
+/* স্টপওয়াচ স্টাইল */
+.stopwatch-display {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    color: #111827;
+    background-color: #e6f7ff;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+.dark .stopwatch-display {
+    background-color: #1e3a8a;
+    color: #e0f2fe;
+}
+.stopwatch-controls, .alarm-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.control-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+    transition: all 0.2s ease;
+}
+.control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.control-btn.start-btn { background-color: #28a745; }
+.control-btn.stop-btn { background-color: #dc3545; }
+.control-btn.reset-btn { background-color: #6c757d; }
+.control-btn.lap-btn { background-color: #007bff; }
+.laps-container {
+    margin-top: 20px;
+    max-height: 150px;
+    overflow-y: auto;
+    background-color: #f1f5f9;
+    border-radius: 8px;
+    padding: 10px;
+}
+.dark .laps-container {
+    background-color: #4a5568;
+}
+.laps-container h4 {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #475569;
+}
+.dark .laps-container h4 {
+    color: #cbd5e0;
+}
+#lapsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+#lapsList li {
+    padding: 8px;
+    border-bottom: 1px solid #e2e8f0;
+    font-family: 'Courier New', Courier, monospace;
+    display: flex;
+    justify-content: space-between;
+}
+.dark #lapsList li {
+    border-color: #718096;
+}
+
+/* অ্যালার্ম স্টাইল */
+.alarm-time-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.5rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.dark .alarm-time-input {
+    background-color: #4a5568;
+    border-color: #718096;
+    color: #f7fafc;
+}
+.control-btn.set-alarm-btn { background-color: #8A2BE2; }
+.control-btn.clear-alarm-btn { background-color: #ffc107; color: #111827; }
+
+.alarm-status {
+    text-align: center;
+    margin-top: 20px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 10px;
+    border-radius: 8px;
+}
+.alarm-status.active {
+    background-color: #dcfce7;
+    color: #166534;
+    animation: pulse 2s infinite;
+}
+.dark .alarm-status.active {
+    background-color: #064e3b;
+    color: #a7f3d0;
+}
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+/* বিশ্ব ঘড়ি স্টাইল */
+.world-clock-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+.world-clock-card {
+    background-color: #e0f2f7;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #b3e0ff;
+}
+.dark .world-clock-card {
+    background-color: #1a202c;
+    border-color: #4a5568;
+}
+.world-clock-card .city {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #0056b3;
+}
+.dark .world-clock-card .city {
+    color: #90cdf4;
+}
+.world-clock-card .time {
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin: 5px 0;
+}
+.world-clock-card .date {
+    font-size: 0.9rem;
+    color: #555;
+}
+.dark .world-clock-card .date {
+    color: #a0aec0;
+}
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে -->
     </style>
@@ -3307,6 +3513,8 @@ input:checked + .slider:before {
             <div class="py-1">
                 <button id="allFeaturesTab" class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">সকল ফিচার</button>
                 <!-- ভবিষ্যতে নতুন ট্যাব এখানে যোগ করা যাবে -->
+				<button id="clockTab" class="tab-button rounded-xl">ঘড়ি</button>
+
             </div>
         </div>
     </div>
@@ -4408,6 +4616,48 @@ input:checked + .slider:before {
         <ul id="taskList" class="task-list">
             <!-- কাজগুলো এখানে জাভাস্ক্রিপ্ট দ্বারা যুক্ত হবে -->
         </ul>
+    </div>
+</div>
+
+<!-- নতুন: ঘড়ি ট্যাব (স্টপওয়াচ, অ্যালার্ম, বিশ্ব ঘড়ি) -->
+<div id="clockContent" class="calculator-content">
+    <div class="clock-container">
+        <!-- স্টপওয়াচ সেকশন -->
+        <div class="clock-section stopwatch">
+            <h3 class="section-title">স্টপওয়াচ</h3>
+            <div class="stopwatch-display">00:00:00.000</div>
+            <div class="stopwatch-controls">
+                <button id="startStopwatch" class="control-btn start-btn">শুরু</button>
+                <button id="stopStopwatch" class="control-btn stop-btn">থামুন</button>
+                <button id="resetStopwatch" class="control-btn reset-btn">রিসেট</button>
+                <button id="lapStopwatch" class="control-btn lap-btn">ল্যাপ</button>
+            </div>
+            <div class="laps-container">
+                <h4>ল্যাপ টাইম</h4>
+                <ul id="lapsList"></ul>
+            </div>
+        </div>
+
+        <!-- অ্যালার্ম সেকশন -->
+        <div class="clock-section alarm">
+            <h3 class="section-title">অ্যালার্ম</h3>
+            <div class="alarm-input-group">
+                <input type="time" id="alarmTimeInput" class="alarm-time-input">
+            </div>
+            <div class="alarm-controls">
+                <button id="setAlarmBtn" class="control-btn set-alarm-btn">অ্যালার্ম সেট করুন</button>
+                <button id="clearAlarmBtn" class="control-btn clear-alarm-btn">অ্যালার্ম মুছুন</button>
+            </div>
+            <div id="alarmStatus" class="alarm-status">কোনো অ্যালার্ম সেট করা নেই।</div>
+        </div>
+
+        <!-- বিশ্ব ঘড়ি সেকশন -->
+        <div class="clock-section world-clock">
+            <h3 class="section-title">বিশ্ব ঘড়ি</h3>
+            <div class="world-clock-grid">
+                <!-- ঘড়িগুলো জাভাস্ক্রিপ্ট দ্বারা এখানে যুক্ত হবে -->
+            </div>
+        </div>
     </div>
 </div>
 
@@ -6816,14 +7066,14 @@ function showTab(tabId) {
     // সমস্ত ট্যাব বোতাম এবং কন্টেন্ট বিভাগ নির্বাচন করুন, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয়।
     const tabs = [
         basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab,
-        converterTab, measurementTab, typingTestTab, translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab,
+        converterTab, measurementTab, typingTestTab, translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,
         spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, 
         textAssistantTab, allFeaturesTab
     ];
     const contents = [
         basicCalculatorContent, ageCalculatorContent, dateCalculatorContent,
         scientificCalculatorContent, newsContent, converterContent,
-        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, weatherContent, notepadContent,
+        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, weatherContent, notepadContent, clockContent,
         spellCheckerContent, textBeautifierContent, wordMeaningContent, 
         textToSpeechContent, speechToTextContent, textAssistantContent,
         allFeaturesContent
@@ -6905,6 +7155,11 @@ function showTab(tabId) {
 			activeTab = notepadTab;
 			activeContent = notepadContent;
 		break;
+		case 'clock':
+			activeTab = clockTab;
+			activeContent = clockContent;
+			initializeClockTab(); // নতুন ফাংশন কল করুন
+		break;
         case 'spellCheck':
             activeTab = spellCheckTab;
             activeContent = spellCheckerContent;
@@ -6965,6 +7220,7 @@ function showTab(tabId) {
 					showTab('notepad');
 					await initializeNotepad(); // Notepad চালু করার জন্য এই ফাংশন কল করুন
 					});
+				if (clockTab) clockTab.addEventListener('click', () => showTab('clock'));
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
                 if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
 
@@ -9346,7 +9602,205 @@ async function initializeNotepad() {
 // END: NOTEPAD SCRIPT
 // ====================================================================
 
+// ====================================================================
+// START: CLOCK TAB SCRIPT (STOPWATCH, ALARM, WORLD CLOCK)
+// ====================================================================
+function initializeClockTab() {
+    // --- Stopwatch Variables ---
+    const stopwatchDisplay = document.querySelector('.stopwatch-display');
+    const startBtn = document.getElementById('startStopwatch');
+    const stopBtn = document.getElementById('stopStopwatch');
+    const resetBtn = document.getElementById('resetStopwatch');
+    const lapBtn = document.getElementById('lapStopwatch');
+    const lapsList = document.getElementById('lapsList');
 
+    let stopwatchTimer = null;
+    let startTime = 0;
+    let elapsedTime = 0;
+    let isRunning = false;
+    let lapCounter = 0;
+
+    // --- Alarm Variables ---
+    const alarmTimeInput = document.getElementById('alarmTimeInput');
+    const setAlarmBtn = document.getElementById('setAlarmBtn');
+    const clearAlarmBtn = document.getElementById('clearAlarmBtn');
+    const alarmStatus = document.getElementById('alarmStatus');
+
+    let alarmTime = null;
+    let alarmInterval = null;
+    let audioContext;
+
+    // --- World Clock Variables ---
+    const worldClockGrid = document.querySelector('.world-clock-grid');
+    const timezones = [
+        { city: 'ঢাকা', zone: 'Asia/Dhaka' },
+        { city: 'কলকাতা', zone: 'Asia/Kolkata' },
+        { city: 'লন্ডন', zone: 'Europe/London' },
+        { city: 'নিউ ইয়র্ক', zone: 'America/New_York' },
+        { city: 'টোকিও', zone: 'Asia/Tokyo' },
+        { city: 'সিডনি', zone: 'Australia/Sydney' },
+        { city: 'দুবাই', zone: 'Asia/Dubai' },
+        { city: 'মস্কো', zone: 'Europe/Moscow' }
+    ];
+    let worldClockInterval = null;
+
+
+    // ======================== STOPWATCH LOGIC ========================
+    function formatTime(ms) {
+        const date = new Date(ms);
+        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+        const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+        const milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0');
+        return `${minutes}:${seconds}:${milliseconds}`;
+    }
+
+    function updateStopwatchDisplay() {
+        stopwatchDisplay.textContent = formatTime(elapsedTime);
+    }
+
+    function startStopwatch() {
+        if (!isRunning) {
+            startTime = Date.now() - elapsedTime;
+            stopwatchTimer = setInterval(() => {
+                elapsedTime = Date.now() - startTime;
+                updateStopwatchDisplay();
+            }, 10);
+            isRunning = true;
+        }
+    }
+
+    function stopStopwatch() {
+        if (isRunning) {
+            clearInterval(stopwatchTimer);
+            isRunning = false;
+        }
+    }
+
+    function resetStopwatch() {
+        stopStopwatch();
+        elapsedTime = 0;
+        lapCounter = 0;
+        updateStopwatchDisplay();
+        lapsList.innerHTML = '';
+    }
+
+    function recordLap() {
+        if (isRunning) {
+            lapCounter++;
+            const li = document.createElement('li');
+            li.innerHTML = `<span>ল্যাপ ${lapCounter}</span><span>${formatTime(elapsedTime)}</span>`;
+            lapsList.prepend(li);
+        }
+    }
+
+    if(startBtn) startBtn.addEventListener('click', startStopwatch);
+    if(stopBtn) stopBtn.addEventListener('click', stopStopwatch);
+    if(resetBtn) resetBtn.addEventListener('click', resetStopwatch);
+    if(lapBtn) lapBtn.addEventListener('click', recordLap);
+
+    // ======================== ALARM LOGIC ========================
+    function playAlarmSound() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4 pitch
+        gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 1); // 1 second beep
+    }
+
+    function checkAlarm() {
+        if (alarmTime) {
+            const now = new Date();
+            const currentHours = String(now.getHours()).padStart(2, '0');
+            const currentMinutes = String(now.getMinutes()).padStart(2, '0');
+            const currentTime = `${currentHours}:${currentMinutes}`;
+            
+            if (currentTime === alarmTime) {
+                playAlarmSound();
+                showCustomAlert(`অ্যালার্ম! এখন সময় ${alarmTimeInput.value}`);
+                clearAlarm(); 
+            }
+        }
+    }
+
+    function setAlarm() {
+        const timeValue = alarmTimeInput.value;
+        if (timeValue) {
+            alarmTime = timeValue;
+            alarmStatus.textContent = `অ্যালার্ম সেট করা হয়েছে: ${timeValue}`;
+            alarmStatus.classList.add('active');
+            if (alarmInterval) clearInterval(alarmInterval);
+            alarmInterval = setInterval(checkAlarm, 1000);
+        } else {
+            showCustomAlert('অনুগ্রহ করে একটি সঠিক সময় নির্বাচন করুন।');
+        }
+    }
+
+    function clearAlarm() {
+        alarmTime = null;
+        alarmTimeInput.value = '';
+        if (alarmInterval) clearInterval(alarmInterval);
+        alarmStatus.textContent = 'কোনো অ্যালার্ম সেট করা নেই।';
+        alarmStatus.classList.remove('active');
+    }
+    
+    if(setAlarmBtn) setAlarmBtn.addEventListener('click', setAlarm);
+    if(clearAlarmBtn) clearAlarmBtn.addEventListener('click', clearAlarm);
+
+    // ======================== WORLD CLOCK LOGIC ========================
+    function updateWorldClocks() {
+        if (!worldClockGrid) return;
+        worldClockGrid.innerHTML = '';
+        const now = new Date();
+
+        timezones.forEach(tz => {
+            const card = document.createElement('div');
+            card.className = 'world-clock-card';
+
+            const timeString = now.toLocaleTimeString('bn-BD', {
+                timeZone: tz.zone,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+
+            const dateString = now.toLocaleDateString('bn-BD', {
+                timeZone: tz.zone,
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long'
+            });
+
+            card.innerHTML = `
+                <div class="city">${tz.city}</div>
+                <div class="time">${timeString}</div>
+                <div class="date">${dateString}</div>
+            `;
+            worldClockGrid.appendChild(card);
+        });
+    }
+
+    // Stop previous interval if it exists
+    if (window.worldClockIntervalId) {
+        clearInterval(window.worldClockIntervalId);
+    }
+    
+    updateWorldClocks(); // Initial call
+    window.worldClockIntervalId = setInterval(updateWorldClocks, 1000); // Update every second
+}
+// ====================================================================
+// END: CLOCK TAB SCRIPT
+// ====================================================================
 
 
 //নতুন কোনো ট্যাব যুক্ত করলে তার স্ক্রিপ্ট এটির আগে অ্যাড করতে হবে।
