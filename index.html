@@ -3398,12 +3398,31 @@ input:checked + .slider:before {
     50% { transform: scale(1.03); }
     100% { transform: scale(1); }
 }
+/* অ্যালার্ম স্ট্যাটাসের জন্য অতিরিক্ত স্টাইল */
+.alarm-status .countdown {
+    display: block;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #4a5568;
+    margin-top: 8px;
+}
 
-/* বিশ্ব ঘড়ি স্টাইল */
+.dark .alarm-status .countdown {
+    color: #a0aec0;
+}
+
+/* বিশ্ব ঘড়ি স্টাইল (এখানে পুরনো কোডটি বদলে দিন) */
 .world-clock-grid {
     display: grid;
+    /* ছোট স্ক্রিনের জন্য: স্বয়ংক্রিয় ফিট কলাম */
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
+}
+/* বড় স্ক্রিনের জন্য ৩-কলামের লেআউট নিশ্চিত করতে */
+@media (min-width: 900px) {
+    .world-clock-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 .world-clock-card {
     background-color: #e0f2f7;
@@ -3437,25 +3456,14 @@ input:checked + .slider:before {
     color: #a0aec0;
 }
 
-/* অ্যালার্ম স্ট্যাটাসের জন্য অতিরিক্ত স্টাইল */
-.alarm-status .countdown {
-    display: block;
-    font-size: 1rem;
-    font-weight: 500;
-    color: #4a5568;
-    margin-top: 8px;
-}
 
-.dark .alarm-status .countdown {
-    color: #a0aec0;
-}
 
-/* নির্বাচিত বিশ্ব ঘড়ির জন্য স্টাইল */
+/* নির্বাচিত কার্ডকে আলাদাভাবে স্টাইল করতে */
 #selected-timezone-card {
     background-color: #dbeafe; /* হালকা নীল */
     border-color: #93c5fd;
+    border-width: 2px;
 }
-
 .dark #selected-timezone-card {
     background-color: #1e3a8a; /* গাঢ় নীল */
     border-color: #3b82f6;
@@ -4679,17 +4687,14 @@ input:checked + .slider:before {
         <!-- বিশ্ব ঘড়ি সেকশন -->
         <div class="clock-section world-clock">
             <h3 class="section-title">বিশ্ব ঘড়ি</h3>
+            <div class="mb-4">
+                <label for="timezone-select" class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">অন্যান্য দেশের সময় দেখুন:</label>
+                <select id="timezone-select" class="w-full p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-blue-500"></select>
+            </div>
             <div class="world-clock-grid">
-                <!-- ঘড়িগুলো জাভাস্ক্রিপ্ট দ্বারা এখানে যুক্ত হবে -->
+                <!-- ঘড়িগুলো এবং নির্বাচিত কার্ড জাভাস্ক্রিপ্ট দ্বারা এখানে যুক্ত হবে -->
             </div>
         </div>
-		<div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-    <label for="timezone-select" class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">অন্যান্য দেশের সময় দেখুন:</label>
-    <select id="timezone-select" class="w-full p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-blue-500"></select>
-    <div id="selected-timezone-card" class="world-clock-card mt-3 hidden">
-        <!-- নির্বাচিত টাইমজোনের সময় এখানে দেখানো হবে -->
-    </div>
-</div>
     </div>
 </div>
 
@@ -9637,36 +9642,34 @@ async function initializeNotepad() {
 // ====================================================================
 // START: CLOCK TAB SCRIPT (STOPWATCH, ALARM, WORLD CLOCK)
 // ====================================================================
+// নতুন: ঘড়ি ট্যাব (স্টপওয়াচ, অ্যালার্ম, বিশ্ব ঘড়ি)
 function initializeClockTab() {
-    // --- Stopwatch Variables ---
+    // --- Stopwatch Variables (unchanged) ---
     const stopwatchDisplay = document.querySelector('.stopwatch-display');
     const startBtn = document.getElementById('startStopwatch');
     const stopBtn = document.getElementById('stopStopwatch');
     const resetBtn = document.getElementById('resetStopwatch');
     const lapBtn = document.getElementById('lapStopwatch');
     const lapsList = document.getElementById('lapsList');
-
     let stopwatchTimer = null;
     let startTime = 0;
     let elapsedTime = 0;
     let isRunning = false;
     let lapCounter = 0;
 
-    // --- Alarm Variables ---
+    // --- Alarm Variables (unchanged) ---
     const alarmTimeInput = document.getElementById('alarmTimeInput');
     const setAlarmBtn = document.getElementById('setAlarmBtn');
     const clearAlarmBtn = document.getElementById('clearAlarmBtn');
     const alarmStatus = document.getElementById('alarmStatus');
-
     let alarmTime = null;
     let alarmInterval = null;
     let alarmCountdownInterval = null;
     let audioContext;
 
-    // --- World Clock Variables ---
+    // --- World Clock Variables (updated) ---
     const worldClockGrid = document.querySelector('.world-clock-grid');
     const timezoneSelect = document.getElementById('timezone-select');
-    const selectedTimezoneCard = document.getElementById('selected-timezone-card');
 
     const defaultTimezones = [
         { city: 'ঢাকা', zone: 'Asia/Dhaka' },
@@ -9678,7 +9681,6 @@ function initializeClockTab() {
         { city: 'দুবাই', zone: 'Asia/Dubai' },
         { city: 'মস্কো', zone: 'Europe/Moscow' }
     ];
-    let worldClockInterval = null;
 
     // ======================== HELPER FUNCTIONS ========================
     function formatTo12Hour(timeString24) {
@@ -9690,8 +9692,28 @@ function initializeClockTab() {
         const hour12 = h % 12 || 12;
         return `${String(hour12).padStart(2, '0')}:${String(m).padStart(2, '0')} ${ampm}`;
     }
+    
+    // অ্যালার্মের জন্য একটি সাধারণ সাউন্ড তৈরি করার ফাংশন
+    function playAlarmSound() {
+        try {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+            oscillator.start();
+            setTimeout(() => oscillator.stop(), 1000); // ১ সেকেন্ডের জন্য বাজবে
+        } catch(e) {
+            console.error("অ্যালার্ম সাউন্ড বাজানো সম্ভব হয়নি:", e);
+        }
+    }
 
-    // ======================== STOPWATCH LOGIC ========================
+    // ======================== STOPWATCH LOGIC (unchanged) ========================
     function formatStopwatchTime(ms) {
         const date = new Date(ms);
         const minutes = String(date.getUTCMinutes()).padStart(2, '0');
@@ -9699,11 +9721,9 @@ function initializeClockTab() {
         const milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0').substring(0, 2);
         return `${minutes}:${seconds}.${milliseconds}`;
     }
-
     function updateStopwatchDisplay() {
         if(stopwatchDisplay) stopwatchDisplay.textContent = formatStopwatchTime(elapsedTime);
     }
-
     function startStopwatch() {
         if (!isRunning) {
             startTime = Date.now() - elapsedTime;
@@ -9714,14 +9734,12 @@ function initializeClockTab() {
             isRunning = true;
         }
     }
-
     function stopStopwatch() {
         if (isRunning) {
             clearInterval(stopwatchTimer);
             isRunning = false;
         }
     }
-
     function resetStopwatch() {
         stopStopwatch();
         elapsedTime = 0;
@@ -9729,7 +9747,6 @@ function initializeClockTab() {
         updateStopwatchDisplay();
         if(lapsList) lapsList.innerHTML = '';
     }
-
     function recordLap() {
         if (isRunning && lapsList) {
             lapCounter++;
@@ -9738,24 +9755,18 @@ function initializeClockTab() {
             lapsList.prepend(li);
         }
     }
-
     if(startBtn) startBtn.addEventListener('click', startStopwatch);
     if(stopBtn) stopBtn.addEventListener('click', stopStopwatch);
     if(resetBtn) resetBtn.addEventListener('click', resetStopwatch);
     if(lapBtn) lapBtn.addEventListener('click', recordLap);
 
-    // ======================== ALARM LOGIC ========================
-    function playAlarmSound() {
-        // This part remains the same
-    }
-
+    // ======================== ALARM LOGIC (unchanged) ========================
     function checkAlarm() {
         if (alarmTime) {
             const now = new Date();
             const currentHours = String(now.getHours()).padStart(2, '0');
             const currentMinutes = String(now.getMinutes()).padStart(2, '0');
             const currentTime = `${currentHours}:${currentMinutes}`;
-            
             if (currentTime === alarmTime) {
                 playAlarmSound();
                 showCustomAlert(`অ্যালার্ম! এখন সময় ${formatTo12Hour(alarmTime)}`);
@@ -9763,52 +9774,41 @@ function initializeClockTab() {
             }
         }
     }
-
     function setAlarm() {
         const timeValue = alarmTimeInput.value;
         if (timeValue) {
             alarmTime = timeValue;
             const time12hr = formatTo12Hour(timeValue);
-            
             clearInterval(alarmCountdownInterval);
-
             const [targetHours, targetMinutes] = timeValue.split(':').map(Number);
             const targetTime = new Date();
             targetTime.setHours(targetHours, targetMinutes, 0, 0);
-
             if (targetTime < new Date()) {
                 targetTime.setDate(targetTime.getDate() + 1);
             }
-
             alarmCountdownInterval = setInterval(() => {
                 const now = new Date();
                 const diff = targetTime - now;
-
                 if (diff <= 0) {
                     clearInterval(alarmCountdownInterval);
                     return;
                 }
-
                 const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
                 const minutes = Math.floor((diff / 1000 / 60) % 60);
                 const seconds = Math.floor((diff / 1000) % 60);
                 const countdownString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-                
                 if(alarmStatus) alarmStatus.innerHTML = `অ্যালার্ম সেট করা হয়েছে: ${time12hr} <span class="countdown">বাকি আছে: ${countdownString}</span>`;
             }, 1000);
-
             if(alarmStatus) {
                 alarmStatus.innerHTML = `অ্যালার্ম সেট করা হয়েছে: ${time12hr}`;
                 alarmStatus.classList.add('active');
             }
-
             if (alarmInterval) clearInterval(alarmInterval);
             alarmInterval = setInterval(checkAlarm, 1000);
         } else {
             showCustomAlert('অনুগ্রহ করে একটি সঠিক সময় নির্বাচন করুন।');
         }
     }
-
     function clearAlarm() {
         alarmTime = null;
         if(alarmTimeInput) alarmTimeInput.value = '';
@@ -9819,15 +9819,12 @@ function initializeClockTab() {
             alarmStatus.classList.remove('active');
         }
     }
-    
     if(setAlarmBtn) setAlarmBtn.addEventListener('click', setAlarm);
     if(clearAlarmBtn) clearAlarmBtn.addEventListener('click', clearAlarm);
 
-    // ======================== WORLD CLOCK LOGIC (MODIFIED) ========================
+    // ======================== WORLD CLOCK LOGIC (REBUILT) ========================
     function populateTimezoneDropdown() {
         if (!timezoneSelect) return;
-        
-        // পরিবর্তন: টাইমজোন লিস্টে শহর ও দেশের নাম যোগ করা হয়েছে
         const timezonesWithCountries = [
             { zone: 'Asia/Dhaka', city: 'ঢাকা', country: 'বাংলাদেশ' },
             { zone: 'Asia/Kolkata', city: 'কলকাতা', country: 'ভারত' },
@@ -9852,84 +9849,91 @@ function initializeClockTab() {
             { zone: 'America/Toronto', city: 'টরন্টো', country: 'কানাডা' },
             { zone: 'Australia/Sydney', city: 'সিডনি', country: 'অস্ট্রেলিয়া' }
         ];
-        
         timezoneSelect.innerHTML = '<option value="">একটি শহর নির্বাচন করুন...</option>';
-        // পরিবর্তন: নতুন লিস্ট ব্যবহার করে ড্রপডাউন তৈরি করা হচ্ছে
         timezonesWithCountries.forEach(tz => {
             const option = document.createElement('option');
             option.value = tz.zone;
-            option.textContent = `${tz.city}, ${tz.country}`; // যেমন: ঢাকা, বাংলাদেশ
+            option.textContent = `${tz.city}, ${tz.country}`;
             timezoneSelect.appendChild(option);
         });
     }
 
-    function updateSelectedTimezoneClock() {
-        if (!timezoneSelect || timezoneSelect.value === "") {
-            if (selectedTimezoneCard) selectedTimezoneCard.classList.add('hidden');
-            return;
-        }
+    function updateWorldClocks() {
+        if (!worldClockGrid) return;
 
-        const selectedZone = timezoneSelect.value;
+        worldClockGrid.innerHTML = ''; // পুনরায় আঁকার জন্য গ্রিড পরিষ্কার করুন
         const now = new Date();
-        
-        // পরিবর্তন: নির্বাচিত অপশন থেকে সরাসরি শহর ও দেশের নাম নেওয়া হচ্ছে
-        const selectedOption = timezoneSelect.options[timezoneSelect.selectedIndex];
-        const cityAndCountry = selectedOption.textContent;
 
-        try {
-            const timeString = now.toLocaleTimeString('bn-BD', {
-                timeZone: selectedZone,
-                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
-            });
-            const dateString = now.toLocaleDateString('bn-BD', {
-                timeZone: selectedZone,
-                weekday: 'long', day: 'numeric', month: 'long'
-            });
+        // ১. ডিফল্ট ঘড়িগুলো রেন্ডার করুন
+        defaultTimezones.forEach(tz => {
+            const card = document.createElement('div');
+            card.className = 'world-clock-card';
+            const timeString = now.toLocaleTimeString('bn-BD', { timeZone: tz.zone, hour: '2-digit', minute: '2-digit', hour12: true });
+            const dateString = now.toLocaleDateString('bn-BD', { timeZone: tz.zone, weekday: 'short', day: 'numeric' });
+            card.innerHTML = `<div class="city">${tz.city}</div><div class="time">${timeString}</div><div class="date">${dateString}</div>`;
+            worldClockGrid.appendChild(card);
+        });
 
-            if (selectedTimezoneCard) {
-                // পরিবর্তন: cityAndCountry ভ্যারিয়েবলটি এখানে ব্যবহার করা হচ্ছে
-                selectedTimezoneCard.innerHTML = `
+        // ২. যদি কোনো দেশ সিলেক্ট করা থাকে, তাহলে তার ঘড়িটিও রেন্ডার করুন
+        const selectedZone = timezoneSelect.value;
+        if (selectedZone) {
+            const selectedOption = timezoneSelect.options[timezoneSelect.selectedIndex];
+            const cityAndCountry = selectedOption.textContent;
+
+            const card = document.createElement('div');
+            card.className = 'world-clock-card';
+            card.id = 'selected-timezone-card'; // স্টাইল করার জন্য বিশেষ আইডি
+
+            try {
+                const timeString = now.toLocaleTimeString('bn-BD', {
+                    timeZone: selectedZone,
+                    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+                });
+                const dateString = now.toLocaleDateString('bn-BD', {
+                    timeZone: selectedZone,
+                    weekday: 'long', day: 'numeric', month: 'long'
+                });
+                card.innerHTML = `
                     <div class="city">${cityAndCountry}</div>
                     <div class="time">${timeString}</div>
                     <div class="date">${dateString}</div>
                 `;
-                selectedTimezoneCard.classList.remove('hidden');
+            } catch (e) {
+                console.error("টাইমজোন ফরম্যাট করতে সমস্যা:", selectedZone);
+                card.innerHTML = `<div class="city">${cityAndCountry}</div><div class="time text-red-500">Error</div>`;
             }
-        } catch(e) {
-            console.error("Invalid timezone for formatting:", selectedZone);
-            if (selectedTimezoneCard) {
-                selectedTimezoneCard.innerHTML = `<div class="city">${cityAndCountry}</div><div class="time text-red-500">Error</div>`;
-                selectedTimezoneCard.classList.remove('hidden');
-            }
+            worldClockGrid.appendChild(card);
         }
     }
 
-    function updateWorldClocks() {
-        if (worldClockGrid) {
-            worldClockGrid.innerHTML = '';
-            const now = new Date();
-            defaultTimezones.forEach(tz => {
-                const card = document.createElement('div');
-                card.className = 'world-clock-card';
-                const timeString = now.toLocaleTimeString('bn-BD', { timeZone: tz.zone, hour: '2-digit', minute: '2-digit', hour12: true });
-                const dateString = now.toLocaleDateString('bn-BD', { timeZone: tz.zone, weekday: 'short', day: 'numeric' });
-                card.innerHTML = `<div class="city">${tz.city}</div><div class="time">${timeString}</div><div class="date">${dateString}</div>`;
-                worldClockGrid.appendChild(card);
-            });
-        }
-        updateSelectedTimezoneClock();
-    }
-
+    // --- ইনিশিয়ালাইজেশন ---
     if (window.worldClockIntervalId) {
         clearInterval(window.worldClockIntervalId);
     }
     
     populateTimezoneDropdown();
+
+    // localStorage থেকে সেভ করা টাইমজোন লোড করুন
+    const savedTimezone = localStorage.getItem('selectedWorldClockTimezone');
+    if (savedTimezone && timezoneSelect) {
+        timezoneSelect.value = savedTimezone;
+    }
+
+    // প্রথমবার রেন্ডার করুন এবং প্রতি সেকেন্ডে আপডেটের জন্য ইন্টারভ্যাল সেট করুন
     updateWorldClocks(); 
     window.worldClockIntervalId = setInterval(updateWorldClocks, 1000);
     
+    // সিলেকশন সেভ করার জন্য ইভেন্ট লিসেনার যোগ করুন
     if (timezoneSelect) {
-        timezoneSelect.addEventListener('change', updateSelectedTimezoneClock);
+        timezoneSelect.addEventListener('change', () => {
+            const selectedZone = timezoneSelect.value;
+            if (selectedZone) {
+                localStorage.setItem('selectedWorldClockTimezone', selectedZone);
+            } else {
+                localStorage.removeItem('selectedWorldClockTimezone');
+            }
+            // ইন্টারভ্যালটি স্বয়ংক্রিয়ভাবে পরিবর্তনটি তুলে নেবে
+        });
     }
 }
 // ====================================================================
