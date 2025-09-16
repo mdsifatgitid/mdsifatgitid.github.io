@@ -3840,6 +3840,7 @@ input:checked + .slider:before {
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="single-enter">একটি এন্টার</a>
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-enter">দুটি এন্টার</a>
 									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-enter-v2">দুটি এন্টার V2</a>
+									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-enter-v3">দুটি এন্টার V3</a>
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="custom">কাস্টম</a>
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="custom-serial">ক্রমিকসহ কাস্টম</a>
                                 </div>
@@ -3879,6 +3880,7 @@ input:checked + .slider:before {
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="single-enter">একটি এন্টার</a>
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-enter">দুটি এন্টার</a>
 									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-enter-v2">দুটি এন্টার V2</a>
+									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-enter-v3">দুটি এন্টার V3</a>
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="custom">কাস্টম</a>
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="custom-serial">ক্রমিকসহ কাস্টম</a>
                                 </div>
@@ -9416,11 +9418,22 @@ async function pasteFromClipboard(textareaId) {
             resetSerialCounter();
         }
 
-        // *** মূল ফিক্স শুরু ***
         // বিভিন্ন প্রিসেটের জন্য টেক্সট প্রস্তুত করার লজিক এখানে আপডেট করা হয়েছে।
         switch (preset) {
             case 'double-enter-v2': {
                 let processedText = clipboardText.trim().replace(/(\r?\n\s*){2,}/g, '\n');
+                if (textarea.value.trim() !== '') {
+                    textToInsert = '\n\n' + processedText;
+                } else {
+                    textToInsert = processedText;
+                }
+                break;
+            }
+            case 'double-enter-v3': { // নতুন V3 প্রিসেট যুক্ত করা হয়েছে
+                // V2 এর মতো, অতিরিক্ত খালি লাইন রিমুভ করা হয়
+                let processedText = clipboardText.trim().replace(/(\r?\n\s*){2,}/g, '\n');
+                // নতুন বৈশিষ্ট্য: প্রতিটা লাইনের শুরু থেকে স্পেস রিমুভ করা হয়
+                processedText = processedText.replace(/^\s+/gm, ''); 
                 if (textarea.value.trim() !== '') {
                     textToInsert = '\n\n' + processedText;
                 } else {
@@ -9455,8 +9468,7 @@ async function pasteFromClipboard(textareaId) {
                 break;
             }
         }
-        // *** মূল ফিক্স শেষ ***
-
+        
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
         const currentValue = textarea.value;
@@ -9481,6 +9493,7 @@ async function pasteFromClipboard(textareaId) {
         showCustomAlert('পেস্ট করতে ব্যর্থ হয়েছে। ব্রাউজার পারমিশন চেক করুন।');
     }
 }
+
 
 // ====================================================================
 // END: PASTE FROM CLIPBOARD FUNCTIONALITY
