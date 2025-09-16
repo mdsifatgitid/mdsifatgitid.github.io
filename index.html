@@ -3356,6 +3356,7 @@ input:checked + .slider:before {
 }
 .dark #lapsList li {
     border-color: #718096;
+    color: #e2e8f0; /* লেখা সাদা করার জন্য যোগ করা হয়েছে */
 }
 
 /* অ্যালার্ম স্টাইল */
@@ -3383,6 +3384,10 @@ input:checked + .slider:before {
     font-size: 1.1rem;
     padding: 10px;
     border-radius: 8px;
+}
+/* নতুন: ডার্ক মোডে অ্যালার্ম স্ট্যাটাসের জন্য রঙ যোগ করা হয়েছে */
+.dark .alarm-status {
+    color: #cbd5e0;
 }
 .alarm-status.active {
     background-color: #dcfce7;
@@ -3447,6 +3452,10 @@ input:checked + .slider:before {
     font-size: 1.8rem;
     font-weight: 500;
     margin: 5px 0;
+}
+/* নতুন: ডার্ক মোডে বিশ্ব ঘড়ির সময়ের রঙ যোগ করা হয়েছে */
+.dark .world-clock-card .time {
+    color: #e2e8f0;
 }
 .world-clock-card .date {
     font-size: 0.9rem;
@@ -9858,53 +9867,78 @@ function initializeClockTab() {
         });
     }
 
-    function updateWorldClocks() {
-        if (!worldClockGrid) return;
+// ======================== WORLD CLOCK LOGIC (REBUILT) ========================
+function updateWorldClocks() {
+    if (!worldClockGrid) return;
 
-        worldClockGrid.innerHTML = ''; // পুনরায় আঁকার জন্য গ্রিড পরিষ্কার করুন
-        const now = new Date();
+    worldClockGrid.innerHTML = ''; // পুনরায় আঁকার জন্য গ্রিড পরিষ্কার করুন
+    const now = new Date();
+    const selectedZone = timezoneSelect.value;
 
-        // ১. ডিফল্ট ঘড়িগুলো রেন্ডার করুন
-        defaultTimezones.forEach(tz => {
-            const card = document.createElement('div');
-            card.className = 'world-clock-card';
-            const timeString = now.toLocaleTimeString('bn-BD', { timeZone: tz.zone, hour: '2-digit', minute: '2-digit', hour12: true });
-            const dateString = now.toLocaleDateString('bn-BD', { timeZone: tz.zone, weekday: 'short', day: 'numeric' });
-            card.innerHTML = `<div class="city">${tz.city}</div><div class="time">${timeString}</div><div class="date">${dateString}</div>`;
-            worldClockGrid.appendChild(card);
-        });
+    // ডিফল্ট টাইমজোনগুলোর একটি পরিবর্তনযোগ্য কপি তৈরি করুন
+    let allTimezones = [...defaultTimezones];
+    let finalOrder = [];
 
-        // ২. যদি কোনো দেশ সিলেক্ট করা থাকে, তাহলে তার ঘড়িটিও রেন্ডার করুন
-        const selectedZone = timezoneSelect.value;
-        if (selectedZone) {
+    // বিশেষ আইটেমগুলো খুঁজে বের করুন
+    const dhakaTz = allTimezones.find(tz => tz.zone === 'Asia/Dhaka');
+    const kolkataTz = allTimezones.find(tz => tz.zone === 'Asia/Kolkata');
+    let selectedTz = null;
+
+    if (selectedZone) {
+        // নির্বাচিত জোনটি ডিফল্টগুলোর মধ্যে আছে কিনা তা পরীক্ষা করুন
+        selectedTz = allTimezones.find(tz => tz.zone === selectedZone);
+        // যদি ডিফল্ট না হয়, তবে এর জন্য একটি নতুন অবজেক্ট তৈরি করুন
+        if (!selectedTz) {
             const selectedOption = timezoneSelect.options[timezoneSelect.selectedIndex];
-            const cityAndCountry = selectedOption.textContent;
-
-            const card = document.createElement('div');
-            card.className = 'world-clock-card';
-            card.id = 'selected-timezone-card'; // স্টাইল করার জন্য বিশেষ আইডি
-
-            try {
-                const timeString = now.toLocaleTimeString('bn-BD', {
-                    timeZone: selectedZone,
-                    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
-                });
-                const dateString = now.toLocaleDateString('bn-BD', {
-                    timeZone: selectedZone,
-                    weekday: 'long', day: 'numeric', month: 'long'
-                });
-                card.innerHTML = `
-                    <div class="city">${cityAndCountry}</div>
-                    <div class="time">${timeString}</div>
-                    <div class="date">${dateString}</div>
-                `;
-            } catch (e) {
-                console.error("টাইমজোন ফরম্যাট করতে সমস্যা:", selectedZone);
-                card.innerHTML = `<div class="city">${cityAndCountry}</div><div class="time text-red-500">Error</div>`;
-            }
-            worldClockGrid.appendChild(card);
+            // শহর এবং দেশের নাম থেকে শুধুমাত্র শহরের নামটি নিন
+            const cityName = selectedOption.textContent.split(',')[0].trim();
+            selectedTz = { city: cityName, zone: selectedZone };
         }
     }
+
+    // "বাকি" তালিকা থেকে বাদ দেওয়ার জন্য জোনগুলোর একটি তালিকা তৈরি করুন
+    const specialZones = new Set();
+    if (dhakaTz) specialZones.add(dhakaTz.zone);
+    if (kolkataTz) specialZones.add(kolkataTz.zone);
+    if (selectedTz) specialZones.add(selectedTz.zone);
+
+    // চূড়ান্ত ক্রম তৈরি করুন
+    if (dhakaTz) finalOrder.push(dhakaTz);
+
+    if (selectedTz && selectedTz.zone !== 'Asia/Dhaka') {
+        finalOrder.push(selectedTz);
+    }
+
+    if (kolkataTz && kolkataTz.zone !== selectedTz?.zone && kolkataTz.zone !== 'Asia/Dhaka') {
+        finalOrder.push(kolkataTz);
+    }
+
+    // বাকি টাইমজোনগুলো যোগ করুন
+    const rest = allTimezones.filter(tz => !specialZones.has(tz.zone));
+    finalOrder.push(...rest);
+
+    // চূড়ান্ত ক্রম অনুসারে কার্ডগুলো রেন্ডার করুন
+    finalOrder.forEach(tz => {
+        const card = document.createElement('div');
+        card.className = 'world-clock-card';
+        let timeString, dateString;
+        
+        // নির্বাচিত কার্ডটি হাইলাইট করুন
+        if (selectedZone && tz.zone === selectedZone) {
+            card.id = 'selected-timezone-card';
+            // নির্বাচিত কার্ডের জন্য সেকেন্ডসহ সময় এবং পূর্ণ তারিখ দেখান
+            timeString = now.toLocaleTimeString('bn-BD', { timeZone: tz.zone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+            dateString = now.toLocaleDateString('bn-BD', { timeZone: tz.zone, weekday: 'long', day: 'numeric', month: 'long' });
+        } else {
+             // অন্যান্য কার্ডের জন্য সংক্ষিপ্ত সময় ও তারিখ দেখান
+             timeString = now.toLocaleTimeString('bn-BD', { timeZone: tz.zone, hour: '2-digit', minute: '2-digit', hour12: true });
+             dateString = now.toLocaleDateString('bn-BD', { timeZone: tz.zone, weekday: 'short', day: 'numeric' });
+        }
+
+        card.innerHTML = `<div class="city">${tz.city}</div><div class="time">${timeString}</div><div class="date">${dateString}</div>`;
+        worldClockGrid.appendChild(card);
+    });
+}
 
     // --- ইনিশিয়ালাইজেশন ---
     if (window.worldClockIntervalId) {
