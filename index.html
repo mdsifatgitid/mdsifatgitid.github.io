@@ -9296,7 +9296,14 @@ async function initializeNotepad() {
             }
         });
 
-        actionsDiv.querySelector('.delete').addEventListener('click', async () => { li.remove(); await saveTasks(); updateTaskNumbers(); });
+       actionsDiv.querySelector('.delete').addEventListener('click', async () => {
+            if (confirm('আপনি কি নিশ্চিতভাবে এই নোটটি মুছে ফেলতে চান?')) {
+                li.remove();
+                await saveTasks();
+                updateTaskNumbers();
+                showCustomAlert('নোট সফলভাবে মুছে ফেলা হয়েছে!');
+            }
+        });
 
         li.appendChild(numberSpan);
         li.appendChild(contentWrapper);
