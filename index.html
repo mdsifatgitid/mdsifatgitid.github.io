@@ -7,6 +7,7 @@
 	<link rel="icon" type="image/png" href="https://mdsifatgitid.github.io/converticon.png">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         /* Custom font and basic styles */
         /* SUTONNYMJ ফন্টটি লোড করার জন্য @font-face ব্যবহার করা হয়েছে। */
@@ -3613,6 +3614,145 @@ input:checked + .slider:before {
    border-color: #60a5fa;
    background-color: #2c3748;
 }
+
+/* ==================================================================== */
+/* START: QR Code Generator Styles */
+/* ==================================================================== */
+
+.qr-code-content {
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 800px; /* Increased max-width */
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+}
+.dark .qr-code-content {
+    background-color: #2d3748;
+}
+
+@media (min-width: 768px) {
+    .qr-code-content {
+        grid-template-columns: 1fr 1fr; /* Two columns on larger screens */
+    }
+}
+
+.qr-input-section, .qr-output-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.qr-code-content textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cce7ff;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    resize: vertical;
+    box-sizing: border-box;
+    background-color: #eaf6ff;
+    color: #333;
+    min-height: 150px;
+    transition: all 0.2s ease-in-out;
+}
+.dark .qr-code-content textarea {
+    background-color: #4a5568;
+    border-color: #718096;
+    color: #f7fafc;
+}
+.qr-code-content textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+#qrcode-container {
+    margin: 0 auto; /* Horizontally center the container */
+    width: 280px;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e6f7ff;
+    border: 1px solid #b3e0ff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05) inset;
+}
+.dark #qrcode-container {
+    background-color: #1a202c;
+    border-color: #4a5568;
+}
+
+#qrcode canvas {
+    border-radius: 8px;
+}
+
+#qrcode-placeholder {
+    width: 100%;
+    height: 100%;
+}
+
+.qr-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.qr-button {
+    color: white;
+    padding: 14px 25px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    width: 100%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.qr-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.qr-button:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.qr-button.generate {
+    background-image: linear-gradient(to right, #3b82f6 0%, #2563eb 100%);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+}
+.qr-button.download {
+    background-image: linear-gradient(to right, #10b981 0%, #059669 100%);
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+}
+.qr-button.clear {
+    background-image: linear-gradient(to right, #ef4444 0%, #dc2626 100%);
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+}
+
+.qr-button:disabled {
+    background-image: none;
+    background-color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* ==================================================================== */
+/* END: QR Code Generator Styles */
+/* ==================================================================== */
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে -->
     </style>
 </head>
@@ -3690,6 +3830,7 @@ input:checked + .slider:before {
                 <!-- ভবিষ্যতে নতুন ট্যাব এখানে যোগ করা যাবে -->
 				<button id="clockTab" class="tab-button rounded-xl">ঘড়ি</button>
 				<button id="playerTab" class="tab-button rounded-xl">প্লেয়ার</button>
+				<button id="qrCodeTab" class="tab-button rounded-xl">কিউআর কোড</button>
 				<button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
 
             </div>
@@ -4896,6 +5037,42 @@ input:checked + .slider:before {
             </div>
         </div>
 
+    </div>
+</div>
+
+<!-- নতুন: কিউআর কোড জেনারেটর বিভাগ -->
+<div id="qrCodeContent" class="calculator-content">
+    <div class="qr-code-content">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">কিউআর কোড জেনারেটর</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">যেকোনো টেক্সট বা লিঙ্ক থেকে তাৎক্ষণিক কিউআর কোড তৈরি করুন এবং ডাউনলোড করুন।</p>
+
+        <!-- ইনপুট এবং অপশন -->
+        <div class="qr-input-section">
+            <textarea id="qrInput" rows="4" placeholder="এখানে আপনার টেক্সট বা URL লিখুন..."></textarea>
+        </div>
+
+        <!-- ফলাফল এবং বাটন -->
+        <div class="qr-output-section">
+            <!-- কিউআর কোড এখানে দেখানো হবে -->
+            <div id="qrcode-container">
+                <div id="qrcode" class="p-2 bg-white rounded-lg shadow-inner"></div>
+                <div id="qrcode-placeholder" class="flex items-center justify-center">
+                    <svg class="w-16 h-16 text-gray-300 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h3v3H5zm0 8h3v3H5zm8-8h3v3h-3zm0 8h3v3h-3zM9 2v2M9 20v2m8-11h2m-2-4h2m-6 0V2m-6 0V2m-2 4h2m-2 2H3m2 6H3m2 2H3m6 0v2m-4 0v2m11-2h2m-2 2h2m-2-6h2m-2-2h2"/></svg>
+                </div>
+            </div>
+            
+            <div class="qr-actions">
+                <button id="generateQrBtn" class="qr-button generate">
+                    <span>তৈরি করুন</span>
+                </button>
+                <button id="downloadQrBtn" class="qr-button download" disabled>
+                    <span>ডাউনলোড (PNG)</span>
+                </button>
+                 <button id="clearQrBtn" class="qr-button clear">
+                    <span>মুছুন</span>
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -7048,6 +7225,8 @@ try {
 				const prayerTimeContent = document.getElementById('prayerTimeContent'); // এই লাইনটি যুক্ত করুন
 				const playerTab = document.getElementById('playerTab');
 				const playerContent = document.getElementById('playerContent');
+				const qrCodeTab = document.getElementById('qrCodeTab');
+				const qrCodeContent = document.getElementById('qrCodeContent');
 
 
 
@@ -7306,14 +7485,14 @@ function showTab(tabId) {
     // সমস্ত ট্যাব বোতাম এবং কন্টেন্ট বিভাগ নির্বাচন করুন, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয়।
     const tabs = [
         basicCalcTab, ageCalcTab, dateCalcTab, scientificCalcTab, newsTab,
-        converterTab, measurementTab, typingTestTab, translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,
+        converterTab, measurementTab, typingTestTab, translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,qrCodeTab,
         spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, 
         textAssistantTab, allFeaturesTab
     ];
     const contents = [
         basicCalculatorContent, ageCalculatorContent, dateCalculatorContent,
         scientificCalculatorContent, newsContent, converterContent,
-        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, weatherContent, notepadContent, clockContent, playerContent,
+        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, weatherContent, notepadContent, clockContent, playerContent,qrCodeContent,
         spellCheckerContent, textBeautifierContent, wordMeaningContent, 
         textToSpeechContent, speechToTextContent, textAssistantContent,
         allFeaturesContent
@@ -7400,6 +7579,10 @@ function showTab(tabId) {
 			activeContent = clockContent;
 			initializeClockTab(); // নতুন ফাংশন কল করুন
 		break;
+		        case 'qrCode':
+            activeTab = qrCodeTab;
+            activeContent = qrCodeContent;
+            break;
 		case 'player':
 			activeTab = playerTab;
 			activeContent = playerContent;
@@ -7466,6 +7649,7 @@ function showTab(tabId) {
 					});
 				if (clockTab) clockTab.addEventListener('click', () => showTab('clock'));
 				if (playerTab) playerTab.addEventListener('click', () => showTab('player'));
+				if (qrCodeTab) qrCodeTab.addEventListener('click', () => showTab('qrCode'));
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
                 if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
 
@@ -10692,6 +10876,99 @@ document.addEventListener('DOMContentLoaded', () => {
 // END: PLAYER TAB SCRIPT
 // ====================================================================
 
+// ====================================================================
+// START: QR CODE GENERATOR SCRIPT
+// ====================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    const qrInput = document.getElementById('qrInput');
+    const generateQrBtn = document.getElementById('generateQrBtn');
+    const downloadQrBtn = document.getElementById('downloadQrBtn');
+    const clearQrBtn = document.getElementById('clearQrBtn');
+    const qrcodeContainer = document.getElementById('qrcode');
+    const qrcodePlaceholder = document.getElementById('qrcode-placeholder');
+    
+    let qrCodeInstance = null;
+
+    const generateQRCode = () => {
+        const text = qrInput.value.trim();
+        if (!text) {
+            showCustomAlert('অনুগ্রহ করে কিউআর কোড তৈরির জন্য কিছু টেক্সট বা লিঙ্ক লিখুন।');
+            return;
+        }
+
+        // আগের QR কোড পরিষ্কার করুন
+        qrcodeContainer.innerHTML = '';
+        qrcodePlaceholder.style.display = 'none';
+
+        try {
+            qrCodeInstance = new QRCode(qrcodeContainer, {
+                text: text,
+                width: 256,
+                height: 256,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            downloadQrBtn.disabled = false;
+        } catch (error) {
+            console.error("QR Code generation error:", error);
+            showCustomAlert("কিউআর কোড তৈরিতে একটি সমস্যা হয়েছে।");
+            resetQrCodeArea();
+        }
+    };
+
+    const downloadQRCode = () => {
+        const canvas = qrcodeContainer.querySelector('canvas');
+        if (!canvas) {
+            showCustomAlert('ডাউনলোড করার জন্য কোনো কিউআর কোড নেই।');
+            return;
+        }
+
+        const dataUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = 'qrcode.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const resetQrCodeArea = () => {
+        qrInput.value = '';
+        qrcodeContainer.innerHTML = '';
+        qrcodePlaceholder.style.display = 'flex';
+        downloadQrBtn.disabled = true;
+        qrCodeInstance = null;
+    };
+
+    if (generateQrBtn) {
+        generateQrBtn.addEventListener('click', generateQRCode);
+    }
+    
+    if (downloadQrBtn) {
+        downloadQrBtn.addEventListener('click', downloadQRCode);
+    }
+
+    if (clearQrBtn) {
+        clearQrBtn.addEventListener('click', () => {
+            resetQrCodeArea();
+            showCustomAlert('ইনপুট এবং কিউআর কোড পরিষ্কার করা হয়েছে।');
+        });
+    }
+
+    // Enter চেপেও কোড জেনারেট করার সুবিধা
+    if (qrInput) {
+        qrInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                generateQRCode();
+            }
+        });
+    }
+});
+// ====================================================================
+// END: QR CODE GENERATOR SCRIPT
+// ====================================================================
 
         window.onload = function() {
             const preloader = document.getElementById('preloader');
