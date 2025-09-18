@@ -2946,7 +2946,16 @@ input:checked + .slider:before {
     #presetButtonLeft.open svg, #presetButtonRight.open svg {
         transform: rotate(180deg);
     }
-
+/* আরও মেনু এবং সেটিংস মেনুর জন্য CSS*/
+        .tab-menu-container {
+			display: flex;
+            justify-content: center;
+            align-items: center; /* উল্লম্বভাবে কেন্দ্র করার জন্য যোগ করা হয়েছে */
+            margin: 5px; 5px; 5px; 5px; /* বর্ধিত মার্জিন */
+            gap: 5px; /* বর্ধিত ফাঁক */
+            flex-wrap: wrap; /* ছোট স্ক্রিনে ট্যাবগুলি মোড়ানো */
+        }
+		
 /* নতুন: নোটপ্যাড / টু-ডু লিস্ট স্টাইল (আপডেট করা) */
 .notepad-container {
     padding: 20px;
