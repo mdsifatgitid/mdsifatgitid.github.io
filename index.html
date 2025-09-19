@@ -5139,6 +5139,8 @@ input:checked + .slider:before {
     </div>
     <div class="alarm-controls">
         <button id="setAlarmBtn" class="control-btn set-alarm-btn">অ্যালার্ম সেট করুন</button>
+        <!-- নতুন 'থামান' বাটন যোগ করা হয়েছে -->
+        <button id="stopAlarmBtn" class="control-btn stop-btn hidden">অ্যালার্ম থামান</button>
         <button id="clearAlarmBtn" class="control-btn clear-alarm-btn">অ্যালার্ম মুছুন</button>
     </div>
     <div id="alarmStatus" class="alarm-status">কোনো অ্যালার্ম সেট করা নেই।</div>
@@ -10266,6 +10268,7 @@ function initializeClockTab() {
     const alarmTimeInput = document.getElementById('alarmTimeInput');
     const setAlarmBtn = document.getElementById('setAlarmBtn');
     const clearAlarmBtn = document.getElementById('clearAlarmBtn');
+    const stopAlarmBtn = document.getElementById('stopAlarmBtn'); // নতুন বাটন
     const alarmStatus = document.getElementById('alarmStatus');
     const alarmSoundSelect = document.getElementById('alarmSoundSelect');
     const customAlarmSoundInput = document.getElementById('customAlarmSoundInput');
@@ -10275,9 +10278,9 @@ function initializeClockTab() {
     let alarmTime = null;
     let alarmCheckInterval = null;
     let alarmCountdownInterval = null;
-    let activeAlarmSound = null; // Holds the currently playing sound object (AudioContext oscillator or Audio element)
+    let activeAlarmSound = null;
     let customAlarmSoundBlob = null;
-    let hasRungThisMinute = false; // Prevents alarm from ringing multiple times in the same minute
+    let hasRungThisMinute = false;
 
     // --- World Clock Variables ---
     const worldClockGrid = document.querySelector('.world-clock-grid');
@@ -10312,22 +10315,26 @@ function initializeClockTab() {
     if(resetBtn) resetBtn.addEventListener('click', resetStopwatch);
     if(lapBtn) lapBtn.addEventListener('click', recordLap);
 
-    // ======================== ALARM LOGIC (Updated) ========================
-
+    // ======================== ALARM LOGIC (Updated with Stop Button) ========================
     function stopAlarmSound() {
         if (activeAlarmSound) {
-            if (activeAlarmSound.stop) { // For AudioContext Oscillator
+            if (activeAlarmSound.stop) {
                 activeAlarmSound.stop();
-            } else if (activeAlarmSound.pause) { // For Audio element
+            } else if (activeAlarmSound.pause) {
                 activeAlarmSound.pause();
                 activeAlarmSound.currentTime = 0;
             }
             activeAlarmSound = null;
         }
+        // অ্যালার্ম থামানোর পর 'থামান' বাটনটি লুকান
+        if (stopAlarmBtn) stopAlarmBtn.classList.add('hidden');
     }
 
     function playAlarmSound() {
-        stopAlarmSound(); // Stop any previously playing sound
+        stopAlarmSound(); 
+        
+        // অ্যালার্ম বাজার সময় 'থামান' বাটনটি দেখান
+        if (stopAlarmBtn) stopAlarmBtn.classList.remove('hidden');
 
         if (customAlarmSoundBlob) {
             try {
@@ -10368,9 +10375,10 @@ function initializeClockTab() {
             }
             oscillator.start();
             setTimeout(() => {
-                // Only stop it if it's still the active sound
                 if (activeAlarmSound === oscillator) {
                     oscillator.stop();
+                    // ১ সেকেন্ড পর 'থামান' বাটনটি আবার লুকান
+                    if (stopAlarmBtn) stopAlarmBtn.classList.add('hidden');
                 }
             }, 1000);
         } catch(e) { console.error("অ্যালার্ম সাউন্ড বাজানো সম্ভব হয়নি:", e); }
@@ -10388,7 +10396,7 @@ function initializeClockTab() {
                     hasRungThisMinute = true;
                 }
             } else {
-                hasRungThisMinute = false; // Reset for the next time the alarm minute comes around
+                hasRungThisMinute = false;
             }
         }
     }
@@ -10400,7 +10408,6 @@ function initializeClockTab() {
             
             const time12hr = formatTo12Hour(timeValue);
 
-            // Clear previous intervals before setting new ones
             clearInterval(alarmCountdownInterval);
             clearInterval(alarmCheckInterval);
 
@@ -10424,11 +10431,9 @@ function initializeClockTab() {
                 if(alarmStatus) alarmStatus.innerHTML = `অ্যালার্ম সেট করা হয়েছে: ${time12hr} <span class="countdown">বাকি আছে: ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}</span>`;
             };
             
-            updateCountdown(); // Run once immediately
+            updateCountdown();
             alarmCountdownInterval = setInterval(updateCountdown, 1000);
-
             if(alarmStatus) alarmStatus.classList.add('active');
-            
             alarmCheckInterval = setInterval(checkAlarm, 1000);
             
             if (showAlert) {
@@ -10484,6 +10489,17 @@ function initializeClockTab() {
         clearAlarm();
         showCustomAlert('অ্যালার্ম মুছে ফেলা হয়েছে।');
     });
+    
+    // নতুন: 'থামান' বাটনের জন্য ইভেন্ট লিসেনার
+    if(stopAlarmBtn) {
+        stopAlarmBtn.addEventListener('click', () => {
+            stopAlarmSound();
+            hasRungThisMinute = true; // এই মিনিটের জন্য আর বাজবে না
+            if (alarmTime && alarmStatus) {
+                 alarmStatus.innerHTML = `অ্যালার্ম (${formatTo12Hour(alarmTime)}) থামানো হয়েছে।`;
+            }
+        });
+    }
 
     if (customAlarmSoundInput) {
         customAlarmSoundInput.addEventListener('change', async (event) => {
@@ -10516,13 +10532,12 @@ function initializeClockTab() {
         alarmSoundSelect.addEventListener('change', () => localStorage.setItem('alarmSound', alarmSoundSelect.value));
     }
     
-    // Initial load for Alarm
     async function loadInitialAlarm() {
         await loadCustomAlarmSound();
         const savedAlarm = await idbGet('activeAlarm');
         if (savedAlarm && savedAlarm.time) {
             alarmTimeInput.value = savedAlarm.time;
-            setupAlarm(savedAlarm.time, false); // Load without showing alert
+            setupAlarm(savedAlarm.time, false);
         }
     }
 
