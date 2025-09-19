@@ -8,6 +8,8 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
     <style>
         /* Custom font and basic styles */
         /* SUTONNYMJ ফন্টটি লোড করার জন্য @font-face ব্যবহার করা হয়েছে। */
@@ -3786,6 +3788,11 @@ input:checked + .slider:before {
     box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
 }
 
+.qr-button.upload {
+    background-image: linear-gradient(to right, #8b5cf6 0%, #6d28d9 100%);
+    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+}
+
 .qr-button:disabled {
     background-image: none;
     background-color: #9ca3af;
@@ -5304,14 +5311,13 @@ input:checked + .slider:before {
     </div>
 </div>
 
-<!-- নতুন: কিউআর কোড জেনারেটর বিভাগ -->
+<!-- নতুন: কিউআর কোড জেনারেটর বিভাগ (আপলোড ফিচারসহ) -->
 <div id="qrCodeContent" class="calculator-content">
     <div class="qr-code-content">
-        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">কিউআর কোড জেনারেটর</h3>
-        <p class="text-gray-600 dark:text-gray-400 mb-6">যেকোনো টেক্সট বা লিঙ্ক থেকে তাৎক্ষণিক কিউআর কোড তৈরি করুন এবং ডাউনলোড করুন।</p>
-
         <!-- ইনপুট এবং অপশন -->
         <div class="qr-input-section">
+            <h3 class="text-xl font-bold text-gray-700 mb-2 dark:text-gray-200">কিউআর কোড জেনারেটর ও রিডার</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-2">যেকোনো টেক্সট বা লিঙ্ক থেকে QR কোড তৈরি করুন অথবা ছবি আপলোড করে QR কোড থেকে তথ্য পড়ুন।</p>
             <textarea id="qrInput" rows="4" placeholder="এখানে আপনার টেক্সট বা URL লিখুন..."></textarea>
         </div>
 
@@ -5321,7 +5327,7 @@ input:checked + .slider:before {
             <div id="qrcode-container">
                 <div id="qrcode" class="p-2 bg-white rounded-lg shadow-inner"></div>
                 <div id="qrcode-placeholder" class="flex items-center justify-center">
-                    <svg class="w-16 h-16 text-gray-300 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h3v3H5zm0 8h3v3H5zm8-8h3v3h-3zm0 8h3v3h-3zM9 2v2M9 20v2m8-11h2m-2-4h2m-6 0V2m-6 0V2m-2 4h2m-2 2H3m2 6H3m2 2H3m6 0v2m-4 0v2m11-2h2m-2 2h2m-2-6h2m-2-2h2"/></svg>
+                    <svg class="w-16 h-16 text-gray-300 dark:text-gray-500" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h3v3H5zm0 8h3v3H5zm8-8h3v3h-3zm0 8h3v3h-3zM9 2v2M9 20v2m8-11h2m-2-4h2m-6 0V2m-6 0V2m-2 4h2m-2 2H3m2 6H3m2 2H3m6 0v2m-4 0v2m11-2h2m-2 2h2m-2-6h2m-2-2h2"/></svg>
                 </div>
             </div>
             
@@ -5332,7 +5338,11 @@ input:checked + .slider:before {
                 <button id="downloadQrBtn" class="qr-button download" disabled>
                     <span>ডাউনলোড (PNG)</span>
                 </button>
-                 <button id="clearQrBtn" class="qr-button clear">
+                 <label for="qrFileInput" class="qr-button upload" style="cursor: pointer;">
+                    <span>আপলোড করুন</span>
+                </label>
+                <input type="file" id="qrFileInput" class="hidden" accept="image/*">
+                <button id="clearQrBtn" class="qr-button clear">
                     <span>মুছুন</span>
                 </button>
             </div>
@@ -11309,28 +11319,35 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 
 // ====================================================================
-// START: QR CODE GENERATOR SCRIPT
+// START: QR CODE GENERATOR SCRIPT (Updated with Upload & Drag-Drop Feature)
+// This entire block should replace the existing QR code script block.
 // ====================================================================
 document.addEventListener('DOMContentLoaded', () => {
+    const qrContent = document.getElementById('qrCodeContent');
+    if (!qrContent) return; // If the tab content is not present, do nothing.
+
     const qrInput = document.getElementById('qrInput');
     const generateQrBtn = document.getElementById('generateQrBtn');
     const downloadQrBtn = document.getElementById('downloadQrBtn');
     const clearQrBtn = document.getElementById('clearQrBtn');
     const qrcodeContainer = document.getElementById('qrcode');
     const qrcodePlaceholder = document.getElementById('qrcode-placeholder');
-    
+    const qrFileInput = document.getElementById('qrFileInput');
+    const dropZone = document.querySelector('.qr-code-content'); // The main container for the QR section
+
     let qrCodeInstance = null;
 
+    // QR কোড তৈরি করার ফাংশন
     const generateQRCode = () => {
         const text = qrInput.value.trim();
+        // এই চেকটি একাধিক শব্দসহ যেকোনো টেক্সটের জন্য সঠিকভাবে কাজ করবে।
         if (!text) {
             showCustomAlert('অনুগ্রহ করে কিউআর কোড তৈরির জন্য কিছু টেক্সট বা লিঙ্ক লিখুন।');
             return;
         }
 
-        // আগের QR কোড পরিষ্কার করুন
-        qrcodeContainer.innerHTML = '';
-        qrcodePlaceholder.style.display = 'none';
+        if(qrcodeContainer) qrcodeContainer.innerHTML = '';
+        if(qrcodePlaceholder) qrcodePlaceholder.style.display = 'none';
 
         try {
             qrCodeInstance = new QRCode(qrcodeContainer, {
@@ -11341,7 +11358,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
-            downloadQrBtn.disabled = false;
+            if(downloadQrBtn) downloadQrBtn.disabled = false;
         } catch (error) {
             console.error("QR Code generation error:", error);
             showCustomAlert("কিউআর কোড তৈরিতে একটি সমস্যা হয়েছে।");
@@ -11349,7 +11366,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // QR কোড ডাউনলোড করার ফাংশন
     const downloadQRCode = () => {
+        if (!qrcodeContainer) return;
         const canvas = qrcodeContainer.querySelector('canvas');
         if (!canvas) {
             showCustomAlert('ডাউনলোড করার জন্য কোনো কিউআর কোড নেই।');
@@ -11365,22 +11384,51 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.removeChild(link);
     };
 
+    // ইনপুট এবং ফলাফল পরিষ্কার করার ফাংশন
     const resetQrCodeArea = () => {
-        qrInput.value = '';
-        qrcodeContainer.innerHTML = '';
-        qrcodePlaceholder.style.display = 'flex';
-        downloadQrBtn.disabled = true;
+        if(qrInput) qrInput.value = '';
+        if(qrcodeContainer) qrcodeContainer.innerHTML = '';
+        if(qrcodePlaceholder) qrcodePlaceholder.style.display = 'flex';
+        if(downloadQrBtn) downloadQrBtn.disabled = true;
         qrCodeInstance = null;
     };
-
-    if (generateQrBtn) {
-        generateQrBtn.addEventListener('click', generateQRCode);
-    }
     
-    if (downloadQrBtn) {
-        downloadQrBtn.addEventListener('click', downloadQRCode);
-    }
+    // আপলোড বা ড্রপ করা ফাইল হ্যান্ডেল করার ফাংশন
+    const handleQrFile = (file) => {
+        if (!file || !file.type.startsWith('image/')) {
+            showCustomAlert('অনুগ্রহ করে একটি ছবি ফাইল নির্বাচন করুন।');
+            return;
+        }
 
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d', { willReadFrequently: true });
+                canvas.width = img.width;
+                canvas.height = img.height;
+                context.drawImage(img, 0, 0, img.width, img.height);
+                const imageData = context.getImageData(0, 0, img.width, img.height);
+                
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                if (code) {
+                    if(qrInput) qrInput.value = code.data;
+                    showCustomAlert('QR কোড থেকে তথ্য পাওয়া গেছে!');
+                    generateQRCode(); // স্বয়ংক্রিয়ভাবে পড়া টেক্সট থেকে QR কোড তৈরি করুন
+                } else {
+                    showCustomAlert('দুঃখিত, কোনো QR কোড খুঁজে পাওয়া যায়নি।');
+                }
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    };
+
+    // বাটনগুলোর জন্য ইভেন্ট লিসেনার
+    if (generateQrBtn) generateQrBtn.addEventListener('click', generateQRCode);
+    if (downloadQrBtn) downloadQrBtn.addEventListener('click', downloadQRCode);
     if (clearQrBtn) {
         clearQrBtn.addEventListener('click', () => {
             resetQrCodeArea();
@@ -11388,7 +11436,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Enter চেপেও কোড জেনারেট করার সুবিধা
     if (qrInput) {
         qrInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -11396,6 +11443,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 generateQRCode();
             }
         });
+    }
+
+    // ফাইল আপলোডের জন্য ইভেন্ট লিসেনার
+    if (qrFileInput) {
+        qrFileInput.addEventListener('change', (e) => {
+            handleQrFile(e.target.files[0]);
+            e.target.value = ''; // একই ফাইল আবার আপলোড করার জন্য ইনপুট রিসেট করুন
+        });
+    }
+
+    // --- নতুন: ড্র্যাগ অ্যান্ড ড্রপ ইভেন্ট লিসেনার ---
+    if (dropZone) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, false);
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            handleQrFile(e.dataTransfer.files[0]);
+        }, false);
     }
 });
 // ====================================================================
