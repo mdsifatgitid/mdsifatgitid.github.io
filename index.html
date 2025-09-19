@@ -5249,6 +5249,14 @@ input:checked + .slider:before {
                     <label for="audioInput" class="custom-file-upload">অডিও ফাইল বাছাই করুন</label>
                     <input type="file" id="audioInput" accept="audio/*">
                     <p id="audioFileName" class="file-name-display"></p>
+                    <!-- অডিওর জন্য নতুন লুপ টগল সুইচ -->
+                    <div class="flex items-center gap-2 ml-auto">
+                        <span class="font-semibold text-gray-700 dark:text-gray-300 text-sm">লুপ</span>
+                        <label class="switch">
+                            <input type="checkbox" id="audioLoopToggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -5281,6 +5289,14 @@ input:checked + .slider:before {
                 <div class="player-input-area">
                     <label for="videoInput" class="custom-file-upload">ভিডিও ফাইল বাছাই করুন</label>
                     <input type="file" id="videoInput" accept="video/*">
+                     <!-- ভিডিওর জন্য নতুন লুপ টগল সুইচ -->
+                    <div class="flex items-center gap-2 ml-auto">
+                        <span class="font-semibold text-gray-700 dark:text-gray-300 text-sm">লুপ</span>
+                        <label class="switch">
+                            <input type="checkbox" id="videoLoopToggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -11258,6 +11274,19 @@ function initializePlayerTab() {
     }
     if (videoInput) {
         videoInput.addEventListener('change', e => handleVideoFile(e.target.files[0]));
+    }
+
+    // নতুন: লুপ টগল লিসেনার
+    if (audioLoopToggle && audioPlayer) {
+        audioLoopToggle.addEventListener('change', () => {
+            audioPlayer.loop = audioLoopToggle.checked;
+        });
+    }
+
+    if (videoLoopToggle && videoPlayer) {
+        videoLoopToggle.addEventListener('change', () => {
+            videoPlayer.loop = videoLoopToggle.checked;
+        });
     }
 
     // ড্র্যাগ অ্যান্ড ড্রপ লিসেনার
