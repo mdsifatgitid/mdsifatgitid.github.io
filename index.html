@@ -11320,11 +11320,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ====================================================================
 // START: QR CODE GENERATOR SCRIPT (Updated with Upload & Drag-Drop Feature)
-// This entire block should replace the existing QR code script block.
+// এই ব্লকের কোডটি আপনার HTML ফাইলের পুরনো QR কোড স্ক্রিপ্ট ব্লকটির জায়গায় সম্পূর্ণরূপে প্রতিস্থাপন করুন।
 // ====================================================================
 document.addEventListener('DOMContentLoaded', () => {
     const qrContent = document.getElementById('qrCodeContent');
-    if (!qrContent) return; // If the tab content is not present, do nothing.
+    if (!qrContent) return; // যদি ট্যাবের কন্টেন্ট না থাকে, তবে কিছুই করবেন না।
 
     const qrInput = document.getElementById('qrInput');
     const generateQrBtn = document.getElementById('generateQrBtn');
@@ -11333,32 +11333,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const qrcodeContainer = document.getElementById('qrcode');
     const qrcodePlaceholder = document.getElementById('qrcode-placeholder');
     const qrFileInput = document.getElementById('qrFileInput');
-    const dropZone = document.querySelector('.qr-code-content'); // The main container for the QR section
+    const dropZone = document.querySelector('.qr-code-content'); // QR সেকশনের প্রধান কন্টেইনার
 
     let qrCodeInstance = null;
 
-    // QR কোড তৈরি করার ফাংশন
+    // QR কোড তৈরি করার ফাংশন (পরিবর্তিত)
     const generateQRCode = () => {
         const text = qrInput.value.trim();
-        // এই চেকটি একাধিক শব্দসহ যেকোনো টেক্সটের জন্য সঠিকভাবে কাজ করবে।
         if (!text) {
             showCustomAlert('অনুগ্রহ করে কিউআর কোড তৈরির জন্য কিছু টেক্সট বা লিঙ্ক লিখুন।');
             return;
         }
 
-        if(qrcodeContainer) qrcodeContainer.innerHTML = '';
-        if(qrcodePlaceholder) qrcodePlaceholder.style.display = 'none';
+        // পরিবর্তন: বাংলা এবং বিশেষ ক্যারেক্টার সঠিকভাবে এনকোড করার জন্য encodeURIComponent ব্যবহার করা হয়েছে।
+        // এটি QR কোড তৈরি এবং পড়ার সময় সম্ভাব্য সমস্যা সমাধান করে।
+        const encodedText = encodeURIComponent(text);
+
+        if (qrcodeContainer) qrcodeContainer.innerHTML = '';
+        if (qrcodePlaceholder) qrcodePlaceholder.style.display = 'none';
 
         try {
             qrCodeInstance = new QRCode(qrcodeContainer, {
-                text: text,
+                text: encodedText, // এনকোড করা টেক্সট ব্যবহার করা হয়েছে
                 width: 256,
                 height: 256,
                 colorDark: "#000000",
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
-            if(downloadQrBtn) downloadQrBtn.disabled = false;
+            if (downloadQrBtn) downloadQrBtn.disabled = false;
         } catch (error) {
             console.error("QR Code generation error:", error);
             showCustomAlert("কিউআর কোড তৈরিতে একটি সমস্যা হয়েছে।");
@@ -11386,14 +11389,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ইনপুট এবং ফলাফল পরিষ্কার করার ফাংশন
     const resetQrCodeArea = () => {
-        if(qrInput) qrInput.value = '';
-        if(qrcodeContainer) qrcodeContainer.innerHTML = '';
-        if(qrcodePlaceholder) qrcodePlaceholder.style.display = 'flex';
-        if(downloadQrBtn) downloadQrBtn.disabled = true;
+        if (qrInput) qrInput.value = '';
+        if (qrcodeContainer) qrcodeContainer.innerHTML = '';
+        if (qrcodePlaceholder) qrcodePlaceholder.style.display = 'flex';
+        if (downloadQrBtn) downloadQrBtn.disabled = true;
         qrCodeInstance = null;
     };
-    
-    // আপলোড বা ড্রপ করা ফাইল হ্যান্ডেল করার ফাংশন
+
+    // আপলোড বা ড্রপ করা ফাইল হ্যান্ডেল করার ফাংশন (পরিবর্তিত)
     const handleQrFile = (file) => {
         if (!file || !file.type.startsWith('image/')) {
             showCustomAlert('অনুগ্রহ করে একটি ছবি ফাইল নির্বাচন করুন।');
@@ -11405,16 +11408,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const img = new Image();
             img.onload = function() {
                 const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d', { willReadFrequently: true });
+                const context = canvas.getContext('2d', {
+                    willReadFrequently: true
+                });
                 canvas.width = img.width;
                 canvas.height = img.height;
                 context.drawImage(img, 0, 0, img.width, img.height);
                 const imageData = context.getImageData(0, 0, img.width, img.height);
-                
+
                 const code = jsQR(imageData.data, imageData.width, imageData.height);
 
                 if (code) {
-                    if(qrInput) qrInput.value = code.data;
+                    // পরিবর্তন: QR কোড থেকে পাওয়া ডেটা decodeURIComponent ব্যবহার করে ডিকোড করার চেষ্টা করা হচ্ছে।
+                    // যদি ডিকোড ব্যর্থ হয় (যেমন, এটি সাধারণ ইংরেজি টেক্সট), তবে মূল ডেটা ব্যবহার করা হবে।
+                    try {
+                        const decodedData = decodeURIComponent(code.data);
+                        if (qrInput) qrInput.value = decodedData;
+                    } catch (e) {
+                        console.warn("QR data is not URI encoded, using raw data.", e);
+                        if (qrInput) qrInput.value = code.data;
+                    }
+
                     showCustomAlert('QR কোড থেকে তথ্য পাওয়া গেছে!');
                     generateQRCode(); // স্বয়ংক্রিয়ভাবে পড়া টেক্সট থেকে QR কোড তৈরি করুন
                 } else {
