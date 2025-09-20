@@ -8,6 +8,7 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.4.13/dist/easy.qrcode.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 
     <style>
@@ -5311,14 +5312,14 @@ input:checked + .slider:before {
     </div>
 </div>
 
-<!-- নতুন: কিউআর কোড জেনারেটর বিভাগ (আপলোড ফিচারসহ) -->
+<!-- নতুন: কিউআর কোড জেনারেটর বিভাগ (আপলোড ফিচার এবং লাইভ জেনারেশনসহ) -->
 <div id="qrCodeContent" class="calculator-content">
     <div class="qr-code-content">
         <!-- ইনপুট এবং অপশন -->
         <div class="qr-input-section">
             <h3 class="text-xl font-bold text-gray-700 mb-2 dark:text-gray-200">কিউআর কোড জেনারেটর ও রিডার</h3>
-            <p class="text-gray-600 dark:text-gray-400 mb-2">যেকোনো টেক্সট বা লিঙ্ক থেকে QR কোড তৈরি করুন অথবা ছবি আপলোড করে QR কোড থেকে তথ্য পড়ুন।</p>
-            <textarea id="qrInput" rows="4" placeholder="এখানে আপনার টেক্সট বা URL লিখুন..."></textarea>
+            <p class="text-gray-600 dark:text-gray-400 mb-2">যেকোনো টেক্সট বা লিঙ্ক থেকে QR কোড তৈরি করুন অথবা ছবি আপলোড করে QR কোড থেকে তথ্য পড়ুন। টেক্সটবক্সে লিখলেই লাইভ QR কোড তৈরি হবে।</p>
+            <textarea id="qrInput" rows="6" placeholder="এখানে আপনার টেক্সট বা URL লিখুন..."></textarea>
         </div>
 
         <!-- ফলাফল এবং বাটন -->
@@ -5327,22 +5328,22 @@ input:checked + .slider:before {
             <div id="qrcode-container">
                 <div id="qrcode" class="p-2 bg-white rounded-lg shadow-inner"></div>
                 <div id="qrcode-placeholder" class="flex items-center justify-center">
-                    <svg class="w-16 h-16 text-gray-300 dark:text-gray-500" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h3v3H5zm0 8h3v3H5zm8-8h3v3h-3zm0 8h3v3h-3zM9 2v2M9 20v2m8-11h2m-2-4h2m-6 0V2m-6 0V2m-2 4h2m-2 2H3m2 6H3m2 2H3m6 0v2m-4 0v2m11-2h2m-2 2h2m-2-6h2m-2-2h2"/></svg>
+                    <svg class="w-16 h-16 text-gray-300 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h3v3H5zm0 8h3v3H5zm8-8h3v3h-3zm0 8h3v3h-3zM9 2v2M9 20v2m8-11h2m-2-4h2m-6 0V2m-6 0V2m-2 4h2m-2 2H3m2 6H3m2 2H3m6 0v2m-4 0v2m11-2h2m-2 2h2m-2-6h2m-2-2h2"/></svg>
                 </div>
             </div>
             
             <div class="qr-actions">
-                <button id="generateQrBtn" class="qr-button generate">
-                    <span>তৈরি করুন</span>
-                </button>
                 <button id="downloadQrBtn" class="qr-button download" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
                     <span>ডাউনলোড (PNG)</span>
                 </button>
                  <label for="qrFileInput" class="qr-button upload" style="cursor: pointer;">
-                    <span>আপলোড করুন</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
+                    <span>আপলোড</span>
                 </label>
                 <input type="file" id="qrFileInput" class="hidden" accept="image/*">
                 <button id="clearQrBtn" class="qr-button clear">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/></svg>
                     <span>মুছুন</span>
                 </button>
             </div>
@@ -11319,7 +11320,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 
 // ====================================================================
-// START: QR CODE GENERATOR SCRIPT (Updated with Upload & Drag-Drop Feature)
+// START: QR CODE GENERATOR SCRIPT (Updated with Live Generation & Unicode Fix)
 // এই ব্লকের কোডটি আপনার HTML ফাইলের পুরনো QR কোড স্ক্রিপ্ট ব্লকটির জায়গায় সম্পূর্ণরূপে প্রতিস্থাপন করুন।
 // ====================================================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -11327,7 +11328,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!qrContent) return; // যদি ট্যাবের কন্টেন্ট না থাকে, তবে কিছুই করবেন না।
 
     const qrInput = document.getElementById('qrInput');
-    const generateQrBtn = document.getElementById('generateQrBtn');
     const downloadQrBtn = document.getElementById('downloadQrBtn');
     const clearQrBtn = document.getElementById('clearQrBtn');
     const qrcodeContainer = document.getElementById('qrcode');
@@ -11336,25 +11336,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const dropZone = document.querySelector('.qr-code-content'); // QR সেকশনের প্রধান কন্টেইনার
 
     let qrCodeInstance = null;
+    let debounceTimer; // লাইভ আপডেটের জন্য টাইমার
 
-    // QR কোড তৈরি করার ফাংশন (পরিবর্তিত)
+    // QR কোড তৈরি করার ফাংশন (লাইভ এবং ইউনিকোড সাপোর্টেড)
     const generateQRCode = () => {
-        const text = qrInput.value.trim();
+        // পরিবর্তন: .trim() সরিয়ে দেওয়া হয়েছে যাতে ব্যবহারকারী চাইলে স্পেসসহ কোড তৈরি করতে পারে।
+        const text = qrInput.value;
+
+        // যদি ইনপুট খালি থাকে, তাহলে QR কোড এরিয়া রিসেট করুন
         if (!text) {
-            showCustomAlert('অনুগ্রহ করে কিউআর কোড তৈরির জন্য কিছু টেক্সট বা লিঙ্ক লিখুন।');
+            resetQrCodeArea();
             return;
         }
-
-        // পরিবর্তন: বাংলা এবং বিশেষ ক্যারেক্টার সঠিকভাবে এনকোড করার জন্য encodeURIComponent ব্যবহার করা হয়েছে।
-        // এটি QR কোড তৈরি এবং পড়ার সময় সম্ভাব্য সমস্যা সমাধান করে।
-        const encodedText = encodeURIComponent(text);
 
         if (qrcodeContainer) qrcodeContainer.innerHTML = '';
         if (qrcodePlaceholder) qrcodePlaceholder.style.display = 'none';
 
         try {
+            // মূল পরিবর্তন: এখানে encodeURIComponent ব্যবহার করা হয়নি।
+            // লাইব্রেরীটি সরাসরি বাংলাসহ যেকোনো UTF-8 টেক্সট হ্যান্ডেল করতে পারে।
             qrCodeInstance = new QRCode(qrcodeContainer, {
-                text: encodedText, // এনকোড করা টেক্সট ব্যবহার করা হয়েছে
+                text: text, // সরাসরি মূল টেক্সট ব্যবহার করা হয়েছে
                 width: 256,
                 height: 256,
                 colorDark: "#000000",
@@ -11396,7 +11398,7 @@ document.addEventListener('DOMContentLoaded', () => {
         qrCodeInstance = null;
     };
 
-    // আপলোড বা ড্রপ করা ফাইল হ্যান্ডেল করার ফাংশন (পরিবর্তিত)
+    // আপলোড বা ড্রপ করা ফাইল হ্যান্ডেল করার ফাংশন
     const handleQrFile = (file) => {
         if (!file || !file.type.startsWith('image/')) {
             showCustomAlert('অনুগ্রহ করে একটি ছবি ফাইল নির্বাচন করুন।');
@@ -11408,29 +11410,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const img = new Image();
             img.onload = function() {
                 const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d', {
-                    willReadFrequently: true
-                });
+                const context = canvas.getContext('2d', { willReadFrequently: true });
                 canvas.width = img.width;
                 canvas.height = img.height;
                 context.drawImage(img, 0, 0, img.width, img.height);
                 const imageData = context.getImageData(0, 0, img.width, img.height);
-
                 const code = jsQR(imageData.data, imageData.width, imageData.height);
 
                 if (code) {
-                    // পরিবর্তন: QR কোড থেকে পাওয়া ডেটা decodeURIComponent ব্যবহার করে ডিকোড করার চেষ্টা করা হচ্ছে।
-                    // যদি ডিকোড ব্যর্থ হয় (যেমন, এটি সাধারণ ইংরেজি টেক্সট), তবে মূল ডেটা ব্যবহার করা হবে।
-                    try {
-                        const decodedData = decodeURIComponent(code.data);
-                        if (qrInput) qrInput.value = decodedData;
-                    } catch (e) {
-                        console.warn("QR data is not URI encoded, using raw data.", e);
-                        if (qrInput) qrInput.value = code.data;
-                    }
-
+                    // QR কোড থেকে পাওয়া ডেটা সরাসরি টেক্সটবক্সে দেখানো হচ্ছে।
+                    if (qrInput) qrInput.value = code.data;
                     showCustomAlert('QR কোড থেকে তথ্য পাওয়া গেছে!');
-                    generateQRCode(); // স্বয়ংক্রিয়ভাবে পড়া টেক্সট থেকে QR কোড তৈরি করুন
+                    generateQRCode(); // তথ্য পাওয়ার পর সাথে সাথে নতুন QR কোড তৈরি করা হচ্ছে
                 } else {
                     showCustomAlert('দুঃখিত, কোনো QR কোড খুঁজে পাওয়া যায়নি।');
                 }
@@ -11440,22 +11431,23 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsDataURL(file);
     };
 
+    // --- নতুন: লাইভ আপডেটের জন্য ইভেন্ট লিসেনার ---
+    if (qrInput) {
+        qrInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            // ব্যবহারকারী টাইপ থামানোর ৩০০ মিলিসেকেন্ড পর QR কোড তৈরি হবে
+            debounceTimer = setTimeout(() => {
+                generateQRCode();
+            }, 300);
+        });
+    }
+
     // বাটনগুলোর জন্য ইভেন্ট লিসেনার
-    if (generateQrBtn) generateQrBtn.addEventListener('click', generateQRCode);
     if (downloadQrBtn) downloadQrBtn.addEventListener('click', downloadQRCode);
     if (clearQrBtn) {
         clearQrBtn.addEventListener('click', () => {
             resetQrCodeArea();
             showCustomAlert('ইনপুট এবং কিউআর কোড পরিষ্কার করা হয়েছে।');
-        });
-    }
-
-    if (qrInput) {
-        qrInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                generateQRCode();
-            }
         });
     }
 
@@ -11466,8 +11458,8 @@ document.addEventListener('DOMContentLoaded', () => {
             e.target.value = ''; // একই ফাইল আবার আপলোড করার জন্য ইনপুট রিসেট করুন
         });
     }
-
-    // --- নতুন: ড্র্যাগ অ্যান্ড ড্রপ ইভেন্ট লিসেনার ---
+    
+    // --- ড্র্যাগ অ্যান্ড ড্রপ ইভেন্ট লিসেনার ---
     if (dropZone) {
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropZone.addEventListener(eventName, (e) => {
@@ -11475,15 +11467,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.stopPropagation();
             }, false);
         });
-
         ['dragenter', 'dragover'].forEach(eventName => {
             dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
         });
-
         ['dragleave', 'drop'].forEach(eventName => {
             dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
         });
-
         dropZone.addEventListener('drop', (e) => {
             handleQrFile(e.dataTransfer.files[0]);
         }, false);
