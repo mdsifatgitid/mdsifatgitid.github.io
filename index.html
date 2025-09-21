@@ -229,7 +229,7 @@
             justify-content: center;
             align-items: center; /* উল্লম্বভাবে কেন্দ্র করার জন্য যোগ করা হয়েছে */
             margin-bottom: 5px; /* বর্ধিত মার্জিন */
-            gap: 10px; /* বর্ধিত ফাঁক */
+            gap: 5px; /* বর্ধিত ফাঁক */
             flex-wrap: wrap; /* ছোট স্ক্রিনে ট্যাবগুলি মোড়ানো */
         }
 
@@ -4153,6 +4153,22 @@ input:checked + .slider:before {
 
 /* শেষ: যাকাত ক্যালকুলেটর স্টাইল */
 
+
+/* Animated News Ticker Styles Start (Updated: Cursor removed) */
+#news-ticker-text {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom; /* লেখাটিকে বেসলাইনের সাথে অ্যালাইন করতে */
+    animation: typing 3.5s steps(60, end); /* Blinking cursor animation removed */
+}
+
+/* Typing animation */
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+/* Animated News Ticker Styles End */
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
 </head>
@@ -4186,6 +4202,23 @@ input:checked + .slider:before {
         <div id="currentDateTimeBanner" class="text-center text-lg font-semibold mb-0 mt-0 p-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-lg shadow-md">
             <!-- JavaScript দ্বারা তারিখ ও সময় এখানে আপডেট হবে -->
         </div>
+	
+<!-- Animated News Ticker Start -->
+
+<!-- বর্তমান তারিখ ও সময় ব্যানারের ঠিক নিচে এবং "বাংলা টুলবক্স" শিরোনামের ওপরে এই অংশটি যোগ করা হয়েছে, এটি দিয়ে নিউজ শিরোনামের মতো করে লেখা আসবে। -->
+
+<!--এটি দ্বারা কমেন্ট করা আছে এখন ব্রাউজারে দেখা যাবেনা, এই ট্যাগ এর মাঝে সেকশনটি রাখলে ব্রাউজারে দেখা যাবেনা, সরিয়ে দিলে তখন দেখা যাবে  -->
+
+        <div id="news-ticker-container" class="relative w-full max-w-2xl mx-auto mb-1 overflow-hidden bg-indigo-100 dark:bg-gray-700 p-0 rounded-lg shadow-inner">
+            <p id="news-ticker-text" class="text-center text-indigo-800 dark:text-indigo-200 font-semibold whitespace-nowrap"></p>
+        </div>
+      
+<!--এটি দ্বারা কমেন্ট করা আছে এখন ব্রাউজারে দেখা যাবেনা, এই ট্যাগ এর মাঝে সেকশনটি রাখলে ব্রাউজারে দেখা যাবেনা, সরিয়ে দিলে তখন দেখা যাবে  -->
+
+<!--এটি দ্বারা কমেন্ট করা আছে এখন ব্রাউজারে দেখা যাবেনা, এই ট্যাগ এর মাঝে সেকশনটি রাখলে ব্রাউজারে দেখা যাবেনা, সরিয়ে দিলে তখন দেখা যাবে  -->
+
+<!-- Animated News Ticker End -->
+
 
         <h2 class="text-3xl font-bold text-gray-800 mb-1">বাংলা টুলবক্স</h2>
 
@@ -12029,6 +12062,49 @@ document.addEventListener('DOMContentLoaded', () => {
 // END: ZAKAT CALCULATOR SCRIPT
 // ====================================================================
 
+// ====================================================================
+// START: Animated News Ticker Script (Updated: Cursor animation removed)
+// ====================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    const tickerTextElement = document.getElementById('news-ticker-text');
+    if (!tickerTextElement) return;
+
+    // এখানে আপনি আপনার ইচ্ছামত মেসেজ যোগ করতে পারবেন
+    const messages = [
+        "বাংলা টুলবক্স-এ নতুন 'যাকাত ক্যালকুলেটর' যুক্ত হয়েছে!",
+        "আপনার টুলস ব্যবহারের অভিজ্ঞতা কেমন? আমাদের মতামত জানান।",
+        "নতুন আপডেট: এখন ছবি থেকেও QR কোড স্ক্যান করা যাবে।"
+    ];
+
+    let messageIndex = 0;
+    const animationInterval = 6000; // প্রতিটি মেসেজ ৬ সেকেন্ড পর পর পরিবর্তন হবে
+
+    function updateTicker() {
+        const currentMessage = messages[messageIndex];
+        
+        // অ্যানিমেশন রিসেট করার জন্য
+        tickerTextElement.style.animation = 'none';
+        tickerTextElement.offsetHeight; // Trigger a reflow to restart animation
+        
+        tickerTextElement.textContent = currentMessage;
+        
+        const steps = currentMessage.length > 0 ? currentMessage.length : 1;
+        const duration = Math.max(2.5, currentMessage.length * 0.1); // লেখার দৈর্ঘ্যের উপর ভিত্তি করে সময় নির্ধারণ
+        
+        // Updated animation string without blink-caret
+        tickerTextElement.style.animation = `typing ${duration}s steps(${steps}, end)`;
+
+        messageIndex = (messageIndex + 1) % messages.length;
+    }
+
+    // প্রথমবার চালানোর জন্য
+    updateTicker(); 
+    // নির্দিষ্ট সময় পর পর মেসেজ পরিবর্তন করার জন্য
+    setInterval(updateTicker, animationInterval); 
+});
+// ====================================================================
+// END: Animated News Ticker Script
+// ====================================================================
 
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
