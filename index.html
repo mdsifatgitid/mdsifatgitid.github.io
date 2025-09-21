@@ -32,47 +32,59 @@
     font-style: normal;
 }
 /* নতুন ফন্ট সেকশন শেষ */
-        /* Preloader Styles */
-        #preloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000000; /* Changed to black */
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            /* পরিবর্তন: লোডার ফেড-আউট হওয়ার ট্রানজিশন ডিউরেশন 0.75s থেকে 1.5s করা হয়েছে */
-            transition: opacity 1.5s ease, visibility 1.5s ease;
-        }
+/* Preloader Styles (পরিবর্তিত) */
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000000;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column; /* ছবি এবং লেখাকে উল্লম্বভাবে সাজানোর জন্য এই লাইনটি যোগ করা হয়েছে */
+    justify-content: center;
+    align-items: center;
+    transition: opacity 1.5s ease, visibility 1.5s ease;
+}
 
-        #preloader.preloader-hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
+/* নতুন: প্রি-লোডার ছবির জন্য স্টাইল */
+#preloader-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%; /* গোলাকার ছবির জন্য */
+    object-fit: cover;
+    margin-bottom: 20px; /* লেখা থেকে ছবির দূরত্ব */
+    border: 3px solid #fff; /* একটি সাদা বর্ডার দেওয়া হয়েছে */
+    opacity: 0;
+    /* লেখার মতো ছবির জন্যও একই অ্যানিমেশন যোগ করা হয়েছে */
+    animation: animate-name 3.5s ease-out forwards;
+}
 
-        #preloader-name {
-            color: white;
-            font-size: 2.5rem;
-            font-weight: bold;
-            opacity: 0;
-            /* পরিবর্তন: নামের অ্যানিমেশন ডিউরেশন 2.5s থেকে 3.5s করা হয়েছে */
-            animation: animate-name 3.5s ease-out forwards;
-            text-align: center;
-        }
+#preloader.preloader-hidden {
+    opacity: 0;
+    visibility: hidden;
+}
 
-        @keyframes animate-name {
-            0% {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
+#preloader-name {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: bold;
+    opacity: 0;
+    animation: animate-name 3.5s ease-out forwards;
+    text-align: center;
+}
+
+@keyframes animate-name {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
         
         @keyframes fadeInContent {
             from { opacity: 0; }
@@ -3988,10 +4000,10 @@ input:checked + .slider:before {
     </style>
 </head>
 <body>
-    <!-- Preloader -->
-    <div id="preloader">
-        <h1 id="preloader-name">Md Shahiduzzaman Sifat</h1>
-    </div>
+		<div id="preloader">
+<!-- সামনের এই কমেন্ট অংশটুকু এবং পেছনের কমেন্ট এর অংশটুকু মুছে দিলে ইমেজও দেখা যাবে।	<img id="preloader-image" src="https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/Md%20Shahiduzzaman%20Sifat.png" alt="Profile Picture"> সামনের অংশটুকু এবং এখানের পিছনের অংশটুকু মুছলে ছবিও দেখা যাবে -->
+			<h1 id="preloader-name">Md Shahiduzzaman Sifat</h1>
+		</div>
 
     <!-- Animated Background -->
     <div class="area">
