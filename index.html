@@ -3996,6 +3996,163 @@ input:checked + .slider:before {
 /* END: Emergency Numbers Styles */
 /* ==================================================================== */
 
+/* শুরু: যাকাত ক্যালকুলেটর স্টাইল */
+.zakat-calculator-content {
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 900px;
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+.dark .zakat-calculator-content {
+    background-color: #2d3748;
+}
+.zakat-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+    margin-bottom: 25px;
+}
+@media (min-width: 768px) {
+    .zakat-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .nisab-section {
+        grid-column: 1 / -1; /* Make Nisab section span full width on larger screens */
+    }
+}
+.zakat-section {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+.dark .zakat-section {
+    background-color: #1a202c;
+    border-color: #4a5568;
+}
+.zakat-section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #3f51b5;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e2e8f0;
+}
+.dark .zakat-section-title {
+    color: #90cdf4;
+    border-bottom-color: #4a5568;
+}
+.zakat-input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+.zakat-input-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #374151;
+    font-weight: 500;
+}
+.dark .zakat-input-group label {
+    color: #cbd5e0;
+}
+.zakat-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.dark .zakat-input {
+    background-color: #4a5568;
+    border-color: #718096;
+    color: #f7fafc;
+}
+.zakat-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+.nisab-result {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #e6f7ff;
+    border: 1px solid #b3e0ff;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+.dark .nisab-result {
+    background-color: #1a202c;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+.zakat-calculate-btn {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 10px;
+}
+.zakat-calculate-btn:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
+}
+.zakat-result-area {
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 12px;
+    background-color: #dcfce7;
+    border: 1px solid #bbf7d0;
+    text-align: left;
+    line-height: 1.8;
+    display: none; /* Initially hidden */
+}
+.dark .zakat-result-area {
+    background-color: #064e3b;
+    border-color: #34d399;
+    color: #d1fae5;
+}
+.zakat-result-area h4 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+.zakat-result-area p {
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+.zakat-result-area .final-zakat {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #047857;
+    margin-top: 10px;
+}
+.dark .zakat-result-area .final-zakat {
+    color: #6ee7b7;
+}
+.zakat-result-area.not-payable {
+    background-color: #fef3c7;
+    border-color: #fde68a;
+}
+.dark .zakat-result-area.not-payable {
+    background-color: #78350f;
+    border-color: #f59e0b;
+    color: #fef3c7;
+}
+
+/* শেষ: যাকাত ক্যালকুলেটর স্টাইল */
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
 </head>
@@ -4074,6 +4231,7 @@ input:checked + .slider:before {
 				<!-- ভবিষ্যতে নতুন ট্যাব এখানে যোগ করা যাবে -->
 				<button id="clockTab" class="tab-button rounded-xl">ঘড়ি</button>
 				<button id="playerTab" class="tab-button rounded-xl">প্লেয়ার</button>
+				<button id="zakatCalcTab" class="tab-button rounded-xl">যাকাতের হিসাব</button>
 				<button id="qrCodeTab" class="tab-button rounded-xl">কিউআর কোড</button>
 				<button id="emergencyNumbersTab" class="tab-button rounded-xl">জরুরি নম্বর</button>
 				<button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
@@ -5321,6 +5479,73 @@ input:checked + .slider:before {
             </div>
         </div>
 
+    </div>
+</div>
+
+<!-- নতুন: যাকাত ক্যালকুলেটর বিভাগ -->
+<div id="zakatCalculatorContent" class="calculator-content">
+    <div class="zakat-calculator-content">
+        <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">যাকাত ক্যালকুলেটর</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">আপনার যাকাতযোগ্য সম্পদের হিসাব করতে নিচের ঘরগুলো পূরণ করুন। রুপার হিসাব অনুযায়ী নিসাব গণনা করা নিরাপদ।</p>
+
+        <div class="zakat-grid">
+            <!-- নিসাব গণনা অংশ -->
+            <div class="zakat-section nisab-section">
+                <h4 class="zakat-section-title">নিসাব গণনা</h4>
+                <div class="zakat-input-group">
+                    <label for="silverPrice">১ ভরি রুপার বর্তমান বাজারমূল্য (টাকা)</label>
+                    <input type="number" id="silverPrice" placeholder="যেমন: 2100" class="zakat-input">
+                </div>
+                 <div class="zakat-input-group">
+                    <label for="goldPrice">১ ভরি সোনার বর্তমান বাজারমূল্য (টাকা)</label>
+                    <input type="number" id="goldPrice" placeholder="যেমন: 110000" class="zakat-input">
+                </div>
+                <div class="nisab-result">
+                    <p>রুপা অনুযায়ী নিসাব: <span id="nisabAmount" class="font-bold">৳ 0.00</span></p>
+                    <small>(সাড়ে ৫২ ভরি রুপার মূল্যের সমপরিমাণ)</small>
+                </div>
+            </div>
+
+            <!-- সম্পদ অংশ -->
+            <div class="zakat-section">
+                <h4 class="zakat-section-title">যাকাতযোগ্য সম্পদ</h4>
+                <div class="zakat-input-group">
+                    <label for="goldAmount">সোনা (ভরি)</label>
+                    <input type="number" id="goldAmount" placeholder="0" class="zakat-input">
+                </div>
+                <div class="zakat-input-group">
+                    <label for="silverAmount">রুপা (ভরি)</label>
+                    <input type="number" id="silverAmount" placeholder="0" class="zakat-input">
+                </div>
+                <div class="zakat-input-group">
+                    <label for="cashAmount">নগদ অর্থ (ব্যাংক, হাতে থাকা)</label>
+                    <input type="number" id="cashAmount" placeholder="0" class="zakat-input">
+                </div>
+                <div class="zakat-input-group">
+                    <label for="businessAssets">ব্যবসায়িক সম্পদ (বর্তমান বাজারমূল্য)</label>
+                    <input type="number" id="businessAssets" placeholder="0" class="zakat-input">
+                </div>
+                <div class="zakat-input-group">
+                    <label for="otherAssets">অন্যান্য সম্পদ (শেয়ার, বন্ড, প্রদত্ত ঋণ)</label>
+                    <input type="number" id="otherAssets" placeholder="0" class="zakat-input">
+                </div>
+            </div>
+
+            <!-- দেনা অংশ -->
+            <div class="zakat-section">
+                <h4 class="zakat-section-title">মোট দেনা / ঋণ</h4>
+                <div class="zakat-input-group">
+                    <label for="debtAmount">বাদযোগ্য ঋণ (যা এক বছরের মধ্যে পরিশোধযোগ্য)</label>
+                    <input type="number" id="debtAmount" placeholder="0" class="zakat-input">
+                </div>
+            </div>
+        </div>
+
+        <button id="calculateZakatBtn" class="zakat-calculate-btn">যাকাতের হিসাব করুন</button>
+
+        <div id="zakatResultArea" class="zakat-result-area">
+            <!-- ফলাফল এখানে দেখানো হবে -->
+        </div>
     </div>
 </div>
 
@@ -7533,6 +7758,8 @@ try {
 				const prayerTimeContent = document.getElementById('prayerTimeContent'); // এই লাইনটি যুক্ত করুন
 				const playerTab = document.getElementById('playerTab');
 				const playerContent = document.getElementById('playerContent');
+				const zakatCalcTab = document.getElementById('zakatCalcTab');
+				const zakatCalculatorContent = document.getElementById('zakatCalculatorContent');
 				const qrCodeTab = document.getElementById('qrCodeTab');
 				const qrCodeContent = document.getElementById('qrCodeContent');
 				const emergencyNumbersTab = document.getElementById('emergencyNumbersTab');
@@ -7795,7 +8022,7 @@ function showTab(tabId) {
     // সমস্ত ট্যাব এর নাম এবং ট্যাব এর কন্টেন্ট নাম একানে বসাতে হয়, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয় বা বসাতে হয় ।
     const tabs = [
         basicCalcTab,
-		ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, typingTestTab,
+		ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, typingTestTab, zakatCalcTab,
 		translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,
 		qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, 
         textAssistantTab,
@@ -7806,7 +8033,7 @@ function showTab(tabId) {
 		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent, newsContent, converterContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent,
 		weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
-		textToSpeechContent, speechToTextContent, textAssistantContent,
+		textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,
         allFeaturesContent
     ];
 
@@ -7870,6 +8097,10 @@ function showTab(tabId) {
             activeContent = prayerTimeContent;
             initializePrayerTimeTab();
             break;
+		case 'zakat':
+			activeTab = zakatCalcTab;
+			activeContent = zakatCalculatorContent;
+		break;
         case 'imageToText':
             activeTab = imageToTextTab;
             activeContent = imageToTextContent;
@@ -7966,6 +8197,7 @@ function showTab(tabId) {
 					});
 				if (clockTab) clockTab.addEventListener('click', () => showTab('clock'));
 				if (playerTab) playerTab.addEventListener('click', () => showTab('player'));
+				if (zakatCalcTab) zakatCalcTab.addEventListener('click', () => showTab('zakat'));
 				if (qrCodeTab) qrCodeTab.addEventListener('click', () => showTab('qrCode'));
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
                 if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
@@ -11671,6 +11903,108 @@ function initializeEmergencyNumbers() {
 // ====================================================================
 // END: EMERGENCY NUMBERS SCRIPT
 // ====================================================================
+
+// ====================================================================
+// START: ZAKAT CALCULATOR SCRIPT
+// ====================================================================
+function initializeZakatCalculator() {
+    // Input elements
+    const silverPriceInput = document.getElementById('silverPrice');
+    const goldPriceInput = document.getElementById('goldPrice');
+    const goldAmountInput = document.getElementById('goldAmount');
+    const silverAmountInput = document.getElementById('silverAmount');
+    const cashAmountInput = document.getElementById('cashAmount');
+    const businessAssetsInput = document.getElementById('businessAssets');
+    const otherAssetsInput = document.getElementById('otherAssets');
+    const debtAmountInput = document.getElementById('debtAmount');
+
+    // Button and display elements
+    const calculateBtn = document.getElementById('calculateZakatBtn');
+    const nisabAmountSpan = document.getElementById('nisabAmount');
+    const resultArea = document.getElementById('zakatResultArea');
+
+    // Helper function to get number value from input
+    const getValue = (el) => parseFloat(el.value) || 0;
+
+    // Function to calculate and update Nisab
+    const updateNisab = () => {
+        const silverPrice = getValue(silverPriceInput);
+        const nisabValue = silverPrice * 52.5;
+        nisabAmountSpan.textContent = `৳ ${nisabValue.toLocaleString('bn-BD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        return nisabValue;
+    };
+
+    // Function to calculate Zakat
+    const calculateZakat = () => {
+        const nisab = updateNisab();
+
+        // Get all asset values
+        const goldPrice = getValue(goldPriceInput);
+        const goldAmount = getValue(goldAmountInput);
+        const silverPrice = getValue(silverPriceInput);
+        const silverAmount = getValue(silverAmountInput);
+        const cashAmount = getValue(cashAmountInput);
+        const businessAssets = getValue(businessAssetsInput);
+        const otherAssets = getValue(otherAssetsInput);
+        
+        // Get liability value
+        const debtAmount = getValue(debtAmountInput);
+
+        // Calculate total assets
+        const totalGoldValue = goldAmount * goldPrice;
+        const totalSilverValue = silverAmount * silverPrice;
+        const totalAssets = totalGoldValue + totalSilverValue + cashAmount + businessAssets + otherAssets;
+
+        // Calculate net zakatable assets
+        const netAssets = totalAssets - debtAmount;
+
+        // Display logic
+        resultArea.style.display = 'block';
+        resultArea.classList.remove('not-payable');
+        
+        if (netAssets < nisab) {
+            resultArea.classList.add('not-payable');
+            resultArea.innerHTML = `
+                <h4>আপনার যাকাত প্রযোজ্য নয়</h4>
+                <p>আপনার মোট যাকাতযোগ্য সম্পদ (৳ ${netAssets.toLocaleString('bn-BD')}) নিসাব পরিমাণ (৳ ${nisab.toLocaleString('bn-BD')}) অপেক্ষা কম।</p>
+            `;
+        } else {
+            const zakatAmount = netAssets * 0.025;
+            resultArea.innerHTML = `
+                <h4>আপনার যাকাতের হিসাব</h4>
+                <p>মোট সম্পদ: ৳ ${totalAssets.toLocaleString('bn-BD')}</p>
+                <p>বাদযোগ্য দেনা: ৳ ${debtAmount.toLocaleString('bn-BD')}</p>
+                <p>যাকাতযোগ্য নিট সম্পদ: ৳ ${netAssets.toLocaleString('bn-BD')}</p>
+                <p class="final-zakat">আপনার প্রদেয় যাকাতের পরিমাণ: ৳ ${zakatAmount.toLocaleString('bn-BD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+            `;
+        }
+    };
+
+    // Event Listeners
+    if (silverPriceInput) {
+        silverPriceInput.addEventListener('input', updateNisab);
+    }
+    
+    if (calculateBtn) {
+        calculateBtn.addEventListener('click', calculateZakat);
+    }
+
+    // Initial Nisab calculation on load
+    updateNisab();
+}
+
+// Initialize when the tab is shown or page loads if it's active
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('zakatCalculatorContent')?.classList.contains('active')) {
+        initializeZakatCalculator();
+    }
+    document.getElementById('zakatCalcTab')?.addEventListener('click', initializeZakatCalculator);
+});
+// ====================================================================
+// END: ZAKAT CALCULATOR SCRIPT
+// ====================================================================
+
+
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
         window.onload = function() {
