@@ -4155,97 +4155,94 @@ input:checked + .slider:before {
 /* শেষ: যাকাত ক্যালকুলেটর স্টাইল */
 
 
-/* Animated News Ticker Styles (Updated) /
+/* Animated News Ticker Styles (Updated) */
 #news-ticker-container {
-position: relative; / For positioning nav icons */
-display: flex;
-align-items: center;
-justify-content: center;
+    position: relative; /* For positioning nav icons */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #news-ticker-container:hover #news-ticker-text {
-animation-play-state: paused;
+    animation-play-state: paused;
 }
 
 #news-ticker-content {
-width: 100%;
-text-align: center;
-white-space: nowrap;
-overflow: hidden;
+    width: 100%;
+    text-align: center;
+    overflow: hidden;
 }
 
 #news-ticker-text {
-display: inline-block;
-vertical-align: middle;
-overflow: hidden;
-white-space: nowrap;
-border-right: .15em solid orange; /* The typewriter cursor */
-animation: typing 3.5s steps(60, end), blink-caret .75s step-end infinite;
-color: inherit;
-text-decoration: none;
+    display: inline-block;
+    vertical-align: middle;
+    overflow: hidden;
+    white-space: nowrap; /* অ্যানিমেশনের সময় লেখা এক লাইনে থাকবে */
+    /* কার্সরের জন্য border-right এবং blink-caret অ্যানিমেশন সরানো হয়েছে */
+    animation: typing 3.5s steps(60, end);
+    color: inherit;
+    text-decoration: none;
+    /* লেখা ভাঙার জন্য এই প্রোপার্টিগুলো যোগ করা হয়েছে */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 #news-ticker-text:hover {
-text-decoration: underline;
+    text-decoration: underline;
 }
 
 .news-source {
-font-style: italic;
-color: #4f46e5; /* Indigo color to match */
+    font-style: italic;
+    color: #4f46e5; /* Indigo color to match */
 }
 .dark .news-source {
-color: #a5b4fc;
+    color: #a5b4fc;
 }
 
 .news-nav-icon {
-position: absolute;
-top: 50%;
-transform: translateY(-50%);
-background-color: rgba(0, 0, 0, 0.1);
-color: #312e81;
-border: none;
-border-radius: 50%;
-width: 24px;
-height: 24px;
-cursor: pointer;
-display: flex;
-align-items: center;
-justify-content: center;
-opacity: 0; /* Initially hidden */
-transition: opacity 0.3s ease, background-color 0.3s ease;
-z-index: 10;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #312e81;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease, background-color 0.3s ease;
+    z-index: 10;
 }
 .dark .news-nav-icon {
-background-color: rgba(255, 255, 255, 0.2);
-color: #e0e7ff;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #e0e7ff;
 }
 
 #news-ticker-container:hover .news-nav-icon {
-opacity: 1; /* Show on hover */
+    opacity: 1; /* Show on hover */
 }
 
 .news-nav-icon:hover {
-background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.2);
 }
 .dark .news-nav-icon:hover {
-background-color: rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.4);
 }
 
 #prev-news { left: 5px; }
 #next-news { right: 5px; }
 
-/* Typing animation (re-using old one) */
+/* Typing animation */
 @keyframes typing {
-from { width: 0 }
-to { width: 100% }
+    from { width: 0 }
+    to { width: 100% }
 }
-
-/* The typewriter cursor effect /
-@keyframes blink-caret {
-from, to { border-color: transparent }
-50% { border-color: orange; }
-}
-/ Animated News Ticker Styles End */
+/* blink-caret keyframes সরানো হয়েছে */
+/* Animated News Ticker Styles End */
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -12183,8 +12180,6 @@ if (!tickerContainer || !tickerTextElement || !prevBtn || !nextBtn) {
 }
 
 // --- সেটিংস ---
-// true করলে বিভিন্ন পত্রিকা থেকে খবর দেখাবে।
-// false করলে নিচের customMessages থেকে আপনার নিজের লেখা দেখাবে।
 const showNewsHeadlines = true;
 
 const customMessages = [
@@ -12270,7 +12265,6 @@ async function fetchNewsHeadlines() {
             return [{ title: "গত ২ ঘণ্টায় কোনো নতুন খবর পাওয়া যায়নি।", link: "#", source: "System" }];
         }
 
-        // ডুপ্লিকেট বাদ দিয়ে শিরোনামগুলো এলোমেলো করে দেওয়া হচ্ছে
         return shuffleArray([...new Set(allHeadlines.map(item => JSON.stringify(item)))].map(item => JSON.parse(item)));
 
     } catch (error) {
@@ -12281,6 +12275,7 @@ async function fetchNewsHeadlines() {
 
 /**
  * স্ক্রিনে বর্তমান শিরোনামটি টাইপিং অ্যানিমেশনসহ দেখানোর ফাংশন।
+ * (পরিবর্তিত)
  */
 function displayCurrentHeadline() {
     if (allMessages.length === 0) {
@@ -12297,9 +12292,10 @@ function displayCurrentHeadline() {
     
     tickerTextElement.href = currentMessage.link;
     
-    // অ্যানিমেশন রিসেট করা
+    // অ্যানিমেশন এবং স্টাইল রিসেট করা
     tickerTextElement.style.animation = 'none';
     tickerTextElement.offsetHeight; // রি-ফ্লো ট্রিগার করা
+    tickerTextElement.style.whiteSpace = 'nowrap'; // অ্যানিমেশনের জন্য nowrap সেট করা
     
     const fullContent = document.createElement('div');
     fullContent.innerHTML = displayText;
@@ -12309,9 +12305,20 @@ function displayCurrentHeadline() {
 
     tickerTextElement.innerHTML = displayText;
     tickerTextElement.style.width = '0'; // টাইপিং ইফেক্টের জন্য প্রস্থ শূন্য থেকে শুরু হবে
-    tickerTextElement.style.animation = `typing ${duration}s steps(${textLength}, end), blink-caret .75s step-end infinite`;
+    
+    // নতুন অ্যানিমেশন সেট করা (blink-caret ছাড়া)
+    tickerTextElement.style.animation = `typing ${duration}s steps(${textLength}, end)`;
     tickerTextElement.style.animationFillMode = 'forwards';
+
+    // অ্যানিমেশন শেষ হলে লেখা র‍্যাপ করার জন্য ইভেন্ট লিসেনার
+    const handleAnimationEnd = () => {
+        tickerTextElement.style.whiteSpace = 'normal'; // র‍্যাপ করার অনুমতি দেওয়া
+    };
+    
+    // { once: true } ব্যবহার করা হয়েছে যাতে ইভেন্টটি একবারই রান করে
+    tickerTextElement.addEventListener('animationend', handleAnimationEnd, { once: true });
 }
+
 
 function showNextHeadline() {
     messageIndex++;
@@ -12324,7 +12331,6 @@ function showPrevHeadline() {
 }
 
 function startAutoPlay() {
-    // নতুন ইন্টারভ্যাল শুরু করার আগে পুরনোটি বন্ধ করা
     stopAutoPlay();
     autoPlayInterval = setInterval(showNextHeadline, animationInterval);
 }
@@ -12355,7 +12361,6 @@ async function initializeTicker() {
 // ইভেন্ট লিসেনার
 nextBtn.addEventListener('click', () => {
     showNextHeadline();
-    // ম্যানুয়াল নেভিগেশনের পর অটো-প্লে টাইমার রিসেট করা
     startAutoPlay();
 });
 
@@ -12380,7 +12385,6 @@ setInterval(async () => {
             const newIndex = news.findIndex(item => item.link === currentLink);
 
             allMessages = news;
-            // বর্তমানে দেখানো খবরটি যদি নতুন লিস্টে থাকে, তবে সেই ইনডেক্স থেকে দেখানো হবে
             if (newIndex !== -1) {
                 messageIndex = newIndex;
             }
