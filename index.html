@@ -4155,20 +4155,97 @@ input:checked + .slider:before {
 /* শেষ: যাকাত ক্যালকুলেটর স্টাইল */
 
 
-/* Animated News Ticker Styles Start (Updated: Cursor removed) */
-#news-ticker-text {
-    display: inline-block;
-    overflow: hidden;
-    vertical-align: bottom; /* লেখাটিকে বেসলাইনের সাথে অ্যালাইন করতে */
-    animation: typing 3.5s steps(60, end); /* Blinking cursor animation removed */
+/* Animated News Ticker Styles (Updated) /
+#news-ticker-container {
+position: relative; / For positioning nav icons */
+display: flex;
+align-items: center;
+justify-content: center;
 }
 
-/* Typing animation */
-@keyframes typing {
-    from { width: 0 }
-    to { width: 100% }
+#news-ticker-container:hover #news-ticker-text {
+animation-play-state: paused;
 }
-/* Animated News Ticker Styles End */
+
+#news-ticker-content {
+width: 100%;
+text-align: center;
+white-space: nowrap;
+overflow: hidden;
+}
+
+#news-ticker-text {
+display: inline-block;
+vertical-align: middle;
+overflow: hidden;
+white-space: nowrap;
+border-right: .15em solid orange; /* The typewriter cursor */
+animation: typing 3.5s steps(60, end), blink-caret .75s step-end infinite;
+color: inherit;
+text-decoration: none;
+}
+
+#news-ticker-text:hover {
+text-decoration: underline;
+}
+
+.news-source {
+font-style: italic;
+color: #4f46e5; /* Indigo color to match */
+}
+.dark .news-source {
+color: #a5b4fc;
+}
+
+.news-nav-icon {
+position: absolute;
+top: 50%;
+transform: translateY(-50%);
+background-color: rgba(0, 0, 0, 0.1);
+color: #312e81;
+border: none;
+border-radius: 50%;
+width: 24px;
+height: 24px;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+opacity: 0; /* Initially hidden */
+transition: opacity 0.3s ease, background-color 0.3s ease;
+z-index: 10;
+}
+.dark .news-nav-icon {
+background-color: rgba(255, 255, 255, 0.2);
+color: #e0e7ff;
+}
+
+#news-ticker-container:hover .news-nav-icon {
+opacity: 1; /* Show on hover */
+}
+
+.news-nav-icon:hover {
+background-color: rgba(0, 0, 0, 0.2);
+}
+.dark .news-nav-icon:hover {
+background-color: rgba(255, 255, 255, 0.4);
+}
+
+#prev-news { left: 5px; }
+#next-news { right: 5px; }
+
+/* Typing animation (re-using old one) */
+@keyframes typing {
+from { width: 0 }
+to { width: 100% }
+}
+
+/* The typewriter cursor effect /
+@keyframes blink-caret {
+from, to { border-color: transparent }
+50% { border-color: orange; }
+}
+/ Animated News Ticker Styles End */
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -4210,9 +4287,22 @@ input:checked + .slider:before {
 
 <!--এটি দ্বারা কমেন্ট করা আছে এখন ব্রাউজারে দেখা যাবেনা, এই ট্যাগ এর মাঝে সেকশনটি রাখলে ব্রাউজারে দেখা যাবেনা, সরিয়ে দিলে তখন দেখা যাবে  -->
 
-        <div id="news-ticker-container" class="relative w-full max-w-2xl mx-auto mt-3 mb-1 overflow-hidden bg-indigo-100 dark:bg-gray-700 p-1 rounded-lg shadow-inner">
-            <p id="news-ticker-text" class="text-center text-indigo-800 dark:text-indigo-200 font-semibold whitespace-nowrap"></p>
-        </div>
+<!-- Animated News Ticker Start (Updated) -->
+
+<div id="news-ticker-container" class="relative w-full max-w-2xl mx-auto mt-3 mb-1 overflow-hidden bg-indigo-100 dark:bg-gray-700 p-2 rounded-lg shadow-inner">
+<div id="news-ticker-content">
+<!-- The 'a' tag will be populated by JavaScript -->
+<a id="news-ticker-text" href="#" target="_blank" class="text-indigo-800 dark:text-indigo-200 font-semibold"></a>
+</div>
+<!-- Navigation Icons -->
+<button id="prev-news" class="news-nav-icon" title="Previous News">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
+</button>
+<button id="next-news" class="news-nav-icon" title="Next News">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
+</button>
+</div>
+<!-- Animated News Ticker End -->
       
 <!--এটি দ্বারা কমেন্ট করা আছে এখন ব্রাউজারে দেখা যাবেনা, এই ট্যাগ এর মাঝে সেকশনটি রাখলে ব্রাউজারে দেখা যাবেনা, সরিয়ে দিলে তখন দেখা যাবে  -->
 
@@ -12079,48 +12169,230 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 
 // ====================================================================
-// START: Animated News Ticker Script (Updated: Cursor animation removed)
+// START: Animated News Ticker Script (Updated with Live News & Navigation)
 // ====================================================================
 document.addEventListener('DOMContentLoaded', () => {
-    const tickerTextElement = document.getElementById('news-ticker-text');
-    if (!tickerTextElement) return;
+const tickerContainer = document.getElementById('news-ticker-container');
+const tickerTextElement = document.getElementById('news-ticker-text');
+const prevBtn = document.getElementById('prev-news');
+const nextBtn = document.getElementById('next-news');
 
-    // এখানে আপনি আপনার ইচ্ছামত মেসেজ যোগ করতে পারবেন
-    const messages = [
-        "বাংলা টুলবক্স-এ নতুন 'যাকাত ক্যালকুলেটর' যুক্ত হয়েছে!",
-        "আপনার টুলস ব্যবহারের অভিজ্ঞতা কেমন?",
-        "নতুন আপডেট: এখন ছবি থেকেও QR কোড স্ক্যান করা যাবে।"
-    ];
+if (!tickerContainer || !tickerTextElement || !prevBtn || !nextBtn) {
+    console.error("News ticker elements not found.");
+    return;
+}
 
-    let messageIndex = 0;
-    const animationInterval = 6000; // প্রতিটি মেসেজ ৬ সেকেন্ড পর পর পরিবর্তন হবে
+// --- সেটিংস ---
+// true করলে বিভিন্ন পত্রিকা থেকে খবর দেখাবে।
+// false করলে নিচের customMessages থেকে আপনার নিজের লেখা দেখাবে।
+const showNewsHeadlines = true;
 
-    function updateTicker() {
-        const currentMessage = messages[messageIndex];
-        
-        // অ্যানিমেশন রিসেট করার জন্য
-        tickerTextElement.style.animation = 'none';
-        tickerTextElement.offsetHeight; // Trigger a reflow to restart animation
-        
-        tickerTextElement.textContent = currentMessage;
-        
-        const steps = currentMessage.length > 0 ? currentMessage.length : 1;
-        const duration = Math.max(2.5, currentMessage.length * 0.1); // লেখার দৈর্ঘ্যের উপর ভিত্তি করে সময় নির্ধারণ
-        
-        // Updated animation string without blink-caret
-        tickerTextElement.style.animation = `typing ${duration}s steps(${steps}, end)`;
+const customMessages = [
+    { title: "বাংলা টুলবক্স-এ আপনাকে স্বাগতম!", link: "#", source: "Bangla Toolbox" },
+    { title: "আপনার টুলস ব্যবহারের অভিজ্ঞতা কেমন?", link: "#", source: "Bangla Toolbox" },
+    { title: "যেকোনো মতামতের জন্য আমাদের সাথে যোগাযোগ করুন।", link: "https://bio.link/mdsifatbiolink", source: "Developer" }
+];
 
-        messageIndex = (messageIndex + 1) % messages.length;
+let allMessages = [];
+let messageIndex = 0;
+let autoPlayInterval = null;
+const animationInterval = 10000; // ১০ সেকেন্ড
+
+/**
+ * বিভিন্ন সংবাদপত্রের RSS ফিড থেকে গত ২ ঘণ্টার খবর নিয়ে আসে।
+ * @returns {Promise<object[]|null>} - খবরগুলোর একটি অ্যারে অথবা ব্যর্থ হলে null।
+ */
+async function fetchNewsHeadlines() {
+    const feeds = {
+        'ঢাকা পোস্ট': 'https://www.dhakapost.com/rss',
+        'বাংলাদেশ প্রতিদিন': 'https://www.bd-pratidin.com/rss.xml',
+        'কালের কণ্ঠ': 'https://www.kalerkantho.com/rss.xml',
+        'ইত্তেফাক': 'https://www.ittefaq.com.bd/rss.xml'
+    };
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
     }
 
-    // প্রথমবার চালানোর জন্য
-    updateTicker(); 
-    // নির্দিষ্ট সময় পর পর মেসেজ পরিবর্তন করার জন্য
-    setInterval(updateTicker, animationInterval); 
+    try {
+        const promises = Object.entries(feeds).map(([source, url]) =>
+            fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`)
+            .then(response => {
+                if (!response.ok) throw new Error(`Failed to fetch from ${url}`);
+                return response.text();
+            })
+            .then(xmlText => ({ source, xmlText }))
+            .catch(err => {
+                console.warn(`Could not fetch from ${source}: ${err.message}`);
+                return null; // Return null on failure
+            })
+        );
+
+        const results = await Promise.all(promises);
+        let allHeadlines = [];
+        const parser = new DOMParser();
+
+        results.forEach(result => {
+            if (result) {
+                const { source, xmlText } = result;
+                const doc = parser.parseFromString(xmlText, 'application/xml');
+                const items = doc.querySelectorAll('item');
+
+                items.forEach(item => {
+                    const titleEl = item.querySelector('title');
+                    const linkEl = item.querySelector('link');
+                    const pubDateEl = item.querySelector('pubDate');
+
+                    if (titleEl && linkEl && pubDateEl) {
+                        try {
+                            const pubDate = new Date(pubDateEl.textContent);
+                            if (pubDate > twoHoursAgo) {
+                                allHeadlines.push({
+                                    title: titleEl.textContent.trim(),
+                                    link: linkEl.textContent.trim(),
+                                    source: source
+                                });
+                            }
+                        } catch (e) {
+                            console.error("Invalid date in feed:", pubDateEl.textContent);
+                        }
+                    }
+                });
+            }
+        });
+        
+        if (allHeadlines.length === 0) {
+            return [{ title: "গত ২ ঘণ্টায় কোনো নতুন খবর পাওয়া যায়নি।", link: "#", source: "System" }];
+        }
+
+        // ডুপ্লিকেট বাদ দিয়ে শিরোনামগুলো এলোমেলো করে দেওয়া হচ্ছে
+        return shuffleArray([...new Set(allHeadlines.map(item => JSON.stringify(item)))].map(item => JSON.parse(item)));
+
+    } catch (error) {
+        console.error('All news feeds failed:', error);
+        return null;
+    }
+}
+
+/**
+ * স্ক্রিনে বর্তমান শিরোনামটি টাইপিং অ্যানিমেশনসহ দেখানোর ফাংশন।
+ */
+function displayCurrentHeadline() {
+    if (allMessages.length === 0) {
+        tickerTextElement.textContent = "বার্তা লোড হচ্ছে...";
+        return;
+    }
+    
+    // ইনডেক্স যেন অ্যারের সীমার মধ্যে থাকে তা নিশ্চিত করা
+    if (messageIndex < 0) messageIndex = allMessages.length - 1;
+    if (messageIndex >= allMessages.length) messageIndex = 0;
+
+    const currentMessage = allMessages[messageIndex];
+    const displayText = ` ● ${currentMessage.title} - <span class="news-source">${currentMessage.source}</span>`;
+    
+    tickerTextElement.href = currentMessage.link;
+    
+    // অ্যানিমেশন রিসেট করা
+    tickerTextElement.style.animation = 'none';
+    tickerTextElement.offsetHeight; // রি-ফ্লো ট্রিগার করা
+    
+    const fullContent = document.createElement('div');
+    fullContent.innerHTML = displayText;
+    const textLength = fullContent.textContent.length;
+    
+    const duration = Math.max(3.5, textLength * 0.1);
+
+    tickerTextElement.innerHTML = displayText;
+    tickerTextElement.style.width = '0'; // টাইপিং ইফেক্টের জন্য প্রস্থ শূন্য থেকে শুরু হবে
+    tickerTextElement.style.animation = `typing ${duration}s steps(${textLength}, end), blink-caret .75s step-end infinite`;
+    tickerTextElement.style.animationFillMode = 'forwards';
+}
+
+function showNextHeadline() {
+    messageIndex++;
+    displayCurrentHeadline();
+}
+
+function showPrevHeadline() {
+    messageIndex--;
+    displayCurrentHeadline();
+}
+
+function startAutoPlay() {
+    // নতুন ইন্টারভ্যাল শুরু করার আগে পুরনোটি বন্ধ করা
+    stopAutoPlay();
+    autoPlayInterval = setInterval(showNextHeadline, animationInterval);
+}
+
+function stopAutoPlay() {
+    clearInterval(autoPlayInterval);
+}
+
+/**
+ * টিকারটি চালু করার মূল ফাংশন।
+ */
+async function initializeTicker() {
+    if (showNewsHeadlines) {
+        const news = await fetchNewsHeadlines();
+        if (news && news.length > 0) {
+            allMessages = news;
+        } else {
+            allMessages = customMessages;
+        }
+    } else {
+        allMessages = customMessages;
+    }
+    
+    displayCurrentHeadline();
+    startAutoPlay();
+}
+
+// ইভেন্ট লিসেনার
+nextBtn.addEventListener('click', () => {
+    showNextHeadline();
+    // ম্যানুয়াল নেভিগেশনের পর অটো-প্লে টাইমার রিসেট করা
+    startAutoPlay();
+});
+
+prevBtn.addEventListener('click', () => {
+    showPrevHeadline();
+    startAutoPlay();
+});
+
+tickerContainer.addEventListener('mouseenter', stopAutoPlay);
+tickerContainer.addEventListener('mouseleave', startAutoPlay);
+
+// টিকার চালু করা হচ্ছে
+initializeTicker();
+
+// ব্যাকগ্রাউন্ডে খবর আপডেট (প্রতি ৫ মিনিটে)
+setInterval(async () => {
+    if(showNewsHeadlines) {
+        console.log("Background news update...");
+        const news = await fetchNewsHeadlines();
+        if (news && news.length > 0) {
+            const currentLink = allMessages[messageIndex]?.link;
+            const newIndex = news.findIndex(item => item.link === currentLink);
+
+            allMessages = news;
+            // বর্তমানে দেখানো খবরটি যদি নতুন লিস্টে থাকে, তবে সেই ইনডেক্স থেকে দেখানো হবে
+            if (newIndex !== -1) {
+                messageIndex = newIndex;
+            }
+        }
+    }
+}, 5 * 60 * 1000);
+
 });
 // ====================================================================
 // END: Animated News Ticker Script
 // ====================================================================
+
 
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
