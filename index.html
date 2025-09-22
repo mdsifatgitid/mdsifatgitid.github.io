@@ -2512,6 +2512,7 @@ input:checked + .slider:before {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* হালকা শ্যাডো */
             color: #3f51b5; /* টেক্সটের রঙ */
             line-height: 1.5; /* লাইন উচ্চতা */
+            transition: opacity 0.5s ease-in-out; /* অ্যানিমেশনের জন্য এই লাইনটি যোগ করা হয়েছে */
         }
         .dark #currentDateTimeBanner {
             background-color: #2d3748; /* ডার্ক মোডে গাঢ় ব্যাকগ্রাউন্ড */
@@ -6238,6 +6239,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const now = new Date();
 
+            // প্রতি মিনিটের শুরুতে (0 সেকেন্ডে) ব্যানারটি ফেইড ইন করুন
+            if (now.getSeconds() === 0) {
+                bannerElement.style.opacity = '1';
+            }
+            // প্রতি মিনিটের শেষে (59 সেকেন্ডে) ব্যানারটি ফেইড আউট করুন
+            else if (now.getSeconds() === 59) {
+                bannerElement.style.opacity = '0';
+            }
+
             // Gregorian Date
             const gregorianDay = now.getDate();
             const gregorianMonth = now.toLocaleDateString('bn-BD', { month: 'long' });
@@ -6251,8 +6261,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Hijri Date (using existing logic)
             let hijriCalculationDate = new Date(now);
-            hijriCalculationDate.setDate(hijriCalculationDate.getDate() - 2); // Adjust as in displayDates for local convention এখানে 1 দিন
-																			//বা দুই দিন কমবেশি করে সেট করতে হবে প্রতিমাসে আরবি তারিখের ক্ষেত্রে।
+            hijriCalculationDate.setDate(hijriCalculationDate.getDate() - 2); // স্থানীয় কনভেনশন অনুযায়ী তারিখ সামঞ্জস্য করুন
             const hijriDateFormatter = new Intl.DateTimeFormat('ar-SA', {
                 calendar: 'islamic',
                 year: 'numeric',
