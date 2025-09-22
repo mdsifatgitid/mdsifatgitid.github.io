@@ -11644,38 +11644,41 @@ document.addEventListener('DOMContentLoaded', () => {
     let qrCodeInstance = null;
     let debounceTimer; // লাইভ আপডেটের জন্য টাইমার
 
-    // QR কোড তৈরি করার ফাংশন (লাইভ এবং ইউনিকোড সাপোর্টেড)
-    const generateQRCode = () => {
-        // পরিবর্তন: .trim() সরিয়ে দেওয়া হয়েছে যাতে ব্যবহারকারী চাইলে স্পেসসহ কোড তৈরি করতে পারে।
-        const text = qrInput.value;
+// QR কোড তৈরি করার ফাংশন (লাইভ এবং ইউনিকোড সাপোর্টেড)
+const generateQRCode = () => {
+    // পরিবর্তন: .trim() সরিয়ে দেওয়া হয়েছে যাতে ব্যবহারকারী চাইলে স্পেসসহ কোড তৈরি করতে পারে।
+    const text = qrInput.value;
 
-        // যদি ইনপুট খালি থাকে, তাহলে QR কোড এরিয়া রিসেট করুন
-        if (!text) {
-            resetQrCodeArea();
-            return;
-        }
+    // যদি ইনপুট খালি থাকে, তাহলে QR কোড এরিয়া রিসেট করুন
+    if (!text) {
+        resetQrCodeArea();
+        return;
+    }
 
-        if (qrcodeContainer) qrcodeContainer.innerHTML = '';
-        if (qrcodePlaceholder) qrcodePlaceholder.style.display = 'none';
+    if (qrcodeContainer) qrcodeContainer.innerHTML = '';
+    if (qrcodePlaceholder) qrcodePlaceholder.style.display = 'none';
 
-        try {
-            // মূল পরিবর্তন: এখানে encodeURIComponent ব্যবহার করা হয়নি।
-            // লাইব্রেরীটি সরাসরি বাংলাসহ যেকোনো UTF-8 টেক্সট হ্যান্ডেল করতে পারে।
-            qrCodeInstance = new QRCode(qrcodeContainer, {
-                text: text, // সরাসরি মূল টেক্সট ব্যবহার করা হয়েছে
-                width: 256,
-                height: 256,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            if (downloadQrBtn) downloadQrBtn.disabled = false;
-        } catch (error) {
-            console.error("QR Code generation error:", error);
-            showCustomAlert("কিউআর কোড তৈরিতে একটি সমস্যা হয়েছে।");
-            resetQrCodeArea();
-        }
-    };
+    try {
+        // মূল পরিবর্তন: এখানে encodeURIComponent ব্যবহার করা হয়নি।
+        // লাইব্রেরীটি সরাসরি বাংলাসহ যেকোনো UTF-8 টেক্সট হ্যান্ডেল করতে পারে।
+        qrCodeInstance = new QRCode(qrcodeContainer, {
+            text: text, // সরাসরি মূল টেক্সট ব্যবহার করা হয়েছে
+            width: 256,
+            height: 256,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            // পরিবর্তন: Error Correction Level 'H' (High) থেকে 'L' (Low) করা হয়েছে।
+            // এর ফলে একই পরিমাণ ডেটার জন্য QR কোডটি কম ঘন (অল্পসংখ্যক দাগ) হবে।
+            // এটি বাংলাসহ যেকোনো ভাষার জন্য কাজ করবে।
+            correctLevel: QRCode.CorrectLevel.L
+        });
+        if (downloadQrBtn) downloadQrBtn.disabled = false;
+    } catch (error) {
+        console.error("QR Code generation error:", error);
+        showCustomAlert("কিউআর কোড তৈরিতে একটি সমস্যা হয়েছে।");
+        resetQrCodeArea();
+    }
+};
 
     // QR কোড ডাউনলোড করার ফাংশন
     const downloadQRCode = () => {
