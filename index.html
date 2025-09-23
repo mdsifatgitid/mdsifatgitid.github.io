@@ -4725,6 +4725,33 @@ input:checked + .slider:before {
                     </div>
                 </div>
             </div>
+			
+	    <!-- নতুন: সময় রূপান্তরকারী সেকশন শুরু -->
+
+<div class="converter-section">
+		<h3>সময় রুপান্তর</h3>
+			<div class="input-row">
+				<div class="input-wrapper">
+				<label for="time24Hour">২৪-ঘণ্টা ফরম্যাট (0-23)</label>
+				<input type="number" id="time24Hour" class="unit-input" placeholder="e.g., 14" min="0" max="23">
+				</div>
+			</div>
+	<div class="input-row">
+				<div class="input-wrapper" style="flex-grow: 2;">
+				<label for="time12Hour">১২-ঘণ্টা ফরম্যাট (1-12)</label>
+			<input type="number" id="time12Hour" class="unit-input" placeholder="e.g., 2" min="1" max="12">
+		</div>
+	<div class="input-wrapper" style="flex-grow: 1;">
+		<label for="timeAmPm">AM/PM</label>
+		<select id="timeAmPm" class="unit-select">
+		<option value="AM">AM</option>
+		<option value="PM">PM</option>
+		</select>
+		</div>
+	</div>
+</div>
+        <!-- নতুন: সময় রূপান্তরকারী সেকশন শেষ -->
+		
 			<!-- BMI ক্যালকুলেটরের শুরু -->
 <div id="bmi-calculator-container" class="bmi-calculator">
     <h3 class="bmi-title">বিএমআই (BMI) ক্যালকুলেটর</h3>
@@ -7633,6 +7660,80 @@ function showResult(message, className) {
     }
 }
 // BMI Calculator Script - শেষ
+
+
+// START: Time Converter (24-hour to 12-hour) Script
+
+function initializeTimeConverter() {
+const time24HourInput = document.getElementById('time24Hour');
+const time12HourInput = document.getElementById('time12Hour');
+const timeAmPmSelect = document.getElementById('timeAmPm');
+
+// নিশ্চিত করুন যে উপাদানগুলি বিদ্যমান আছে
+if (!time24HourInput || !time12HourInput || !timeAmPmSelect) {
+    console.error("Time converter elements not found!");
+    return;
+}
+
+// ফাংশন: ২৪-ঘণ্টা থেকে ১২-ঘণ্টা ফরম্যাটে রূপান্তর
+const convertTo12Hour = () => {
+    const hour24 = parseInt(time24HourInput.value, 10);
+
+    if (isNaN(hour24) || hour24 < 0 || hour24 > 23) {
+        time12HourInput.value = '';
+        return;
+    }
+
+    const period = hour24 >= 12 ? 'PM' : 'AM';
+    let hour12 = hour24 % 12;
+
+    if (hour12 === 0) { // মধ্যরাত (00:xx) এবং দুপুর (12:xx) এর জন্য
+        hour12 = 12;
+    }
+
+    time12HourInput.value = hour12;
+    timeAmPmSelect.value = period;
+};
+
+// ফাংশন: ১২-ঘণ্টা থেকে ২৪-ঘণ্টা ফরম্যাটে রূপান্তর
+const convertTo24Hour = () => {
+    let hour12 = parseInt(time12HourInput.value, 10);
+    const period = timeAmPmSelect.value;
+
+    if (isNaN(hour12) || hour12 < 1 || hour12 > 12) {
+        time24HourInput.value = '';
+        return;
+    }
+
+    let hour24 = 0;
+    if (period === 'PM' && hour12 < 12) {
+        hour24 = hour12 + 12;
+    } else if (period === 'AM' && hour12 === 12) { // মধ্যরাতের জন্য বিশেষ নিয়ম
+        hour24 = 0;
+    } else {
+        hour24 = hour12;
+    }
+
+    time24HourInput.value = hour24;
+};
+
+// ইনপুট এবং পরিবর্তনের জন্য ইভেন্ট লিসেনার যুক্ত করুন
+time24HourInput.addEventListener('input', convertTo12Hour);
+time12HourInput.addEventListener('input', convertTo24Hour);
+timeAmPmSelect.addEventListener('change', convertTo24Hour);
+
+}
+
+// DOMContentLoaded ইভেন্টের মধ্যে এই ফাংশনটি কল করুন
+document.addEventListener('DOMContentLoaded', () => {
+initializeTimeConverter();
+});
+
+// END: Time Converter Script
+
+
+
+
 // ====================================================================
 // END: UNIT CONVERTER (MEASUREMENT) SCRIPT (CORRECTED)
 // ====================================================================
