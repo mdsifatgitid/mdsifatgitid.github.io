@@ -12262,7 +12262,7 @@ async function fetchNewsHeadlines() {
         });
         
         if (allHeadlines.length === 0) {
-            return [{ title: "গত ২ ঘণ্টায় কোনো নতুন খবর পাওয়া যায়নি।", link: "#", source: "System" }];
+            return [{ title: "গত ২ ঘণ্টায় কোনো নতুন খবর পাওয়া যায়নি। ইন্টারনেট কানেকশন যাচাই করুন অথবা ব্রাউজার রিফ্রেশ করুন", link: "#", source: "System" }];
         }
 
         return shuffleArray([...new Set(allHeadlines.map(item => JSON.stringify(item)))].map(item => JSON.parse(item)));
