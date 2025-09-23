@@ -12260,9 +12260,12 @@ async function fetchNewsHeadlines() {
                 });
             }
         });
-        
+/**
+ * খবর পাওয়া না গেলে নিচের এই বার্তা দেখানোর ফাংশন।
+ * (পরিবর্তিত)
+ */   
         if (allHeadlines.length === 0) {
-            return [{ title: "গত ২ ঘণ্টায় কোনো নতুন খবর পাওয়া যায়নি। নেটওয়ার্ক যাচাই করে ব্রাউজার রিফ্রেশ করুন", link: "#", source: "System" }];
+            return [{ title: "বাংলা টুলবক্স-এ আপনাকে স্বাগতম!", link: "#", source: "System" }];
         }
 
         return shuffleArray([...new Set(allHeadlines.map(item => JSON.stringify(item)))].map(item => JSON.parse(item)));
