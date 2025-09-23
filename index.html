@@ -4244,6 +4244,104 @@ input:checked + .slider:before {
 /* blink-caret keyframes সরানো হয়েছে */
 /* Animated News Ticker Styles End */
 
+
+/* ======================================================== */
+/* START: Important Links Tab Styles (গুরুত্বপূর্ণ লিংকসমূহ) */
+/* ======================================================== */
+
+.important-links-container {
+    max-width: 680px;
+    margin: 0 auto;
+    background-color: #f8fafc; /* Tailwind's gray-50 */
+    border-radius: 16px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0; /* Tailwind's gray-200 */
+}
+
+.dark .important-links-container {
+    background-color: #1f2937; /* Tailwind's gray-800 */
+    border-color: #4b5563; /* Tailwind's gray-600 */
+}
+
+.profile-pic {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 0 auto;
+    object-fit: cover;
+    border: 4px solid #ffffff; /* Tailwind's white */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dark .profile-pic {
+    border-color: #374151; /* Tailwind's gray-700 */
+}
+
+.link-btn {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 14px 20px;
+    text-align: center;
+    border-radius: 12px;
+    background-color: #ffffff; /* Tailwind's white */
+    color: #1f2937; /* Tailwind's gray-800 */
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #e5e7eb; /* Tailwind's gray-200 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.dark .link-btn {
+    background-color: #374151; /* Tailwind's gray-700 */
+    color: #f9fafb; /* Tailwind's gray-50 */
+    border-color: #4b5563; /* Tailwind's gray-600 */
+}
+
+.link-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark .link-btn:hover {
+    background-color: #4b5563; /* Tailwind's gray-600 */
+}
+
+.link-btn svg {
+    flex-shrink: 0;
+}
+
+.link-btn span {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.social-icon {
+    color: #4b5563; /* Tailwind's gray-600 */
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.dark .social-icon {
+    color: #9ca3af; /* Tailwind's gray-400 */
+}
+
+.social-icon:hover {
+    color: #111827; /* Tailwind's gray-900 */
+    transform: scale(1.1);
+}
+
+.dark .social-icon:hover {
+    color: #ffffff; /* Tailwind's white */
+}
+
+/* ======================================================== */
+/* END: Important Links Tab Styles                         */
+/* ======================================================== */
+
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
 </head>
@@ -4355,6 +4453,7 @@ input:checked + .slider:before {
 				<button id="zakatCalcTab" class="tab-button rounded-xl">যাকাতের হিসাব</button>
 				<button id="qrCodeTab" class="tab-button rounded-xl">কিউআর কোড</button>
 				<button id="emergencyNumbersTab" class="tab-button rounded-xl">জরুরি নম্বর</button>
+				<button id="importantLinksTab" class="tab-button rounded-xl">গুরুত্বপূর্ণ লিংকসমূহ</button>
 				<button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
 			</div>
 		</div>
@@ -5781,6 +5880,57 @@ input:checked + .slider:before {
         </div>
     </div>
 </div>
+
+<!-- নতুন: গুরুত্বপূর্ণ লিংকসমূহ বিভাগ -->
+<div id="importantLinksContent" class="calculator-content">
+    <div class="important-links-container p-4 sm:p-6">
+        <!-- Profile Section -->
+        <div class="text-center mb-6">
+            <img class="profile-pic" src="https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/Md%20Shahiduzzaman%20Sifat.png" alt="Profile Picture">
+            <h2 class="text-2xl font-bold mt-4 text-gray-800 dark:text-gray-100">Md Shahiduzzaman Sifat</h2>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">Stuff of Daily Madhukar, Tech Enthusiast</p>
+        </div>
+
+        <!-- Links Section -->
+        <div class="flex flex-col gap-4">
+            <!-- Example Link 1: Website -->
+            <a href="https://bio.link/mdsifatbiolink" target="_blank" class="link-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                <span>বায়ো প্রোফাইল</span>
+            </a>
+            <!-- Example Link 2: GitHub -->
+            <a href="https://mdsifatgitid.github.io/" target="_blank" class="link-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                <span>গিটহাব প্রোফাইল (বাংলা টুলবক্স/Bangla Toolbox)</span>
+            </a>
+            <!-- Example Link 3: Facebook -->
+            <a href="https://www.facebook.com/mdsifatfbid" target="_blank" class="link-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                <span>ফেসবুক</span>
+            </a>
+             <!-- Example Link 4: Email -->
+            <a href="mailto:banglatoolbox@gmail.com" class="link-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <span>ইমেইল করুন</span>
+            </a>
+        </div>
+
+        <!-- Social Icons Section -->
+        <div class="flex justify-center gap-6 mt-8">
+            <a href="https://linkedin.com/in/md-shahiduzzaman-sifat" target="_blank" class="social-icon" title="LinkedIn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+            </a>
+            <a href="https://x.com/mdsifatttid" target="_blank" class="social-icon" title="Twitter / X">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+            </a>
+             <a href="https://www.youtube.com/@mdsifatytid" target="_blank" class="social-icon" title="YouTube">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+            </a>
+        </div>
+    </div>
+</div>
+
+
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
 </div>
@@ -8022,6 +8172,8 @@ try {
 				const qrCodeTab = document.getElementById('qrCodeTab');
 				const qrCodeContent = document.getElementById('qrCodeContent');
 				const emergencyNumbersTab = document.getElementById('emergencyNumbersTab');
+				const importantLinksTab = document.getElementById('importantLinksTab');
+				const importantLinksContent = document.getElementById('importantLinksContent');
 				const emergencyNumbersContent = document.getElementById('emergencyNumbersContent');
 
 
@@ -8283,7 +8435,7 @@ function showTab(tabId) {
         basicCalcTab,
 		ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, typingTestTab, zakatCalcTab,
 		translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,
-		qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, 
+		qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,
         textAssistantTab,
 		allFeaturesTab
     ];
@@ -8292,7 +8444,7 @@ function showTab(tabId) {
 		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent, newsContent, converterContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent,
 		weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
-		textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,
+		textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,
         allFeaturesContent
     ];
 
@@ -8385,6 +8537,10 @@ function showTab(tabId) {
             activeTab = qrCodeTab;
             activeContent = qrCodeContent;
             break;
+		case 'importantLinks':
+			activeTab = importantLinksTab;
+			activeContent = importantLinksContent;
+		break;
 		case 'player':
 			activeTab = playerTab;
 			activeContent = playerContent;
@@ -8458,6 +8614,7 @@ function showTab(tabId) {
 				if (playerTab) playerTab.addEventListener('click', () => showTab('player'));
 				if (zakatCalcTab) zakatCalcTab.addEventListener('click', () => showTab('zakat'));
 				if (qrCodeTab) qrCodeTab.addEventListener('click', () => showTab('qrCode'));
+				if (importantLinksTab) importantLinksTab.addEventListener('click', () => showTab('importantLinks'));
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
                 if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
 				if (emergencyNumbersTab) emergencyNumbersTab.addEventListener('click', () => showTab('emergency'));
