@@ -12194,7 +12194,7 @@ let autoPlayInterval = null;
 const animationInterval = 10000; // ১০ সেকেন্ড
 
 /**
- * বিভিন্ন সংবাদপত্রের RSS ফিড থেকে গত ২ ঘণ্টার খবর নিয়ে আসে।
+ * বিভিন্ন সংবাদপত্রের RSS ফিড থেকে গত ৮ ঘণ্টার খবর নিয়ে আসে।
  * @returns {Promise<object[]|null>} - খবরগুলোর একটি অ্যারে অথবা ব্যর্থ হলে null।
  */
 async function fetchNewsHeadlines() {
@@ -12204,7 +12204,8 @@ async function fetchNewsHeadlines() {
         'কালের কণ্ঠ': 'https://www.kalerkantho.com/rss.xml',
         'ইত্তেফাক': 'https://www.ittefaq.com.bd/rss.xml'
     };
-    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+    // সময়সীমা ৮ ঘণ্টা রাখা হয়েছে যাতে খবর খুঁজে পাওয়ার সম্ভাবনা বাড়ে।
+    const eightHoursAgo = new Date(Date.now() - 8 * 60 * 60 * 1000);
 
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -12215,64 +12216,66 @@ async function fetchNewsHeadlines() {
     }
 
     try {
-        const promises = Object.entries(feeds).map(([source, url]) =>
-            fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`)
-            .then(response => {
-                if (!response.ok) throw new Error(`Failed to fetch from ${url}`);
-                return response.text();
-            })
-            .then(xmlText => ({ source, xmlText }))
-            .catch(err => {
-                console.warn(`Could not fetch from ${source}: ${err.message}`);
-                return null; // Return null on failure
-            })
-        );
+        const promises = Object.entries(feeds).map(async ([source, url]) => {
+            try {
+                // পরিবর্তন: নিউজ আনার জন্য rss2json.com এপিআই ব্যবহার করা হচ্ছে।
+                const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch from ${url} with status ${response.status}`);
+                }
+                const data = await response.json();
+                if (data.status !== 'ok') {
+                    throw new Error(`rss2json API error for ${url}: ${data.message}`);
+                }
+                return { source, items: data.items };
+            } catch (err) {
+                console.warn(`Could not fetch or parse from ${source}: ${err.message}`);
+                return null; // এই নির্দিষ্ট ফিডের জন্য ব্যর্থ হলে null রিটার্ন করবে
+            }
+        });
 
         const results = await Promise.all(promises);
         let allHeadlines = [];
-        const parser = new DOMParser();
 
         results.forEach(result => {
-            if (result) {
-                const { source, xmlText } = result;
-                const doc = parser.parseFromString(xmlText, 'application/xml');
-                const items = doc.querySelectorAll('item');
-
+            if (result && result.items) {
+                const { source, items } = result;
                 items.forEach(item => {
-                    const titleEl = item.querySelector('title');
-                    const linkEl = item.querySelector('link');
-                    const pubDateEl = item.querySelector('pubDate');
-
-                    if (titleEl && linkEl && pubDateEl) {
+                    const { title, link, pubDate } = item;
+                    if (title && link && pubDate) {
                         try {
-                            const pubDate = new Date(pubDateEl.textContent);
-                            if (pubDate > twoHoursAgo) {
+                            const publicationDate = new Date(pubDate);
+                            if (publicationDate > eightHoursAgo) {
                                 allHeadlines.push({
-                                    title: titleEl.textContent.trim(),
-                                    link: linkEl.textContent.trim(),
+                                    title: title.trim(),
+                                    link: link.trim(),
                                     source: source
                                 });
                             }
                         } catch (e) {
-                            console.error("Invalid date in feed:", pubDateEl.textContent);
+                            console.error("Invalid date in feed:", pubDate);
                         }
                     }
                 });
             }
         });
-/**
- * খবর পাওয়া না গেলে নিচের এই বার্তা দেখানোর ফাংশন।
- * (পরিবর্তিত)
- */   
+
+        // খবর পাওয়া না গেলে একটি তথ্যপূর্ণ বার্তা দেখানো হবে।
         if (allHeadlines.length === 0) {
+            console.log("No news found within the last 8 hours. Showing default message.");
             return [{ title: "বাংলা টুলবক্স-এ আপনাকে স্বাগতম!", link: "#", source: "System" }];
         }
+        
+        // ডুপ্লিকেট শিরোনাম দূর করা
+        const uniqueHeadlines = [...new Map(allHeadlines.map(item => [item.title, item])).values()];
 
-        return shuffleArray([...new Set(allHeadlines.map(item => JSON.stringify(item)))].map(item => JSON.parse(item)));
+
+        return shuffleArray(uniqueHeadlines);
 
     } catch (error) {
-        console.error('All news feeds failed:', error);
-        return null;
+        console.error('A critical error occurred while fetching all news feeds:', error);
+        // ত্রুটি ঘটলেও একটি তথ্যপূর্ণ বার্তা দেখানো হবে।
+        return [{ title: "এই মুহূর্তে কোনো খবর পাওয়া যায়নি। অনুগ্রহ করে ব্রাউজার রিফ্রেশ করুন।", link: "#", source: "System Error" }];
     }
 }
 
