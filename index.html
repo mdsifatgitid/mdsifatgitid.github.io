@@ -12436,7 +12436,6 @@ if (!tickerContainer || !tickerTextElement || !prevBtn || !nextBtn) {
     console.error("News ticker elements not found.");
     return;
 }
-
 // --- সেটিংস এখানে ট্রু বা true; সেট করলে নিউজ হেডলাইন দেখাবে এবং ফলস বা false; লিখে দিলে নিচের মেসেজগুলো দেখাবে ---
 const showNewsHeadlines = true;
 
@@ -12451,10 +12450,6 @@ let messageIndex = 0;
 let autoPlayInterval = null;
 const animationInterval = 10000; // ১০ সেকেন্ড
 
-/**
- * বিভিন্ন সংবাদপত্রের RSS ফিড থেকে গত ৮ ঘণ্টার খবর নিয়ে আসে।
- * @returns {Promise<object[]|null>} - খবরগুলোর একটি অ্যারে অথবা ব্যর্থ হলে null।
- */
 async function fetchNewsHeadlines() {
     const feeds = {
         'ঢাকা পোস্ট': 'https://www.dhakapost.com/rss',
@@ -12462,7 +12457,6 @@ async function fetchNewsHeadlines() {
         'কালের কণ্ঠ': 'https://www.kalerkantho.com/rss.xml',
         'ইত্তেফাক': 'https://www.ittefaq.com.bd/rss.xml'
     };
-    // সময়সীমা ৮ ঘণ্টা রাখা হয়েছে যাতে খবর খুঁজে পাওয়ার সম্ভাবনা বাড়ে।
     const eightHoursAgo = new Date(Date.now() - 8 * 60 * 60 * 1000);
 
     function shuffleArray(array) {
@@ -12476,8 +12470,9 @@ async function fetchNewsHeadlines() {
     try {
         const promises = Object.entries(feeds).map(async ([source, url]) => {
             try {
-                // পরিবর্তন: নিউজ আনার জন্য rss2json.com এপিআই ব্যবহার করা হচ্ছে।
-                const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`);
+                // নতুন: ব্রাউজার ক্যাশ এড়ানোর জন্য একটি ইউনিক প্যারামিটার যোগ করা হয়েছে
+                const cacheBuster = `&_=${new Date().getTime()}`;
+                const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}${cacheBuster}`);
                 if (!response.ok) {
                     throw new Error(`Failed to fetch from ${url} with status ${response.status}`);
                 }
@@ -12488,7 +12483,7 @@ async function fetchNewsHeadlines() {
                 return { source, items: data.items };
             } catch (err) {
                 console.warn(`Could not fetch or parse from ${source}: ${err.message}`);
-                return null; // এই নির্দিষ্ট ফিডের জন্য ব্যর্থ হলে null রিটার্ন করবে
+                return null;
             }
         });
 
@@ -12518,36 +12513,26 @@ async function fetchNewsHeadlines() {
             }
         });
 
-        // খবর পাওয়া না গেলে একটি তথ্যপূর্ণ বার্তা দেখানো হবে।
         if (allHeadlines.length === 0) {
             console.log("No news found within the last 8 hours. Showing default message.");
             return [{ title: "বাংলা টুলবক্স-এ আপনাকে স্বাগতম!", link: "#", source: "System" }];
         }
         
-        // ডুপ্লিকেট শিরোনাম দূর করা
         const uniqueHeadlines = [...new Map(allHeadlines.map(item => [item.title, item])).values()];
-
-
         return shuffleArray(uniqueHeadlines);
 
     } catch (error) {
         console.error('A critical error occurred while fetching all news feeds:', error);
-        // ত্রুটি ঘটলেও একটি তথ্যপূর্ণ বার্তা দেখানো হবে।
         return [{ title: "এই মুহূর্তে কোনো খবর পাওয়া যায়নি। অনুগ্রহ করে ব্রাউজার রিফ্রেশ করুন।", link: "#", source: "System Error" }];
     }
 }
 
-/**
- * স্ক্রিনে বর্তমান শিরোনামটি টাইপিং অ্যানিমেশনসহ দেখানোর ফাংশন।
- * (পরিবর্তিত)
- */
 function displayCurrentHeadline() {
     if (allMessages.length === 0) {
         tickerTextElement.textContent = "বার্তা লোড হচ্ছে...";
         return;
     }
     
-    // ইনডেক্স যেন অ্যারের সীমার মধ্যে থাকে তা নিশ্চিত করা
     if (messageIndex < 0) messageIndex = allMessages.length - 1;
     if (messageIndex >= allMessages.length) messageIndex = 0;
 
@@ -12556,10 +12541,9 @@ function displayCurrentHeadline() {
     
     tickerTextElement.href = currentMessage.link;
     
-    // অ্যানিমেশন এবং স্টাইল রিসেট করা
     tickerTextElement.style.animation = 'none';
-    tickerTextElement.offsetHeight; // রি-ফ্লো ট্রিগার করা
-    tickerTextElement.style.whiteSpace = 'nowrap'; // অ্যানিমেশনের জন্য nowrap সেট করা
+    tickerTextElement.offsetHeight; 
+    tickerTextElement.style.whiteSpace = 'nowrap';
     
     const fullContent = document.createElement('div');
     fullContent.innerHTML = displayText;
@@ -12568,21 +12552,17 @@ function displayCurrentHeadline() {
     const duration = Math.max(3.5, textLength * 0.1);
 
     tickerTextElement.innerHTML = displayText;
-    tickerTextElement.style.width = '0'; // টাইপিং ইফেক্টের জন্য প্রস্থ শূন্য থেকে শুরু হবে
+    tickerTextElement.style.width = '0'; 
     
-    // নতুন অ্যানিমেশন সেট করা (blink-caret ছাড়া)
     tickerTextElement.style.animation = `typing ${duration}s steps(${textLength}, end)`;
     tickerTextElement.style.animationFillMode = 'forwards';
 
-    // অ্যানিমেশন শেষ হলে লেখা র‍্যাপ করার জন্য ইভেন্ট লিসেনার
     const handleAnimationEnd = () => {
-        tickerTextElement.style.whiteSpace = 'normal'; // র‍্যাপ করার অনুমতি দেওয়া
+        tickerTextElement.style.whiteSpace = 'normal';
     };
     
-    // { once: true } ব্যবহার করা হয়েছে যাতে ইভেন্টটি একবারই রান করে
     tickerTextElement.addEventListener('animationend', handleAnimationEnd, { once: true });
 }
-
 
 function showNextHeadline() {
     messageIndex++;
@@ -12603,9 +12583,6 @@ function stopAutoPlay() {
     clearInterval(autoPlayInterval);
 }
 
-/**
- * টিকারটি চালু করার মূল ফাংশন।
- */
 async function initializeTicker() {
     if (showNewsHeadlines) {
         const news = await fetchNewsHeadlines();
@@ -12622,7 +12599,7 @@ async function initializeTicker() {
     startAutoPlay();
 }
 
-// ইভেন্ট লিসেনার
+// Event listeners
 nextBtn.addEventListener('click', () => {
     showNextHeadline();
     startAutoPlay();
@@ -12636,25 +12613,33 @@ prevBtn.addEventListener('click', () => {
 tickerContainer.addEventListener('mouseenter', stopAutoPlay);
 tickerContainer.addEventListener('mouseleave', startAutoPlay);
 
-// টিকার চালু করা হচ্ছে
 initializeTicker();
 
-// ব্যাকগ্রাউন্ডে খবর আপডেট (প্রতি ৫ মিনিটে)
+// নতুন: ব্যাকগ্রাউন্ডে খবর আপডেট এবং ডিসপ্লে রিফ্রেশ (প্রতি ৫ মিনিটে)
 setInterval(async () => {
     if(showNewsHeadlines) {
-        console.log("Background news update...");
+        console.log("Background news update at 5-minute interval...");
         const news = await fetchNewsHeadlines();
-        if (news && news.length > 0) {
+        // নতুন খবর পাওয়া গেছে কিনা তা চেক করুন
+        if (news && news.length > 0 && JSON.stringify(news) !== JSON.stringify(allMessages)) {
+            console.log("New headlines found. Updating ticker.");
             const currentLink = allMessages[messageIndex]?.link;
-            const newIndex = news.findIndex(item => item.link === currentLink);
-
+            
             allMessages = news;
-            if (newIndex !== -1) {
-                messageIndex = newIndex;
-            }
+            
+            const newIndex = news.findIndex(item => item.link === currentLink);
+            messageIndex = (newIndex !== -1) ? newIndex : 0;
+            
+            // নতুন খবর তাৎক্ষণিকভাবে ডিসপ্লে করুন
+            displayCurrentHeadline();
+            
+            // অটো-প্লে পুনরায় শুরু করুন
+            startAutoPlay();
+        } else {
+            console.log("No new headlines found or data is the same.");
         }
     }
-}, 5 * 60 * 1000);
+}, 5 * 60 * 1000); // 5 minutes
 
 });
 // ====================================================================
