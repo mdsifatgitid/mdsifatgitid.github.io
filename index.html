@@ -4341,6 +4341,93 @@ input:checked + .slider:before {
 /* END: Important Links Tab Styles                         */
 /* ======================================================== */
 
+/* হেডিং অ্যানিমেশনের জন্য নতুন স্টাইল */
+#main-heading {
+    position: relative; /* গ্লিচ ইফেক্টের জন্য আবশ্যক */
+    z-index: 1; /* অন্যান্য উপাদানের উপরে রাখতে */
+    transition: color 0.3s; /* ডার্ক মোডের জন্য ট্রানজিশন */
+}
+
+/* যখন অ্যানিমেশন ক্লাসটি যোগ করা হবে */
+#main-heading.glitch-effect {
+    animation: fadeInOut 2s ease-in-out, gradientShift 5s ease infinite alternate;
+    /* গ্রেডিয়েন্ট ব্যাকগ্রাউন্ড যা টেক্সটে ক্লিপ করা হবে */
+    background: linear-gradient(to right, #8A2BE2, #4169E1, #00BFFF, #20B2AA, #32CD32, #FFD700, #FF4500);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+/* নতুন: গ্রেডিয়েন্ট শিফটিং অ্যানিমেশন */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+#main-heading.glitch-effect::before,
+#main-heading.glitch-effect::after {
+    content: 'বাংলা টুলবক্স'; /* অবশ্যই আপনার হেডিং টেক্সট দিন */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    overflow: hidden;
+    clip: rect(0, 900px, 0, 0);
+    /* মূল লেখার রঙ এখন transparent, কিন্তু শ্যাডো দেখা যাবে */
+    color: inherit;
+}
+
+#main-heading.glitch-effect::before {
+    left: 2px;
+    text-shadow: -1px 0 red;
+    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+
+#main-heading.glitch-effect::after {
+    left: -2px;
+    text-shadow: -1px 0 blue;
+    animation: glitch-anim-2 2s infinite linear alternate-reverse;
+}
+
+/* ফ্যাডইন/আউট অ্যানিমেশন */
+@keyframes fadeInOut {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+}
+
+/* গ্লিচ অ্যানিমেশন ১ */
+@keyframes glitch-anim-1 {
+    0% { clip: rect(42px, 9999px, 44px, 0); }
+    5% { clip: rect(12px, 9999px, 60px, 0); }
+    10% { clip: rect(40px, 9999px, 40px, 0); }
+    15% { clip: rect(80px, 9999px, 5px, 0); }
+    20% { clip: rect(25px, 9999px, 70px, 0); }
+    25% { clip: rect(55px, 9999px, 33px, 0); }
+    30% { clip: rect(15px, 9999px, 82px, 0); }
+    35% { clip: rect(90px, 9999px, 2px, 0); }
+    40% { clip: rect(33px, 9999px, 50px, 0); }
+    45% { clip: rect(70px, 9999px, 18px, 0); }
+    50% { clip: rect(48px, 9999px, 52px, 0); }
+}
+
+/* গ্লিচ অ্যানিমেশন ২ */
+@keyframes glitch-anim-2 {
+    0% { clip: rect(10px, 9999px, 90px, 0); }
+    10% { clip: rect(80px, 9999px, 10px, 0); }
+    20% { clip: rect(22px, 9999px, 66px, 0); }
+    30% { clip: rect(5px, 9999px, 85px, 0); }
+    40% { clip: rect(60px, 9999px, 30px, 0); }
+    50% { clip: rect(18px, 9999px, 77px, 0); }
+    60% { clip: rect(40px, 9999px, 55px, 0); }
+    70% { clip: rect(75px, 9999px, 5px, 0); }
+    80% { clip: rect(30px, 9999px, 60px, 0); }
+    90% { clip: rect(55px, 9999px, 40px, 0); }
+    100% { clip: rect(15px, 9999px, 80px, 0); }
+}
+
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -4406,7 +4493,7 @@ input:checked + .slider:before {
 <!-- Animated News Ticker End -->
 
 
-        <h2 class="text-2xl font-bold text-gray-800 mb-0">বাংলা টুলবক্স</h2>
+        <h2 id="main-heading" class="text-2xl font-bold text-gray-800 mb-0">বাংলা টুলবক্স</h2>
 
         <div class="tab-buttons">
     <!-- থিম টগল বাটন এখানে সরানো হয়েছে -->
@@ -12429,6 +12516,39 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 // ====================================================================
 // END: ZAKAT CALCULATOR SCRIPT
+// ====================================================================
+
+// ====================================================================
+// START: Animated Bangla Toolbox Heading
+// ====================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    // উপরের HTML পরিবর্তনে যে আইডিটি যোগ করা হয়েছে, সেটি এখানে ব্যবহার করুন
+    const mainHeading = document.getElementById('main-heading');
+
+    if (mainHeading) {
+        // প্রতি সেকেন্ডে সময় পরীক্ষা করার জন্য
+        setInterval(() => {
+            const seconds = new Date().getSeconds();
+
+            // ব্যানারের মিনিটের শুরু থেকে 30 সেকেন্ড হলে, তখন অ্যানিমেশন ট্রিগার করুন
+            // অ্যানিমেশনটি যদি আগে থেকেই চলতে থাকে তবে এটি আবার শুরু হবে না
+            if ((seconds === 30) && !mainHeading.classList.contains('glitch-effect')) {
+                mainHeading.classList.add('glitch-effect');
+            }
+        }, 1000); // প্রতি 1000 মিলিসেকেন্ড = 1 সেকেন্ড
+
+        // অ্যানিমেশন শেষ হলে ক্লাসটি সরিয়ে দিন যাতে এটি আবার ট্রিগার হতে পারে
+        mainHeading.addEventListener('animationend', (event) => {
+            // শুধুমাত্র মূল হেডিং এর fadeInOut অ্যানিমেশন শেষ হলেই ক্লাসটি সরান
+            if (event.animationName === 'fadeInOut') {
+                 mainHeading.classList.remove('glitch-effect');
+            }
+        });
+    }
+});
+
+// ====================================================================
+// END: Animated Bangla Toolbox Heading
 // ====================================================================
 
 // ====================================================================
