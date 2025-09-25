@@ -4350,7 +4350,8 @@ input:checked + .slider:before {
 
 /* যখন অ্যানিমেশন ক্লাসটি যোগ করা হবে */
 #main-heading.glitch-effect {
-    animation: fadeInOut 2s ease-in-out, gradientShift 5s ease infinite alternate;
+    /* অ্যানিমেশনের সময়কাল ৪ সেকেন্ড করা হয়েছে এবং নতুন fadeInOut অ্যানিমেশন ব্যবহার করা হয়েছে */
+    animation: fadeInOut 4s ease-in-out, gradientShift 5s ease infinite alternate;
     /* গ্রেডিয়েন্ট ব্যাকগ্রাউন্ড যা টেক্সটে ক্লিপ করা হবে */
     background: linear-gradient(to right, #8A2BE2, #4169E1, #00BFFF, #20B2AA, #32CD32, #FFD700, #FF4500);
     background-size: 200% auto;
@@ -4383,22 +4384,31 @@ input:checked + .slider:before {
 #main-heading.glitch-effect::before {
     left: 2px;
     text-shadow: -1px 0 red;
-    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+    /* অ্যানিমেশনটি এখন শুধু একবার চলবে */
+    animation: glitch-anim-1 2s linear alternate-reverse;
 }
 
 #main-heading.glitch-effect::after {
     left: -2px;
     text-shadow: -1px 0 blue;
-    animation: glitch-anim-2 2s infinite linear alternate-reverse;
+    /* অ্যানিমেশনটি এখন শুধু একবার চলবে */
+    animation: glitch-anim-2 2s linear alternate-reverse;
 }
 
-/* ফ্যাডইন/আউট অ্যানিমেশন */
+/* ফ্যাডইন/আউট অ্যানিমেশন (আপডেট করা হয়েছে) */
 @keyframes fadeInOut {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.2; }
+    0%, 50% {
+        opacity: 1; /* প্রথম ৫০% সময় গ্লিচ ইফেক্ট চলবে */
+    }
+    75% {
+        opacity: 0; /* ৭৫% সময়ে পুরোপুরি ফেড আউট হবে */
+    }
+    100% {
+        opacity: 1; /* ১০০% সময়ে আবার ফেড ইন হবে */
+    }
 }
 
-/* গ্লিচ অ্যানিমেশন ১ */
+/* গ্লিচ অ্যানিমেশন ১ (অপরিবর্তিত) */
 @keyframes glitch-anim-1 {
     0% { clip: rect(42px, 9999px, 44px, 0); }
     5% { clip: rect(12px, 9999px, 60px, 0); }
@@ -4413,7 +4423,7 @@ input:checked + .slider:before {
     50% { clip: rect(48px, 9999px, 52px, 0); }
 }
 
-/* গ্লিচ অ্যানিমেশন ২ */
+/* গ্লিচ অ্যানিমেশন ২ (অপরিবর্তিত) */
 @keyframes glitch-anim-2 {
     0% { clip: rect(10px, 9999px, 90px, 0); }
     10% { clip: rect(80px, 9999px, 10px, 0); }
@@ -4427,7 +4437,6 @@ input:checked + .slider:before {
     90% { clip: rect(55px, 9999px, 40px, 0); }
     100% { clip: rect(15px, 9999px, 80px, 0); }
 }
-
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -6653,6 +6662,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const timeString = now.toLocaleTimeString('bn-BD', {
                 hour: '2-digit',
                 minute: '2-digit',
+				second: '2-digit', // সেকেন্ড যোগ করা হয়েছে
                 hour12: true,
                 timeZone: 'Asia/Dhaka'
             });
