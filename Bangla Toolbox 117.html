@@ -4341,23 +4341,26 @@ input:checked + .slider:before {
 /* END: Important Links Tab Styles                         */
 /* ======================================================== */
 
-/* হেডিং অ্যানিমেশনের জন্য নতুন স্টাইল */
+/* ======================================================== */
+/* START: হেডিং অ্যানিমেশনের জন্য পরিবর্তিত স্টাইল (Updated Heading Animation Styles) */
+/* ======================================================== */
+
 #main-heading {
     position: relative; /* গ্লিচ ইফেক্টের জন্য আবশ্যক */
     z-index: 1; /* অন্যান্য উপাদানের উপরে রাখতে */
-    transition: color 1s; /* ডার্ক মোডের জন্য ট্রানজিশন */
+    transition: color 0.3s; /* ডার্ক মোডের জন্য ট্রানজিশন */
 }
 
 /* যখন অ্যানিমেশন ক্লাসটি যোগ করা হবে */
 #main-heading.glitch-effect {
-    /* গ্রেডিয়েন্ট অ্যানিমেশন এবং রঙ পরিবর্তন সরানো হয়েছে */
-    animation: fadeInOut 0s ease-in-out;
-    /* color প্রোপার্টিটি এখন আর transparent নয়, তাই এটি ডিফল্ট রঙ (কালো বা সাদা) ব্যবহার করবে */
+    /* গ্লিচ ইফেক্টের সময়কাল নিয়ন্ত্রণের জন্য একটি অ্যানিমেশন যোগ করা হয়েছে */
+    /* ফ্যাড-ইন/আউট এবং গ্রেডিয়েন্ট অ্যানিমেশন সরানো হয়েছে */
+    animation: glitch-duration 2s linear;
 }
 
 #main-heading.glitch-effect::before,
 #main-heading.glitch-effect::after {
-    content: 'বাংলা টুলবক্স'; /* অবশ্যই আপনার হেডিং টেক্সট দিন */
+    content: 'বাংলা টুলবক্স'; /* আপনার হেডিং টেক্সট */
     position: absolute;
     top: 0;
     left: 0;
@@ -4366,45 +4369,29 @@ input:checked + .slider:before {
     background: transparent;
     overflow: hidden;
     clip: rect(0, 900px, 0, 0);
-    /* মূল লেখার রঙ এখন transparent, কিন্তু শ্যাডো দেখা যাবে */
+    /* মূল লেখার রঙ এখন স্বাভাবিক থাকবে কারণ গ্রেডিয়েন্ট সরানো হয়েছে */
     color: inherit;
 }
 
 #main-heading.glitch-effect::before {
     left: 2px;
     text-shadow: -1px 0 red;
-    /* গ্লিচ অ্যানিমেশনটি এখন hideGlitch অ্যানিমেশন দ্বারা নিয়ন্ত্রিত হবে */
-    animation: glitch-anim-1 1s linear infinite alternate-reverse, hideGlitch 5s ease-in-out forwards;
+    /* গ্লিচ অ্যানিমেশন অপরিবর্তিত আছে */
+    animation: glitch-anim-1 2s linear alternate-reverse;
 }
 
 #main-heading.glitch-effect::after {
     left: -2px;
-    /* নীল রঙের পরিবর্তে সবুজ রঙ ব্যবহার করা হয়েছে */
-    text-shadow: -1px 0 green;
-    /* গ্লিচ অ্যানিমেশনটি এখন hideGlitch অ্যানিমেশন দ্বারা নিয়ন্ত্রিত হবে */
-    animation: glitch-anim-2 1s linear infinite alternate-reverse, hideGlitch 5s ease-in-out forwards;
+    text-shadow: -1px 0 blue;
+    /* গ্লিচ অ্যানিমেশন অপরিবর্তিত আছে */
+    animation: glitch-anim-2 2s linear alternate-reverse;
 }
 
-/* নতুন কীফ্রেম: গ্লিচ ইফেক্ট লুকানোর জন্য */
-@keyframes hideGlitch {
-    0%, 50% {
+/* নতুন: গ্লিচ ইফেক্টের সময়কাল নিয়ন্ত্রণের জন্য অ্যানিমেশন */
+/* এটি JavaScript-এর 'animationend' ইভেন্টটিকে সঠিকভাবে কাজ করতে সাহায্য করে */
+@keyframes glitch-duration {
+    0%, 100% {
         opacity: 1;
-    }
-    50.1%, 100% {
-        opacity: 0;
-    }
-}
-
-/* ফ্যাডইন/আউট অ্যানিমেশন (আপডেট করা হয়েছে) */
-@keyframes fadeInOut {
-    0%, 50% {
-        opacity: 1; /* প্রথম ৫০% সময় গ্লিচ ইফেক্ট চলবে */
-    }
-    75% {
-        opacity: 0; /* ৭৫% সময়ে পুরোপুরি ফেড আউট হবে */
-    }
-    100% {
-        opacity: 1; /* ১০০% সময়ে আবার ফেড ইন হবে */
     }
 }
 
@@ -4437,6 +4424,9 @@ input:checked + .slider:before {
     90% { clip: rect(55px, 9999px, 40px, 0); }
     100% { clip: rect(15px, 9999px, 80px, 0); }
 }
+/* ======================================================== */
+/* END: হেডিং অ্যানিমেশনের জন্য পরিবর্তিত স্টাইল (Updated Heading Animation Styles) */
+/* ======================================================== */
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -12540,29 +12530,28 @@ document.addEventListener('DOMContentLoaded', () => {
 // START: Animated Bangla Toolbox Heading
 // ====================================================================
 document.addEventListener('DOMContentLoaded', () => {
-    // উপরের HTML পরিবর্তনে যে আইডিটি যোগ করা হয়েছে, সেটি এখানে ব্যবহার করুন
-    const mainHeading = document.getElementById('main-heading');
+const mainHeading = document.getElementById('main-heading');
 
-    if (mainHeading) {
-        // প্রতি সেকেন্ডে সময় পরীক্ষা করার জন্য
-        setInterval(() => {
-            const seconds = new Date().getSeconds();
+if (mainHeading) {
+    // প্রতি সেকেন্ডে সময় পরীক্ষা করার জন্য
+    setInterval(() => {
+        const seconds = new Date().getSeconds();
 
-            // ব্যানারের মিনিটের শুরু থেকে 30 সেকেন্ড হলে, তখন অ্যানিমেশন ট্রিগার করুন
-            // অ্যানিমেশনটি যদি আগে থেকেই চলতে থাকে তবে এটি আবার শুরু হবে না
-            if ((seconds === 30) && !mainHeading.classList.contains('glitch-effect')) {
-                mainHeading.classList.add('glitch-effect');
-            }
-        }, 1000); // প্রতি 1000 মিলিসেকেন্ড = 1 সেকেন্ড
+        // ব্যানারের মিনিটের শুরু থেকে 30 সেকেন্ড হলে, তখন অ্যানিমেশন ট্রিগার করুন
+        if ((seconds === 30) && !mainHeading.classList.contains('glitch-effect')) {
+            mainHeading.classList.add('glitch-effect');
+        }
+    }, 1000);
 
-        // অ্যানিমেশন শেষ হলে ক্লাসটি সরিয়ে দিন যাতে এটি আবার ট্রিগার হতে পারে
-        mainHeading.addEventListener('animationend', (event) => {
-            // শুধুমাত্র মূল হেডিং এর fadeInOut অ্যানিমেশন শেষ হলেই ক্লাসটি সরান
-            if (event.animationName === 'fadeInOut') {
-                 mainHeading.classList.remove('glitch-effect');
-            }
-        });
-    }
+    // অ্যানিমেশন শেষ হলে ক্লাসটি সরিয়ে দিন যাতে এটি আবার ট্রিগার হতে পারে
+    mainHeading.addEventListener('animationend', (event) => {
+        // পরিবর্তন: অ্যানিমেশনের নাম 'glitch-duration' হলে ক্লাসটি সরান
+        if (event.animationName === 'glitch-duration') {
+             mainHeading.classList.remove('glitch-effect');
+        }
+    });
+}
+
 });
 
 // ====================================================================
