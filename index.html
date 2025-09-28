@@ -4581,6 +4581,170 @@ input:checked + .slider:before {
 /* END: Health & Lifestyle Tab Styles                      */
 /* ======================================================== */
 
+/* ======================================================== */
+/* START: Days/Observances Tab Styles (দিবসসমূহ) */
+/* ======================================================== */
+
+.days-observances-container {
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 900px;
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+.dark .days-observances-container {
+    background-color: #2d3748;
+}
+
+/* নতুন: আগত দিবস সেকশনের জন্য স্টাইল */
+.upcoming-observances-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+@media (min-width: 640px) {
+    .upcoming-observances-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+.upcoming-day-card {
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.upcoming-day-card.national {
+    background: linear-gradient(135deg, #059669, #10b981);
+}
+.upcoming-day-card.international {
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+}
+.upcoming-day-card .card-supertitle {
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0.8;
+    margin-bottom: 4px;
+}
+.upcoming-day-card .card-day-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.upcoming-day-card .card-day-date {
+    font-size: 1.1rem;
+    font-weight: 500;
+    background-color: rgba(0,0,0,0.15);
+    padding: 5px 10px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.year-selector-wrapper {
+    text-align: center;
+    margin-bottom: 25px;
+}
+.year-selector-wrapper .year-input {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #cce7ff;
+    background-color: #eaf6ff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    width: 120px;
+    text-align: center;
+}
+
+.observances-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+@media (min-width: 768px) {
+    .observances-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.observance-section {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+.dark .observance-section {
+    background-color: #1a202c;
+    border-color: #4a5568;
+}
+
+.observance-section .section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #3f51b5;
+    margin-bottom: 15px;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e2e8f0;
+}
+.dark .observance-section .section-title {
+    color: #90cdf4;
+    border-bottom-color: #4a5568;
+}
+
+.days-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 50vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.day-item {
+    background-color: #e6f7ff;
+    border-left: 4px solid #3b82f6;
+    padding: 12px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.dark .day-item {
+    background-color: #1a202c;
+    border-left-color: #60a5fa;
+}
+
+.day-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.day-item .day-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #1e3a8a;
+}
+.dark .day-item .day-name {
+    color: #bfdbfe;
+}
+
+.day-item .day-date {
+    font-size: 0.95rem;
+    color: #475569;
+    font-weight: 500;
+}
+.dark .day-item .day-date {
+    color: #cbd5e0;
+}
+/* ======================================================== */
+/* END: Days/Observances Tab Styles */
+/* ======================================================== */
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
 </head>
@@ -4689,6 +4853,7 @@ input:checked + .slider:before {
 				<!-- ভবিষ্যতে নতুন ট্যাব এখানে যোগ করা যাবে -->
 				<button id="clockTab" class="tab-button rounded-xl">ঘড়ি</button>
 				<button id="playerTab" class="tab-button rounded-xl">প্লেয়ার</button>
+				<button id="daysObservancesTab" class="tab-button rounded-xl">দিবসসমূহ</button>
 				<button id="zakatCalcTab" class="tab-button rounded-xl">যাকাতের হিসাব</button>
 				<button id="qrCodeTab" class="tab-button rounded-xl">কিউআর কোড</button>
 				<button id="emergencyNumbersTab" class="tab-button rounded-xl">জরুরি নম্বর</button>
@@ -6234,6 +6399,42 @@ input:checked + .slider:before {
     <div id="bmi-result" class="bmi-result-section"></div>
 </div>
 <!-- BMI ক্যালকুলেটরের শেষ -->
+        </div>
+    </div>
+</div>
+
+<!-- নতুন: দিবসসমূহ ট্যাব -->
+<div id="daysObservancesContent" class="calculator-content">
+    <div class="days-observances-container">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">দিবসসমূহ</h3>
+        
+        <!-- নতুন: আগত দিবস সেকশন -->
+        <div id="upcomingObservances" class="upcoming-observances-container mb-6">
+            <div id="upcomingNationalDay" class="upcoming-day-card national">
+                <!-- JavaScript দ্বারা পূর্ণ হবে -->
+            </div>
+            <div id="upcomingInternationalDay" class="upcoming-day-card international">
+                <!-- JavaScript দ্বারা পূর্ণ হবে -->
+            </div>
+        </div>
+
+        <div class="year-selector-wrapper mb-6">
+            <label for="observanceYearSelect" class="font-semibold text-gray-700 dark:text-gray-300 mr-2">বছর নির্বাচন করুন:</label>
+            <input type="number" id="observanceYearSelect" class="year-input dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all">
+        </div>
+        <div class="observances-grid">
+            <div class="observance-section">
+                <h4 class="section-title">বাংলাদেশী দিবসসমূহ</h4>
+                <div id="bangladeshiDaysList" class="days-list">
+                    <!-- JavaScript দ্বারা পূর্ণ হবে -->
+                </div>
+            </div>
+            <div class="observance-section">
+                <h4 class="section-title">আন্তর্জাতিক দিবসসমূহ</h4>
+                <div id="internationalDaysList" class="days-list">
+                    <!-- JavaScript দ্বারা পূর্ণ হবে -->
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -8484,6 +8685,8 @@ try {
 				const emergencyNumbersContent = document.getElementById('emergencyNumbersContent');
 				const healthLifestyleTab = document.getElementById('healthLifestyleTab');
 				const healthLifestyleContent = document.getElementById('healthLifestyleContent');
+				const daysObservancesTab = document.getElementById('daysObservancesTab');
+				const daysObservancesContent = document.getElementById('daysObservancesContent');
 
 
 
@@ -8743,14 +8946,14 @@ function showTab(tabId) {
     const tabs = [
         basicCalcTab,
 		ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,
-		translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,
+		translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
 		qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,
         textAssistantTab,
 		allFeaturesTab
     ];
     const contents = [
         basicCalculatorContent,
-		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent, newsContent, converterContent,healthLifestyleContent,
+		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent, newsContent, converterContent,healthLifestyleContent,daysObservancesContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent,
 		weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
 		textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,
@@ -8817,6 +9020,11 @@ function showTab(tabId) {
             activeContent = prayerTimeContent;
             initializePrayerTimeTab();
             break;
+		case 'daysObservances':
+			activeTab = daysObservancesTab;
+			activeContent = daysObservancesContent;
+			initializeDaysObservancesTab();
+		break;
 		case 'zakat':
 			activeTab = zakatCalcTab;
 			activeContent = zakatCalculatorContent;
@@ -8932,6 +9140,7 @@ function showTab(tabId) {
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
                 if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
 				if (emergencyNumbersTab) emergencyNumbersTab.addEventListener('click', () => showTab('emergency'));
+				if (daysObservancesTab) daysObservancesTab.addEventListener('click', () => showTab('daysObservances'));
 
                 // API কী সেটিং বোতাম এবং মডেল লজিক
                 if (setApiKeyBtn) {
@@ -13060,6 +13269,151 @@ function initializeHealthLifestyleTab() {
 }
 // ====================================================================
 // END: HEALTH & LIFESTYLE TAB SCRIPT
+// ====================================================================
+
+
+// ====================================================================
+// START: DAYS/OBSERVANCES SCRIPT (দিবসসমূহ)
+// ====================================================================
+function initializeDaysObservancesTab() {
+    // DOM Elements
+    const yearSelectInput = document.getElementById('observanceYearSelect');
+    const bangladeshiDaysList = document.getElementById('bangladeshiDaysList');
+    const internationalDaysList = document.getElementById('internationalDaysList');
+    // নতুন সেকশনের জন্য DOM Elements
+    const upcomingNationalDayCard = document.getElementById('upcomingNationalDay');
+    const upcomingInternationalDayCard = document.getElementById('upcomingInternationalDay');
+
+
+    if (!yearSelectInput || !bangladeshiDaysList || !internationalDaysList) return;
+
+    // Data for observances
+    const bangladeshiObservances = [
+        { name: "শহীদ দিবস ও আন্তর্জাতিক মাতৃভাষা দিবস", month: 1, day: 21 },
+        { name: "জাতীয় শিশু দিবস (বঙ্গবন্ধুর জন্মদিন)", month: 2, day: 17 },
+        { name: "স্বাধীনতা দিবস", month: 2, day: 26 },
+        { name: "পহেলা বৈশাখ (বাংলা নববর্ষ)", month: 3, day: 14 },
+        { name: "শ্রমিক দিবস (মে দিবস)", month: 4, day: 1 },
+        { name: "জাতীয় শোক দিবস", month: 7, day: 15 },
+        { name: "শহীদ বুদ্ধিজীবী দিবস", month: 11, day: 14 },
+        { name: "বিজয় দিবস", month: 11, day: 16 }
+    ];
+
+    const internationalObservances = [
+        { name: "নববর্ষ", month: 0, day: 1 },
+        { name: "বিশ্ব ভালোবাসা দিবস", month: 1, day: 14 },
+        { name: "আন্তর্জাতিক নারী দিবস", month: 2, day: 8 },
+        { name: "এপ্রিল ফুলস ডে", month: 3, day: 1 },
+        { name: "বিশ্ব পরিবেশ দিবস", month: 4, day: 5 },
+        { name: "মা দিবস", dateFn: (year) => getNthWeekdayOfMonth(year, 4, 0, 2) }, // 2nd Sunday of May
+        { name: "বাবা দিবস", dateFn: (year) => getNthWeekdayOfMonth(year, 5, 0, 3) }, // 3rd Sunday of June
+        { name: "বিশ্ব শিক্ষক দিবস", month: 9, day: 5 },
+        { name: "হ্যালোউইন", month: 9, day: 31 },
+        { name: "বড়দিন", month: 11, day: 25 }
+    ];
+
+    function getNthWeekdayOfMonth(year, month, weekday, n) {
+        const date = new Date(year, month, 1);
+        let count = 0;
+        while (date.getDay() !== weekday) {
+            date.setDate(date.getDate() + 1);
+        }
+        date.setDate(date.getDate() + (n - 1) * 7);
+        return date;
+    }
+    
+    // নতুন ফাংশন: আগত দিবস খুঁজে বের করার জন্য
+    function findUpcomingDay(observances, today) {
+        const currentYear = today.getFullYear();
+        
+        const upcoming = observances.map(obs => {
+            let date = obs.dateFn ? obs.dateFn(currentYear) : new Date(currentYear, obs.month, obs.day);
+            // যদি তারিখটি ইতোমধ্যে চলে গিয়ে থাকে, তবে পরের বছরের তারিখ গণনা করুন
+            if (date < today) {
+                date = obs.dateFn ? obs.dateFn(currentYear + 1) : new Date(currentYear + 1, obs.month, obs.day);
+            }
+            return { name: obs.name, date: date };
+        })
+        .sort((a, b) => a.date - b.date); // তারিখ অনুযায়ী সাজান
+
+        return upcoming[0]; // সবচেয়ে কাছের তারিখটি রিটার্ন করুন
+    }
+
+    // নতুন ফাংশন: আগত দিবসের কার্ড আপডেট করার জন্য
+    function displayUpcomingObservances() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // শুধুমাত্র তারিখ তুলনা করার জন্য সময় রিসেট করুন
+
+        const upcomingNational = findUpcomingDay(bangladeshiObservances, today);
+        const upcomingInternational = findUpcomingDay(internationalObservances, today);
+
+        const dateFormatter = new Intl.DateTimeFormat('bn-BD', { day: 'numeric', month: 'long' });
+        const weekdayFormatter = new Intl.DateTimeFormat('bn-BD', { weekday: 'long' });
+
+        if (upcomingNationalDayCard && upcomingNational) {
+            upcomingNationalDayCard.innerHTML = `
+                <div class="card-supertitle">আগত জাতীয় দিবস</div>
+                <div class="card-day-name">${upcomingNational.name}</div>
+                <div class="card-day-date">${dateFormatter.format(upcomingNational.date)} (${weekdayFormatter.format(upcomingNational.date)})</div>
+            `;
+        }
+        
+        if (upcomingInternationalDayCard && upcomingInternational) {
+            upcomingInternationalDayCard.innerHTML = `
+                <div class="card-supertitle">আগত আন্তর্জাতিক দিবস</div>
+                <div class="card-day-name">${upcomingInternational.name}</div>
+                <div class="card-day-date">${dateFormatter.format(upcomingInternational.date)} (${weekdayFormatter.format(upcomingInternational.date)})</div>
+            `;
+        }
+    }
+
+
+    function displayObservances(year) {
+        bangladeshiDaysList.innerHTML = '';
+        internationalDaysList.innerHTML = '';
+
+        const dateFormatter = new Intl.DateTimeFormat('bn-BD', { day: 'numeric', month: 'long' });
+        const weekdayFormatter = new Intl.DateTimeFormat('bn-BD', { weekday: 'long' });
+
+        bangladeshiObservances.forEach(obs => {
+            const date = new Date(year, obs.month, obs.day);
+            renderDayItem(date, obs.name, bangladeshiDaysList, dateFormatter, weekdayFormatter);
+        });
+
+        internationalObservances.forEach(obs => {
+            const date = obs.dateFn ? obs.dateFn(year) : new Date(year, obs.month, obs.day);
+            renderDayItem(date, obs.name, internationalDaysList, dateFormatter, weekdayFormatter);
+        });
+    }
+    
+    function renderDayItem(date, name, listElement, dateFormatter, weekdayFormatter) {
+        const dateString = dateFormatter.format(date);
+        const weekdayString = weekdayFormatter.format(date);
+
+        const item = document.createElement('div');
+        item.className = 'day-item';
+        item.innerHTML = `
+            <div class="day-name">${name}</div>
+            <div class="day-date">${dateString} (${weekdayString})</div>
+        `;
+        listElement.appendChild(item);
+    }
+
+    yearSelectInput.addEventListener('input', () => {
+        const year = parseInt(yearSelectInput.value, 10);
+        if (!isNaN(year) && year > 1900 && year < 2100) {
+            displayObservances(year);
+        }
+    });
+
+    // Initial setup
+    const currentYear = new Date().getFullYear();
+    yearSelectInput.value = currentYear;
+    displayObservances(currentYear);
+    displayUpcomingObservances(); // নতুন ফাংশনটি কল করুন
+}
+// ====================================================================
+// END: DAYS/OBSERVANCES SCRIPT
 // ====================================================================
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
