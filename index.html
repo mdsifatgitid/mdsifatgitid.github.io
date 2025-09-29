@@ -6380,6 +6380,20 @@ input:checked + .slider:before {
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
             </a>
         </div>
+ <!-- ভিজিটর কাউন্টার সেকশন শুরু -->
+        <div id="visitor-counter-section" class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- আজকের ভিজিট কার্ড -->
+            <div class="bg-indigo-100 dark:bg-indigo-900/50 p-4 rounded-xl text-center">
+                <h4 class="text-sm font-semibold text-indigo-600 dark:text-indigo-300">আজকের ভিজিট</h4>
+                <p id="today-visits" class="text-3xl font-bold text-indigo-800 dark:text-indigo-200 mt-2">০</p>
+            </div>
+            <!-- মোট ভিজিট কার্ড -->
+            <div class="bg-green-100 dark:bg-green-900/50 p-4 rounded-xl text-center">
+                <h4 class="text-sm font-semibold text-green-600 dark:text-green-300">সর্বমোট ভিজিট</h4>
+                <p id="total-visits" class="text-3xl font-bold text-green-800 dark:text-green-200 mt-2">০</p>
+            </div>
+        </div>
+        <!-- ভিজিটর কাউন্টার সেকশন শেষ -->
     </div>
 </div>
 
@@ -14002,6 +14016,66 @@ function initializeHolidayListTab() {
 // END: HOLIDAY LIST SCRIPT
 // ====================================================================
 
+
+// ====================================================================
+// START: VISITOR COUNTER SCRIPT (গুরুত্বপূর্ণ লিংকসমূহ ট্যাব)
+// ====================================================================
+
+// --- ভিজিট গণনা এবং সেভ করার লজিক (এই অংশটি পেজ লোড হওয়ার সাথে সাথে একবারই রান হবে) ---
+(function incrementVisitCounters() {
+    // মোট ভিজিট গণনা
+    let totalVisits = localStorage.getItem('totalVisits');
+    totalVisits = totalVisits ? parseInt(totalVisits, 10) + 1 : 1;
+    localStorage.setItem('totalVisits', totalVisits);
+
+    // আজকের ভিজিট গণনা
+    const today = new Date().toISOString().split('T')[0];
+    let todaysData = localStorage.getItem('todaysData');
+    try {
+        todaysData = todaysData ? JSON.parse(todaysData) : { date: today, count: 0 };
+    } catch (e) {
+        todaysData = { date: today, count: 0 };
+    }
+
+    if (todaysData.date === today) {
+        todaysData.count += 1;
+    } else {
+        todaysData = { date: today, count: 1 };
+    }
+    localStorage.setItem('todaysData', JSON.stringify(todaysData));
+})(); // Immediately Invoked Function Expression (IIFE) to run once on script load.
+
+
+// --- সেভ করা ভিজিট সংখ্যা প্রদর্শনের ফাংশন ---
+function displayVisitorCount() {
+    const todayVisitsEl = document.getElementById('today-visits');
+    const totalVisitsEl = document.getElementById('total-visits');
+
+    if (todayVisitsEl && totalVisitsEl) {
+        const totalVisits = localStorage.getItem('totalVisits') || '1';
+        const todaysData = JSON.parse(localStorage.getItem('todaysData')) || { count: 1 };
+        
+        totalVisitsEl.textContent = parseInt(totalVisits).toLocaleString('bn-BD');
+        todayVisitsEl.textContent = todaysData.count.toLocaleString('bn-BD');
+    }
+}
+
+// যখন "গুরুত্বপূর্ণ লিংকসমূহ" ট্যাবটি দেখানো হবে, তখন কাউন্টার প্রদর্শন করুন
+const importantLinksTabForCounter = document.getElementById('importantLinksTab');
+if (importantLinksTabForCounter) {
+    importantLinksTabForCounter.addEventListener('click', () => {
+        // Tab click করলে DOM এ এলিমেন্টগুলো থাকবে, তাই এখানে display function কল করা নিরাপদ
+        setTimeout(displayVisitorCount, 0); 
+    });
+    
+    // পেজ লোডের সময় ট্যাবটি সক্রিয় থাকলে কাউন্টার প্রদর্শন করুন
+    if (importantLinksTabForCounter.classList.contains('active')) {
+         displayVisitorCount();
+    }
+}
+// ====================================================================
+// END: VISITOR COUNTER SCRIPT
+// ====================================================================
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
         window.onload = function() {
