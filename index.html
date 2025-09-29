@@ -10804,7 +10804,7 @@ async function transcribeAudioWithGemini(audioFile) {
 }
 
 
-// Event listener for the record/stop/send button
+// Event listener for the record/send button
 if (startSttBtn) {
     startSttBtn.addEventListener('click', async () => {
         const state = startSttBtn.dataset.state;
@@ -10820,46 +10820,39 @@ if (startSttBtn) {
                     audioChunks.push(event.data);
                 };
 
+                // This onstop handler will now create the blob and trigger the transcription
                 mediaRecorder.onstop = () => {
-                    // Use a common MIME type like audio/webm
-                    audioBlob = new Blob(audioChunks, { type: 'audio/webm' }); 
-                    startSttBtn.dataset.state = 'send';
-                    startSttBtn.innerText = 'পাঠান';
-                    sttStatus.innerText = 'অবস্থা: রেকর্ডিং শেষ। পাঠানোর জন্য প্রস্তুত।';
-                    startSttBtn.disabled = false;
-                    // Stop microphone track to turn off indicator
+                    audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    if (audioBlob) {
+                        transcribeAudioWithGemini(audioBlob);
+                        audioBlob = null; // Clear blob after processing
+                    }
+                    // Stop microphone track to turn off the indicator
                     stream.getTracks().forEach(track => track.stop());
                 };
 
                 mediaRecorder.start();
                 isRecording = true;
-                startSttBtn.dataset.state = 'recording';
-                startSttBtn.innerText = 'থামান';
+                startSttBtn.dataset.state = 'recording'; // State is now 'recording'
+                startSttBtn.innerText = 'পাঠান'; // Text changes to 'পাঠান'
                 sttStatus.innerText = 'অবস্থা: রেকর্ডিং চলছে... 🎙️';
             } catch (err) {
                 console.error("Microphone access error:", err);
                 sttStatus.innerText = 'অবস্থা: মাইক্রোফোন অ্যাক্সেস করা যায়নি।';
                 showCustomAlert('মাইক্রোফোন ব্যবহারের অনুমতি প্রয়োজন।');
             }
-        } else if (state === 'recording') {
-            // Stop recording
+        } else if (state === 'recording') { // This state now means "Send" is clicked
+            // Stop recording, which will trigger the onstop handler to send the data
             if (mediaRecorder && isRecording) {
                 mediaRecorder.stop();
                 isRecording = false;
-                startSttBtn.disabled = true; // Disable until onstop event fires
+                startSttBtn.disabled = true; // Disable button while processing
                 sttStatus.innerText = 'অবস্থা: প্রসেসিং...';
-            }
-        } else if (state === 'send') {
-            // Send the recorded audio
-            if (audioBlob) {
-                transcribeAudioWithGemini(audioBlob);
-                audioBlob = null; // Clear blob after sending
-            } else {
-                 sttStatus.innerText = 'অবস্থা: পাঠানোর জন্য কোনো রেকর্ডিং নেই।';
             }
         }
     });
 }
+
 
 // Event listeners for the upload functionality
 if (uploadAudioBtn) {
