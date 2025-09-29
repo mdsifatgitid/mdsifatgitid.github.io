@@ -6489,9 +6489,9 @@ input:checked + .slider:before {
     <div class="days-observances-container"> <!-- Reusing existing style for consistency -->
         <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">সরকারি ছুটির তালিকা</h3>
         
-        <!-- নতুন: আগত ছুটির সেকশন -->
-        <div id="upcomingHolidayContainer" class="upcoming-observances-container mb-6">
-            <div id="upcomingHolidayCard" class="upcoming-day-card" style="background: linear-gradient(135deg, #3b82f6, #60a5fa);">
+        <!-- পরিবর্তন: আগত ছুটির কার্ডটি মাঝে আনা হয়েছে -->
+        <div id="upcomingHolidayContainer" class="flex justify-center mb-6">
+            <div id="upcomingHolidayCard" class="upcoming-day-card w-full max-w-sm" style="background: linear-gradient(135deg, #3b82f6, #60a5fa);">
                 <!-- JavaScript দ্বারা পূর্ণ হবে -->
             </div>
         </div>
@@ -6499,9 +6499,16 @@ input:checked + .slider:before {
         <p class="text-gray-600 dark:text-gray-400 mb-4">
             সাপ্তাহিক ছুটি (লাল), সরকারি ছুটি (সবুজ), এবং চাঁদ দেখার উপর নির্ভরশীল ছুটিগুলো (হলুদ) দেখানো হয়েছে। ডেটা Gemini API অথবা Nager.Date API থেকে লোড করা হয়েছে। তথ্য যাচাই প্রয়োজন হতে পারে।
         </p>
-        <div class="year-selector-wrapper mb-6">
+        <!-- পরিবর্তন: রিফ্রেশ বাটন যোগ করা হয়েছে -->
+        <div class="year-selector-wrapper mb-6 flex justify-center items-center gap-4">
             <label for="holidayYearSelect" class="font-semibold text-gray-700 dark:text-gray-300 mr-2">বছর নির্বাচন করুন:</label>
             <input type="number" id="holidayYearSelect" class="year-input dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all">
+            <button id="refreshHolidayListBtn" class="p-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition-colors" title="তালিকা রিফ্রেশ করুন">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+                </svg>
+            </button>
         </div>
         <div class="overflow-x-auto max-h-[60vh] relative min-h-[300px]">
             <table id="holidayTable" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -13511,11 +13518,12 @@ function initializeHolidayListTab() {
     const yearSelectInput = document.getElementById('holidayYearSelect');
     const holidayTableBody = document.querySelector('#holidayTable tbody');
     const upcomingHolidayCard = document.getElementById('upcomingHolidayCard');
+    const refreshButton = document.getElementById('refreshHolidayListBtn'); // নতুন বাটন
 
-    if (!yearSelectInput || !holidayTableBody || !upcomingHolidayCard) return;
+    if (!yearSelectInput || !holidayTableBody || !upcomingHolidayCard || !refreshButton) return;
 
-    // API ডেটা ক্যাশ করার জন্য
-    const holidayCache = {};
+    // The holidayCache is no longer needed as a local variable.
+    // We will use sessionStorage directly to cache data for the session.
 
     // Nager.Date API ব্যর্থ হলে অফলাইন ফলব্যাক ডেটা
     const localHolidayData = {
@@ -13577,20 +13585,24 @@ function initializeHolidayListTab() {
     // Fallback function using Nager.Date API
     async function fetchHolidaysFromNager(year) {
         showCustomAlert('Gemini API থেকে ডেটা আনা যায়নি। বিকল্প উৎস থেকে চেষ্টা করা হচ্ছে।');
+        const nagerCacheKey = `nager_holidays_${year}`;
+        
+        // sessionStorage থেকে ডেটা চেক করুন
+        const cachedData = sessionStorage.getItem(nagerCacheKey);
+        if (cachedData) {
+            console.log(`Nager data for ${year} loaded from session cache.`);
+            processAndRenderHolidays(JSON.parse(cachedData), year);
+            return;
+        }
+
         try {
-            let apiHolidays = [];
-            // Cache check for Nager API
-            const nagerCacheKey = `nager_${year}`;
-            if (holidayCache[nagerCacheKey]) {
-                apiHolidays = holidayCache[nagerCacheKey];
-            } else {
-                const response = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/BD`);
-                if (!response.ok) {
-                    throw new Error(`Nager API থেকে ডেটা আনা সম্ভব হয়নি (Status: ${response.status})`);
-                }
-                apiHolidays = await response.json();
-                holidayCache[nagerCacheKey] = apiHolidays;
+            const response = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/BD`);
+            if (!response.ok) {
+                throw new Error(`Nager API থেকে ডেটা আনা সম্ভব হয়নি (Status: ${response.status})`);
             }
+            const apiHolidays = await response.json();
+            // sessionStorage-এ ডেটা সেভ করুন
+            sessionStorage.setItem(nagerCacheKey, JSON.stringify(apiHolidays));
             processAndRenderHolidays(apiHolidays, year);
         } catch (nagerError) {
             console.error("Nager.Date API fetch error:", nagerError);
@@ -13608,11 +13620,14 @@ function initializeHolidayListTab() {
     async function loadAndDisplayHolidays(year) {
         holidayTableBody.innerHTML = `<tr><td colspan="3" class="text-center p-4">ছুটির তালিকা লোড হচ্ছে...</td></tr>`;
         upcomingHolidayCard.innerHTML = `<div class="card-supertitle">আগত ছুটি</div><div class="card-day-name">লোড হচ্ছে...</div>`;
-
-        // Check for cached data first
-        const geminiCacheKey = `gemini_${year}`;
-        if (holidayCache[geminiCacheKey]) {
-            processAndRenderHolidays(holidayCache[geminiCacheKey], year);
+        
+        const geminiCacheKey = `gemini_holidays_${year}`;
+        
+        // sessionStorage থেকে ডেটা চেক করুন
+        const cachedData = sessionStorage.getItem(geminiCacheKey);
+        if (cachedData) {
+            console.log(`Gemini data for ${year} loaded from session cache.`);
+            processAndRenderHolidays(JSON.parse(cachedData), year);
             return;
         }
 
@@ -13656,7 +13671,8 @@ function initializeHolidayListTab() {
                  throw new Error("Gemini API থেকে পাওয়া ডেটা সঠিক ফরম্যাটে নেই।");
             }
 
-            holidayCache[geminiCacheKey] = geminiHolidays; // Cache the successful response
+            // sessionStorage-এ ডেটা সেভ করুন
+            sessionStorage.setItem(geminiCacheKey, JSON.stringify(geminiHolidays));
             processAndRenderHolidays(geminiHolidays, year);
 
         } catch (error) {
@@ -13754,6 +13770,19 @@ function initializeHolidayListTab() {
         }
     });
 
+    // নতুন: রিফ্রেশ বাটনের জন্য ইভেন্ট লিসেনার
+    refreshButton.addEventListener('click', () => {
+        const year = parseInt(yearSelectInput.value, 10);
+        if (!isNaN(year)) {
+            // ক্যাশ পরিষ্কার করুন
+            sessionStorage.removeItem(`gemini_holidays_${year}`);
+            sessionStorage.removeItem(`nager_holidays_${year}`);
+            showCustomAlert(`${year} সালের ছুটির তালিকা রিফ্রেশ করা হচ্ছে...`);
+            // ডেটা আবার লোড করুন
+            loadAndDisplayHolidays(year);
+        }
+    });
+
     // ইনিশিয়ালাইজেশন
     const currentYear = new Date().getFullYear();
     yearSelectInput.value = currentYear;
@@ -13762,6 +13791,7 @@ function initializeHolidayListTab() {
 // ====================================================================
 // END: HOLIDAY LIST SCRIPT
 // ====================================================================
+
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
         window.onload = function() {
