@@ -6381,19 +6381,30 @@ input:checked + .slider:before {
             </a>
         </div>
  <!-- ভিজিটর কাউন্টার সেকশন শুরু -->
-        <div id="visitor-counter-section" class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- আজকের ভিজিট কার্ড -->
-            <div class="bg-indigo-100 dark:bg-indigo-900/50 p-4 rounded-xl text-center">
-                <h4 class="text-sm font-semibold text-indigo-600 dark:text-indigo-300"> আপনার আজকের ভিজিট</h4>
-                <p id="today-visits" class="text-3xl font-bold text-indigo-800 dark:text-indigo-200 mt-2">০</p>
-            </div>
-            <!-- মোট ভিজিট কার্ড -->
-            <div class="bg-green-100 dark:bg-green-900/50 p-4 rounded-xl text-center">
-                <h4 class="text-sm font-semibold text-green-600 dark:text-green-300"> আপনার মোট ভিজিট</h4>
-                <p id="total-visits" class="text-3xl font-bold text-green-800 dark:text-green-200 mt-2">০</p>
-            </div>
-        </div>
-        <!-- ভিজিটর কাউন্টার সেকশন শেষ -->
+<!-- এই সম্পূর্ণ div টি আপনার পুরনো visitor-counter-section div এর পরিবর্তে বসান -->
+<div id="visitor-counter-section" class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600 grid grid-cols-2 md:grid-cols-4 gap-4">
+    <!-- আপনার আজকের ভিজিট কার্ড (বিদ্যমান) -->
+    <div class="bg-indigo-100 dark:bg-indigo-900/50 p-4 rounded-xl text-center">
+        <h4 class="text-sm font-semibold text-indigo-600 dark:text-indigo-300"> আপনার আজকের ভিজিট</h4>
+        <p id="today-visits" class="text-3xl font-bold text-indigo-800 dark:text-indigo-200 mt-2">০</p>
+    </div>
+    <!-- আপনার মোট ভিজিট কার্ড (বিদ্যমান) -->
+    <div class="bg-green-100 dark:bg-green-900/50 p-4 rounded-xl text-center">
+        <h4 class="text-sm font-semibold text-green-600 dark:text-green-300"> আপনার মোট ভিজিট</h4>
+        <p id="total-visits" class="text-3xl font-bold text-green-800 dark:text-green-200 mt-2">০</p>
+    </div>
+    <!-- আজকের ভিজিট (সকল) কার্ড (নতুন) -->
+    <div class="bg-yellow-100 dark:bg-yellow-900/50 p-4 rounded-xl text-center">
+        <h4 class="text-sm font-semibold text-yellow-600 dark:text-yellow-300"> আজকের ভিজিট (সকল)</h4>
+        <p id="all-today-visits" class="text-3xl font-bold text-yellow-800 dark:text-yellow-200 mt-2">০</p>
+    </div>
+    <!-- সর্বমোট ভিজিট (সকল) কার্ড (নতুন) -->
+    <div class="bg-red-100 dark:bg-red-900/50 p-4 rounded-xl text-center">
+        <h4 class="text-sm font-semibold text-red-600 dark:text-red-300"> মোট ভিজিট (সকল)</h4>
+        <p id="all-total-visits" class="text-3xl font-bold text-red-800 dark:text-red-200 mt-2">০</p>
+    </div>
+</div>
+<!-- ভিজিটর কাউন্টার সেকশন শেষ -->
     </div>
 </div>
 
@@ -12093,6 +12104,66 @@ function initializeClockTab() {
 // END: CLOCK TAB SCRIPT (STOPWATCH, ALARM, WORLD CLOCK)
 // ====================================================================
 
+// ====================================================================
+// START: VISITOR COUNTER SCRIPT (গুরুত্বপূর্ণ লিংকসমূহ ট্যাব)
+// ====================================================================
+
+// --- ভিজিট গণনা এবং সেভ করার লজিক (এই অংশটি পেজ লোড হওয়ার সাথে সাথে একবারই রান হবে) ---
+(function incrementVisitCounters() {
+    // মোট ভিজিট গণনা
+    let totalVisits = localStorage.getItem('totalVisits');
+    totalVisits = totalVisits ? parseInt(totalVisits, 10) + 1 : 1;
+    localStorage.setItem('totalVisits', totalVisits);
+
+    // আজকের ভিজিট গণনা
+    const today = new Date().toISOString().split('T')[0];
+    let todaysData = localStorage.getItem('todaysData');
+    try {
+        todaysData = todaysData ? JSON.parse(todaysData) : { date: today, count: 0 };
+    } catch (e) {
+        todaysData = { date: today, count: 0 };
+    }
+
+    if (todaysData.date === today) {
+        todaysData.count += 1;
+    } else {
+        todaysData = { date: today, count: 1 };
+    }
+    localStorage.setItem('todaysData', JSON.stringify(todaysData));
+})(); // Immediately Invoked Function Expression (IIFE) to run once on script load.
+
+
+// --- সেভ করা ভিজিট সংখ্যা প্রদর্শনের ফাংশন ---
+function displayVisitorCount() {
+    const todayVisitsEl = document.getElementById('today-visits');
+    const totalVisitsEl = document.getElementById('total-visits');
+
+    if (todayVisitsEl && totalVisitsEl) {
+        const totalVisits = localStorage.getItem('totalVisits') || '1';
+        const todaysData = JSON.parse(localStorage.getItem('todaysData')) || { count: 1 };
+        
+        totalVisitsEl.textContent = parseInt(totalVisits).toLocaleString('bn-BD');
+        todayVisitsEl.textContent = todaysData.count.toLocaleString('bn-BD');
+    }
+}
+
+// যখন "গুরুত্বপূর্ণ লিংকসমূহ" ট্যাবটি দেখানো হবে, তখন কাউন্টার প্রদর্শন করুন
+const importantLinksTabForCounter = document.getElementById('importantLinksTab');
+if (importantLinksTabForCounter) {
+    importantLinksTabForCounter.addEventListener('click', () => {
+        // Tab click করলে DOM এ এলিমেন্টগুলো থাকবে, তাই এখানে display function কল করা নিরাপদ
+        setTimeout(displayVisitorCount, 0); 
+    });
+    
+    // পেজ লোডের সময় ট্যাবটি সক্রিয় থাকলে কাউন্টার প্রদর্শন করুন
+    if (importantLinksTabForCounter.classList.contains('active')) {
+         displayVisitorCount();
+    }
+}
+// ====================================================================
+// END: VISITOR COUNTER SCRIPT
+// ====================================================================
+
 
 //নতুন কোনো ট্যাব যুক্ত করলে তার স্ক্রিপ্ট এটির আগে অ্যাড করতে হবে।
 
@@ -14017,66 +14088,6 @@ function initializeHolidayListTab() {
 // ====================================================================
 
 
-// ====================================================================
-// START: VISITOR COUNTER SCRIPT (গুরুত্বপূর্ণ লিংকসমূহ ট্যাব)
-// ====================================================================
-
-// --- ভিজিট গণনা এবং সেভ করার লজিক (এই অংশটি পেজ লোড হওয়ার সাথে সাথে একবারই রান হবে) ---
-(function incrementVisitCounters() {
-    // মোট ভিজিট গণনা
-    let totalVisits = localStorage.getItem('totalVisits');
-    totalVisits = totalVisits ? parseInt(totalVisits, 10) + 1 : 1;
-    localStorage.setItem('totalVisits', totalVisits);
-
-    // আজকের ভিজিট গণনা
-    const today = new Date().toISOString().split('T')[0];
-    let todaysData = localStorage.getItem('todaysData');
-    try {
-        todaysData = todaysData ? JSON.parse(todaysData) : { date: today, count: 0 };
-    } catch (e) {
-        todaysData = { date: today, count: 0 };
-    }
-
-    if (todaysData.date === today) {
-        todaysData.count += 1;
-    } else {
-        todaysData = { date: today, count: 1 };
-    }
-    localStorage.setItem('todaysData', JSON.stringify(todaysData));
-})(); // Immediately Invoked Function Expression (IIFE) to run once on script load.
-
-
-// --- সেভ করা ভিজিট সংখ্যা প্রদর্শনের ফাংশন ---
-function displayVisitorCount() {
-    const todayVisitsEl = document.getElementById('today-visits');
-    const totalVisitsEl = document.getElementById('total-visits');
-
-    if (todayVisitsEl && totalVisitsEl) {
-        const totalVisits = localStorage.getItem('totalVisits') || '1';
-        const todaysData = JSON.parse(localStorage.getItem('todaysData')) || { count: 1 };
-        
-        totalVisitsEl.textContent = parseInt(totalVisits).toLocaleString('bn-BD');
-        todayVisitsEl.textContent = todaysData.count.toLocaleString('bn-BD');
-    }
-}
-
-// যখন "গুরুত্বপূর্ণ লিংকসমূহ" ট্যাবটি দেখানো হবে, তখন কাউন্টার প্রদর্শন করুন
-const importantLinksTabForCounter = document.getElementById('importantLinksTab');
-if (importantLinksTabForCounter) {
-    importantLinksTabForCounter.addEventListener('click', () => {
-        // Tab click করলে DOM এ এলিমেন্টগুলো থাকবে, তাই এখানে display function কল করা নিরাপদ
-        setTimeout(displayVisitorCount, 0); 
-    });
-    
-    // পেজ লোডের সময় ট্যাবটি সক্রিয় থাকলে কাউন্টার প্রদর্শন করুন
-    if (importantLinksTabForCounter.classList.contains('active')) {
-         displayVisitorCount();
-    }
-}
-// ====================================================================
-// END: VISITOR COUNTER SCRIPT
-// ====================================================================
-
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
         window.onload = function() {
             const preloader = document.getElementById('preloader');
@@ -14107,5 +14118,127 @@ if (importantLinksTabForCounter) {
         };
 
     </script>
+
+<script type="module">
+// ====================================================================
+// START: GLOBAL VISITOR COUNTER (FIREBASE)
+// ====================================================================
+
+    // এই মডিউলটি Firebase ইনিশিয়ালাইজ করে এবং গ্লোবাল ভিজিটর কাউন্টার পরিচালনা করে।
+
+    // আপনার ওয়েব অ্যাপের Firebase কনফিগারেশন
+    const firebaseConfig = {
+        apiKey: "AIzaSyBmTptSZWbNB5MrT8jIWVm6knak2L2Xv40",
+        authDomain: "bangla-toolbox1.firebaseapp.com",
+        projectId: "bangla-toolbox1",
+        storageBucket: "bangla-toolbox1.firebasestorage.app",
+        messagingSenderId: "345647713379",
+        appId: "1:345647713379:web:d3e121c3a7e258b971bc56",
+        measurementId: "G-6NVS7YFNBX"
+    };
+
+    async function initializeGlobalCounter() {
+        try {
+            // Firebase SDK গুলি ডায়নামিকভাবে ইম্পোর্ট করা হচ্ছে
+            const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
+            const { getFirestore, doc, runTransaction, onSnapshot } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+            const { getAuth, signInAnonymously } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+            const { getAnalytics } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js");
+
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const auth = getAuth(app);
+            const analytics = getAnalytics(app); // অ্যানালিটিক্স এখানে ইনিশিয়ালাইজ করা হলো
+
+            // বেনামীভাবে ব্যবহারকারীকে সাইন ইন করানো হচ্ছে
+            if (!auth.currentUser) {
+                await signInAnonymously(auth);
+            }
+            
+            const todayString = new Date().toISOString().split('T')[0];
+            const counterDocRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "global_visitor_stats", "counts");
+
+            // ভিজিট সংখ্যা ১ বাড়ানোর ফাংশন
+            const incrementCounts = async () => {
+                 try {
+                    await runTransaction(db, async (transaction) => {
+                        const counterDoc = await transaction.get(counterDocRef);
+
+                        if (!counterDoc.exists()) {
+                            // ডকুমেন্ট না থাকলে নতুন করে তৈরি হবে
+                            transaction.set(counterDocRef, {
+                                totalVisits: 1,
+                                dailyVisits: { [todayString]: 1 }
+                            });
+                        } else {
+                            // ডকুমেন্ট থাকলে সংখ্যা বাড়ানো হবে
+                            const data = counterDoc.data();
+                            const newTotalVisits = (data.totalVisits || 0) + 1;
+                            
+                            const dailyVisits = data.dailyVisits || {};
+                            const newDailyCount = (dailyVisits[todayString] || 0) + 1;
+                            
+                            transaction.update(counterDocRef, {
+                                totalVisits: newTotalVisits,
+                                [`dailyVisits.${todayString}`]: newDailyCount
+                            });
+                        }
+                    });
+                } catch (e) {
+                    console.error("Firestore transaction failed: ", e);
+                }
+            };
+
+            // রিয়েল-টাইমে ভিজিট সংখ্যা দেখানোর ফাংশন
+            const listenForCounts = () => {
+                onSnapshot(counterDocRef, (doc) => {
+                    const allTodayVisitsEl = document.getElementById('all-today-visits');
+                    const allTotalVisitsEl = document.getElementById('all-total-visits');
+
+                    if (doc.exists()) {
+                        const data = doc.data();
+                        const total = data.totalVisits || 0;
+                        const today = (data.dailyVisits && data.dailyVisits[todayString]) ? data.dailyVisits[todayString] : 0;
+                        
+                        if (allTotalVisitsEl) allTotalVisitsEl.textContent = total.toLocaleString('bn-BD');
+                        if (allTodayVisitsEl) allTodayVisitsEl.textContent = today.toLocaleString('bn-BD');
+                    } else {
+                        if (allTotalVisitsEl) allTotalVisitsEl.textContent = '০';
+                        if (allTodayVisitsEl) allTodayVisitsEl.textContent = '০';
+                    }
+                }, (error) => {
+                     console.error("Firestore snapshot listener error:", error);
+                });
+            };
+
+            // এই সেশনে ব্যবহারকারীর ভিজিট গণনা হয়েছে কিনা তা পরীক্ষা করা হচ্ছে
+            // এটি প্রতিবার পেইজ রিলোড করার সাথে সাথে ভিজিট সংখ্যা বেড়ে যাওয়া থেকে বিরত রাখবে
+            if (!sessionStorage.getItem('globalVisitCounted')) {
+                await incrementCounts();
+                sessionStorage.setItem('globalVisitCounted', 'true');
+            }
+
+            // রিয়েল-টাইম আপডেটের জন্য লিসেনার চালু করা হচ্ছে
+            listenForCounts();
+
+        } catch (error) {
+            console.error("Failed to initialize global visitor counter:", error);
+            // কোনো সমস্যা হলে কাউন্টারে ত্রুটি বার্তা দেখানো হবে
+            const allTodayVisitsEl = document.getElementById('all-today-visits');
+            const allTotalVisitsEl = document.getElementById('all-total-visits');
+            if (allTodayVisitsEl) allTodayVisitsEl.textContent = 'বন্ধ';
+            if (allTotalVisitsEl) allTotalVisitsEl.textContent = 'বন্ধ';
+        }
+    }
+
+    // মডিউল লোড হওয়ার সাথে সাথে ফাংশনটি কল করা হচ্ছে
+    initializeGlobalCounter();
+
+// ====================================================================
+// END: GLOBAL VISITOR COUNTER (FIREBASE)
+// ====================================================================
+</script>
+
+	
 </body>
 </html>
