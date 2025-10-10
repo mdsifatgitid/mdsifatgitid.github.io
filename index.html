@@ -14480,7 +14480,7 @@ async function fetchQuizDataFromGemini(category, difficulty, count) {
         // পরিবর্তন: এখানে প্রশ্নের সংখ্যা `10` এর পরিবর্তে আপনার নির্বাচিত `count` ভেরিয়েবলটি ব্যবহার করা হয়েছে।
         const prompt = `
             Generate ${count} multiple-choice quiz questions for me in Bengali.
-            The topic is "${category}" and the difficulty level is "${difficulty}".
+            The category is "${category}" and the difficulty level is "${difficulty}".
             The questions should be relevant for general knowledge.
             Your response MUST be a valid JSON array of objects. Do not include any text, explanations, or markdown formatting outside of the JSON array.
             Each object in the array must have these four keys: "question", "options" (an array of 4 strings), "answer" (a string that exactly matches one of the options), and "type" (a string describing the question category and difficulty, e.g., "সাধারণ জ্ঞান (মধ্যম)").
