@@ -4789,6 +4789,256 @@ input:checked + .slider:before {
     /* END: Holiday List Tab Styles */
     /* ======================================================== */
 
+/* ======================================================== */
+/* START: Quiz Tab Styles (Gemini Integrated) */
+/* ======================================================== */
+
+.quiz-setup-container, .quiz-container, .quiz-result-container {
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 700px;
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+.dark .quiz-setup-container, .dark .quiz-container, .dark .quiz-result-container {
+    background-color: #2d3748;
+}
+
+.quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 30px 0;
+}
+@media (min-width: 640px) {
+    .quiz-options {
+        flex-direction: row;
+        justify-content: center; /* Updated for better alignment */
+        flex-wrap: wrap; /* Added for responsiveness */
+        gap: 15px; /* Added for spacing */
+    }
+}
+.quiz-option-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+.quiz-option-group label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #374151;
+}
+.dark .quiz-option-group label {
+    color: #cbd5e0;
+}
+.quiz-select {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background-color: #ffffff;
+    font-size: 1rem;
+    min-width: 200px;
+}
+.dark .quiz-select {
+    background-color: #4a5568;
+    border-color: #718096;
+    color: #f7fafc;
+}
+
+.quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4a5568;
+}
+.dark .quiz-header {
+    color: #a0aec0;
+}
+
+.question-container {
+    background-color: #e6f7ff;
+    border: 1px solid #b3e0ff;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column; /* To stack question and type */
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.dark .question-container {
+    background-color: #1a202c;
+    border-color: #4a5568;
+}
+#question-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0056b3;
+    margin-bottom: 8px; /* Space between question and type */
+}
+.dark #question-text {
+    color: #90cdf4;
+}
+#question-type {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #0284c7;
+    background-color: #e0f2fe;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+.dark #question-type {
+    color: #bae6fd;
+    background-color: #075985;
+}
+
+
+.options-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+@media (min-width: 640px) {
+    .options-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.option-btn {
+    width: 100%;
+    padding: 14px;
+    text-align: left;
+    background-color: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.dark .option-btn {
+    background-color: #4a5568;
+    border-color: #718096;
+    color: #f7fafc;
+}
+.option-btn:hover:not(:disabled) {
+    border-color: #3b82f6;
+    background-color: #eff6ff;
+}
+.dark .option-btn:hover:not(:disabled) {
+    border-color: #60a5fa;
+    background-color: #2c3748;
+}
+.option-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.option-btn.correct {
+    background-color: #dcfce7;
+    border-color: #34d399;
+    color: #065f46;
+    font-weight: 700;
+}
+.dark .option-btn.correct {
+    background-color: #064e3b;
+    border-color: #34d399;
+    color: #a7f3d0;
+}
+.option-btn.incorrect {
+    background-color: #fee2e2;
+    border-color: #f87171;
+    color: #991b1b;
+}
+.dark .option-btn.incorrect {
+    background-color: #7f1d1d;
+    border-color: #ef4444;
+    color: #fecaca;
+}
+
+.quiz-feedback {
+    margin-top: 15px;
+    font-size: 1rem;
+    font-weight: 600;
+    min-height: 24px;
+    text-align: center;
+}
+.quiz-feedback.correct { color: #15803d; }
+.dark .quiz-feedback.correct { color: #6ee7b7; }
+.quiz-feedback.incorrect { color: #b91c1c; }
+.dark .quiz-feedback.incorrect { color: #fca5a5; }
+
+.quiz-footer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.quiz-button {
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.quiz-button.start {
+    background-color: #8A2BE2; /* Purple */
+    width: 60%;
+    margin-top: 20px;
+}
+.quiz-button.start:hover {
+    background-color: #6a1aae;
+}
+.quiz-button.next {
+    background-color: #3b82f6; /* Blue */
+}
+.quiz-button.next:hover {
+    background-color: #2563eb;
+}
+.quiz-button.restart {
+    background-color: #10b981; /* Green */
+}
+.quiz-button.restart:hover {
+    background-color: #059669;
+}
+.quiz-button:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.final-score {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #3b82f6;
+    margin: 20px 0;
+}
+.dark .final-score {
+    color: #60a5fa;
+}
+
+.final-feedback {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+.hidden {
+    display: none !important;
+}
+/* ======================================================== */
+/* END: Quiz Tab Styles */
+/* ======================================================== */
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
 </head>
@@ -4897,6 +5147,7 @@ input:checked + .slider:before {
 				<!-- ভবিষ্যতে নতুন ট্যাব এখানে যোগ করা যাবে -->
 				<button id="clockTab" class="tab-button rounded-xl">ঘড়ি</button>
 				<button id="playerTab" class="tab-button rounded-xl">প্লেয়ার</button>
+				<button id="quizTab" class="tab-button rounded-xl">কুইজ</button>
 				<button id="daysObservancesTab" class="tab-button rounded-xl">দিবসসমূহ</button>
 				<button id="holidayListTab" class="tab-button rounded-xl">ছুটির তালিকা</button>
 				<button id="zakatCalcTab" class="tab-button rounded-xl">যাকাতের হিসাব</button>
@@ -6564,6 +6815,77 @@ input:checked + .slider:before {
                 </tbody>
             </table>
         </div>
+    </div>
+</div>
+
+<!-- নতুন: কুইজ ট্যাব (জেমিনি API ইন্টিগ্রেটেড) -->
+<div id="quizContent" class="calculator-content">
+    <!-- কুইজ সেটআপ স্ক্রিন -->
+    <div id="quiz-setup-container" class="quiz-setup-container">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">সাধারণ জ্ঞান কুইজ</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">আপনার পছন্দের বিভাগ এবং অসুবিধার স্তর নির্বাচন করে কুইজ শুরু করুন। প্রশ্নগুলো জেমিনি দ্বারা তৈরি করা হবে।</p>
+        
+        <div class="quiz-options">
+            <div class="quiz-option-group">
+                <label for="quiz-category">বিভাগ নির্বাচন করুন:</label>
+                <select id="quiz-category" class="quiz-select">
+                    <option value="সাধারণ জ্ঞান">সাধারণ জ্ঞান</option>
+                    <option value="বিসিএস প্রস্তুতি">বিসিএস প্রস্তুতি</option>
+                    <option value="চাকরির পরীক্ষা">চাকরির পরীক্ষা</option>
+                    <option value="বিশ্ববিদ্যালয় ভর্তি">বিশ্ববিদ্যালয় ভর্তি</option>
+                    <option value="স্কুল ও কলেজ">স্কুল ও কলেজ</option>
+                    <option value="বিজ্ঞান ও প্রযুক্তি">বিজ্ঞান ও প্রযুক্তি</option>
+                </select>
+            </div>
+            <div class="quiz-option-group">
+                <label for="quiz-difficulty">অসুবিধার স্তর:</label>
+                <select id="quiz-difficulty" class="quiz-select">
+                    <option value="সহজ">সহজ</option>
+                    <option value="মধ্যম">মধ্যম</option>
+                    <option value="জটিল">জটিল</option>
+                </select>
+            </div>
+            <!-- নতুন: প্রশ্নের সংখ্যা নির্বাচনের জন্য ড্রপডাউন -->
+            <div class="quiz-option-group">
+                <label for="quiz-question-count">প্রশ্নের সংখ্যা:</label>
+                <select id="quiz-question-count" class="quiz-select">
+                    <option value="10">১০</option>
+                    <option value="20">২০</option>
+                    <option value="30">৩০</option>
+                    <option value="50">৫০</option>
+                    <option value="100">১০০</option>
+                </select>
+            </div>
+        </div>
+        
+        <button id="start-quiz-btn" class="quiz-button start">কুইজ শুরু করুন</button>
+        <div id="quiz-loading" class="loading-indicator mt-4" style="display: none;">কুইজ লোড হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...</div>
+    </div>
+
+    <!-- মূল কুইজ স্ক্রিন -->
+    <div id="quiz-main-container" class="quiz-container hidden">
+        <div id="quiz-header" class="quiz-header">
+            <div id="question-number">প্রশ্ন: ১/১০</div>
+            <div id="quiz-score">স্কোর: ০</div>
+        </div>
+        <div class="question-container">
+            <p id="question-text">প্রশ্ন এখানে লোড হবে...</p>
+        </div>
+        <div id="options-container" class="options-container">
+            <!-- অপশনগুলো এখানে যুক্ত হবে -->
+        </div>
+        <div id="quiz-feedback" class="quiz-feedback"></div>
+        <div class="quiz-footer">
+            <button id="next-question-btn" class="quiz-button next">পরবর্তী প্রশ্ন</button>
+        </div>
+    </div>
+
+    <!-- ফলাফল স্ক্রিন -->
+    <div id="quiz-result-container" class="quiz-result-container hidden">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">কুইজ সম্পন্ন!</h3>
+        <p id="final-score" class="final-score"></p>
+        <p id="final-feedback" class="final-feedback"></p>
+        <button id="restart-quiz-btn" class="quiz-button restart">নতুন কুইজ শুরু করুন</button>
     </div>
 </div>
 
@@ -8817,6 +9139,8 @@ try {
 				const daysObservancesContent = document.getElementById('daysObservancesContent');
 				const holidayListTab = document.getElementById('holidayListTab');
 				const holidayListContent = document.getElementById('holidayListContent');
+				const quizTab = document.getElementById('quizTab');
+				const quizContent = document.getElementById('quizContent');
 
 
 //pest button code start
@@ -9077,12 +9401,12 @@ function showTab(tabId) {
 		ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,
 		translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
 		qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,
-        textAssistantTab,holidayListTab,
+        textAssistantTab,holidayListTab,quizTab,
 		allFeaturesTab
     ];
     const contents = [
         basicCalculatorContent,
-		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent, newsContent, converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,
+		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent, newsContent, converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent,
 		weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
 		textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,
@@ -9229,6 +9553,11 @@ function showTab(tabId) {
             activeContent = emergencyNumbersContent;
             initializeEmergencyNumbers(); // Tab-টি চালু করার সময় ফাংশন কল করুন
             break;
+		case 'quiz':
+			activeTab = quizTab;
+			activeContent = quizContent;
+			initializeQuiz(); // এই ফাংশন কুইজ শুরু করবে
+		break;
         case 'allFeatures':
             activeTab = allFeaturesTab;
             activeContent = allFeaturesContent;
@@ -9261,6 +9590,7 @@ function showTab(tabId) {
 				if (imageToTextTab) imageToTextTab.addEventListener('click', () => showTab('imageToText'));
 				if (wordCounterTab) wordCounterTab.addEventListener('click', () => showTab('wordCounter'));
 				if (weatherTab) weatherTab.addEventListener('click', () => showTab('weather'));
+				if (quizTab) quizTab.addEventListener('click', () => showTab('quiz'));
 				if (notepadTab) notepadTab.addEventListener('click', async () => {
 					showTab('notepad');
 					await initializeNotepad(); // Notepad চালু করার জন্য এই ফাংশন কল করুন
@@ -14087,6 +14417,227 @@ function initializeHolidayListTab() {
 // END: HOLIDAY LIST SCRIPT
 // ====================================================================
 
+// ====================================================================
+// START: QUIZ TAB SCRIPT (Gemini API Integrated & State Preserved)
+// ====================================================================
+
+// Global variables to preserve quiz state across tab switches
+let quizQuestions = [];
+let currentQuestionIndex = 0;
+let quizScore = 0;
+let quizState = 'not_started'; // 'not_started', 'loading', 'in_progress', 'finished'
+
+function initializeQuiz() {
+    // DOM Elements
+    const setupContainer = document.getElementById('quiz-setup-container');
+    const mainContainer = document.getElementById('quiz-main-container');
+    const resultContainer = document.getElementById('quiz-result-container');
+    const startBtn = document.getElementById('start-quiz-btn');
+    const categorySelect = document.getElementById('quiz-category');
+    const difficultySelect = document.getElementById('quiz-difficulty');
+	const questionCountSelect = document.getElementById('quiz-question-count'); // নতুন: প্রশ্নের সংখ্যা সিলেক্ট এলিমেন্ট
+    const loadingEl = document.getElementById('quiz-loading');
+    
+    const questionNumberEl = document.getElementById('question-number');
+    const scoreEl = document.getElementById('quiz-score');
+    const questionTextEl = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const feedbackEl = document.getElementById('quiz-feedback');
+    const nextBtn = document.getElementById('next-question-btn');
+    
+    const restartBtn = document.getElementById('restart-quiz-btn');
+    const finalScoreEl = document.getElementById('final-score');
+    const finalFeedbackEl = document.getElementById('final-feedback');
+
+    // Attach event listeners only once
+    const setupEventListeners = (() => {
+        let listenersAttached = false;
+        return () => {
+            if (listenersAttached || !startBtn || !nextBtn || !restartBtn) return;
+            startBtn.addEventListener('click', startQuiz);
+            nextBtn.addEventListener('click', handleNextQuestion);
+            restartBtn.addEventListener('click', () => {
+                quizState = 'not_started';
+                updateUI();
+            });
+            listenersAttached = true;
+        };
+    })();
+    
+async function fetchQuizDataFromGemini(category, difficulty, count) {
+    quizState = 'loading';
+    updateUI();
+
+    const apiKey = localStorage.getItem('geminiApiKey');
+    if (!apiKey) {
+        showCustomAlert('জেমিনি API কী সেট করা হয়নি। অনুগ্রহ করে সেটিংস থেকে API কী সেট করুন।');
+        quizState = 'not_started';
+        updateUI();
+        return false;
+    }
+
+    try {
+        // পরিবর্তন: এখানে প্রশ্নের সংখ্যা `10` এর পরিবর্তে আপনার নির্বাচিত `count` ভেরিয়েবলটি ব্যবহার করা হয়েছে।
+        const prompt = `
+            Generate ${count} multiple-choice quiz questions for me in Bengali.
+            The topic is "${category}" and the difficulty level is "${difficulty}".
+            The questions should be relevant for general knowledge.
+            Your response MUST be a valid JSON array of objects. Do not include any text, explanations, or markdown formatting outside of the JSON array.
+            Each object in the array must have these four keys: "question", "options" (an array of 4 strings), "answer" (a string that exactly matches one of the options), and "type" (a string describing the question category and difficulty, e.g., "সাধারণ জ্ঞান (মধ্যম)").
+        `;
+        
+        const payload = { contents: [{ parts: [{ text: prompt }] }] };
+        const model = "gemini-2.5-flash-preview-05-20";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+        const result = await response.json();
+        const rawText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!rawText) throw new Error("API থেকে কোনো প্রশ্ন পাওয়া যায়নি।");
+
+        const jsonText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+        const parsedQuestions = JSON.parse(jsonText);
+        
+        if (Array.isArray(parsedQuestions) && parsedQuestions.length > 0) {
+            quizQuestions = parsedQuestions;
+            return true;
+        } else {
+            throw new Error("API থেকে সঠিক ফরম্যাটে প্রশ্ন পাওয়া যায়নি।");
+        }
+    } catch (error) {
+        console.error("Quiz Fetch Error:", error);
+        showCustomAlert(`প্রশ্ন আনতে সমস্যা হয়েছে: ${error.message}`);
+        quizState = 'not_started';
+        updateUI();
+        return false;
+    }
+}
+
+    async function startQuiz() {
+        const category = categorySelect.value;
+        const difficulty = difficultySelect.value;
+		const count = questionCountSelect.value; // নতুন: প্রশ্নের সংখ্যা পাওয়া
+        
+        const success = await fetchQuizDataFromGemini(category, difficulty, count);
+        
+        if (success) {
+            quizState = 'in_progress';
+            currentQuestionIndex = 0;
+            quizScore = 0;
+            updateUI();
+            loadQuestion();
+        }
+    }
+
+    function loadQuestion() {
+        feedbackEl.textContent = '';
+        feedbackEl.className = 'quiz-feedback';
+        optionsContainer.innerHTML = '';
+        nextBtn.style.display = 'none';
+
+        const currentQuestion = quizQuestions[currentQuestionIndex];
+        questionTextEl.innerHTML = currentQuestion.question; // Use innerHTML to render any formatting
+        
+        // Add a new element for the question type
+        const questionTypeEl = document.createElement('span');
+        questionTypeEl.id = 'question-type';
+        questionTypeEl.textContent = currentQuestion.type || `${categorySelect.value} (${difficultySelect.value})`;
+        questionTextEl.appendChild(document.createElement('br'));
+        questionTextEl.appendChild(questionTypeEl);
+
+        questionNumberEl.textContent = `প্রশ্ন: ${currentQuestionIndex + 1}/${quizQuestions.length}`;
+        scoreEl.textContent = `স্কোর: ${quizScore}`;
+
+        const shuffledOptions = [...currentQuestion.options].sort(() => Math.random() - 0.5);
+        shuffledOptions.forEach(option => {
+            const button = document.createElement('button');
+            button.innerHTML = option; // Use innerHTML for options too
+            button.classList.add('option-btn');
+            button.addEventListener('click', selectAnswer);
+            optionsContainer.appendChild(button);
+        });
+    }
+
+    function selectAnswer(e) {
+        const selectedBtn = e.target;
+        const correct = selectedBtn.innerHTML === quizQuestions[currentQuestionIndex].answer;
+
+        if (correct) {
+            quizScore++;
+            selectedBtn.classList.add('correct');
+            feedbackEl.textContent = 'সঠিক উত্তর!';
+            feedbackEl.classList.add('correct');
+        } else {
+            selectedBtn.classList.add('incorrect');
+            feedbackEl.textContent = `ভুল! সঠিক উত্তর: ${quizQuestions[currentQuestionIndex].answer}`;
+            feedbackEl.classList.add('incorrect');
+        }
+        
+        Array.from(optionsContainer.children).forEach(button => {
+            if (button.innerHTML === quizQuestions[currentQuestionIndex].answer) {
+                button.classList.add('correct');
+            }
+            button.disabled = true;
+        });
+
+        scoreEl.textContent = `স্কোর: ${quizScore}`;
+        nextBtn.textContent = (currentQuestionIndex < quizQuestions.length - 1) ? 'পরবর্তী প্রশ্ন' : 'ফলাফল দেখুন';
+        nextBtn.style.display = 'block';
+    }
+
+    function handleNextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < quizQuestions.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        quizState = 'finished';
+        updateUI();
+
+        finalScoreEl.textContent = `আপনি ${quizQuestions.length} টির মধ্যে ${quizScore} টি সঠিক উত্তর দিয়েছেন!`;
+
+        let feedbackText = '';
+        const percentage = (quizScore / quizQuestions.length) * 100;
+        if (percentage === 100) feedbackText = 'অসাধারণ! আপনার জ্ঞান চমৎকার।';
+        else if (percentage >= 70) feedbackText = 'খুব ভালো! চালিয়ে যান।';
+        else if (percentage >= 40) feedbackText = 'ভালো করেছেন, আরও চেষ্টা করুন।';
+        else feedbackText = 'অনুশীলন চালিয়ে যেতে হবে।';
+        finalFeedbackEl.textContent = feedbackText;
+    }
+    
+     function updateUI() {
+        // পরিবর্তন: 'not_started' অথবা 'loading' অবস্থায় সেটআপ স্ক্রিনটি দেখানো হবে।
+        setupContainer.classList.toggle('hidden', quizState !== 'not_started' && quizState !== 'loading');
+        
+        // বাকি কন্টেইনারগুলো আগের মতোই থাকবে
+        mainContainer.classList.toggle('hidden', quizState !== 'in_progress');
+        resultContainer.classList.toggle('hidden', quizState !== 'finished');
+        
+        // শুধুমাত্র 'loading' অবস্থায় লোডিং বার্তাটি দেখানো হবে
+        loadingEl.style.display = (quizState === 'loading') ? 'block' : 'none';
+        
+        // লোড হওয়ার সময় স্টার্ট বাটনটি নিষ্ক্রিয় থাকবে
+        startBtn.disabled = (quizState === 'loading');
+    }
+
+    // --- Main Logic ---
+    setupEventListeners();
+    updateUI(); // Show the correct screen based on the current state
+}
+// ====================================================================
+// END: QUIZ TAB SCRIPT
+// ====================================================================
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
         window.onload = function() {
