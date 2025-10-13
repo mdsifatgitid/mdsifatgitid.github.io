@@ -5039,6 +5039,128 @@ input:checked + .slider:before {
 /* END: Quiz Tab Styles */
 /* ======================================================== */
 
+/* ======================================================== */
+/* START: Donate Tab Styles (ডোনেট ট্যাব) */
+/* ======================================================== */
+
+.donate-section {
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 600px;
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+.dark .donate-section {
+    background-color: #2d3748;
+}
+.donate-text {
+    font-size: 1.1rem;
+    color: #374151;
+    margin-bottom: 20px;
+    line-height: 1.8;
+    text-align: justify;
+}
+.dark .donate-text {
+    color: #cbd5e0;
+}
+.donate-subtitle {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #3f51b5;
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+.dark .donate-subtitle {
+    color: #90cdf4;
+}
+.donate-number {
+    font-size: 1.3rem;
+    font-weight: 600;
+    background-color: #e6f7ff;
+    padding: 12px 20px; /* আইকনের জন্য জায়গা করতে ডানে প্যাডিং বাড়ানো হয়েছে */
+    border-radius: 10px;
+    border: 1px solid #b3e0ff;
+    display: inline-block;
+}
+.dark .donate-number {
+    background-color: #1a202c;
+    border-color: #4a5568;
+}
+.qr-code-section {
+    margin-top: 20px;
+}
+.qr-code-image {
+    max-width: 200px;
+    height: auto;
+    margin: 10px auto;
+    border: 5px solid white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.donate-email {
+    margin-top: 25px;
+    font-size: 1rem;
+    color: #4a5568;
+}
+.dark .donate-email {
+    color: #a0aec0;
+}
+
+/* নতুন: ডোনেট নম্বর কপির জন্য স্টাইল - পরিবর্তিত */
+#donate-number-container .actions {
+    position: absolute;
+    top: 50%;
+    left: 100%; /* কন্টেইনারের ডান পাশে পজিশন করা হয়েছে */
+    transform: translateY(-50%); /* শুধুমাত্র উল্লম্বভাবে মাঝখানে আনা হয়েছে */
+    margin-left: 8px; /* নম্বর বক্স থেকে একটু فاصله দেওয়ার জন্য */
+    opacity: 0; /* প্রাথমিকভাবে লুকানো থাকবে */
+    transition: opacity 0.3s ease; /* মসৃণভাবে দেখানোর জন্য ট্রানজিশন */
+    pointer-events: none; /* লুকানো অবস্থায় ক্লিক করা যাবে না */
+    background: rgba(241, 245, 249, 0.9);
+    padding: 5px;
+    border-radius: 20px;
+    z-index: 2;
+    display: flex;
+}
+.dark #donate-number-container .actions {
+    background: rgba(45, 55, 72, 0.9);
+}
+#donate-number-container:hover .actions {
+    opacity: 1; /* হোভার করলে দৃশ্যমান হবে */
+    pointer-events: auto; /* দৃশ্যমান অবস্থায় ক্লিক করা যাবে */
+}
+
+#donate-number-container .action-btn {
+    border: none;
+    background: #e2e8f0;
+    color: #475569;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, color 0.2s, transform 0.2s;
+}
+.dark #donate-number-container .action-btn {
+    background-color: #4a5568;
+    color: #e2e8f0;
+}
+#donate-number-container .action-btn:hover {
+    transform: scale(1.1);
+}
+#donate-number-container .action-btn.copy:hover {
+    background-color: #3b82f6; /* নীল */
+    color: white;
+}
+/* ======================================================== */
+/* END: Donate Tab Styles */
+/* ======================================================== */
+
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
 </head>
@@ -5156,6 +5278,7 @@ input:checked + .slider:before {
 				<button id="healthLifestyleTab" class="tab-button rounded-xl">স্বাস্থ্য ও জীবনধারা</button>
 				<button id="importantLinksTab" class="tab-button rounded-xl">গুরুত্বপূর্ণ লিংকসমূহ</button>
 				<button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
+				<button id="donateTab" class="tab-button rounded-xl">ডোনেট</button>
 			</div>
 		</div>
     </div>
@@ -6890,6 +7013,40 @@ input:checked + .slider:before {
         <button id="restart-quiz-btn" class="quiz-button restart">নতুন কুইজ শুরু করুন</button>
     </div>
 </div>
+
+<!-- ডোনেট ট্যাব কন্টেন্ট শুরু -->
+<div id="donateContent" class="calculator-content">
+    <div class="donate-section">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">ডোনেট করুন</h3>
+        <p class="donate-text">
+            বাংলা ভাষাভাষীদের জন্য বাংলা টুলবক্স সবসময় ফ্রিতেই ব্যবহার করার সুযোগ থাকবে ইনশাআল্লাহ। তবে বাংলা টুলবক্স প্রকল্পটির উন্নয়ন চলমান রাখতে ও উৎসাহ প্রদানের উপলক্ষে বাংলা টুলবক্স প্রজেক্টটিতে সামর্থ্য ও ইচ্ছা অনুযায়ী ডোনেট করতে পারেন।
+        </p>
+        <h4 class="donate-subtitle">ডোনেট করুন নিম্নোক্ত মাধ্যমে:</h4>
+        
+        <!-- নতুন: নম্বর কপি করার জন্য কন্টেইনার যোগ করা হয়েছে -->
+        <div class="relative inline-block" id="donate-number-container">
+            <p class="donate-number" id="donate-number-text">
+                <strong>বিকাশ, নগদ, রকেট, উপায়:</strong> 01778472964
+            </p>
+            <!-- নোটপ্যাডের মতো অ্যাকশন বার -->
+            <div id="donate-actions" class="actions">
+                <button class="action-btn copy" id="copyDonateNumberBtn" title="নম্বর কপি করুন">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="qr-code-section">
+             <h4 class="donate-subtitle">কিউআর কোড (সেন্ড মানি): বিকাশ</h4>
+             <!-- পরিবর্তন: QR কোডের লিংক CDN ব্যবহার করে আপডেট করা হয়েছে -->
+             <img src="https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/Bkash%20QR%20Code.jpeg" alt="বিকাশ QR কোড" class="qr-code-image">
+        </div>
+        <p class="donate-email">
+            <strong>প্রয়োজনে মেইল করুন:</strong> </br>mdsifatgid@gmail.com</br>banglatoolbox@gmail.com</br>mdshahiduzzamansifat@gmail.com
+        </p>
+    </div>
+</div>
+<!-- ডোনেট ট্যাব কন্টেন্ট শেষ -->
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
 </div>
@@ -9153,6 +9310,8 @@ try {
 				const holidayListContent = document.getElementById('holidayListContent');
 				const quizTab = document.getElementById('quizTab');
 				const quizContent = document.getElementById('quizContent');
+				const donateTab = document.getElementById('donateTab');
+				const donateContent = document.getElementById('donateContent');
 
 
 //pest button code start
@@ -9410,7 +9569,7 @@ function showTab(tabId) {
     // সমস্ত ট্যাব এর নাম এবং ট্যাব এর কন্টেন্ট নাম একানে বসাতে হয়, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয় বা বসাতে হয় ।
     const tabs = [
         basicCalcTab,
-		ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,
+		ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,
 		translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
 		qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,
         textAssistantTab,holidayListTab,quizTab,
@@ -9419,7 +9578,7 @@ function showTab(tabId) {
     const contents = [
         basicCalculatorContent,
 		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent, newsContent, converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,
-        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent,
+        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent,
 		weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
 		textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,
         allFeaturesContent
@@ -9570,6 +9729,10 @@ function showTab(tabId) {
 			activeContent = quizContent;
 			initializeQuiz(); // এই ফাংশন কুইজ শুরু করবে
 		break;
+		case 'donate':
+			activeTab = donateTab;
+			activeContent = donateContent;
+		break;
         case 'allFeatures':
             activeTab = allFeaturesTab;
             activeContent = allFeaturesContent;
@@ -9603,6 +9766,7 @@ function showTab(tabId) {
 				if (wordCounterTab) wordCounterTab.addEventListener('click', () => showTab('wordCounter'));
 				if (weatherTab) weatherTab.addEventListener('click', () => showTab('weather'));
 				if (quizTab) quizTab.addEventListener('click', () => showTab('quiz'));
+				if (donateTab) donateTab.addEventListener('click', () => showTab('donate'));
 				if (notepadTab) notepadTab.addEventListener('click', async () => {
 					showTab('notepad');
 					await initializeNotepad(); // Notepad চালু করার জন্য এই ফাংশন কল করুন
@@ -14663,6 +14827,32 @@ updateUI();
 }
 // ====================================================================
 // END: QUIZ TAB SCRIPT
+// ====================================================================
+
+// ====================================================================
+// START: DONATE NUMBER COPY SCRIPT
+// ====================================================================
+const copyDonateNumberBtn = document.getElementById('copyDonateNumberBtn');
+const donateNumberText = document.getElementById('donate-number-text');
+
+if (copyDonateNumberBtn && donateNumberText) {
+    copyDonateNumberBtn.addEventListener('click', () => {
+        // টেক্সট থেকে শুধুমাত্র নম্বরটি খুঁজে বের করুন
+        const numberToCopy = donateNumberText.textContent.match(/(\d{11})/);
+        if (numberToCopy && numberToCopy[0]) {
+            navigator.clipboard.writeText(numberToCopy[0]).then(() => {
+                showCustomAlert('নম্বর (01778472964) কপি করা হয়েছে!');
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+                showCustomAlert('কপি করতে ব্যর্থ হয়েছে।');
+            });
+        } else {
+            showCustomAlert('কোনো নম্বর খুঁজে পাওয়া যায়নি।');
+        }
+    });
+}
+// ====================================================================
+// END: DONATE NUMBER COPY SCRIPT
 // ====================================================================
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
