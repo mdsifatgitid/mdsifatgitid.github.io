@@ -5160,6 +5160,106 @@ input:checked + .slider:before {
 /* END: Donate Tab Styles */
 /* ======================================================== */
 
+/* ======================================================== */
+/* START: Invoice Tab Styles (ইনভয়েজ ট্যাব) */
+/* ======================================================== */
+
+#invoiceContent {
+    background-color: #f3f4f6; /* gray-100 */
+}
+.dark #invoiceContent {
+    background-color: #111827; /* gray-900 */
+}
+
+#invoice-container [contenteditable="true"]:focus {
+    background-color: #eff6ff; /* blue-50 */
+}
+.dark #invoice-container [contenteditable="true"]:focus {
+    background-color: #1e3a8a; /* blue-900 */
+}
+
+#invoice-items-table input {
+    border: 1px solid #d1d5db; /* gray-300 */
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+    padding: 0.5rem;
+}
+.dark #invoice-items-table input {
+    background-color: #374151; /* gray-700 */
+    border-color: #4b5563; /* gray-600 */
+}
+#invoice-items-table input:focus {
+    outline: none;
+    border-color: #3b82f6; /* blue-500 */
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.summary-input {
+    width: 120px;
+    text-align: right;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+}
+.dark .summary-input {
+     background-color: #374151; /* gray-700 */
+    border-color: #4b5563; /* gray-600 */
+}
+
+
+/* Print Styles */
+@media print {
+    body * {
+        visibility: hidden;
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+    .main-container {
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    #invoice-container, #invoice-container * {
+        visibility: visible;
+    }
+    #invoice-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 100%;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+        border-radius: 0;
+        color: #000 !important;
+    }
+    .no-print {
+        display: none !important;
+    }
+    input[type="text"], 
+    input[type="number"], 
+    textarea {
+        border: none !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        padding: 1px !important;
+    }
+    [contenteditable="true"] {
+        outline: none !important;
+    }
+    #invoice-items-table tbody tr {
+        page-break-inside: avoid;
+    }
+    #invoice-items-table {
+        width: 100%;
+    }
+}
+/* ======================================================== */
+/* END: Invoice Tab Styles */
+/* ======================================================== */
+
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -5274,6 +5374,7 @@ input:checked + .slider:before {
 				<button id="holidayListTab" class="tab-button rounded-xl">ছুটির তালিকা</button>
 				<button id="zakatCalcTab" class="tab-button rounded-xl">যাকাতের হিসাব</button>
 				<button id="qrCodeTab" class="tab-button rounded-xl">কিউআর কোড</button>
+				<button id="invoiceTab" class="tab-button rounded-xl">ইনভয়েজ</button>
 				<button id="emergencyNumbersTab" class="tab-button rounded-xl">জরুরি নম্বর</button>
 				<button id="healthLifestyleTab" class="tab-button rounded-xl">স্বাস্থ্য ও জীবনধারা</button>
 				<button id="importantLinksTab" class="tab-button rounded-xl">গুরুত্বপূর্ণ লিংকসমূহ</button>
@@ -7067,6 +7168,143 @@ input:checked + .slider:before {
     </div>
 </div>
 <!-- ডোনেট ট্যাব কন্টেন্ট শেষ -->
+
+<!-- ======================================================== -->
+<!-- START: Invoice Tab Content (ইনভয়েজ ট্যাব) -->
+<!-- ======================================================== -->
+<div id="invoiceContent" class="calculator-content">
+    <div id="invoice-container" class="mx-auto my-8 p-8 bg-white dark:bg-gray-900 rounded-lg shadow-lg max-w-4xl text-gray-800 dark:text-gray-200">
+
+        <!-- Header Section -->
+        <header class="flex justify-between items-start mb-8 border-b pb-4 border-gray-200 dark:border-gray-700">
+            <div class="flex items-center gap-4">
+                <div class="relative">
+                    <img id="invoice-logo" src="https://placehold.co/150x80/e2e8f0/4a5568?text=লোগো+দিন" alt="Company Logo" class="object-contain h-20 w-auto">
+                    <input type="file" id="logo-upload" class="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer no-print" accept="image/*" title="লোগো পরিবর্তন করুন">
+                </div>
+                <div>
+                    <h2 contenteditable="true" id="company-name" class="text-2xl font-bold text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-2">আপনার প্রতিষ্ঠানের নাম</h2>
+                    <p contenteditable="true" id="company-address" class="text-sm text-gray-600 dark:text-gray-400 outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-2 mt-1">ঠিকানা, শহর, পোস্টকোড</p>
+                    <p contenteditable="true" id="company-phone" class="text-sm text-gray-600 dark:text-gray-400 outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-2">ফোন: +৮৮০ ১২৩৪ ৫৬৭৮৯০</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <h1 class="text-3xl font-bold text-gray-700 dark:text-gray-300">ইনভয়েজ</h1>
+                <div class="mt-2">
+                    <span class="font-semibold">ইনভয়েজ নং:</span>
+                    <span contenteditable="true" id="invoice-number" class="outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-1">০০১</span>
+                </div>
+                <div>
+                    <span class="font-semibold">তারিখ:</span>
+                    <span contenteditable="true" id="invoice-date" class="outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-1"></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Bill To Section -->
+        <section class="mb-8">
+            <h3 class="text-lg font-semibold border-b border-gray-200 dark:border-gray-700 pb-1 mb-2">প্রাপক:</h3>
+            <div contenteditable="true" id="customer-name" class="font-bold outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-2">ক্রেতার নাম</div>
+            <div contenteditable="true" id="customer-address" class="text-sm text-gray-600 dark:text-gray-400 outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-2">ক্রেতার ঠিকানা</div>
+        </section>
+
+        <!-- Items Table -->
+        <section>
+            <table class="w-full text-left" id="invoice-items-table">
+                <thead class="bg-gray-100 dark:bg-gray-800">
+                    <tr>
+                        <th class="p-3 font-semibold">পণ্যের বিবরণ</th>
+                        <th class="p-3 font-semibold text-center w-24">পরিমাণ</th>
+                        <th class="p-3 font-semibold text-right w-32">দর</th>
+                        <th class="p-3 font-semibold text-right w-32">ছাড় (টাকা)</th>
+                        <th class="p-3 font-semibold text-right w-40">নীট মূল্য</th>
+                        <th class="p-3 text-center no-print">মুছুন</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Item rows will be injected here -->
+                </tbody>
+            </table>
+            <button id="add-item-btn" class="mt-4 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors no-print">
+                + নতুন আইটেম
+            </button>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="mt-8 flex justify-end">
+            <div class="w-full max-w-sm space-y-2">
+                <div class="flex justify-between">
+                    <span class="font-semibold">সাবটোটাল:</span>
+                    <span id="subtotal">০.০০</span>
+                </div>
+                 <div class="flex justify-between">
+                    <span class="font-semibold text-red-600">আইটেম ডিসকাউন্ট:</span>
+                    <span id="item-discounts-total" class="text-red-600">- ০.০০</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="font-semibold text-red-600">অতিরিক্ত ডিসকাউন্ট:</span>
+                    <input type="number" id="extra-discount" placeholder="0.00" class="w-28 text-right p-1 border rounded-md bg-red-50 dark:bg-red-900/50 text-red-700 dark:text-red-300">
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="font-semibold">পূর্বের বকেয়া:</span>
+                    <input type="number" id="prev-due" placeholder="0.00" class="w-28 text-right p-1 border rounded-md bg-gray-50 dark:bg-gray-700">
+                </div>
+                <div class="flex justify-between border-t-2 pt-2 border-gray-300 dark:border-gray-600">
+                    <span class="font-bold text-lg">সর্বমোট:</span>
+                    <span id="grand-total" class="font-bold text-lg">০.০০</span>
+                </div>
+                 <div class="flex justify-between items-center">
+                    <span class="font-semibold text-green-600">জমা:</span>
+                    <input type="number" id="paid-amount" placeholder="0.00" class="w-28 text-right p-1 border rounded-md bg-green-50 dark:bg-green-900/50 text-green-700 dark:text-green-300">
+                </div>
+                <div class="flex justify-between bg-red-100 dark:bg-red-900/50 p-2 rounded-md">
+                    <span class="font-bold text-red-700 dark:text-red-300 text-lg">বর্তমান বকেয়া:</span>
+                    <span id="final-due" class="font-bold text-red-700 dark:text-red-300 text-lg">০.০০</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer / Actions -->
+        <footer class="mt-12 text-center no-print">
+            <button id="print-invoice-btn" class="px-6 py-3 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition-colors">
+                ইনভয়েজ প্রিন্ট করুন
+            </button>
+        </footer>
+
+         <!-- NEW: Saved Invoices Section -->
+        <div class="mt-8 pt-8 border-t border-gray-300 dark:border-gray-700 no-print">
+            <div class="flex justify-center gap-4">
+                 <button id="save-to-list-btn" class="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors">
+                    ইনভয়েজ লিস্টে সেভ করুন
+                 </button>
+                 <button id="clear-current-invoice-btn" class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition-colors">
+                    নতুন ইনভয়েজ
+                 </button>
+            </div>
+            <h3 class="text-xl font-bold text-gray-700 dark:text-gray-200 mt-8 mb-4 text-center">সেভ করা ইনভয়েজের তালিকা</h3>
+            <div id="saved-invoices-container" class="max-h-96 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <table id="saved-invoices-table" class="w-full text-left hidden">
+                    <thead class="bg-gray-200 dark:bg-gray-700 sticky top-0">
+                        <tr>
+                            <th class="p-2">তারিখ</th>
+                            <th class="p-2">ক্রেতা</th>
+                            <th class="p-2 text-right">সর্বমোট</th>
+                            <th class="p-2 text-center">অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Saved invoice rows go here -->
+                    </tbody>
+                </table>
+                 <p id="no-invoices-message" class="text-center text-gray-500">এখনো কোনো ইনভয়েজ সেভ করা হয়নি।</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- ======================================================== -->
+<!-- END: Invoice Tab Content -->
+<!-- ======================================================== -->
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
 </div>
@@ -9332,6 +9570,8 @@ try {
 				const quizContent = document.getElementById('quizContent');
 				const donateTab = document.getElementById('donateTab');
 				const donateContent = document.getElementById('donateContent');
+				const invoiceTab = document.getElementById('invoiceTab');
+				const invoiceContent = document.getElementById('invoiceContent');
 
 
 //pest button code start
@@ -9591,13 +9831,13 @@ function showTab(tabId) {
         basicCalcTab,
 		ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,
 		translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
-		qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,
+		qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab,
         textAssistantTab,holidayListTab,quizTab,
 		allFeaturesTab
     ];
     const contents = [
         basicCalculatorContent,
-		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent, newsContent, converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,
+		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent, newsContent, converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent,
 		weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
 		textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,
@@ -9753,6 +9993,10 @@ function showTab(tabId) {
 			activeTab = donateTab;
 			activeContent = donateContent;
 		break;
+		case 'invoice':
+            activeTab = invoiceTab;
+            activeContent = invoiceContent;
+        break;
         case 'allFeatures':
             activeTab = allFeaturesTab;
             activeContent = allFeaturesContent;
@@ -9802,6 +10046,7 @@ function showTab(tabId) {
 				if (emergencyNumbersTab) emergencyNumbersTab.addEventListener('click', () => showTab('emergency'));
 				if (daysObservancesTab) daysObservancesTab.addEventListener('click', () => showTab('daysObservances'));
 				if (holidayListTab) holidayListTab.addEventListener('click', () => showTab('holiday'));
+				if (invoiceTab) invoiceTab.addEventListener('click', () => showTab('invoice'));
 
                 // API কী সেটিং বোতাম এবং মডেল লজিক
                 if (setApiKeyBtn) {
@@ -14874,6 +15119,483 @@ if (copyDonateNumberBtn && donateNumberText) {
 // ====================================================================
 // END: DONATE NUMBER COPY SCRIPT
 // ====================================================================
+
+// ====================================================================
+// START: INVOICE TAB SCRIPT (ইনভয়েজ ট্যাব)
+// ====================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    // শুধুমাত্র ইনভয়েজ ট্যাব সক্রিয় থাকলেই এই স্ক্রিপ্ট কাজ করবে
+    const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            if (mutation.attributeName === 'class') {
+                const invoiceContent = document.getElementById('invoiceContent');
+                if (invoiceContent && invoiceContent.classList.contains('active')) {
+                    initializeInvoiceTab();
+                    observer.disconnect(); // একবার ইনিশিয়ালাইজ হওয়ার পর আর পর্যবেক্ষণ করবে না
+                    break;
+                }
+            }
+        }
+    });
+
+    const invoiceContentElement = document.getElementById('invoiceContent');
+    if (invoiceContentElement) {
+        observer.observe(invoiceContentElement, { attributes: true });
+        // যদি পেজ লোড হওয়ার সময়ই ট্যাবটি সক্রিয় থাকে
+        if (invoiceContentElement.classList.contains('active')) {
+            initializeInvoiceTab();
+            observer.disconnect();
+        }
+    }
+
+    // ইনভয়েজ ট্যাবের সকল ইভেন্ট ও ফাংশন এখানে থাকবে
+function initializeInvoiceTab() {
+    // --- IndexedDB Helper Functions ---
+    const DB_NAME = 'invoiceDB';
+    const STORE_NAME = 'invoices';
+    const DB_VERSION = 1;
+    let db;
+
+    function openDb() {
+        return new Promise((resolve, reject) => {
+            if (db) {
+                return resolve(db);
+            }
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+            request.onerror = (event) => reject('IndexedDB error: ' + request.error);
+            request.onsuccess = (event) => {
+                db = event.target.result;
+                resolve(db);
+            };
+            request.onupgradeneeded = (event) => {
+                const store = event.target.result.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                store.createIndex('date', 'date', { unique: false });
+            };
+        });
+    }
+
+    async function addInvoice(invoiceData) {
+        const db = await openDb();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORE_NAME, 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            store.add(invoiceData);
+            transaction.oncomplete = () => resolve(true);
+            transaction.onerror = (event) => reject('Error adding invoice: ' + event.target.error);
+        });
+    }
+
+    async function getAllInvoices() {
+        const db = await openDb();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORE_NAME, 'readonly');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.getAll();
+            request.onsuccess = () => resolve(request.result.sort((a, b) => b.id - a.id)); // Sort descending
+            request.onerror = (event) => reject('Error getting invoices: ' + event.target.error);
+        });
+    }
+
+    async function getInvoiceById(id) {
+        const db = await openDb();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORE_NAME, 'readonly');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.get(id);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = (event) => reject('Error getting invoice by ID: ' + event.target.error);
+        });
+    }
+    
+    async function deleteInvoice(id) {
+        const db = await openDb();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORE_NAME, 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            store.delete(id);
+            transaction.oncomplete = () => resolve(true);
+            transaction.onerror = (event) => reject('Error deleting invoice: ' + event.target.error);
+        });
+    }
+
+
+    async function clearAllInvoices() {
+        const db = await openDb();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORE_NAME, 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            store.clear();
+            transaction.oncomplete = () => resolve(true);
+            transaction.onerror = (event) => reject('Error clearing invoices: ' + event.target.error);
+        });
+    }
+    
+    // --- Monthly Reset Logic ---
+    async function checkAndClearOldInvoices() {
+        const lastCheckMonth = localStorage.getItem('invoiceMonth');
+        const currentMonth = new Date().getMonth().toString();
+
+        if (lastCheckMonth !== currentMonth) {
+            console.log("New month detected. Clearing old invoices.");
+            await clearAllInvoices();
+            localStorage.setItem('invoiceMonth', currentMonth);
+            showCustomAlert('নতুন মাস শুরু হওয়ায় আগের মাসের ইনভয়েস তালিকা মুছে ফেলা হয়েছে।');
+        }
+    }
+
+
+    // --- DOM Elements ---
+    const invoiceContainer = document.getElementById('invoice-container');
+    const logoUpload = document.getElementById('logo-upload');
+    const invoiceLogo = document.getElementById('invoice-logo');
+    const addItemBtn = document.getElementById('add-item-btn');
+    const itemsTableBody = document.querySelector('#invoice-items-table tbody');
+    const printInvoiceBtn = document.getElementById('print-invoice-btn');
+    const saveToListBtn = document.getElementById('save-to-list-btn');
+    const clearCurrentInvoiceBtn = document.getElementById('clear-current-invoice-btn');
+    const savedInvoicesContainer = document.getElementById('saved-invoices-container');
+    const savedInvoicesTable = document.getElementById('saved-invoices-table');
+    const noInvoicesMessage = document.getElementById('no-invoices-message');
+    const invoiceDateEl = document.getElementById('invoice-date');
+    
+    const editableFields = invoiceContainer.querySelectorAll('[contenteditable="true"], input');
+
+    // --- Persistence Functions (localStorage) ---
+    function saveCurrentInvoiceState() {
+        const state = {
+            logoSrc: invoiceLogo.src,
+            fields: {},
+            items: []
+        };
+        
+        // Save editable fields and inputs
+        invoiceContainer.querySelectorAll('[contenteditable="true"], input:not([type="file"])').forEach(el => {
+            if(el.id) {
+                state.fields[el.id] = el.matches('[contenteditable="true"]') ? el.innerHTML : el.value;
+            }
+        });
+
+        // Save table items
+        itemsTableBody.querySelectorAll('tr').forEach(row => {
+            state.items.push({
+                name: row.querySelector('.item-name').value,
+                qty: row.querySelector('.item-qty').value,
+                price: row.querySelector('.item-price').value,
+                discount: row.querySelector('.item-discount').value
+            });
+        });
+
+        localStorage.setItem('currentInvoiceState', JSON.stringify(state));
+    }
+    
+    function loadCurrentInvoiceState() {
+        const stateJSON = localStorage.getItem('currentInvoiceState');
+        if (!stateJSON) {
+             // যদি কোনো সেভ করা ডেটা না থাকে, তাহলে একটি ডিফল্ট রো তৈরি করুন
+            if (itemsTableBody.rows.length === 0) {
+                 addNewItemRow();
+            }
+            return;
+        }
+
+        const state = JSON.parse(stateJSON);
+
+        if (state.logoSrc) invoiceLogo.src = state.logoSrc;
+
+        for (const id in state.fields) {
+            const el = document.getElementById(id);
+            if (el) {
+                if(el.matches('[contenteditable="true"]')) {
+                    el.innerHTML = state.fields[id];
+                } else {
+                    el.value = state.fields[id];
+                }
+            }
+        }
+        
+        itemsTableBody.innerHTML = '';
+        if (state.items && state.items.length > 0) {
+            state.items.forEach(item => addNewItemRow(item));
+        } else {
+            addNewItemRow(); // যদি কোনো আইটেম সেভ করা না থাকে
+        }
+
+        updateInvoiceTotals();
+    }
+    
+    function startNewInvoice() {
+        if(confirm('আপনি কি একটি নতুন ইনভয়েজ শুরু করতে চান? বর্তমান ক্রেতা এবং পণ্যের তালিকা মুছে যাবে।')) {
+            // Increment invoice number
+            const invoiceNumberEl = document.getElementById('invoice-number');
+            if (invoiceNumberEl) {
+                const bengaliNumerals = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+                const toEnglish = str => str.split('').map(char => bengaliNumerals.indexOf(char) !== -1 ? bengaliNumerals.indexOf(char) : char).join('');
+                const toBengali = numStr => numStr.split('').map(digit => bengaliNumerals[parseInt(digit)] || digit).join('');
+                
+                const currentNumStr = toEnglish(invoiceNumberEl.textContent.trim());
+                const currentNum = parseInt(currentNumStr, 10);
+                if (!isNaN(currentNum)) {
+                    const newNum = currentNum + 1;
+                    const newNumStr = newNum.toString().padStart(currentNumStr.length, '0');
+                    invoiceNumberEl.textContent = toBengali(newNumStr);
+                }
+            }
+
+            // Reset customer info
+            const customerNameEl = document.getElementById('customer-name');
+            const customerAddressEl = document.getElementById('customer-address');
+            if (customerNameEl) customerNameEl.innerHTML = 'ক্রেতার নাম';
+            if (customerAddressEl) customerAddressEl.innerHTML = 'ক্রেতার ঠিকানা';
+
+            // Reset summary inputs
+            const extraDiscountEl = document.getElementById('extra-discount');
+            const prevDueEl = document.getElementById('prev-due');
+            const paidAmountEl = document.getElementById('paid-amount');
+            if (extraDiscountEl) extraDiscountEl.value = '';
+            if (prevDueEl) prevDueEl.value = '';
+            if (paidAmountEl) paidAmountEl.value = '';
+            
+             // Reset date
+            const invoiceDateEl = document.getElementById('invoice-date');
+            if (invoiceDateEl) {
+                 const today = new Date();
+                 invoiceDateEl.textContent = today.toLocaleDateString('bn-BD', {
+                    day: 'numeric', month: 'long', year: 'numeric'
+                 });
+            }
+
+            // Reset items table
+            itemsTableBody.innerHTML = '';
+            addNewItemRow();
+            
+            // Recalculate and save the new state
+            updateInvoiceTotals(); 
+            
+            showCustomAlert('নতুন ইনভয়েজ শুরু হয়েছে।');
+        }
+    }
+    
+    function loadSelectedInvoice(invoiceState) {
+        if (!invoiceState || !invoiceState.fullData) {
+            showCustomAlert('ইনভয়েজ ডেটা লোড করা যায়নি।');
+            return;
+        }
+
+        const state = invoiceState.fullData;
+
+        if (state.logoSrc) {
+            invoiceLogo.src = state.logoSrc;
+        }
+
+        // Load fields
+        for (const id in state.fields) {
+            const el = document.getElementById(id);
+            if (el) {
+                if (el.matches('[contenteditable="true"]')) {
+                    el.innerHTML = state.fields[id];
+                } else {
+                    el.value = state.fields[id];
+                }
+            }
+        }
+        
+        // Load items
+        itemsTableBody.innerHTML = '';
+        if (state.items && state.items.length > 0) {
+            state.items.forEach(item => addNewItemRow(item));
+        } else {
+            addNewItemRow(); // Add a blank row if no items
+        }
+
+        updateInvoiceTotals(); // This recalculates and saves to localStorage
+        showCustomAlert(`ইনভয়েজ #${invoiceState.id} (${invoiceState.customerName}) লোড করা হয়েছে।`);
+        window.scrollTo(0, 0); // Scroll to top to see the loaded invoice
+    }
+
+
+    // --- Core Functions ---
+    function setDate() {
+        if (invoiceDateEl && !invoiceDateEl.textContent.trim()) {
+            const today = new Date();
+            invoiceDateEl.textContent = today.toLocaleDateString('bn-BD', {
+                day: 'numeric', month: 'long', year: 'numeric'
+            });
+        }
+    }
+
+    function addNewItemRow(item = { name: '', qty: '', price: '', discount: '' }) {
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td class="p-2"><input type="text" placeholder="পণ্যের নাম" class="item-name w-full bg-gray-50 dark:bg-gray-700" value="${item.name}"></td>
+            <td class="p-2"><input type="number" placeholder="0" class="item-qty w-full text-center bg-gray-50 dark:bg-gray-700" min="0" value="${item.qty}"></td>
+            <td class="p-2"><input type="number" placeholder="0.00" class="item-price w-full text-right bg-gray-50 dark:bg-gray-700" min="0" value="${item.price}"></td>
+            <td class="p-2"><input type="number" placeholder="0.00" class="item-discount w-full text-right bg-gray-50 dark:bg-gray-700" min="0" value="${item.discount}"></td>
+            <td class="p-2 text-right item-total">০.০০</td>
+            <td class="p-2 text-center no-print">
+                <svg class="delete-item-btn w-5 h-5 mx-auto text-red-500 hover:text-red-700 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </td>
+        `;
+        itemsTableBody.appendChild(newRow);
+    }
+
+    function updateInvoiceTotals() {
+        let subtotal = 0;
+        let totalItemDiscounts = 0;
+        
+        itemsTableBody.querySelectorAll('tr').forEach(row => {
+            const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+            const price = parseFloat(row.querySelector('.item-price').value) || 0;
+            const discount = parseFloat(row.querySelector('.item-discount').value) || 0;
+            const grossTotal = qty * price;
+            const netTotal = grossTotal - discount;
+            
+            row.querySelector('.item-total').textContent = netTotal.toLocaleString('bn-BD', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            subtotal += grossTotal;
+            totalItemDiscounts += discount;
+        });
+
+        const extraDiscount = parseFloat(document.getElementById('extra-discount').value) || 0;
+        const prevDue = parseFloat(document.getElementById('prev-due').value) || 0;
+        const paidAmount = parseFloat(document.getElementById('paid-amount').value) || 0;
+        
+        const grandTotal = (subtotal - totalItemDiscounts - extraDiscount) + prevDue;
+        const finalDue = grandTotal - paidAmount;
+
+        document.getElementById('subtotal').textContent = subtotal.toLocaleString('bn-BD', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('item-discounts-total').textContent = `- ${totalItemDiscounts.toLocaleString('bn-BD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        document.getElementById('grand-total').textContent = grandTotal.toLocaleString('bn-BD', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('final-due').textContent = finalDue.toLocaleString('bn-BD', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        // Calculation update triggers a save
+        saveCurrentInvoiceState();
+    }
+
+    async function renderInvoiceList() {
+        const invoices = await getAllInvoices();
+        const tableBody = savedInvoicesTable.querySelector('tbody');
+        tableBody.innerHTML = '';
+
+        if (invoices.length === 0) {
+            savedInvoicesTable.classList.add('hidden');
+            noInvoicesMessage.classList.remove('hidden');
+        } else {
+            noInvoicesMessage.classList.add('hidden');
+            savedInvoicesTable.classList.remove('hidden');
+
+            invoices.forEach(inv => {
+                const row = document.createElement('tr');
+                row.className = 'border-b dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800';
+                row.innerHTML = `
+                    <td class="p-2">${inv.date}</td>
+                    <td class="p-2">${inv.customerName}</td>
+                    <td class="p-2 text-right">${inv.grandTotal.toLocaleString('bn-BD', {minimumFractionDigits: 2})}</td>
+                    <td class="p-2 text-center">
+                        <button class="load-saved-invoice-btn text-blue-500 hover:text-blue-700 mr-4 font-semibold" data-id="${inv.id}">লোড</button>
+                        <button class="delete-saved-invoice-btn text-red-500 hover:text-red-700 font-semibold" data-id="${inv.id}">মুছুন</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+    }
+    
+     async function handleSaveToList() {
+        const invoiceData = JSON.parse(localStorage.getItem('currentInvoiceState')) || {};
+        const grandTotal = parseFloat(document.getElementById('grand-total').textContent.replace(/,/g, '')) || 0;
+
+        const dataToSave = {
+            date: document.getElementById('invoice-date').textContent,
+            customerName: document.getElementById('customer-name').textContent,
+            grandTotal: grandTotal,
+            fullData: invoiceData 
+        };
+        
+        await addInvoice(dataToSave);
+        showCustomAlert('ইনভয়েজ সফলভাবে সেভ করা হয়েছে!');
+        await renderInvoiceList();
+    }
+
+
+    // --- Event Listeners ---
+    logoUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                invoiceLogo.src = event.target.result;
+                saveCurrentInvoiceState(); // Save after logo change
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    addItemBtn.addEventListener('click', () => {
+        addNewItemRow();
+        saveCurrentInvoiceState();
+    });
+    
+    invoiceContainer.addEventListener('input', (e) => {
+         if (e.target.closest('#invoice-items-table') || e.target.closest('.justify-end')) {
+             updateInvoiceTotals(); // This already calls save
+         } else {
+             saveCurrentInvoiceState();
+         }
+    });
+
+    itemsTableBody.addEventListener('click', (e) => {
+        if (e.target.closest('.delete-item-btn')) {
+            if (itemsTableBody.rows.length > 1) {
+                e.target.closest('tr').remove();
+                updateInvoiceTotals();
+            } else {
+                showCustomAlert('শেষ আইটেমটি মোছা যাবে না।');
+            }
+        }
+    });
+
+    printInvoiceBtn.addEventListener('click', () => window.print());
+    saveToListBtn.addEventListener('click', handleSaveToList);
+    clearCurrentInvoiceBtn.addEventListener('click', startNewInvoice);
+
+    savedInvoicesContainer.addEventListener('click', async (e) => {
+        const target = e.target;
+        if (target.classList.contains('delete-saved-invoice-btn')) {
+            const id = parseInt(target.dataset.id, 10);
+            if(confirm('আপনি কি নিশ্চিতভাবে এই সেভ করা ইনভয়েজটি মুছে ফেলতে চান?')) {
+                await deleteInvoice(id);
+                showCustomAlert('ইনভয়েজ মুছে ফেলা হয়েছে।');
+                await renderInvoiceList();
+            }
+        } else if (target.classList.contains('load-saved-invoice-btn')) {
+            const id = parseInt(target.dataset.id, 10);
+            const invoiceToLoad = await getInvoiceById(id);
+            if (invoiceToLoad) {
+                loadSelectedInvoice(invoiceToLoad);
+            } else {
+                showCustomAlert('ইনভয়েজটি খুঁজে পাওয়া যায়নি।');
+            }
+        }
+    });
+
+    // --- Initialization ---
+    async function init() {
+        await checkAndClearOldInvoices();
+        setDate();
+        loadCurrentInvoiceState();
+        updateInvoiceTotals();
+        await renderInvoiceList();
+        console.log("Invoice tab initialized successfully.");
+    }
+    
+    init();
+}
+
+});
+// ====================================================================
+// END: INVOICE TAB SCRIPT
+// ====================================================================
+
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
         window.onload = function() {
