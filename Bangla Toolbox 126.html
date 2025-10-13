@@ -5039,6 +5039,128 @@ input:checked + .slider:before {
 /* END: Quiz Tab Styles */
 /* ======================================================== */
 
+/* ======================================================== */
+/* START: Donate Tab Styles (ডোনেট ট্যাব) */
+/* ======================================================== */
+
+.donate-section {
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 600px;
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+.dark .donate-section {
+    background-color: #2d3748;
+}
+.donate-text {
+    font-size: 1.1rem;
+    color: #374151;
+    margin-bottom: 20px;
+    line-height: 1.8;
+    text-align: justify;
+}
+.dark .donate-text {
+    color: #cbd5e0;
+}
+.donate-subtitle {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #3f51b5;
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+.dark .donate-subtitle {
+    color: #90cdf4;
+}
+.donate-number {
+    font-size: 1.3rem;
+    font-weight: 600;
+    background-color: #e6f7ff;
+    padding: 12px 20px; /* আইকনের জন্য জায়গা করতে ডানে প্যাডিং বাড়ানো হয়েছে */
+    border-radius: 10px;
+    border: 1px solid #b3e0ff;
+    display: inline-block;
+}
+.dark .donate-number {
+    background-color: #1a202c;
+    border-color: #4a5568;
+}
+.qr-code-section {
+    margin-top: 20px;
+}
+.qr-code-image {
+    max-width: 200px;
+    height: auto;
+    margin: 10px auto;
+    border: 5px solid white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.donate-email {
+    margin-top: 25px;
+    font-size: 1rem;
+    color: #4a5568;
+}
+.dark .donate-email {
+    color: #a0aec0;
+}
+
+/* নতুন: ডোনেট নম্বর কপির জন্য স্টাইল - পরিবর্তিত */
+#donate-number-container .actions {
+    position: absolute;
+    top: 50%;
+    left: 100%; /* কন্টেইনারের ডান পাশে পজিশন করা হয়েছে */
+    transform: translateY(-50%); /* শুধুমাত্র উল্লম্বভাবে মাঝখানে আনা হয়েছে */
+    margin-left: 8px; /* নম্বর বক্স থেকে একটু فاصله দেওয়ার জন্য */
+    opacity: 0; /* প্রাথমিকভাবে লুকানো থাকবে */
+    transition: opacity 0.3s ease; /* মসৃণভাবে দেখানোর জন্য ট্রানজিশন */
+    pointer-events: none; /* লুকানো অবস্থায় ক্লিক করা যাবে না */
+    background: rgba(241, 245, 249, 0.9);
+    padding: 5px;
+    border-radius: 20px;
+    z-index: 2;
+    display: flex;
+}
+.dark #donate-number-container .actions {
+    background: rgba(45, 55, 72, 0.9);
+}
+#donate-number-container:hover .actions {
+    opacity: 1; /* হোভার করলে দৃশ্যমান হবে */
+    pointer-events: auto; /* দৃশ্যমান অবস্থায় ক্লিক করা যাবে */
+}
+
+#donate-number-container .action-btn {
+    border: none;
+    background: #e2e8f0;
+    color: #475569;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, color 0.2s, transform 0.2s;
+}
+.dark #donate-number-container .action-btn {
+    background-color: #4a5568;
+    color: #e2e8f0;
+}
+#donate-number-container .action-btn:hover {
+    transform: scale(1.1);
+}
+#donate-number-container .action-btn.copy:hover {
+    background-color: #3b82f6; /* নীল */
+    color: white;
+}
+/* ======================================================== */
+/* END: Donate Tab Styles */
+/* ======================================================== */
+
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
 </head>
@@ -5156,6 +5278,7 @@ input:checked + .slider:before {
 				<button id="healthLifestyleTab" class="tab-button rounded-xl">স্বাস্থ্য ও জীবনধারা</button>
 				<button id="importantLinksTab" class="tab-button rounded-xl">গুরুত্বপূর্ণ লিংকসমূহ</button>
 				<button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
+				<button id="donateTab" class="tab-button rounded-xl">ডোনেট</button>
 			</div>
 		</div>
     </div>
@@ -6587,9 +6710,17 @@ input:checked + .slider:before {
                 <span>বায়ো প্রোফাইল (সকল লিংক এখানে)</span>
             </a>
             <!-- Example Link 2: GitHub -->
+            <a href="https://toffeeshare.com/" target="_blank" class="link-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                <span>ফাইল ট্রান্সফার</span>
+            </a>
             <a href="https://www.remove.bg/" target="_blank" class="link-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
                 <span>ব্যাকগ্রাউন্ড রিমুভ</span>
+            </a>
+            <a href="https://www.camscanner.com/" target="_blank" class="link-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                <span>ক্যামস্ক্যানার</span>
             </a>
             <a href="https://www.sejda.com/" target="_blank" class="link-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
@@ -6825,18 +6956,20 @@ input:checked + .slider:before {
         <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">সাধারণ জ্ঞান কুইজ</h3>
         <p class="text-gray-600 dark:text-gray-400 mb-6">আপনার পছন্দের বিভাগ এবং অসুবিধার স্তর নির্বাচন করে কুইজ শুরু করুন। প্রশ্নগুলো জেমিনি দ্বারা তৈরি করা হবে।</p>
         
-        <div class="quiz-options">
-            <div class="quiz-option-group">
-                <label for="quiz-category">বিভাগ নির্বাচন করুন:</label>
-                <select id="quiz-category" class="quiz-select">
-                    <option value="সাধারণ জ্ঞান">সাধারণ জ্ঞান</option>
-                    <option value="বিসিএস প্রস্তুতি">বিসিএস প্রস্তুতি</option>
-                    <option value="চাকরির পরীক্ষা">চাকরির পরীক্ষা</option>
-                    <option value="বিশ্ববিদ্যালয় ভর্তি">বিশ্ববিদ্যালয় ভর্তি</option>
-                    <option value="স্কুল ও কলেজ">স্কুল ও কলেজ</option>
-                    <option value="বিজ্ঞান ও প্রযুক্তি">বিজ্ঞান ও প্রযুক্তি</option>
-                </select>
-            </div>
+    <div class="quiz-options">
+		<div class="quiz-option-group">
+			<label for="quiz-category">বিভাগ নির্বাচন করুন:</label>
+			<select id="quiz-category" class="quiz-select">
+				<option value="সাধারণ জ্ঞান">সাধারণ জ্ঞান</option>
+				<option value="বিসিএস প্রস্তুতি">বিসিএস প্রস্তুতি</option>
+				<option value="চাকরির পরীক্ষা">চাকরির পরীক্ষা</option>
+				<option value="বিশ্ববিদ্যালয় ভর্তি">বিশ্ববিদ্যালয় ভর্তি</option>
+				<option value="স্কুল ও কলেজ">স্কুল ও কলেজ</option>
+				<option value="বিজ্ঞান ও প্রযুক্তি">বিজ্ঞান ও প্রযুক্তি</option>
+				<option value="custom">কাস্টম</option>
+			</select>
+			<input type="text" id="quiz-custom-category" class="quiz-select hidden mt-2" placeholder="আপনার কাস্টম ক্যাটাগরি লিখুন...">
+		</div>
             <div class="quiz-option-group">
                 <label for="quiz-difficulty">অসুবিধার স্তর:</label>
                 <select id="quiz-difficulty" class="quiz-select">
@@ -6888,6 +7021,52 @@ input:checked + .slider:before {
         <button id="restart-quiz-btn" class="quiz-button restart">নতুন কুইজ শুরু করুন</button>
     </div>
 </div>
+
+<!-- ডোনেট ট্যাব কন্টেন্ট শুরু -->
+<div id="donateContent" class="calculator-content">
+    <div class="donate-section">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">ডোনেট করুন</h3>
+        <p class="donate-text">
+            বাংলা ভাষাভাষীদের জন্য বাংলা টুলবক্স সবসময় ফ্রিতেই ব্যবহার করার সুযোগ থাকবে ইনশাআল্লাহ। তবে বাংলা টুলবক্স প্রকল্পটির উন্নয়ন চলমান রাখতে ও উৎসাহ প্রদানের উপলক্ষে বাংলা টুলবক্স প্রজেক্টটিতে সামর্থ্য ও ইচ্ছা অনুযায়ী ডোনেট করতে পারেন।
+        </p>
+        <h4 class="donate-subtitle">ডোনেট করুন নিম্নোক্ত মাধ্যমে:</h4>
+        
+        <!-- নতুন: নম্বর কপি করার জন্য কন্টেইনার যোগ করা হয়েছে -->
+        <div class="relative inline-block" id="donate-number-container">
+            <p class="donate-number" id="donate-number-text">
+                <strong>বিকাশ, নগদ, রকেট, উপায়:</strong> 01778472964
+            </p>
+            <!-- নোটপ্যাডের মতো অ্যাকশন বার -->
+            <div id="donate-actions" class="actions">
+                <button class="action-btn copy" id="copyDonateNumberBtn" title="নম্বর কপি করুন">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="qr-code-section">
+             <h4 class="donate-subtitle">কিউআর কোড (সেন্ড মানি): বিকাশ</h4>
+             <!-- পরিবর্তন: QR কোডের লিংক CDN ব্যবহার করে আপডেট করা হয়েছে -->
+             <img src="https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/Bkash%20QR%20Code.jpeg" alt="বিকাশ QR কোড" class="qr-code-image">
+        </div>
+        <p class="donate-email">
+            <strong>প্রয়োজনে মেইল করুন:</strong> </br>mdsifatgid@gmail.com</br>banglatoolbox@gmail.com</br>mdshahiduzzamansifat@gmail.com
+        </p>
+        <div class="flex flex-col gap-1">
+            <!-- Example Link 1: Website -->
+            <a href="https://bio.link/mdsifatbiolink" target="_blank" class="link-btn">
+                <span>যেকোনো মতামত বা পরামর্শ জানান (অন্যান্য সকল যোগাযোগ মাধ্যম)</span>
+            </a>
+            <a href="https://banglatoolbox.github.io" target="_blank" class="link-btn">
+                <span>বাংলা টুলবক্স (লিংক ১)</span>
+            </a>
+            <a href="https://mdsifatgitid.github.io" target="_blank" class="link-btn">
+                <span>বাংলা টুলবক্স (লিংক ২)</span>
+            </a>
+        </div>
+    </div>
+</div>
+<!-- ডোনেট ট্যাব কন্টেন্ট শেষ -->
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
 </div>
@@ -9151,6 +9330,8 @@ try {
 				const holidayListContent = document.getElementById('holidayListContent');
 				const quizTab = document.getElementById('quizTab');
 				const quizContent = document.getElementById('quizContent');
+				const donateTab = document.getElementById('donateTab');
+				const donateContent = document.getElementById('donateContent');
 
 
 //pest button code start
@@ -9408,7 +9589,7 @@ function showTab(tabId) {
     // সমস্ত ট্যাব এর নাম এবং ট্যাব এর কন্টেন্ট নাম একানে বসাতে হয়, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয় বা বসাতে হয় ।
     const tabs = [
         basicCalcTab,
-		ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,
+		ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,
 		translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
 		qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,
         textAssistantTab,holidayListTab,quizTab,
@@ -9417,7 +9598,7 @@ function showTab(tabId) {
     const contents = [
         basicCalculatorContent,
 		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent, newsContent, converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,
-        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent,
+        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent,
 		weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
 		textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,
         allFeaturesContent
@@ -9568,6 +9749,10 @@ function showTab(tabId) {
 			activeContent = quizContent;
 			initializeQuiz(); // এই ফাংশন কুইজ শুরু করবে
 		break;
+		case 'donate':
+			activeTab = donateTab;
+			activeContent = donateContent;
+		break;
         case 'allFeatures':
             activeTab = allFeaturesTab;
             activeContent = allFeaturesContent;
@@ -9601,6 +9786,7 @@ function showTab(tabId) {
 				if (wordCounterTab) wordCounterTab.addEventListener('click', () => showTab('wordCounter'));
 				if (weatherTab) weatherTab.addEventListener('click', () => showTab('weather'));
 				if (quizTab) quizTab.addEventListener('click', () => showTab('quiz'));
+				if (donateTab) donateTab.addEventListener('click', () => showTab('donate'));
 				if (notepadTab) notepadTab.addEventListener('click', async () => {
 					showTab('notepad');
 					await initializeNotepad(); // Notepad চালু করার জন্য এই ফাংশন কল করুন
@@ -14438,42 +14624,54 @@ let quizScore = 0;
 let quizState = 'not_started'; // 'not_started', 'loading', 'in_progress', 'finished'
 
 function initializeQuiz() {
-    // DOM Elements
-    const setupContainer = document.getElementById('quiz-setup-container');
-    const mainContainer = document.getElementById('quiz-main-container');
-    const resultContainer = document.getElementById('quiz-result-container');
-    const startBtn = document.getElementById('start-quiz-btn');
-    const categorySelect = document.getElementById('quiz-category');
-    const difficultySelect = document.getElementById('quiz-difficulty');
-	const questionCountSelect = document.getElementById('quiz-question-count'); // নতুন: প্রশ্নের সংখ্যা সিলেক্ট এলিমেন্ট
-    const loadingEl = document.getElementById('quiz-loading');
-    
-    const questionNumberEl = document.getElementById('question-number');
-    const scoreEl = document.getElementById('quiz-score');
-    const questionTextEl = document.getElementById('question-text');
-    const optionsContainer = document.getElementById('options-container');
-    const feedbackEl = document.getElementById('quiz-feedback');
-    const nextBtn = document.getElementById('next-question-btn');
-    
-    const restartBtn = document.getElementById('restart-quiz-btn');
-    const finalScoreEl = document.getElementById('final-score');
-    const finalFeedbackEl = document.getElementById('final-feedback');
+// DOM Elements
+const setupContainer = document.getElementById('quiz-setup-container');
+const mainContainer = document.getElementById('quiz-main-container');
+const resultContainer = document.getElementById('quiz-result-container');
+const startBtn = document.getElementById('start-quiz-btn');
+const categorySelect = document.getElementById('quiz-category');
+const customCategoryInput = document.getElementById('quiz-custom-category'); // নতুন
+const difficultySelect = document.getElementById('quiz-difficulty');
+const questionCountSelect = document.getElementById('quiz-question-count');
+const loadingEl = document.getElementById('quiz-loading');
 
-    // Attach event listeners only once
-    const setupEventListeners = (() => {
-        let listenersAttached = false;
-        return () => {
-            if (listenersAttached || !startBtn || !nextBtn || !restartBtn) return;
-            startBtn.addEventListener('click', startQuiz);
-            nextBtn.addEventListener('click', handleNextQuestion);
-            restartBtn.addEventListener('click', () => {
-                quizState = 'not_started';
-                updateUI();
-            });
-            listenersAttached = true;
-        };
-    })();
-    
+const questionNumberEl = document.getElementById('question-number');
+const scoreEl = document.getElementById('quiz-score');
+const questionTextEl = document.getElementById('question-text');
+const optionsContainer = document.getElementById('options-container');
+const feedbackEl = document.getElementById('quiz-feedback');
+const nextBtn = document.getElementById('next-question-btn');
+
+const restartBtn = document.getElementById('restart-quiz-btn');
+const finalScoreEl = document.getElementById('final-score');
+const finalFeedbackEl = document.getElementById('final-feedback');
+
+// নতুন: কাস্টম ক্যাটাগরি ইনপুট দেখানোর জন্য ইভেন্ট লিসেনার
+if (categorySelect) {
+    categorySelect.addEventListener('change', () => {
+        if (categorySelect.value === 'custom') {
+            customCategoryInput.classList.remove('hidden');
+        } else {
+            customCategoryInput.classList.add('hidden');
+        }
+    });
+}
+
+// Attach event listeners only once
+const setupEventListeners = (() => {
+    let listenersAttached = false;
+    return () => {
+        if (listenersAttached || !startBtn || !nextBtn || !restartBtn) return;
+        startBtn.addEventListener('click', startQuiz);
+        nextBtn.addEventListener('click', handleNextQuestion);
+        restartBtn.addEventListener('click', () => {
+            quizState = 'not_started';
+            updateUI();
+        });
+        listenersAttached = true;
+    };
+})();
+
 async function fetchQuizDataFromGemini(category, difficulty, count) {
     quizState = 'loading';
     updateUI();
@@ -14487,7 +14685,6 @@ async function fetchQuizDataFromGemini(category, difficulty, count) {
     }
 
     try {
-        // পরিবর্তন: এখানে প্রশ্নের সংখ্যা `10` এর পরিবর্তে আপনার নির্বাচিত `count` ভেরিয়েবলটি ব্যবহার করা হয়েছে।
         const prompt = `
             Generate ${count} multiple-choice quiz questions for me in Bangladeshi Bengali.
             The category is "${category}" and the difficulty level is "${difficulty}".
@@ -14530,123 +14727,152 @@ async function fetchQuizDataFromGemini(category, difficulty, count) {
     }
 }
 
-    async function startQuiz() {
-        const category = categorySelect.value;
-        const difficulty = difficultySelect.value;
-		const count = questionCountSelect.value; // নতুন: প্রশ্নের সংখ্যা পাওয়া
-        
-        const success = await fetchQuizDataFromGemini(category, difficulty, count);
-        
-        if (success) {
-            quizState = 'in_progress';
-            currentQuestionIndex = 0;
-            quizScore = 0;
-            updateUI();
-            loadQuestion();
+async function startQuiz() {
+    let category = categorySelect.value;
+    const difficulty = difficultySelect.value;
+    const count = questionCountSelect.value;
+    
+    if (category === 'custom') {
+        category = customCategoryInput.value.trim();
+        if (!category) {
+            showCustomAlert('অনুগ্রহ করে একটি কাস্টম ক্যাটাগরি লিখুন।');
+            return;
         }
-    }
-
-    function loadQuestion() {
-        feedbackEl.textContent = '';
-        feedbackEl.className = 'quiz-feedback';
-        optionsContainer.innerHTML = '';
-        nextBtn.style.display = 'none';
-
-        const currentQuestion = quizQuestions[currentQuestionIndex];
-        questionTextEl.innerHTML = currentQuestion.question; // Use innerHTML to render any formatting
-        
-        // Add a new element for the question type
-        const questionTypeEl = document.createElement('span');
-        questionTypeEl.id = 'question-type';
-        questionTypeEl.textContent = currentQuestion.type || `${categorySelect.value} (${difficultySelect.value})`;
-        questionTextEl.appendChild(document.createElement('br'));
-        questionTextEl.appendChild(questionTypeEl);
-
-        questionNumberEl.textContent = `প্রশ্ন: ${currentQuestionIndex + 1}/${quizQuestions.length}`;
-        scoreEl.textContent = `স্কোর: ${quizScore}`;
-
-        const shuffledOptions = [...currentQuestion.options].sort(() => Math.random() - 0.5);
-        shuffledOptions.forEach(option => {
-            const button = document.createElement('button');
-            button.innerHTML = option; // Use innerHTML for options too
-            button.classList.add('option-btn');
-            button.addEventListener('click', selectAnswer);
-            optionsContainer.appendChild(button);
-        });
-    }
-
-    function selectAnswer(e) {
-        const selectedBtn = e.target;
-        const correct = selectedBtn.innerHTML === quizQuestions[currentQuestionIndex].answer;
-
-        if (correct) {
-            quizScore++;
-            selectedBtn.classList.add('correct');
-            feedbackEl.textContent = 'সঠিক উত্তর!';
-            feedbackEl.classList.add('correct');
-        } else {
-            selectedBtn.classList.add('incorrect');
-            feedbackEl.textContent = `ভুল! সঠিক উত্তর: ${quizQuestions[currentQuestionIndex].answer}`;
-            feedbackEl.classList.add('incorrect');
-        }
-        
-        Array.from(optionsContainer.children).forEach(button => {
-            if (button.innerHTML === quizQuestions[currentQuestionIndex].answer) {
-                button.classList.add('correct');
-            }
-            button.disabled = true;
-        });
-
-        scoreEl.textContent = `স্কোর: ${quizScore}`;
-        nextBtn.textContent = (currentQuestionIndex < quizQuestions.length - 1) ? 'পরবর্তী প্রশ্ন' : 'ফলাফল দেখুন';
-        nextBtn.style.display = 'block';
-    }
-
-    function handleNextQuestion() {
-        currentQuestionIndex++;
-        if (currentQuestionIndex < quizQuestions.length) {
-            loadQuestion();
-        } else {
-            showResults();
-        }
-    }
-
-    function showResults() {
-        quizState = 'finished';
-        updateUI();
-
-        finalScoreEl.textContent = `আপনি ${quizQuestions.length} টির মধ্যে ${quizScore} টি সঠিক উত্তর দিয়েছেন!`;
-
-        let feedbackText = '';
-        const percentage = (quizScore / quizQuestions.length) * 100;
-        if (percentage === 100) feedbackText = 'অসাধারণ! আপনার জ্ঞান চমৎকার।';
-        else if (percentage >= 70) feedbackText = 'খুব ভালো! চালিয়ে যান।';
-        else if (percentage >= 40) feedbackText = 'ভালো করেছেন, আরও চেষ্টা করুন।';
-        else feedbackText = 'অনুশীলন চালিয়ে যেতে হবে।';
-        finalFeedbackEl.textContent = feedbackText;
     }
     
-     function updateUI() {
-        // পরিবর্তন: 'not_started' অথবা 'loading' অবস্থায় সেটআপ স্ক্রিনটি দেখানো হবে।
-        setupContainer.classList.toggle('hidden', quizState !== 'not_started' && quizState !== 'loading');
-        
-        // বাকি কন্টেইনারগুলো আগের মতোই থাকবে
-        mainContainer.classList.toggle('hidden', quizState !== 'in_progress');
-        resultContainer.classList.toggle('hidden', quizState !== 'finished');
-        
-        // শুধুমাত্র 'loading' অবস্থায় লোডিং বার্তাটি দেখানো হবে
-        loadingEl.style.display = (quizState === 'loading') ? 'block' : 'none';
-        
-        // লোড হওয়ার সময় স্টার্ট বাটনটি নিষ্ক্রিয় থাকবে
-        startBtn.disabled = (quizState === 'loading');
+    const success = await fetchQuizDataFromGemini(category, difficulty, count);
+    
+    if (success) {
+        quizState = 'in_progress';
+        currentQuestionIndex = 0;
+        quizScore = 0;
+        updateUI();
+        loadQuestion();
     }
+}
 
-    // --- Main Logic ---
-    setupEventListeners();
-    updateUI(); // Show the correct screen based on the current state
+function loadQuestion() {
+    feedbackEl.textContent = '';
+    feedbackEl.className = 'quiz-feedback';
+    optionsContainer.innerHTML = '';
+    nextBtn.style.display = 'none';
+
+    const currentQuestion = quizQuestions[currentQuestionIndex];
+    questionTextEl.innerHTML = currentQuestion.question;
+    
+    const questionTypeEl = document.createElement('span');
+    questionTypeEl.id = 'question-type';
+    // কাস্টম ক্যাটাগরির জন্য type হ্যান্ডেল করা
+    let currentCategory = categorySelect.value === 'custom' ? customCategoryInput.value.trim() : categorySelect.value;
+    questionTypeEl.textContent = currentQuestion.type || `${currentCategory} (${difficultySelect.value})`;
+    questionTextEl.appendChild(document.createElement('br'));
+    questionTextEl.appendChild(questionTypeEl);
+
+    questionNumberEl.textContent = `প্রশ্ন: ${currentQuestionIndex + 1}/${quizQuestions.length}`;
+    scoreEl.textContent = `স্কোর: ${quizScore}`;
+
+    const shuffledOptions = [...currentQuestion.options].sort(() => Math.random() - 0.5);
+    shuffledOptions.forEach(option => {
+        const button = document.createElement('button');
+        button.innerHTML = option;
+        button.classList.add('option-btn');
+        button.addEventListener('click', selectAnswer);
+        optionsContainer.appendChild(button);
+    });
+}
+
+function selectAnswer(e) {
+    const selectedBtn = e.target;
+    const correct = selectedBtn.innerHTML === quizQuestions[currentQuestionIndex].answer;
+
+    if (correct) {
+        quizScore++;
+        selectedBtn.classList.add('correct');
+        feedbackEl.textContent = 'সঠিক উত্তর!';
+        feedbackEl.classList.add('correct');
+    } else {
+        selectedBtn.classList.add('incorrect');
+        feedbackEl.textContent = `ভুল! সঠিক উত্তর: ${quizQuestions[currentQuestionIndex].answer}`;
+        feedbackEl.classList.add('incorrect');
+    }
+    
+    Array.from(optionsContainer.children).forEach(button => {
+        if (button.innerHTML === quizQuestions[currentQuestionIndex].answer) {
+            button.classList.add('correct');
+        }
+        button.disabled = true;
+    });
+
+    scoreEl.textContent = `স্কোর: ${quizScore}`;
+    nextBtn.textContent = (currentQuestionIndex < quizQuestions.length - 1) ? 'পরবর্তী প্রশ্ন' : 'ফলাফল দেখুন';
+    nextBtn.style.display = 'block';
+}
+
+function handleNextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < quizQuestions.length) {
+        loadQuestion();
+    } else {
+        showResults();
+    }
+}
+
+function showResults() {
+    quizState = 'finished';
+    updateUI();
+
+    finalScoreEl.textContent = `আপনি ${quizQuestions.length} টির মধ্যে ${quizScore} টি সঠিক উত্তর দিয়েছেন!`;
+
+    let feedbackText = '';
+    const percentage = (quizScore / quizQuestions.length) * 100;
+    if (percentage === 100) feedbackText = 'অসাধারণ! আপনার জ্ঞান চমৎকার।';
+    else if (percentage >= 70) feedbackText = 'খুব ভালো! চালিয়ে যান।';
+    else if (percentage >= 40) feedbackText = 'ভালো করেছেন, আরও চেষ্টা করুন।';
+    else feedbackText = 'অনুশীলন চালিয়ে যেতে হবে।';
+    finalFeedbackEl.textContent = feedbackText;
+}
+
+ function updateUI() {
+    setupContainer.classList.toggle('hidden', quizState !== 'not_started' && quizState !== 'loading');
+    mainContainer.classList.toggle('hidden', quizState !== 'in_progress');
+    resultContainer.classList.toggle('hidden', quizState !== 'finished');
+    loadingEl.style.display = (quizState === 'loading') ? 'block' : 'none';
+    startBtn.disabled = (quizState === 'loading');
+}
+
+// --- Main Logic ---
+setupEventListeners();
+updateUI();
+
 }
 // ====================================================================
 // END: QUIZ TAB SCRIPT
+// ====================================================================
+
+// ====================================================================
+// START: DONATE NUMBER COPY SCRIPT
+// ====================================================================
+const copyDonateNumberBtn = document.getElementById('copyDonateNumberBtn');
+const donateNumberText = document.getElementById('donate-number-text');
+
+if (copyDonateNumberBtn && donateNumberText) {
+    copyDonateNumberBtn.addEventListener('click', () => {
+        // টেক্সট থেকে শুধুমাত্র নম্বরটি খুঁজে বের করুন
+        const numberToCopy = donateNumberText.textContent.match(/(\d{11})/);
+        if (numberToCopy && numberToCopy[0]) {
+            navigator.clipboard.writeText(numberToCopy[0]).then(() => {
+                showCustomAlert('নম্বর (01778472964) কপি করা হয়েছে!');
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+                showCustomAlert('কপি করতে ব্যর্থ হয়েছে।');
+            });
+        } else {
+            showCustomAlert('কোনো নম্বর খুঁজে পাওয়া যায়নি।');
+        }
+    });
+}
+// ====================================================================
+// END: DONATE NUMBER COPY SCRIPT
 // ====================================================================
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
