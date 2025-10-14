@@ -7453,28 +7453,18 @@ async function clearExpiredItems() {
 	let currentModalSide = null; // কোন পাশের ('left' বা 'right') মোডাল খোলা হয়েছে তা ট্র্যাক করে
 	let currentModalPreset = null; // কোন প্রিসেট ('custom' বা 'custom-serial') এর জন্য ইনপুট প্রয়োজন তা ট্র্যাক করে
 
-//Start Typing Script
+// ====================================================================
+// Start Typing Script
+// ====================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
     // Typing Test Tab এর জন্য প্রয়োজনীয় সকল DOM উপাদান নির্বাচন করা
     const typingTestTab = document.getElementById('typingTestTab');
-    const typingTestContent = document.getElementById('typingTestContent');
-
-    const notepadTab = document.getElementById('notepadTab');
-    const notepadContent = document.getElementById('notepadContent');
-    const imageToTextTab = document.getElementById('imageToTextTab');
-    const imageToTextContent = document.getElementById('imageToTextContent');
-    const wordCounterTab = document.getElementById('wordCounterTab');
-    const wordCounterContent = document.getElementById('wordCounterContent');
-    // নতুন যুক্ত করা উপাদান
     const textSelection = document.getElementById('textSelection');
     const timeSelection = document.getElementById('timeSelection');
     const customTextInputContainer = document.getElementById('custom-text-input');
     const clearTypingBtn = document.getElementById('clearTypingBtn');
     const totalWordsDisplay = document.getElementById('totalWordsDisplay');
-    const weatherTab = document.getElementById('weatherTab');
-    const weatherContent = document.getElementById('weatherContent');
-    // আগের উপাদান
     const typingTextDisplay = document.getElementById('typingTextDisplay');
     const typingInput = document.getElementById('typingInput');
     const elapsedTimeDisplay = document.getElementById('elapsedTimeDisplay');
@@ -7500,36 +7490,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let timeElapsed = 0;
     let totalTestTime = 0;
     let isTestActive = false;
-    let isPaused = false; // টেস্ট পজ করা হয়েছে কিনা তা ট্র্যাক করতে
+    let isPaused = false;
     let correctChars = 0;
     let incorrectChars = 0;
+    let originalParagraphForTest = ""; // মূল অনুচ্ছেদ সংরক্ষণের জন্য ভ্যারিয়েবল
 
-    // *** নতুন সংযোজন: ক্যারেক্টার রিপ্লেসমেন্টের জন্য হেল্পার ফাংশন ***
-    function replaceTypingCharacters(textareaElement) {
-        const value = textareaElement.value;
-        const selectionStart = textareaElement.selectionStart;
-        const selectionEnd = textareaElement.selectionEnd;
-
-        // decomposed form (letter + nukta) থেকে precomposed form-এ পরিবর্তন করা হচ্ছে
-        let newValue = value
-            .replace(/য়/g, 'য়') // U+09AF + U+09BC -> U+09DF
-            .replace(/ড়/g, 'ড়') // U+09A1 + U+09BC -> U+09DC
-            .replace(/ঢ়/g, 'ঢ়'); // U+09A2 + U+09BC -> U+09DD
-
-        if (newValue !== value) {
-            textareaElement.value = newValue;
-            // কার্সরের অবস্থান ঠিক রাখার জন্য
-            textareaElement.setSelectionRange(selectionStart, selectionEnd);
-        }
-    }
-    
     // টেস্ট শুরু বা রিসেট করার ফাংশন
     function initializeTest() {
         clearInterval(timer);
         isTestActive = false;
-        isPaused = false; // পজ স্টেট রিসেট
+        isPaused = false;
         timeElapsed = 0;
-
         totalTestTime = parseInt(timeSelection.value, 10);
 
         typingInput.value = '';
@@ -7541,19 +7512,32 @@ document.addEventListener('DOMContentLoaded', () => {
         let selectedParagraph = '';
 
         if (selection === 'custom') {
-            selectedParagraph = customTextInputContainer.value.trim();
-            if (!selectedParagraph) {
+            selectedParagraph = customTextInputContainer.value; // Use raw value to preserve newlines
+            if (!selectedParagraph.trim()) {
                 showCustomAlert('অনুগ্রহ করে কাস্টম টেক্সট ইনপুট করুন। ডিফল্ট অনুচ্ছেদ লোড করা হচ্ছে।');
                 selectedParagraph = paragraphs['bn_1'];
             }
         } else {
             selectedParagraph = paragraphs[selection];
         }
+        
+        originalParagraphForTest = selectedParagraph.normalize('NFC');
 
-        typingTextDisplay.innerHTML = selectedParagraph.split('').map(char => `<span>${char}</span>`).join('');
-        const spans = typingTextDisplay.querySelectorAll('span');
-        if (spans.length > 0) {
-            spans[0].classList.add('current');
+        // **NEW LOGIC** for display with newlines
+        typingTextDisplay.innerHTML = originalParagraphForTest
+            .split('')
+            .map(char => {
+                if (char === '\n') {
+                    return `<span class="newline"></span><br>`; 
+                }
+                const escapedChar = char.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                return `<span>${escapedChar}</span>`;
+            })
+            .join('');
+
+        const firstSpan = typingTextDisplay.querySelector('span:not(.newline)'); // Select first visible char
+        if (firstSpan) {
+            firstSpan.classList.add('current');
         }
 
         updateTimeDisplays();
@@ -7563,10 +7547,9 @@ document.addEventListener('DOMContentLoaded', () => {
         accuracyDisplay.innerText = '100%';
         totalWordsDisplay.innerText = '0';
 
-        // পজ/রিজিউম বাটন রিসেট করা
         if (pauseResumeTypingBtn) {
             pauseResumeTypingBtn.innerText = 'থামান';
-            pauseResumeTypingBtn.disabled = true; // টেস্ট শুরু না হওয়া পর্যন্ত নিষ্ক্রিয়
+            pauseResumeTypingBtn.disabled = true;
         }
     }
 
@@ -7578,7 +7561,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (totalTestTime > 0) {
             const remainingTime = totalTestTime - timeElapsed;
-            if (remainingTime <= 0) {
+            if (remainingTime < 0) {
                 remainingTimeDisplay.innerText = '০০:০০';
                 if (isTestActive) endTest();
                 return;
@@ -7590,16 +7573,11 @@ document.addEventListener('DOMContentLoaded', () => {
             remainingTimeDisplay.innerText = 'আনলিমিটেড';
         }
     }
-
-    // *** সংশোধিত ফাংশন: handleTypingInput ***
+    
+    // **পরিবর্তিত ফাংশন:** ইনপুট হ্যান্ডেল করার জন্য
     function handleTypingInput() {
         if (isPaused) return;
 
-        // *** নতুন সংযোজন: অটোমেটিক অক্ষর রিপ্লেসমেন্ট ***
-        replaceTypingCharacters(typingInput);
-        // *** সংযোজন শেষ ***
-
-        // প্রথম অক্ষর টাইপ করার সাথে সাথে টাইমার শুরু করুন
         if (!isTestActive && typingInput.value.length > 0) {
             startTimer();
             isTestActive = true;
@@ -7607,38 +7585,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const spans = Array.from(typingTextDisplay.querySelectorAll('span'));
-        const typedValue = typingInput.value;
+        const typedValue = typingInput.value.normalize('NFC');
         const typedLength = typedValue.length;
 
         let localCorrectChars = 0;
         let localIncorrectChars = 0;
 
-        // টাইপ করা সমস্ত অক্ষর পুনরায় মূল্যায়ন করুন
-        spans.forEach((charSpan, index) => {
-            charSpan.classList.remove('correct', 'incorrect', 'current');
+        for (let i = 0; i < originalParagraphForTest.length; i++) {
+            const charSpan = spans[i];
+            if (!charSpan) continue;
 
-            if (index < typedLength) {
-                const originalChar = charSpan.innerText;
-                const typedChar = typedValue[index];
-                
-                if (originalChar.normalize('NFC') === typedChar.normalize('NFC')) {
-                    charSpan.classList.add('correct');
+            charSpan.classList.remove('correct', 'incorrect', 'current');
+            const originalChar = originalParagraphForTest[i];
+
+            if (i < typedLength) {
+                const typedChar = typedValue[i];
+                if (originalChar === typedChar) {
                     localCorrectChars++;
+                    if (originalChar !== '\n') {
+                        charSpan.classList.add('correct');
+                    }
                 } else {
-                    charSpan.classList.add('incorrect');
                     localIncorrectChars++;
+                    if (originalChar !== '\n') {
+                        charSpan.classList.add('incorrect');
+                    }
                 }
             }
-        });
-
+        }
+        
         correctChars = localCorrectChars;
         incorrectChars = localIncorrectChars;
 
-        if (typedLength < spans.length) {
-            spans[typedLength].classList.add('current');
-        } 
-        
-        if (typedLength >= spans.length) {
+        if (typedLength < originalParagraphForTest.length) {
+            const currentSpan = spans[typedLength];
+            if (currentSpan && !currentSpan.classList.contains('newline')) {
+                currentSpan.classList.add('current');
+            }
+        }
+
+        if (typedLength >= originalParagraphForTest.length) {
             endTest();
         }
         
@@ -7661,7 +7647,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // পজ এবং রিজিউম ফাংশন
     function togglePauseResume() {
         if (!isTestActive) return;
-
         isPaused = !isPaused;
 
         if (isPaused) {
@@ -7678,7 +7663,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // *** সংশোধিত ফাংশন: updateStats ***
+    // **পরিবর্তিত ফাংশন:** পরিসংখ্যান আপডেট করার জন্য
     function updateStats() {
         const totalTypedChars = correctChars + incorrectChars;
         const accuracy = (totalTypedChars > 0) ? (correctChars / totalTypedChars) * 100 : 100;
@@ -7691,12 +7676,12 @@ document.addEventListener('DOMContentLoaded', () => {
             wpmDisplay.innerText = '0';
         }
         
-        const allOriginalWords = typingTextDisplay.innerText.split(/\s+/).filter(Boolean);
-        const typedWordsArray = typingInput.value.trim().split(/\s+/).filter(Boolean);
+        const allOriginalWords = originalParagraphForTest.split(/\s+/).filter(Boolean);
+        const typedWordsArray = typingInput.value.normalize('NFC').trim().split(/\s+/).filter(Boolean);
         
         let correctWordsCount = 0;
         typedWordsArray.forEach((typedWord, index) => {
-            if (index < allOriginalWords.length && typedWord.normalize('NFC') === allOriginalWords[index].normalize('NFC')) {
+            if (index < allOriginalWords.length && typedWord === allOriginalWords[index]) {
                 correctWordsCount++;
             }
         });
@@ -7748,17 +7733,13 @@ document.addEventListener('DOMContentLoaded', () => {
         typingInput.addEventListener('input', handleTypingInput);
     }
     
-    // *** নতুন সংযোজন: কাস্টম টেক্সট বক্সের জন্য ইভেন্ট লিসেনার ***
     if (customTextInputContainer) {
         customTextInputContainer.addEventListener('input', () => {
-            replaceTypingCharacters(customTextInputContainer);
-            // কাস্টম টেক্সট পরিবর্তন হলে টেস্ট রিসেট করুন
             if (textSelection.value === 'custom') {
                  initializeTest();
             }
         });
     }
-    // *** সংযোজন শেষ ***
 
     if (textSelection) {
         textSelection.addEventListener('change', (e) => {
@@ -7775,12 +7756,17 @@ document.addEventListener('DOMContentLoaded', () => {
         timeSelection.addEventListener('change', initializeTest);
     }
     
-    if (typingTestContent && typingTestContent.classList.contains('active')) {
+    // If the tab is already active on load, initialize it
+    if (document.getElementById('typingTestContent')?.classList.contains('active')) {
         initializeTest();
     }
  });
-//End Typing Script
-	
+
+
+// ====================================================================
+// End Typing Script
+// ====================================================================
+
         // ====================================================================
         // START: DATE AND TIME BANNER SCRIPT (নতুন যুক্ত করা হয়েছে)
         // ====================================================================
@@ -7886,35 +7872,46 @@ document.addEventListener('DOMContentLoaded', () => {
             'ذو الحجة': 'জিলহজ'
         };
 
-        function updateDateTimeBanner() {
+       function updateDateTimeBanner() {
             const bannerElement = document.getElementById('currentDateTimeBanner');
             if (!bannerElement) return;
 
             const now = new Date();
 
-            // প্রতি মিনিটের শুরুতে (0 সেকেন্ডে) ব্যানারটি ফেইড ইন করুন
+            // ব্যানার ফেড ইন/আউট করার জন্য
             if (now.getSeconds() === 0) {
                 bannerElement.style.opacity = '1';
             }
-            // প্রতি মিনিটের শেষে (59 সেকেন্ডে) ব্যানারটি ফেইড আউট করুন
             else if (now.getSeconds() === 59) {
                 bannerElement.style.opacity = '0';
             }
 
-            // Gregorian Date
-            const gregorianDay = now.getDate();
-            const gregorianMonth = now.toLocaleDateString('bn-BD', { month: 'long' });
-            const gregorianYear = now.getFullYear();
-            const gregorianDateString = `${gregorianDay} ${gregorianMonth} ${gregorianYear}`;
-            const dayOfWeekBengali = now.toLocaleDateString('bn-BD', { weekday: 'long' }); // সপ্তাহের দিন বাংলাতে
+            // ইংরেজি সংখ্যাকে বাংলা সংখ্যায় রূপান্তর করার জন্য ফাংশন
+            const toBengaliNumber = (num) => {
+                const numbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+                return String(num).split('').map(digit => {
+                    // এটি সংখ্যা কিনা তা পরীক্ষা করে
+                    if (!isNaN(parseInt(digit))) {
+                        return numbers[parseInt(digit)];
+                    }
+                    return digit; // সংখ্যা না হলে যেমন আছে তেমনই থাকবে
+                }).join('');
+            };
 
-            // Bengali Date (using existing getBengaliDate function)
+            // Gregorian Date (ইংরেজি তারিখ)
+            const gregorianDay = toBengaliNumber(now.getDate());
+            const gregorianMonth = now.toLocaleDateString('bn-BD', { month: 'long' });
+            const gregorianYear = toBengaliNumber(now.getFullYear());
+            const gregorianDateString = `${gregorianDay} ${gregorianMonth} ${gregorianYear}`;
+            const dayOfWeekBengali = now.toLocaleDateString('bn-BD', { weekday: 'long' });
+
+            // Bengali Date (বাংলা তারিখ)
             const bengaliDateInfo = getBengaliDate(now);
             const bengaliDateString = bengaliDateInfo.formatted;
 
-            // Hijri Date (using existing logic)
+            // Hijri Date (হিজরি তারিখ)
             let hijriCalculationDate = new Date(now);
-            hijriCalculationDate.setDate(hijriCalculationDate.getDate() - 2); // স্থানীয় কনভেনশন অনুযায়ী তারিখ সামঞ্জস্য করুন
+            hijriCalculationDate.setDate(hijriCalculationDate.getDate() - 2); // স্থানীয় রীতি অনুযায়ী তারিখ সামঞ্জস্য
             const hijriDateFormatter = new Intl.DateTimeFormat('ar-SA', {
                 calendar: 'islamic',
                 year: 'numeric',
@@ -7939,11 +7936,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const hijriMonthBengali = hijriMonthArabicToBengali[hijriMonthArabic] || hijriMonthArabic;
             const hijriDateString = `${hijriDay} ${hijriMonthBengali} ${hijriYear} হিজরি`;
 
-            // Time
+            // Time (সময়)
             const timeString = now.toLocaleTimeString('bn-BD', {
                 hour: '2-digit',
                 minute: '2-digit',
-				second: '2-digit', // সেকেন্ড যোগ করা হয়েছে
+				second: '2-digit',
                 hour12: true,
                 timeZone: 'Asia/Dhaka'
             });
