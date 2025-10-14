@@ -7284,14 +7284,15 @@ input:checked + .slider:before {
             <h3 class="text-xl font-bold text-gray-700 dark:text-gray-200 mt-8 mb-4 text-center">সেভ করা ইনভয়েজের তালিকা</h3>
             <div id="saved-invoices-container" class="max-h-96 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                 <table id="saved-invoices-table" class="w-full text-left hidden">
-                    <thead class="bg-gray-200 dark:bg-gray-700 sticky top-0">
-                        <tr>
-                            <th class="p-2">তারিখ</th>
-                            <th class="p-2">ক্রেতা</th>
-                            <th class="p-2 text-right">সর্বমোট</th>
-                            <th class="p-2 text-center">অ্যাকশন</th>
-                        </tr>
-                    </thead>
+					<thead class="bg-gray-200 dark:bg-gray-700 sticky top-0">
+						<tr>
+							<th class="p-2">তারিখ</th>
+							<th class="p-2">ক্রেতা</th>
+							<th class="p-2 text-right">জমা</th>
+							<th class="p-2 text-right">বর্তমান বকেয়া</th>
+							<th class="p-2 text-center">অ্যাকশন</th>
+						</tr>
+					</thead>
                     <tbody>
                         <!-- Saved invoice rows go here -->
                     </tbody>
@@ -15470,51 +15471,68 @@ function initializeInvoiceTab() {
         // Calculation update triggers a save
         saveCurrentInvoiceState();
     }
+	
+	async function handleSaveToList() {
+		const invoiceData = JSON.parse(localStorage.getItem('currentInvoiceState')) || {};
 
-    async function renderInvoiceList() {
-        const invoices = await getAllInvoices();
-        const tableBody = savedInvoicesTable.querySelector('tbody');
-        tableBody.innerHTML = '';
-
-        if (invoices.length === 0) {
-            savedInvoicesTable.classList.add('hidden');
-            noInvoicesMessage.classList.remove('hidden');
-        } else {
-            noInvoicesMessage.classList.add('hidden');
-            savedInvoicesTable.classList.remove('hidden');
-
-            invoices.forEach(inv => {
-                const row = document.createElement('tr');
-                row.className = 'border-b dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800';
-                row.innerHTML = `
-                    <td class="p-2">${inv.date}</td>
-                    <td class="p-2">${inv.customerName}</td>
-                    <td class="p-2 text-right">${inv.grandTotal.toLocaleString('bn-BD', {minimumFractionDigits: 2})}</td>
-                    <td class="p-2 text-center">
-                        <button class="load-saved-invoice-btn text-blue-500 hover:text-blue-700 mr-4 font-semibold" data-id="${inv.id}">লোড</button>
-                        <button class="delete-saved-invoice-btn text-red-500 hover:text-red-700 font-semibold" data-id="${inv.id}">মুছুন</button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-    }
-    
-     async function handleSaveToList() {
-        const invoiceData = JSON.parse(localStorage.getItem('currentInvoiceState')) || {};
-        const grandTotal = parseFloat(document.getElementById('grand-total').textContent.replace(/,/g, '')) || 0;
-
-        const dataToSave = {
-            date: document.getElementById('invoice-date').textContent,
-            customerName: document.getElementById('customer-name').textContent,
-            grandTotal: grandTotal,
-            fullData: invoiceData 
+        // Helper to convert Bengali numerals to English and parse
+        const bengaliNumerals = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        const parseBengaliNumber = (bengaliStr) => {
+            if (!bengaliStr) return 0;
+            const englishStr = bengaliStr.toString().split('').map(char => {
+                const index = bengaliNumerals.indexOf(char);
+                return index !== -1 ? index : char;
+            }).join('');
+            return parseFloat(englishStr.replace(/[^\d.-]/g, '')) || 0;
         };
         
-        await addInvoice(dataToSave);
-        showCustomAlert('ইনভয়েজ সফলভাবে সেভ করা হয়েছে!');
-        await renderInvoiceList();
-    }
+		const grandTotal = parseBengaliNumber(document.getElementById('grand-total').textContent);
+		const paidAmount = parseFloat(document.getElementById('paid-amount').value) || 0;
+		const finalDue = parseBengaliNumber(document.getElementById('final-due').textContent);
+
+		const dataToSave = {
+			date: document.getElementById('invoice-date').textContent,
+			customerName: document.getElementById('customer-name').textContent,
+			grandTotal: grandTotal,
+			paidAmount: paidAmount, // জমা করা টাকার পরিমাণ সেভ করা হচ্ছে
+			finalDue: finalDue,     // বর্তমান ডিউ সেভ করা হচ্ছে
+			fullData: invoiceData
+		};
+		
+		await addInvoice(dataToSave);
+		showCustomAlert('ইনভয়েজ সফলভাবে সেভ করা হয়েছে!');
+		await renderInvoiceList();
+	}
+
+	async function renderInvoiceList() {
+		const invoices = await getAllInvoices();
+		const tableBody = savedInvoicesTable.querySelector('tbody');
+		tableBody.innerHTML = '';
+
+		if (invoices.length === 0) {
+			savedInvoicesTable.classList.add('hidden');
+			noInvoicesMessage.classList.remove('hidden');
+		} else {
+			noInvoicesMessage.classList.add('hidden');
+			savedInvoicesTable.classList.remove('hidden');
+
+			invoices.forEach(inv => {
+				const row = document.createElement('tr');
+				row.className = 'border-b dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800';
+				row.innerHTML = `
+					<td class="p-2">${inv.date}</td>
+					<td class="p-2">${inv.customerName}</td>
+					<td class="p-2 text-right">${(inv.paidAmount || 0).toLocaleString('bn-BD', {minimumFractionDigits: 2})}</td>
+					<td class="p-2 text-right">${(inv.finalDue || 0).toLocaleString('bn-BD', {minimumFractionDigits: 2})}</td>
+					<td class="p-2 text-center">
+						<button class="load-saved-invoice-btn text-blue-500 hover:text-blue-700 mr-4 font-semibold" data-id="${inv.id}">লোড</button>
+						<button class="delete-saved-invoice-btn text-red-500 hover:text-red-700 font-semibold" data-id="${inv.id}">মুছুন</button>
+					</td>
+				`;
+				tableBody.appendChild(row);
+			});
+		}
+	}
 
 
     // --- Event Listeners ---
