@@ -15452,15 +15452,21 @@ function initializeInvoiceTab() {
             if (itemsTableBody.rows.length === 0) addNewItemRow();
             return;
         }
+
         const state = JSON.parse(stateJSON);
         if (state.logoSrc) invoiceLogo.src = state.logoSrc;
+
         for (const id in state.fields) {
             const el = document.getElementById(id);
             if (el) {
-                if(el.matches('[contenteditable="true"]')) el.innerHTML = state.fields[id];
-                else el.value = toBengali(state.fields[id]);
+                if(el.matches('[contenteditable="true"]')) {
+                    el.innerHTML = toBengali(state.fields[id]);
+                } else {
+                    el.value = toBengali(state.fields[id]);
+                }
             }
         }
+        
         itemsTableBody.innerHTML = '';
         if (state.items && state.items.length > 0) {
             state.items.forEach(item => addNewItemRow(item));
@@ -15523,6 +15529,37 @@ function initializeInvoiceTab() {
             invoiceDateEl.textContent = today.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' });
         }
     }
+    
+    function loadSelectedInvoice(invoiceState) {
+        if (!invoiceState || !invoiceState.fullData) return showCustomAlert('ইনভয়েজ ডেটা লোড করা যায়নি।');
+
+        const state = invoiceState.fullData;
+        if (state.logoSrc) invoiceLogo.src = state.logoSrc;
+
+        for (const id in state.fields) {
+            const el = document.getElementById(id);
+            if (el) {
+                if (el.matches('[contenteditable="true"]')) {
+                    el.innerHTML = toBengali(state.fields[id]);
+                } else {
+                    el.value = toBengali(state.fields[id]);
+                }
+            }
+        }
+        
+        itemsTableBody.innerHTML = '';
+        if (state.items && state.items.length > 0) {
+            state.items.forEach(item => addNewItemRow(item));
+        } else {
+            addNewItemRow();
+        }
+
+        updateInvoiceTotals();
+        showCustomAlert(`ইনভয়েজ #${toBengali(invoiceState.id)} (${invoiceState.customerName}) লোড করা হয়েছে।`);
+        window.scrollTo(0, 0);
+    }
+
+    // --- Core Functions ---
 
     function addNewItemRow(item = { name: '', qty: '', price: '', discount: '' }) {
         const newRow = document.createElement('tr');
