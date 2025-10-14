@@ -15429,7 +15429,7 @@ async function checkAndClearOldInvoices() {
                 
                 const nameSpan = document.createElement('span');
                 nameSpan.textContent = p.name;
-                nameSpan.onclick = () => {
+                item.onclick = () => {
                     targetInput.value = p.name;
                     const row = targetInput.closest('tr');
                     row.querySelector('.item-price').value = toBengali(p.price);
