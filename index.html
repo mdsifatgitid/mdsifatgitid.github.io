@@ -5209,6 +5209,12 @@ input:checked + .slider:before {
 
 /* Print Styles */
 @media print {
+    #invoice-comments {
+        background-color: transparent !important;
+        border: 1px solid #eee !important; /* প্রিন্টের জন্য একটি হালকা বর্ডার */
+        padding: 8px !important;
+        min-height: 40px !important;
+    }
     body * {
         visibility: hidden;
         -webkit-print-color-adjust: exact !important;
@@ -7263,7 +7269,10 @@ input:checked + .slider:before {
                 </div>
             </div>
         </section>
-
+        <!-- Notes/Comments Section -->
+        <section class="mt-8 border-t pt-4 border-gray-200 dark:border-gray-700">
+            <div contenteditable="true" id="invoice-comments" class="text-sm text-gray-600 dark:text-gray-400 outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-2 min-h-[60px] bg-gray-50 dark:bg-gray-800 w-full">এখানে মন্তব্য যুক্ত করুন...</div>
+        </section>
         <!-- Footer / Actions -->
         <footer class="mt-12 text-center no-print">
             <button id="print-invoice-btn" class="px-6 py-3 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition-colors">
@@ -15542,6 +15551,7 @@ async function checkAndClearOldInvoices() {
             }
             document.getElementById('customer-name').innerHTML = 'ক্রেতার নাম';
             document.getElementById('customer-address').innerHTML = 'ক্রেতার ঠিকানা';
+			document.getElementById('invoice-comments').innerHTML = 'মন্তব্য:';
             document.getElementById('extra-discount').value = '';
             document.getElementById('prev-due').value = '';
             document.getElementById('paid-amount').value = '';
@@ -15555,21 +15565,29 @@ async function checkAndClearOldInvoices() {
     
     function loadSelectedInvoice(invoiceState) {
         if (!invoiceState || !invoiceState.fullData) return showCustomAlert('ইনভয়েজ ডেটা লোড করা যায়নি।');
+
         const state = invoiceState.fullData;
         if (state.logoSrc) invoiceLogo.src = state.logoSrc;
+
         for (const id in state.fields) {
             const el = document.getElementById(id);
             if (el) {
-                if (el.matches('[contenteditable="true"]')) el.innerHTML = state.fields[id];
-                else el.value = toBengali(state.fields[id]);
+                if (el.matches('[contenteditable="true"]')) {
+                    // সংশোধন: এখানে toBengali() যুক্ত করা হয়েছে
+                    el.innerHTML = toBengali(state.fields[id]);
+                } else {
+                    el.value = toBengali(state.fields[id]);
+                }
             }
         }
+        
         itemsTableBody.innerHTML = '';
         if (state.items && state.items.length > 0) {
             state.items.forEach(item => addNewItemRow(item));
         } else {
             addNewItemRow();
         }
+
         updateInvoiceTotals();
         showCustomAlert(`ইনভয়েজ #${toBengali(invoiceState.id)} (${invoiceState.customerName}) লোড করা হয়েছে।`);
         window.scrollTo(0, 0);
@@ -15595,6 +15613,7 @@ async function checkAndClearOldInvoices() {
             const el = document.getElementById(id);
             if (el) {
                 if (el.matches('[contenteditable="true"]')) {
+                    // সংশোধন: এখানে toBengali() যুক্ত করা হয়েছে
                     el.innerHTML = toBengali(state.fields[id]);
                 } else {
                     el.value = toBengali(state.fields[id]);
