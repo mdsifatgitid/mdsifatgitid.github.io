@@ -5266,6 +5266,124 @@ input:checked + .slider:before {
 /* END: Invoice Tab Styles */
 /* ======================================================== */
 
+/* ======================================================== */
+/* START: Color Picker Tab Styles (রঙ বাছাইকারী) */
+/* ======================================================== */
+/* নির্দেশনা: এই সম্পূর্ণ CSS কোডটি আপনার HTML ফাইলের <style> ট্যাগের ভেতরে যেকোনো জায়গায় যুক্ত করুন। */
+
+.color-picker-container {
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 500px;
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+.dark .color-picker-container {
+    background-color: #2d3748;
+}
+.color-picker-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+.color-picker-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+.color-picker-label {
+    font-weight: 600;
+    color: #374151;
+}
+.dark .color-picker-label {
+    color: #cbd5e0;
+}
+#colorPickerInput {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 80px;
+    height: 80px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+#colorPickerInput::-webkit-color-swatch {
+    border-radius: 50%;
+    border: 4px solid #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+#colorPickerInput::-moz-color-swatch {
+    border-radius: 50%;
+    border: 4px solid #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+.color-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 16px;
+    border: 2px solid #e5e7eb;
+    transition: background-color 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+.dark .color-preview {
+    border-color: #4b5563;
+}
+.color-values {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.color-value-group {
+    text-align: left;
+}
+.color-value-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #4b5569;
+}
+.dark .color-value-group label {
+    color: #9ca3af;
+}
+.input-with-button {
+    display: flex;
+    gap: 8px;
+}
+.input-with-button input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    background-color: #f9fafb;
+}
+.dark .input-with-button input {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #f3f4f6;
+}
+.copy-color-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background-color: #3b82f6;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.copy-color-btn:hover {
+    background-color: #2563eb;
+}
+/* ======================================================== */
+/* END: Color Picker Tab Styles */
+/* ======================================================== */
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -5380,6 +5498,7 @@ input:checked + .slider:before {
 				<button id="holidayListTab" class="tab-button rounded-xl">ছুটির তালিকা</button>
 				<button id="zakatCalcTab" class="tab-button rounded-xl">যাকাতের হিসাব</button>
 				<button id="qrCodeTab" class="tab-button rounded-xl">কিউআর কোড</button>
+				<button id="colorPickerTab" class="tab-button rounded-xl">রঙ বাছাইকারী</button>
 				<button id="invoiceTab" class="tab-button rounded-xl">ইনভয়েজ</button>
 				<button id="emergencyNumbersTab" class="tab-button rounded-xl">জরুরি নম্বর</button>
 				<button id="healthLifestyleTab" class="tab-button rounded-xl">স্বাস্থ্য ও জীবনধারা</button>
@@ -7315,6 +7434,48 @@ input:checked + .slider:before {
 <!-- ======================================================== -->
 <!-- END: Invoice Tab Content -->
 <!-- ======================================================== -->
+
+<!-- নতুন: রঙ বাছাইকারী ট্যাব -->
+<div id="colorPickerContent" class="calculator-content">
+    <div class="color-picker-container">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">রঙ বাছাইকারী (Color Picker)</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">ওয়েব ডেভেলপার এবং ডিজাইনারদের জন্য একটি সহায়ক টুল। রঙ বাছাই করুন এবং HEX, RGB ও HSL কোডের মধ্যে রূপান্তর করুন।</p>
+        <div class="color-picker-main">
+            <div class="color-picker-controls">
+                <label for="colorPickerInput" class="color-picker-label">রঙ বাছাই করুন</label>
+                <input type="color" id="colorPickerInput" value="#3b82f6">
+            </div>
+            <div id="colorPreview" class="color-preview"></div>
+        </div>
+        <div class="color-values">
+            <!-- HEX -->
+            <div class="color-value-group">
+                <label for="hexValue">HEX</label>
+                <div class="input-with-button">
+                    <input type="text" id="hexValue" readonly>
+                    <button class="copy-color-btn" data-target="hexValue">কপি</button>
+                </div>
+            </div>
+            <!-- RGB -->
+            <div class="color-value-group">
+                <label for="rgbValue">RGB</label>
+                <div class="input-with-button">
+                    <input type="text" id="rgbValue" readonly>
+                    <button class="copy-color-btn" data-target="rgbValue">কপি</button>
+                </div>
+            </div>
+            <!-- HSL -->
+            <div class="color-value-group">
+                <label for="hslValue">HSL</label>
+                <div class="input-with-button">
+                    <input type="text" id="hslValue" readonly>
+                    <button class="copy-color-btn" data-target="hslValue">কপি</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
 </div>
@@ -9579,6 +9740,8 @@ try {
 				const donateContent = document.getElementById('donateContent');
 				const invoiceTab = document.getElementById('invoiceTab');
 				const invoiceContent = document.getElementById('invoiceContent');
+				const colorPickerTab = document.getElementById('colorPickerTab');
+				const colorPickerContent = document.getElementById('colorPickerContent');
 
 
 //pest button code start
@@ -9835,7 +9998,7 @@ window.addEventListener('click', (e) => {
 function showTab(tabId) {
     // সমস্ত ট্যাব এর নাম এবং ট্যাব এর কন্টেন্ট নাম একানে বসাতে হয়, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয় বা বসাতে হয় ।
     const tabs = [
-        basicCalcTab,
+        basicCalcTab,colorPickerTab,
 		ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,
 		translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
 		qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab,
@@ -9843,7 +10006,7 @@ function showTab(tabId) {
 		allFeaturesTab
     ];
     const contents = [
-        basicCalculatorContent,
+        basicCalculatorContent,colorPickerContent,
 		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent, newsContent, converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent,
 		weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
@@ -9996,6 +10159,11 @@ function showTab(tabId) {
 			activeContent = quizContent;
 			initializeQuiz(); // এই ফাংশন কুইজ শুরু করবে
 		break;
+		    case 'colorPicker':
+				activeTab = colorPickerTab;
+				activeContent = colorPickerContent;
+				initializeColorPicker(); // ট্যাব দেখানোর সময় ফাংশনটি কল করুন
+        break;
 		case 'donate':
 			activeTab = donateTab;
 			activeContent = donateContent;
@@ -10054,6 +10222,7 @@ function showTab(tabId) {
 				if (daysObservancesTab) daysObservancesTab.addEventListener('click', () => showTab('daysObservances'));
 				if (holidayListTab) holidayListTab.addEventListener('click', () => showTab('holiday'));
 				if (invoiceTab) invoiceTab.addEventListener('click', () => showTab('invoice'));
+				if (colorPickerTab) colorPickerTab.addEventListener('click', () => showTab('colorPicker'));
 
                 // API কী সেটিং বোতাম এবং মডেল লজিক
                 if (setApiKeyBtn) {
@@ -12479,61 +12648,72 @@ async function initializeNotepad() {
         downloadFile(htmlContent, 'bangla-toolbox-notes.html', 'text/html');
     };
 
-    const findInNotepad = () => {
-        const query = findInput.value.trim();
-        
-        taskList.querySelectorAll('mark').forEach(mark => {
-            const parent = mark.parentNode;
-            if (parent) {
-                parent.replaceChild(document.createTextNode(mark.textContent), mark);
-                parent.normalize();
-            }
-        });
-
-        if (!query) {
-            lastSearchQuery = '';
-            return;
+const findInNotepad = () => {
+    const query = findInput.value.trim();
+    
+    // Remove previous highlights
+    taskList.querySelectorAll('mark').forEach(mark => {
+        const parent = mark.parentNode;
+        if (parent) {
+            parent.replaceChild(document.createTextNode(mark.textContent), mark);
+            parent.normalize(); // Merges adjacent text nodes
         }
-        if (query.toLowerCase() === lastSearchQuery.toLowerCase()) return;
-        lastSearchQuery = query;
+    });
 
-        const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-        let matchFound = false;
+    if (!query) {
+        lastSearchQuery = '';
+        return; // Exit if query is empty
+    }
 
-        taskList.querySelectorAll('.task-text, .task-image-caption').forEach(task => {
-            const treeWalker = document.createTreeWalker(task, NodeFilter.SHOW_TEXT);
-            let currentNode;
-            const nodesToReplace = [];
+    // Avoid re-searching for the same query
+    if (query.toLowerCase() === lastSearchQuery.toLowerCase()) return;
+    lastSearchQuery = query;
 
-            while (currentNode = treeWalker.nextNode()) {
-                const text = currentNode.nodeValue;
-                if (regex.test(text)) {
-                    nodesToReplace.push(currentNode);
-                }
+    const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    let matchCount = 0;
+
+    taskList.querySelectorAll('.task-text, .task-image-caption').forEach(task => {
+        const treeWalker = document.createTreeWalker(task, NodeFilter.SHOW_TEXT);
+        let currentNode;
+        const nodesToReplace = [];
+
+        while (currentNode = treeWalker.nextNode()) {
+            if (regex.test(currentNode.nodeValue)) {
+                nodesToReplace.push(currentNode);
             }
-            
-            nodesToReplace.forEach(node => {
-                const parent = node.parentNode;
-                const fragment = document.createDocumentFragment();
-                let lastIndex = 0;
-                node.nodeValue.replace(regex, (match, offset) => {
-                    fragment.appendChild(document.createTextNode(node.nodeValue.substring(lastIndex, offset)));
-                    const mark = document.createElement('mark');
-                    mark.textContent = match;
-                    fragment.appendChild(mark);
-                    lastIndex = offset + match.length;
-                    if (!matchFound) {
-                        setTimeout(() => mark.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
-                        matchFound = true;
-                    }
-                });
-                fragment.appendChild(document.createTextNode(node.nodeValue.substring(lastIndex)));
-                parent.replaceChild(fragment, node);
-            });
-        });
+        }
+        
+        nodesToReplace.forEach(node => {
+            const parent = node.parentNode;
+            if (!parent) return;
 
-        if (!matchFound) showCustomAlert("কোনো ফলাফল পাওয়া যায়নি।");
-    };
+            const fragment = document.createDocumentFragment();
+            let lastIndex = 0;
+            node.nodeValue.replace(regex, (match, offset) => {
+                fragment.appendChild(document.createTextNode(node.nodeValue.substring(lastIndex, offset)));
+                const mark = document.createElement('mark');
+                mark.style.backgroundColor = '#ffda79'; // Custom highlight color
+                mark.style.color = '#000';
+                mark.textContent = match;
+                fragment.appendChild(mark);
+                lastIndex = offset + match.length;
+                matchCount++;
+            });
+            fragment.appendChild(document.createTextNode(node.nodeValue.substring(lastIndex)));
+            parent.replaceChild(fragment, node);
+        });
+    });
+
+    if (matchCount > 0) {
+        showCustomAlert(`${matchCount.toLocaleString('bn-BD')} টি মিল পাওয়া গেছে।`);
+        const firstMatch = taskList.querySelector('mark');
+        if (firstMatch) {
+            firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    } else {
+        showCustomAlert("কোনো ফলাফল পাওয়া যায়নি।");
+    }
+};
 
     if(exportTxtBtn) exportTxtBtn.addEventListener('click', exportNotepadAsTXT);
     if(exportHtmlBtn) exportHtmlBtn.addEventListener('click', exportNotepadAsHTML);
@@ -15816,6 +15996,86 @@ async function checkAndClearOldInvoices() {
 // END: INVOICE TAB SCRIPT
 // ====================================================================
 
+/* ==================================================================== */
+/*  শুরু: নতুন "রঙ বাছাইকারী" ট্যাবের জন্য JavaScript ফাংশন */
+/* ==================================================================== */
+
+function initializeColorPicker() {
+    const colorPickerInput = document.getElementById('colorPickerInput');
+    const colorPreview = document.getElementById('colorPreview');
+    const hexValueInput = document.getElementById('hexValue');
+    const rgbValueInput = document.getElementById('rgbValue');
+    const hslValueInput = document.getElementById('hslValue');
+    const copyButtons = document.querySelectorAll('.copy-color-btn');
+
+    if (!colorPickerInput) return;
+
+    // --- Color Conversion Functions ---
+    function hexToRgb(hex) {
+        let r = 0, g = 0, b = 0;
+        if (hex.length == 4) {
+            r = "0x" + hex[1] + hex[1]; g = "0x" + hex[2] + hex[2]; b = "0x" + hex[3] + hex[3];
+        } else if (hex.length == 7) {
+            r = "0x" + hex[1] + hex[2]; g = "0x" + hex[3] + hex[4]; b = "0x" + hex[5] + hex[6];
+        }
+        return { r: +r, g: +g, b: +b };
+    }
+
+    function rgbToHsl(r, g, b) {
+        r /= 255; g /= 255; b /= 255;
+        let max = Math.max(r, g, b), min = Math.min(r, g, b);
+        let h, s, l = (max + min) / 2;
+        if (max == min) {
+            h = s = 0;
+        } else {
+            let d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch (max) {
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
+            }
+            h /= 6;
+        }
+        return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+    }
+    
+    function updateAllValues(source, value) {
+        let hex = value;
+        const rgb = hexToRgb(hex);
+        const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+
+        if(hex && rgb && hsl) {
+            colorPickerInput.value = hex;
+            hexValueInput.value = hex.toUpperCase();
+            rgbValueInput.value = `${rgb.r}, ${rgb.g}, ${rgb.b}`;
+            hslValueInput.value = `${hsl.h}, ${hsl.s}%, ${hsl.l}%`;
+            colorPreview.style.backgroundColor = hex;
+        }
+    }
+
+    // --- Event Listeners ---
+    colorPickerInput.addEventListener('input', (e) => updateAllValues('picker', e.target.value));
+    
+    copyButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const targetId = e.target.dataset.target;
+            const inputToCopy = document.getElementById(targetId);
+            if (inputToCopy && inputToCopy.value) {
+                navigator.clipboard.writeText(inputToCopy.value).then(() => {
+                    showCustomAlert(`${targetId.toUpperCase()} মান কপি করা হয়েছে!`);
+                });
+            }
+        });
+    });
+
+    // Initial call
+    updateAllValues('picker', colorPickerInput.value);
+}
+
+/* ==================================================================== */
+/*  শেষ: নতুন "রঙ বাছাইকারী" ট্যাবের জন্য JavaScript ফাংশন */
+/* ==================================================================== */
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
         window.onload = function() {
