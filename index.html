@@ -5394,7 +5394,9 @@ input:checked + .slider:before {
     transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 50; /* Ensure sidebar is on top */
 }
-
+.dark #sidebar {
+    background-color: #1f2937 !important; /* Tailwind CSS-এর bg-gray-800 এর রঙ */
+}
 #sidebarOverlay { 
     position: fixed;
     top: 0;
