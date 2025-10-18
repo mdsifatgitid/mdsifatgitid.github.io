@@ -5385,6 +5385,122 @@ input:checked + .slider:before {
 /* END: Color Picker Tab Styles */
 /* ======================================================== */
 
+
+/* ======================================================== */
+/* START: Sidebar */
+/* ======================================================== */
+/* Sidebar Styles */
+#sidebar {
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 50; /* Ensure sidebar is on top */
+}
+
+#sidebarOverlay { 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%; /* পুরো প্রস্থ কভার করে */
+    height: 100%; /* পুরো উচ্চতা কভার করে */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    display: none; /* Initially hidden */
+    z-index: 40; /* Should be below sidebar but above main content */
+    cursor: pointer;
+}
+body.sidebar-open #sidebar {
+    left: 0;
+}
+body.sidebar-open #sidebarOverlay {
+    display: block; /* Visible when sidebar is open */
+}
+/* Custom scrollbar for sidebar */
+#sidebar-tool-list::-webkit-scrollbar {
+    width: 6px;
+}
+#sidebar-tool-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+.dark #sidebar-tool-list::-webkit-scrollbar-track {
+    background: #4b5563;
+}
+#sidebar-tool-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+#sidebar-tool-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Dashboard Styles */
+.dashboard-card {
+    background-color: #ffffff;
+    color: #3f51b5;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: grab; /* Indicates it's draggable */
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    border: 1px solid #e0e7ff;
+    user-select: none; /* Prevent text selection while dragging */
+}
+.dark .dashboard-card {
+    background-color: #2d3748;
+    color: #cbd5e0;
+    border-color: #4a5568;
+}
+.dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+.dashboard-card .remove-from-dashboard {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    background-color: #ef4444;
+    color: white;
+    border-radius: 50%;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.2s, transform 0.2s;
+}
+.dark .dashboard-card .remove-from-dashboard {
+    border-color: #2d3748;
+}
+.dashboard-card:hover .remove-from-dashboard {
+    opacity: 1;
+    transform: scale(1);
+}
+#dashboard-grid.drag-over {
+    background-color: #e0e7ff;
+    border-color: #3f51b5;
+}
+.dark #dashboard-grid.drag-over {
+    background-color: #4a5563;
+    border-color: #a5b4fc;
+}
+
+/* Draggable item style */
+.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+    border: 2px dashed #3f51b5 !important;
+}
+/* ======================================================== */
+/* End: Sidebar */
+/* ======================================================== */
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
 </head>
@@ -5466,20 +5582,21 @@ input:checked + .slider:before {
 	<button id="textAssistantTab" class="tab-button rounded-xl">টেক্সট অ্যাসিস্ট্যান্ট</button>
 	<button id="converterTab" class="tab-button rounded-xl">কনভার্টার</button>
 	<button id="prayerTimeTab" class="tab-button rounded-xl">নামাজের সময়সূচি</button>
-	<button id="newsTab" class="tab-button rounded-xl">সাম্প্রতিক খবর</button>
     <button id="translatorTab" class="tab-button rounded-xl">ট্রান্সলেটর</button>
 	<button id="wordCounterTab" class="tab-button rounded-xl">ওয়ার্ড কাউন্টার</button>
 	<button id="wordMeaningTab" class="tab-button rounded-xl">শব্দের অর্থ</button>
     <button id="spellCheckTab" class="tab-button rounded-xl">বানান সংশোধন</button>
     <button id="textBeautifierTab" class="tab-button rounded-xl">লেখা সাজানো</button>
-	<button id="typingTestTab" class="tab-button rounded-xl">টাইপিং টেস্ট</button>
 	<button id="imageToTextTab" class="tab-button rounded-xl">ছবি থেকে লেখা</button>
+	<button id="typingTestTab" class="tab-button rounded-xl">টাইপিং টেস্ট</button>
 	<button id="sttTab" class="tab-button rounded-xl">কথা থেকে লেখা</button>
     <button id="ttsTab" class="tab-button rounded-xl">লেখা থেকে কথা</button>
 	<button id="mapTab" class="tab-button rounded-xl">গুগল ম্যাপ</button>
     <button id="weatherTab" class="tab-button rounded-xl">আবহাওয়া</button>
 	<button id="measurementTab" class="tab-button rounded-xl">পরিমাপ</button>
 	<button id="notepadTab" class="tab-button rounded-xl">নোটপ্যাড</button>
+	<button id="dashboardTab" class="tab-button rounded-xl">ড্যাশবোর্ড</button>
+
     
     <!-- নতুন: আরও মেনু (ড্রপডাউন) -->
     <div class="tab-buttons">
@@ -5494,6 +5611,7 @@ input:checked + .slider:before {
 				<button id="clockTab" class="tab-button rounded-xl">ঘড়ি</button>
 				<button id="playerTab" class="tab-button rounded-xl">প্লেয়ার</button>
 				<button id="quizTab" class="tab-button rounded-xl">কুইজ</button>
+				<button id="newsTab" class="tab-button rounded-xl">সাম্প্রতিক খবর</button>
 				<button id="daysObservancesTab" class="tab-button rounded-xl">দিবসসমূহ</button>
 				<button id="holidayListTab" class="tab-button rounded-xl">ছুটির তালিকা</button>
 				<button id="zakatCalcTab" class="tab-button rounded-xl">যাকাতের হিসাব</button>
@@ -7475,6 +7593,18 @@ input:checked + .slider:before {
         </div>
     </div>
 </div>
+
+<!-- Start Dashboard Content -->
+<div id="dashboardContent" class="calculator-content">
+    <div class="p-4 md:p-6">
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">আপনার কাস্টম ড্যাশবোর্ড</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">আপনার সবচেয়ে বেশি ব্যবহৃত টুলগুলোকে এখানে ড্র্যাগ করে এনে সাজিয়ে রাখুন। ড্যাশবোর্ড থেকে সরাতে চাইলে আইটেমের উপরের ডানদিকের 'x' বাটনে ক্লিক করুন।</p>
+        <div id="dashboard-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-4 min-h-[200px] bg-gray-100 dark:bg-gray-700/50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 transition-colors duration-300">
+            <!-- Draggable items will be dropped here -->
+        </div>
+    </div>
+</div>
+<!-- End Dashboard Content -->
 
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
@@ -9998,7 +10128,7 @@ window.addEventListener('click', (e) => {
 function showTab(tabId) {
     // সমস্ত ট্যাব এর নাম এবং ট্যাব এর কন্টেন্ট নাম একানে বসাতে হয়, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয় বা বসাতে হয় ।
     const tabs = [
-        basicCalcTab,colorPickerTab,
+        basicCalcTab,colorPickerTab, dashboardTab,
 		ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,
 		translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
 		qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab,
@@ -10006,7 +10136,7 @@ function showTab(tabId) {
 		allFeaturesTab
     ];
     const contents = [
-        basicCalculatorContent,colorPickerContent,
+        basicCalculatorContent,colorPickerContent,dashboardContent,
 		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent, newsContent, converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent,
 		weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
@@ -10176,6 +10306,10 @@ function showTab(tabId) {
             activeTab = allFeaturesTab;
             activeContent = allFeaturesContent;
             break;
+		case 'dashboard':
+			activeTab = dashboardTab;
+			activeContent = dashboardContent;
+		break;
     }
 
 			if (activeTab) activeTab.classList.add('active');
@@ -10223,6 +10357,7 @@ function showTab(tabId) {
 				if (holidayListTab) holidayListTab.addEventListener('click', () => showTab('holiday'));
 				if (invoiceTab) invoiceTab.addEventListener('click', () => showTab('invoice'));
 				if (colorPickerTab) colorPickerTab.addEventListener('click', () => showTab('colorPicker'));
+				if (dashboardTab) dashboardTab.addEventListener('click', () => showTab('dashboard'));
 
                 // API কী সেটিং বোতাম এবং মডেল লজিক
                 if (setApiKeyBtn) {
@@ -16077,6 +16212,328 @@ function initializeColorPicker() {
 /*  শেষ: নতুন "রঙ বাছাইকারী" ট্যাবের জন্য JavaScript ফাংশন */
 /* ==================================================================== */
 
+
+// ====================================================================
+// START: NEW SIDEBAR, DASHBOARD & INTERACTIVITY SCRIPT (UPDATED)
+// ====================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- Initialize all new features ---
+    initializeSidebar();
+    initializeDraggableDashboard();
+    makeAllFeaturesInteractive();
+
+    // --- Sidebar Functionality (Sidebar Close Button Added) ---
+    function initializeSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarCloseBtn = document.getElementById('sidebarClose'); // নতুন ক্লোজ বাটন
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarSearch = document.getElementById('sidebarSearch');
+        const toolList = document.getElementById('sidebar-tool-list');
+
+        if (!sidebar || !sidebarToggle || !sidebarOverlay || !sidebarSearch || !toolList || !sidebarCloseBtn) return;
+        
+        // Populate the tool list from existing tab buttons
+        const tabButtons = document.querySelectorAll('.tab-button');
+        if (toolList.children.length === 0) { // Populate only once
+            tabButtons.forEach(button => {
+                const buttonText = button.textContent.trim();
+                // ড্যাশবোর্ড বাটনটি সাইডবারে লিস্ট হিসেবে যোগ করা হচ্ছে না
+                if (button.id && buttonText && buttonText !== 'ড্যাশবোর্ড') { 
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = "#";
+                    a.textContent = buttonText;
+                    a.dataset.tabId = button.id;
+                    a.className = "block w-full text-left p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300";
+                    a.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const targetTab = document.getElementById(a.dataset.tabId);
+                        if (targetTab) {
+                            targetTab.click(); // Simulate a click on the tab
+                        }
+                        closeSidebar();
+                    });
+                    li.appendChild(a);
+                    toolList.appendChild(li);
+                }
+            });
+        }
+
+
+        // সাইডবার খোলা এবং বন্ধ করার ফাংশন
+        function closeSidebar() {
+            document.body.classList.remove('sidebar-open');
+        }
+
+        // টগল বাটন ক্লিক করলে সাইডবার খুলবে বা বন্ধ হবে
+        sidebarToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.body.classList.toggle('sidebar-open');
+        });
+        
+        // নতুন: ক্লোজ বাটন (অ্যারে আইকন) ক্লিক করলে সাইডবার বন্ধ হবে
+        sidebarCloseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeSidebar();
+        });
+
+        // ফিক্স: সাইডবারের বাইরে (overlay অংশে) ক্লিক করা হলে সাইডবার বন্ধ হবে
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // Search functionality (unchanged)
+        sidebarSearch.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            toolList.querySelectorAll('li').forEach(li => {
+                const toolName = li.textContent.toLowerCase();
+                if (toolName.includes(searchTerm)) {
+                    li.style.display = 'block';
+                } else {
+                    li.style.display = 'none';
+                }
+            });
+        });
+    }
+
+    // --- Draggable Dashboard Functionality (UPDATED to allow 'আরও' and 'সেটিংস') ---
+    function initializeDraggableDashboard() {
+        const dashboardGrid = document.getElementById('dashboard-grid');
+        const allTabs = document.querySelectorAll('.tab-button');
+        const DOCK_KEY = 'dashboardItems_v2'; 
+
+        if (!dashboardGrid) return;
+        
+        let draggedTabId = null; 
+        let draggingCard = null; 
+        
+        // Make all tabs draggable
+        allTabs.forEach(tab => {
+            const buttonText = tab.textContent.trim();
+            // ফিক্স: 'dashboardTab' বাদে সব ট্যাবকে draggable করা হয়েছে, যাতে 'আরও' এবং 'সেটিংস' ড্যাশবোর্ডে যোগ করা যায়।
+            if (tab.id && buttonText && tab.id !== 'dashboardTab') { 
+                tab.setAttribute('draggable', 'true');
+                
+                tab.addEventListener('dragstart', (e) => {
+                    draggedTabId = e.target.id;
+                    draggingCard = null; 
+                    e.target.classList.add('dragging');
+                });
+                
+                tab.addEventListener('dragend', (e) => {
+                    e.target.classList.remove('dragging');
+                });
+            } else {
+                 // dashboardTab draggable হবে না
+                tab.setAttribute('draggable', 'false');
+            }
+        });
+
+        // Setup dropzone 
+        dashboardGrid.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            if (!draggingCard) { 
+                 dashboardGrid.classList.add('drag-over');
+            } else { 
+                const afterElement = getDragAfterElement(dashboardGrid, e.clientX);
+                
+                // অপটিমাইজেশন: ফ্লিকারিং কমাতে অপ্রয়োজনীয় DOM মুভমেন্ট বন্ধ করা হয়েছে।
+                let shouldMove = true;
+                if (afterElement === null) {
+                    // যদি শেষ পজিশন হয়, তবে মুভ করার দরকার নেই যদি কার্ডটি ইতিমধ্যেই শেষ চাইল্ড হয়।
+                    if (draggingCard === dashboardGrid.lastElementChild) {
+                        shouldMove = false;
+                    }
+                } else {
+                    // যদি afterElement এর আগে পজিশন হয়, তবে মুভ করার দরকার নেই যদি কার্ডটি ইতিমধ্যেই তার আগের এলিমেন্ট হয়।
+                    if (draggingCard === afterElement.previousElementSibling) {
+                        shouldMove = false;
+                    }
+                }
+
+                if (shouldMove) {
+                    if (afterElement == null) {
+                        dashboardGrid.appendChild(draggingCard);
+                    } else {
+                        dashboardGrid.insertBefore(draggingCard, afterElement);
+                    }
+                }
+            }
+        });
+
+        dashboardGrid.addEventListener('dragleave', () => dashboardGrid.classList.remove('drag-over'));
+        
+        dashboardGrid.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dashboardGrid.classList.remove('drag-over');
+            if (draggedTabId) {
+                addToDashboard(draggedTabId);
+                draggedTabId = null;
+            }
+        });
+
+        function addToDashboard(tabId) {
+            const tabButton = document.getElementById(tabId);
+            if (!tabButton) return;
+            
+            const savedItems = getDashboardItems();
+            if (savedItems.includes(tabId)) {
+                showCustomAlert('এই টুলটি ইতোমধ্যে ড্যাশবোর্ডে আছে।');
+                return;
+            }
+
+            createDashboardCard(tabId, tabButton.textContent.trim());
+            
+            // ফিক্স: শুধুমাত্র ড্র্যাগ করা বাটনটিকে লুকানো হয়েছে
+            tabButton.style.setProperty('display', 'none', 'important'); 
+
+            savedItems.push(tabId);
+            saveDashboardItems(savedItems);
+        }
+        
+        function createDashboardCard(tabId, text) {
+             const card = document.createElement('div');
+            card.className = 'dashboard-card';
+            card.textContent = text;
+            card.dataset.tabId = tabId;
+            card.setAttribute('draggable', 'true');
+
+            card.addEventListener('dragstart', (e) => {
+                e.stopPropagation();
+                draggingCard = card;
+                draggedTabId = null; 
+                setTimeout(() => card.classList.add('dragging'), 0);
+            });
+
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+                draggingCard = null;
+                saveDashboardOrder(); 
+            });
+
+            card.addEventListener('click', () => {
+                const tabToClick = document.getElementById(tabId);
+                if (tabToClick) tabToClick.click();
+            });
+
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-from-dashboard';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.title = 'ড্যাশবোর্ড থেকে সরান';
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                removeFromDashboard(tabId);
+            });
+
+            card.appendChild(removeBtn);
+            dashboardGrid.appendChild(card);
+        }
+
+        function removeFromDashboard(tabId) {
+            const cardToRemove = dashboardGrid.querySelector(`.dashboard-card[data-tab-id="${tabId}"]`);
+            if (cardToRemove) cardToRemove.remove();
+
+            // ফিক্স: ড্যাশবোর্ড থেকে রিমুভ করার পর বাটনটিকে দৃশ্যমান করা হয়েছে
+            const originalButton = document.getElementById(tabId);
+            if (originalButton) originalButton.style.display = ''; 
+
+            let savedItems = getDashboardItems();
+            savedItems = savedItems.filter(id => id !== tabId);
+            saveDashboardItems(savedItems);
+        }
+        
+        function saveDashboardOrder() {
+            const orderedIds = [...dashboardGrid.querySelectorAll('.dashboard-card')].map(card => card.dataset.tabId);
+            saveDashboardItems(orderedIds);
+        }
+
+        function getDragAfterElement(container, x) {
+            const draggableElements = [...container.querySelectorAll('.dashboard-card:not(.dragging)')];
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = x - box.left - box.width / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function saveDashboardItems(items) {
+            localStorage.setItem(DOCK_KEY, JSON.stringify(items));
+        }
+        function getDashboardItems() {
+            return JSON.parse(localStorage.getItem(DOCK_KEY) || '[]');
+        }
+        
+        function loadDashboard() {
+            const items = getDashboardItems();
+            dashboardGrid.innerHTML = ''; // Clear first
+            items.forEach(tabId => {
+                const tabButton = document.getElementById(tabId);
+                if (tabButton) {
+                    createDashboardCard(tabId, tabButton.textContent.trim());
+                    // ফিক্স: বাটনটিকে লুকানো হয়েছে
+                    tabButton.style.setProperty('display', 'none', 'important');
+                }
+            });
+        }
+        
+        loadDashboard();
+        
+        // Add dashboard tab functionality
+        const dashboardTab = document.getElementById('dashboardTab');
+        if (dashboardTab) {
+            dashboardTab.addEventListener('click', () => showTab('dashboard'));
+        }
+    }
+    
+    // --- "All Features" Tab Interactivity ---
+    function makeAllFeaturesInteractive() {
+        const featuresList = document.querySelector('#featuresDisplayArea ul');
+        if (!featuresList) return;
+        
+        const featureToTabIdMap = {
+            'সাধারণ ও সাইন্টিফিক ক্যালকুলেটর': 'basicCalcTab', 'বয়স ও তারিখ ক্যালকুলেটর': 'ageCalcTab',
+            'পরিমাপ (ইউনিট কনভার্টার)': 'measurementTab', 'টাইপিং টেস্ট': 'typingTestTab', 'ফন্ট কনভার্টার': 'converterTab',
+            'ওয়ার্ড কাউন্টার': 'wordCounterTab', 'ট্রান্সলেটর (জেমিনি)': 'translatorTab', 'বানান সংশোধন': 'spellCheckTab',
+            'লেখা সাজানো': 'textBeautifierTab', 'শব্দের অর্থ': 'wordMeaningTab', 'টেক্সট টু স্পিচ': 'ttsTab',
+            'স্পিচ টু টেক্সট (জেমিনি)': 'sttTab', 'ছবি থেকে লেখা (ocr - জেমিনি)': 'imageToTextTab',
+            'টেক্সট অ্যাসিস্ট্যান্ট (জেমিনি)': 'textAssistantTab', 'গুগল ম্যাপ': 'mapTab', 'আবহাওয়া': 'weatherTab',
+            'নামাজের সময়সূচি': 'prayerTimeTab', 'যাকাত ক্যালকুলেটর': 'zakatCalcTab', 'কিউআর কোড': 'qrCodeTab',
+            'জরুরি নম্বর': 'emergencyNumbersTab', 'ঘড়ি': 'clockTab', 'প্লেয়ার': 'playerTab', 'নোটপ্যাড / টু-ডু লিস্ট': 'notepadTab',
+            'সাম্প্রতিক খবর': 'newsTab', 'ডেভেলোপার প্রোফাইল': 'importantLinksTab', 'স্বাস্থ্য ও জীবনধারা': 'healthLifestyleTab',
+            'দিবসসমূহ': 'daysObservancesTab', 'ছুটির তালিকা': 'holidayListTab', 'কুইজ': 'quizTab', 'ডোনেট': 'donateTab',
+            'ইনভয়েজ': 'invoiceTab', 'রঙ বাছাইকারী': 'colorPickerTab', 'আরও': 'allFeaturesTab', 'সেটিংস': 'settingsTab'
+        };
+
+        featuresList.querySelectorAll('li > strong').forEach(strongEl => {
+            const featureName = strongEl.textContent.trim().replace(/:$/, '');
+            const tabId = featureToTabIdMap[featureName];
+            
+            if (tabId) {
+                strongEl.style.cursor = 'pointer';
+                strongEl.style.textDecoration = 'underline';
+                strongEl.title = `"${featureName}" ট্যাবে যান`;
+                strongEl.addEventListener('click', () => {
+                    const tabButton = document.getElementById(tabId);
+                    if (tabButton) {
+                        tabButton.click();
+                    } else {
+                        showCustomAlert(`"${featureName}" ট্যাবটি খুঁজে পাওয়া যায়নি।`);
+                    }
+                });
+            }
+        });
+    }
+});
+// ====================================================================
+// END: NEW SIDEBAR, DASHBOARD & INTERACTIVITY SCRIPT (UPDATED)
+// ====================================================================
+
+
+
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
         window.onload = function() {
             const preloader = document.getElementById('preloader');
@@ -16230,4 +16687,29 @@ function initializeColorPicker() {
 
 	
 </body>
+
+<!-- Start Sidebar -->
+<!-- Sidebar Toggle Button -->
+<button id="sidebarToggle" class="fixed top-4 left-4 z-40 w-12 h-12 bg-indigo-600 text-white rounded-full shadow-lg flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-transform duration-300 ease-in-out hover:bg-indigo-700">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+</button>
+
+<!-- Sidebar Menu -->
+<div id="sidebar" class="fixed top-0 left-[-300px] w-[300px] h-full bg-white dark:bg-gray-800 shadow-xl z-50 transition-left duration-300 ease-in-out">
+    <div class="p-4">
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">সকল টুলস</h3>
+		<!-- নতুন সাইডবার ক্লোজ বাটন: সাইডবার ওপেন হলে ডানদিকে প্রদর্শিত হবে -->
+<button id="sidebarClose" class="absolute top-4 right-4 z-50 text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+</button>
+        <input type="text" id="sidebarSearch" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-indigo-500" placeholder="টুলস খুঁজুন...">
+        <ul id="sidebar-tool-list" class="mt-4 space-y-2 h-[calc(100vh-120px)] overflow-y-auto">
+            <!-- Tool list will be populated by JavaScript -->
+        </ul>
+    </div>
+</div>
+<!-- Sidebar Overlay -->
+<div id="sidebarOverlay" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-30 hidden"></div>
+<!-- End Sidebar -->
+
 </html>
