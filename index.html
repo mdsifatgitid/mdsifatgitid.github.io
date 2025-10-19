@@ -791,92 +791,6 @@
             color: #f7fafc;
         }
 
-
-        /* সংবাদ বিভাগের স্টাইল */
-        .news-content {
-            padding: 20px; /* বর্ধিত প্যাডিং */
-            border-radius: 16px;
-            margin: 0 auto;
-            max-width: 480px; /* বর্ধিত প্রস্থ */
-            background-color: #f8f9fa; /* হালকা ধূসর ব্যাকগ্রাউন্ড */
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
-        .dark .news-content {
-            background-color: #2d3748;
-        }
-        .news-content .news-display-area {
-            margin-top: 20px; /* বর্ধিত মার্জিন */
-            padding: 20px; /* বর্ধিত প্যাডিং */
-            background-color: #e6f7ff; /* হালকা নীল ব্যাকগ্রাউন্ড */
-            border-radius: 16px;
-            border: 1px solid #b3e0ff;
-            min-height: 100px; /* বর্ধিত উচ্চতা */
-            text-align: left;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-        .dark .news-content .news-display-area {
-            background-color: #1a202c;
-            border-color: #4a5568;
-        }
-        .news-content .news-display-area h3 {
-            font-size: 1.4rem; /* বর্ধিত ফন্ট সাইজ */
-            font-weight: 700;
-            color: #0056b3;
-            margin-bottom: 12px; /* বর্ধিত মার্জিন */
-        }
-        .dark .news-content .news-display-area h3 {
-            color: #90cdf4;
-        }
-        .news-content .news-display-area ul {
-            list-style: none;
-            padding: 0;
-        }
-        .news-content .news-display-area li {
-            margin-bottom: 10px; /* বর্ধিত মার্জিন */
-        }
-        .news-content .news-display-area a {
-            color: #007bff;
-            text-decoration: none;
-            font-size: 1.05rem; /* বর্ধিত ফন্ট সাইজ */
-            transition: color 0.2s ease;
-        }
-        .dark .news-content .news-display-area a {
-            color: #63b3ed;
-        }
-        .news-content .news-display-area a:hover {
-            color: #0056b3;
-            text-decoration: underline;
-        }
-        .dark .news-content .news-display-area a:hover {
-            color: #90cdf4;
-        }
-        .news-content .news-display-area .error-message {
-            color: #d9534f;
-            font-size: 1rem;
-            font-weight: 500;
-        }
-
-        .bio-link-section {
-            margin-top: 20px; /* বর্ধিত মার্জিন */
-            text-align: center;
-            padding-top: 15px; /* বর্ধিত প্যাডিং */
-            border-top: 1px solid #e0e0e0;
-        }
-        .dark .bio-link-section {
-            border-top-color: #4a5568;
-        }
-
-        .bio-link-section p {
-            font-size: 1.05rem; /* বর্ধিত ফন্ট সাইজ */
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 10px; /* বর্ধিত মার্জিন */
-        }
-        .dark .bio-link-section p {
-            color: #e2e8f0;
-        }
-
-
         /* ফন্ট কনভার্টার বিভাগের স্টাইল */
         .font-converter-content {
             padding: 15px; /* বডির সাথে মিলিয়ে প্যাডিং বাড়ানো হয়েছে */
@@ -5613,7 +5527,6 @@ body.sidebar-open #sidebarOverlay {
 				<button id="clockTab" class="tab-button rounded-xl">ঘড়ি</button>
 				<button id="playerTab" class="tab-button rounded-xl">প্লেয়ার</button>
 				<button id="quizTab" class="tab-button rounded-xl">কুইজ</button>
-				<button id="newsTab" class="tab-button rounded-xl">সাম্প্রতিক খবর</button>
 				<button id="daysObservancesTab" class="tab-button rounded-xl">দিবসসমূহ</button>
 				<button id="holidayListTab" class="tab-button rounded-xl">ছুটির তালিকা</button>
 				<button id="zakatCalcTab" class="tab-button rounded-xl">যাকাতের হিসাব</button>
@@ -6098,28 +6011,6 @@ body.sidebar-open #sidebarOverlay {
         </div>
 
 
-
-        <!-- সাম্প্রতিক সংবাদ বিভাগ -->
-        <div id="newsContent" class="calculator-content">
-            <div class="news-content"> <!-- সাধারণ কন্টেন্ট প্রদর্শনের জন্য news-content স্টাইলিং পুনরায় ব্যবহার করা হচ্ছে -->
-                <div id="newsDisplayArea" class="news-display-area rounded-lg">
-                    <h3>বাংলাদেশের প্রধান দৈনিক পত্রিকা</h3>
-                    <ul id="newsHeadlinesList">
-                        <li><a href="https://www.bd-pratidin.com/" target="_blank">বাংলাদেশ প্রতিদিন</a></li>
-                        <li><a href="https://www.dhakapost.com/" target="_blank">ঢাকাপোস্ট</a></li>
-                        <li><a href="https://www.kalerkantho.com/" target="_blank">কালের কণ্ঠ</a></li>
-                        <li><a href="https://www.ittefaq.com.bd/" target="_blank">দৈনিক ইত্তেফাক</a></li>
-                        <li><a href="https://www.dailyamardesh.com/" target="_blank">আমার দেশ</a></li>
-                    </ul>
-                    <div class="bio-link-section">
-                        <p>প্রয়োজনে ভিজিট করুন</p>
-                        <a href="https://bio.link/mdsifatbiolink" target="_blank" class="text-blue-600 hover:underline font-semibold text-lg">bio.link/mdsifatbiolink</a>
-                    </div>
-                    <div id="newsErrorMessage" class="error-message"></div>
-                </div>
-            </div>
-        </div>
-
         <!-- ফন্ট কনভার্টার বিভাগ (আনডু/রিডু সহ আপডেট করা হয়েছে) -->
 <!-- ফন্ট কনভার্টার বিভাগ (প্রিসেট বাটনসহ আপডেট করা হয়েছে) -->
 <div id="converterContent" class="calculator-content">
@@ -6489,9 +6380,6 @@ body.sidebar-open #sidebarOverlay {
                         </li>
                         <li class="mb-2">
                              <strong class="text-gray-700 dark:text-gray-400">নোটপ্যাড / টু-ডু লিস্ট:</strong> আপনার কাজ বা নোট যোগ করুন এবং ব্রাউজারেই সেভ করে রাখুন। এতে টেক্সট ফরম্যাটিং, ছবি যোগ করা, এবং কাজ ড্র্যাগ-ড্রপ করার সুবিধা রয়েছে।
-                        </li>
-                        <li class="mb-2">
-                            <strong class="text-slate-700 dark:text-slate-400">সাম্প্রতিক খবর:</strong> বাংলাদেশের প্রধান দৈনিক পত্রিকাগুলোর সরাসরি লিংক এখানে পাবেন।
                         </li>
 						<li class="mb-2"><strong class="text-violet-700 dark:text-violet-400">ডেভেলোপার প্রোফাইল: </strong>প্রয়োজনীয় বিভিন্ন লিংক পেতে এবং ডেভেলোপার এর প্রোফাইল 👉 <a href="https://bio.link/mdsifatbiolink" target="_blank" class="text-blue-600 hover:underline">bio.link/mdsifatbiolink</a></li>
                     </ul>
@@ -9820,7 +9708,7 @@ try {
                 const ageCalcTab = document.getElementById('ageCalcTab');
                 const dateCalcTab = document.getElementById('dateCalcTab');
                 const scientificCalcTab = document.getElementById('scientificCalcTab');
-                const newsTab = document.getElementById('newsTab');
+                
                 const converterTab = document.getElementById('converterTab');
                 const measurementTab = document.getElementById('measurementTab'); // Add this line
                 const textAssistantTab = document.getElementById('textAssistantTab');
@@ -10131,7 +10019,7 @@ function showTab(tabId) {
     // সমস্ত ট্যাব এর নাম এবং ট্যাব এর কন্টেন্ট নাম একানে বসাতে হয়, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয় বা বসাতে হয় ।
     const tabs = [
         basicCalcTab,colorPickerTab, dashboardTab,
-		ageCalcTab, dateCalcTab, scientificCalcTab, newsTab, converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,
+		ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,
 		translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
 		qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab,
         textAssistantTab,holidayListTab,quizTab,
@@ -10139,7 +10027,7 @@ function showTab(tabId) {
     ];
     const contents = [
         basicCalculatorContent,colorPickerContent,dashboardContent,
-		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent, newsContent, converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent,
+		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent,  converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent,
 		weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
 		textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,
@@ -10176,10 +10064,6 @@ function showTab(tabId) {
         case 'scientific':
             activeTab = scientificCalcTab;
             activeContent = scientificCalculatorContent;
-            break;
-        case 'news':
-            activeTab = newsTab;
-            activeContent = newsContent;
             break;
         case 'converter':
             activeTab = converterTab;
@@ -10326,7 +10210,6 @@ function showTab(tabId) {
                 if (ageCalcTab) ageCalcTab.addEventListener('click', () => showTab('age'));
                 if (dateCalcTab) dateCalcTab.addEventListener('click', () => showTab('date'));
                 if (scientificCalcTab) scientificCalcTab.addEventListener('click', () => showTab('scientific'));
-                if (newsTab) newsTab.addEventListener('click', () => showTab('news'));
                 if (converterTab) converterTab.addEventListener('click', () => showTab('converter'));
                 if (measurementTab) measurementTab.addEventListener('click', () => showTab('measurement')); // Add this line
                 if (spellCheckTab) spellCheckTab.addEventListener('click', () => showTab('spellCheck'));
@@ -11302,9 +11185,6 @@ function showTab(tabId) {
                     console.error('বৈজ্ঞানিক ব্যাখ্যা উপাদান পাওয়া যায়নি।');
                 }
 
-
-                // --- সাম্প্রতিক সংবাদ লজিক ---
-                // সংবাদ বিভাগের জন্য HTML এ যা আছে তার বাইরে কোনো নির্দিষ্ট লজিক প্রয়োজন নেই।
 
 
                 if (textAreaLeft) {
@@ -16505,7 +16385,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'টেক্সট অ্যাসিস্ট্যান্ট (জেমিনি)': 'textAssistantTab', 'গুগল ম্যাপ': 'mapTab', 'আবহাওয়া': 'weatherTab',
             'নামাজের সময়সূচি': 'prayerTimeTab', 'যাকাত ক্যালকুলেটর': 'zakatCalcTab', 'কিউআর কোড': 'qrCodeTab',
             'জরুরি নম্বর': 'emergencyNumbersTab', 'ঘড়ি': 'clockTab', 'প্লেয়ার': 'playerTab', 'নোটপ্যাড / টু-ডু লিস্ট': 'notepadTab',
-            'সাম্প্রতিক খবর': 'newsTab', 'ডেভেলোপার প্রোফাইল': 'importantLinksTab', 'স্বাস্থ্য ও জীবনধারা': 'healthLifestyleTab',
+            'ডেভেলোপার প্রোফাইল': 'importantLinksTab', 'স্বাস্থ্য ও জীবনধারা': 'healthLifestyleTab',
             'দিবসসমূহ': 'daysObservancesTab', 'ছুটির তালিকা': 'holidayListTab', 'কুইজ': 'quizTab', 'ডোনেট': 'donateTab',
             'ইনভয়েজ': 'invoiceTab', 'রঙ বাছাইকারী': 'colorPickerTab', 'আরও': 'allFeaturesTab', 'সেটিংস': 'settingsTab'
         };
