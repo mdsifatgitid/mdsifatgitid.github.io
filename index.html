@@ -11,6 +11,10 @@
 	<script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.4.13/dist/easy.qrcode.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 
+    <!-- Cropper.js CDN (নতুন যুক্ত করা হয়েছে) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+	
     <style>
         /* Custom font and basic styles */
         /* SUTONNYMJ ফন্টটি লোড করার জন্য @font-face ব্যবহার করা হয়েছে। */
@@ -5417,7 +5421,7 @@ body.sidebar-open #sidebarOverlay {
 /* End: Sidebar */
 /* ======================================================== */
 /* ======================================================== */
-/* START: Image Resizer Styles (ছবি রিসাইজার) */
+/* START: Image Resizer Styles (ছবি রিসাইজার) - পরিবর্তিত */
 /* ======================================================== */
 .image-resizer-container {
     display: grid;
@@ -5439,11 +5443,10 @@ body.sidebar-open #sidebarOverlay {
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 .dark .image-resizer-controls {
-    background-color: #1f2937; /* গাঢ় থিমের জন্য ব্যাকগ্রাউন্ড */
-    border-color: #4a5568; /* গাঢ় থিমের জন্য বর্ডার */
+    background-color: #1f2937;
+    border-color: #4a5568;
 }
 
-/* আপলোড এরিয়া স্টাইল অপরিবর্তিত */
 .image-upload-area {
     border: 2px dashed #9ca3af;
     border-radius: 12px;
@@ -5459,7 +5462,7 @@ body.sidebar-open #sidebarOverlay {
     border-color: #6b7280;
 }
 .image-upload-area.drag-over, .image-upload-area:hover {
-    background-color: #eff6ff; /* হোভার বা ড্র্যাগ ওভারের সময় রঙ */
+    background-color: #eff6ff;
     border-color: #3b82f6;
 }
 .dark .image-upload-area.drag-over, .dark .image-upload-area:hover {
@@ -5521,6 +5524,38 @@ body.sidebar-open #sidebarOverlay {
     color: #f7fafc;
 }
 
+/* নতুন: ক্রপ টগল বাটনের জন্য স্টাইল */
+.crop-toggle-btn {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    background-color: #8A2BE2; /* বেগুনি রঙ */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.crop-toggle-btn.active {
+    background-color: #dc3545; /* লাল রঙ যখন সক্রিয় */
+}
+.crop-toggle-btn:hover:not(:disabled) {
+    background-color: #6a1aae; /* হোভারে গাঢ় বেগুনি */
+}
+.crop-toggle-btn.active:hover:not(:disabled) {
+    background-color: #c82333; /* হোভারে গাঢ় লাল */
+}
+.crop-toggle-btn:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+
 .download-btn {
     width: 100%;
     padding: 0.8rem 1rem;
@@ -5573,80 +5608,76 @@ body.sidebar-open #sidebarOverlay {
     font-size: 1rem;
     font-weight: 600;
     margin-bottom: 10px;
-    color: #374151; /* নতুন: টেক্সটের রঙ যোগ করা হয়েছে */
+    color: #374151;
 }
 .dark .preview-title {
-    color: #d1d5db; /* নতুন: ডার্ক মোডের জন্য টেক্সটের রঙ */
+    color: #d1d5db;
 }
 
-/* ইমেজ কন্টেইনার স্টাইল আপডেট করা হয়েছে */
 .image-container {
     width: 100%;
-    height: 250px; /* উচ্চতা ঠিক করা হয়েছে */
-    background-color: #f1f5f9; /* হালকা ব্যাকগ্রাউন্ড */
+    height: auto; /* পরিবর্তিত: উচ্চতা auto করা হয়েছে */
+    min-height: 250px; /* একটি ন্যূনতম উচ্চতা দেওয়া হয়েছে */
+    background-color: #f1f5f9;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden; /* ছবি বাইরে গেলে কেটে যাবে */
+    overflow: hidden;
     margin-bottom: 10px;
-    position: relative; /* Remove button পজিশনের জন্য */
+    position: relative;
 }
 .dark .image-container {
-    background-color: #374151; /* গাঢ় থিমের ব্যাকগ্রাউন্ড */
+    background-color: #374151;
 }
 .image-container img {
-    max-width: 100%;
+    display: block; /* Cropper.js এর জন্য আবশ্যক */
+    max-width: 100%; /* Cropper.js এর জন্য আবশ্যক */
     max-height: 100%;
-    object-fit: contain; /* ছবি পুরোটা দেখাবে, কাটবে না */
-    transition: opacity 0.2s ease-in-out; /* হোভার ইফেক্টের জন্য */
+    object-fit: contain;
+    transition: opacity 0.2s ease-in-out;
 }
 
-/* নতুন: Remove Button স্টাইল */
 #removeOriginalBtn {
     position: absolute;
-    top: 8px; /* কন্টেইনারের কোণা থেকে দূরত্ব */
+    top: 8px;
     right: 8px;
     z-index: 10;
-    width: 32px; /* আকার */
+    width: 32px;
     height: 32px;
-    background-color: rgba(239, 68, 68, 0.8); /* হালকা লাল ব্যাকগ্রাউন্ড */
+    background-color: rgba(239, 68, 68, 0.8);
     color: white;
-    border-radius: 50%; /* গোলাকার */
+    border-radius: 50%;
     box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px; /* আইকনের আকার */
+    font-size: 20px;
     font-weight: bold;
     line-height: 1;
     cursor: pointer;
-    opacity: 0; /* প্রাথমিকভাবে লুকানো */
-    pointer-events: none; /* প্রাথমিকভাবে ক্লিক করা যাবে না */
-    transition: opacity 0.2s ease-in-out; /* মসৃণভাবে দেখানোর জন্য ট্রানজিশন */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
 }
-
-/* যখন .has-image ক্লাস থাকবে এবং হোভার করা হবে, তখন বাটন দেখা যাবে */
 #originalPreviewContainer.has-image:hover #removeOriginalBtn {
     opacity: 1;
-    pointer-events: auto; /* ক্লিক করা যাবে */
+    pointer-events: auto;
 }
-
 #removeOriginalBtn:hover {
-    background-color: rgba(220, 38, 38, 1); /* হোভারে গাঢ় লাল */
+    background-color: rgba(220, 38, 38, 1);
 }
-
 
 .file-info-box {
-    background-color: #f8fafc; /* খুব হালকা ব্যাকগ্রাউন্ড */
+    background-color: #f8fafc;
     border-radius: 8px;
     padding: 8px;
     font-size: 0.85rem;
-    color: #475569; /* টেক্সটের রঙ */
+    color: #475569;
 }
 .dark .file-info-box {
-    background-color: #4a5568; /* গাঢ় থিমের ব্যাকগ্রাউন্ড */
-    color: #d1d5db; /* গাঢ় থিমের টেক্সট রঙ */
+    background-color: #4a5568;
+    color: #d1d5db;
 }
 /* ======================================================== */
 /* END: Image Resizer Styles */
@@ -7788,10 +7819,18 @@ body.sidebar-open #sidebarOverlay {
                 </div>
             </div>
 
+            <!-- নতুন: ক্রপ বাটন -->
+            <div class="control-section">
+                <button id="cropToggleBtn" class="crop-toggle-btn" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"></path><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"></path></svg>
+                    <span>ক্রপ মোড</span>
+                </button>
+            </div>
+
             <!-- Download Button -->
             <button id="downloadBtn" class="download-btn" disabled>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
-                <span>ডাউনলোড করুন</span>
+                <span>প্রসেস ও ডাউনলোড করুন</span>
             </button>
         </div>
 
@@ -16766,8 +16805,7 @@ function initializeImageResizer() {
     const formatSelect = document.getElementById('formatSelect');
     const downloadBtn = document.getElementById('downloadBtn');
 
-    // নতুন: আসল ছবির কন্টেইনার এবং রিমুভ বাটন
-    const originalPreviewContainer = document.getElementById('originalPreviewContainer'); // Assuming you have a container div
+    const originalPreviewContainer = document.getElementById('originalPreviewContainer');
     const originalPreview = document.getElementById('originalPreview');
     const removeOriginalBtn = document.getElementById('removeOriginalBtn');
 
@@ -16777,12 +16815,32 @@ function initializeImageResizer() {
     const processedSize = document.getElementById('processedSize');
     const processedDimensions = document.getElementById('processedDimensions');
 
+    // নতুন: ক্রপ করার জন্য ভ্যারিয়েবল
+    const cropToggleBtn = document.getElementById('cropToggleBtn');
+    let cropper = null;
+
     let originalImage = null;
     let originalAspectRatio = 1;
     let isProcessing = false;
-    let currentProcessedObjectURL = null; // Track the current blob URL for cleanup
+    let currentProcessedObjectURL = null;
 
-    // --- File Handling ---
+    // Enter কী-এর জন্য ইভেন্ট লিসেনার শুধুমাত্র একবার যুক্ত করার জন্য ফ্ল্যাগ
+    if (!window.imageResizerKeyListenerAdded) {
+        document.addEventListener('keydown', (e) => {
+            const imageResizerContent = document.getElementById('imageResizerContent');
+            // শুধুমাত্র রিসাইজার ট্যাব فعال থাকলে এবং Enter চাপলে কাজ করবে
+            if (imageResizerContent && imageResizerContent.classList.contains('active') && e.key === 'Enter') {
+                // ক্রপ মোড চালু আছে কিনা তা পরীক্ষা করুন
+                if (cropper) {
+                    e.preventDefault(); // ডিফল্ট আচরণ বন্ধ করুন
+                    downloadBtn.click(); // "ক্রপ করুন" বাটনের কাজ ট্রিগার করুন
+                }
+            }
+        });
+        window.imageResizerKeyListenerAdded = true;
+    }
+
+
     function handleFile(file) {
         if (!file || !file.type.startsWith('image/')) {
             showCustomAlert('অনুগ্রহ করে একটি ছবি ফাইল নির্বাচন করুন।');
@@ -16798,14 +16856,16 @@ function initializeImageResizer() {
                 heightInput.value = originalImage.height;
                 originalPreview.src = e.target.result;
                 originalDimensions.textContent = `${originalImage.width} x ${originalImage.height} px`;
+                originalSize.textContent = formatBytes(file.size);
 
-                const sizeInBytes = file.size; // Get size in bytes
-                originalSize.textContent = formatBytes(sizeInBytes); // Format bytes
-
-                formatSelect.value = file.type; // Set format based on input
-                qualitySlider.disabled = formatSelect.value === 'image/png'; // Disable quality for PNG
+                formatSelect.value = file.type;
+                qualitySlider.disabled = formatSelect.value === 'image/png';
                 if (originalPreviewContainer) originalPreviewContainer.classList.add('has-image');
-                processImage(); // Process the newly loaded image
+                
+                // নতুন: ক্রপ বাটন সক্রিয় করুন
+                if (cropToggleBtn) cropToggleBtn.disabled = false;
+
+                processImage();
             };
             originalImage.onerror = () => {
                  showCustomAlert('ছবিটি লোড করা সম্ভব হয়নি। ফাইলটি ত্রুটিপূর্ণ হতে পারে।');
@@ -16820,16 +16880,53 @@ function initializeImageResizer() {
         reader.readAsDataURL(file);
     }
 
-    // --- Image Processing ---
+    // নতুন: ক্রপ মোড টগল করার ফাংশন
+    function toggleCropMode() {
+        if (!originalImage) return;
+
+        if (cropper) {
+            // ক্রপ মোড বন্ধ করা হচ্ছে
+            cropper.destroy();
+            cropper = null;
+            cropToggleBtn.classList.remove('active');
+            cropToggleBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"></path><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"></path></svg>
+                <span>ক্রপ মোড</span>
+            `;
+            // ডাউনলোড বাটনের টেক্সট আগের অবস্থায় ফিরিয়ে আনা হচ্ছে
+            if(downloadBtn) downloadBtn.querySelector('span').textContent = 'ডাউনলোড করুন';
+            
+            widthInput.value = originalImage.width;
+            heightInput.value = originalImage.height;
+            processImage();
+        } else {
+            // ক্রপ মোড চালু করা হচ্ছে
+            cropper = new Cropper(originalPreview, {
+                viewMode: 1,
+                autoCropArea: 0.8,
+                background: false,
+                crop(event) {
+                    const data = event.detail;
+                    widthInput.value = Math.round(data.width);
+                    heightInput.value = Math.round(data.height);
+                },
+            });
+            cropToggleBtn.classList.add('active');
+            cropToggleBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+                <span>ক্রপ বন্ধ করুন</span>
+            `;
+            // ডাউনলোড বাটনের টেক্সট পরিবর্তন করা হচ্ছে
+            if(downloadBtn) downloadBtn.querySelector('span').textContent = 'ক্রপ করুন';
+        }
+    }
+
     async function processImage() {
         if (!originalImage || isProcessing) return;
         isProcessing = true;
         downloadBtn.disabled = true;
-        // Do NOT reset the preview src here to prevent flickering
-        // processedPreview.src = 'https://placehold.co/400x300/dcfce7/166534?text=Processing...';
-        processedSize.textContent = 'প্রসেসিং...'; // Indicate processing in text
+        processedSize.textContent = 'প্রসেসিং...';
         processedDimensions.textContent = 'প্রসেসিং...';
-
 
         const width = parseInt(widthInput.value);
         const height = parseInt(heightInput.value);
@@ -16838,69 +16935,58 @@ function initializeImageResizer() {
 
         if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
             showCustomAlert('অনুগ্রহ করে সঠিক প্রস্থ এবং উচ্চতা দিন।');
-            // Update text, but don't change image src yet if one exists
             processedSize.textContent = 'ত্রুটি';
             processedDimensions.textContent = 'অবৈধ মাপ';
-            // Optionally set placeholder if no previous image exists:
             if (!currentProcessedObjectURL) {
                 processedPreview.src = 'https://placehold.co/400x300/fee2e2/b91c1c?text=Invalid+Dimensions';
             }
             isProcessing = false;
             return;
         }
-
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-
-        try {
-            ctx.drawImage(originalImage, 0, 0, width, height);
-
-            // Wait for the next frame to avoid blocking the UI thread
-            await new Promise(resolve => requestAnimationFrame(resolve));
-
-            canvas.toBlob((blob) => {
-                if (blob) {
-                    // Revoke the previous object URL before creating a new one
-                    if (currentProcessedObjectURL) {
-                        URL.revokeObjectURL(currentProcessedObjectURL);
-                    }
-
-                    currentProcessedObjectURL = URL.createObjectURL(blob); // Store the new URL
-                    processedPreview.src = currentProcessedObjectURL; // Update the src ONLY when blob is ready
-                    processedDimensions.textContent = `${width} x ${height} px`;
-
-                    const sizeInBytes = blob.size;
-                    processedSize.textContent = formatBytes(sizeInBytes);
-
-                    downloadBtn.disabled = false;
+        
+        // অ্যাসিঙ্ক্রোনাস প্রসেসিং শুরু করুন
+        setTimeout(async () => {
+            try {
+                let sourceCanvas;
+                if (cropper) {
+                    sourceCanvas = cropper.getCroppedCanvas();
                 } else {
-                    showCustomAlert("ছবি প্রসেস করা সম্ভব হয়নি। ছবির আকার বা ফরম্যাট সমস্যাযুক্ত হতে পারে।");
-                    processedSize.textContent = 'ত্রুটি';
-                    processedDimensions.textContent = 'প্রসেসিং ত্রুটি';
-                    // Optionally set placeholder if no previous image exists:
-                    if (!currentProcessedObjectURL) {
-                         processedPreview.src = 'https://placehold.co/400x300/fee2e2/b91c1c?text=Processing+Error';
-                    }
-                    downloadBtn.disabled = true;
+                    sourceCanvas = document.createElement('canvas');
+                    sourceCanvas.width = originalImage.width;
+                    sourceCanvas.height = originalImage.height;
+                    sourceCanvas.getContext('2d').drawImage(originalImage, 0, 0);
                 }
-                isProcessing = false; // Mark processing as finished
-            }, format, quality);
-         } catch (error) {
-            console.error("Canvas drawing error:", error);
-            showCustomAlert("ছবি আঁকতে সমস্যা হয়েছে। ফাইলটি ত্রুটিপূর্ণ হতে পারে।");
-            processedSize.textContent = 'ত্রুটি';
-            processedDimensions.textContent = 'অঙ্কন ত্রুটি';
-            // Optionally set placeholder if no previous image exists:
-             if (!currentProcessedObjectURL) {
-                processedPreview.src = 'https://placehold.co/400x300/fee2e2/b91c1c?text=Drawing+Error';
-             }
-            downloadBtn.disabled = true;
-            isProcessing = false; // Mark processing as finished even on error
-         }
+
+                const finalCanvas = document.createElement('canvas');
+                finalCanvas.width = width;
+                finalCanvas.height = height;
+                const ctx = finalCanvas.getContext('2d');
+                ctx.drawImage(sourceCanvas, 0, 0, width, height);
+
+                finalCanvas.toBlob((blob) => {
+                    if (blob) {
+                        if (currentProcessedObjectURL) URL.revokeObjectURL(currentProcessedObjectURL);
+                        currentProcessedObjectURL = URL.createObjectURL(blob);
+                        processedPreview.src = currentProcessedObjectURL;
+                        processedDimensions.textContent = `${width} x ${height} px`;
+                        processedSize.textContent = formatBytes(blob.size);
+                        downloadBtn.disabled = false;
+                    } else {
+                         throw new Error("Blob could not be created.");
+                    }
+                    isProcessing = false;
+                }, format, quality);
+
+            } catch (error) {
+                console.error("Image processing error:", error);
+                showCustomAlert("ছবি প্রসেস করা সম্ভব হয়নি।");
+                processedSize.textContent = 'ত্রুটি';
+                processedDimensions.textContent = 'প্রসেসিং ত্রুটি';
+                isProcessing = false;
+            }
+        }, 10); // UI ব্লক না করার জন্য setTimeout ব্যবহার করা হয়েছে
     }
-     // Helper function to format bytes
+
     function formatBytes(bytes, decimals = 2) {
         if (bytes === 0) return '0 Bytes';
         const k = 1024;
@@ -16910,8 +16996,19 @@ function initializeImageResizer() {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 
-    // --- আসল ছবি এবং প্রসেসড ছবি পরিষ্কার করার ফাংশন ---
     function clearOriginalImage() {
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+            cropToggleBtn.classList.remove('active');
+            cropToggleBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"></path><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"></path></svg>
+                <span>ক্রপ মোড</span>
+            `;
+            // ছবি পরিষ্কার করার সময় ডাউনলোড বাটনের টেক্সট রিসেট করুন
+            if(downloadBtn) downloadBtn.querySelector('span').textContent = 'ডাউনলোড করুন';
+        }
+        if (cropToggleBtn) cropToggleBtn.disabled = true;
         originalImage = null;
         originalAspectRatio = 1;
         if(originalPreview) originalPreview.src = 'https://placehold.co/400x300/e0e7ff/3f51b5?text=Original+Image';
@@ -16919,93 +17016,51 @@ function initializeImageResizer() {
         if(originalDimensions) originalDimensions.textContent = 'N/A';
         if(widthInput) widthInput.value = '';
         if(heightInput) heightInput.value = '';
-        if(imageInput) imageInput.value = ''; // ফাইল ইনপুট রিসেট করুন
-        if (originalPreviewContainer) originalPreviewContainer.classList.remove('has-image'); // Remove class when cleared
-        clearProcessedImage(); // আসল ছবি মুছলে প্রসেসড ছবিও মুছে ফেলুন
+        if(imageInput) imageInput.value = '';
+        if (originalPreviewContainer) originalPreviewContainer.classList.remove('has-image');
+        clearProcessedImage();
     }
 
     function clearProcessedImage() {
-        // Revoke the object URL if it exists
         if (currentProcessedObjectURL) {
             URL.revokeObjectURL(currentProcessedObjectURL);
             currentProcessedObjectURL = null;
         }
-        if(processedPreview) {
-            processedPreview.src = 'https://placehold.co/400x300/dcfce7/166534?text=Processed+Image';
-        }
+        if(processedPreview) processedPreview.src = 'https://placehold.co/400x300/dcfce7/166534?text=Processed+Image';
         if(processedSize) processedSize.textContent = 'N/A';
         if(processedDimensions) processedDimensions.textContent = 'N/A';
         if(downloadBtn) downloadBtn.disabled = true;
     }
 
-
-    // --- Event Listeners ---
     if (dropZone) {
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            dropZone.classList.add('drag-over');
-        });
-        dropZone.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            dropZone.classList.remove('drag-over');
-        });
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            dropZone.classList.remove('drag-over');
-            const file = e.dataTransfer.files[0];
-            handleFile(file);
-        });
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('drag-over'); });
+        dropZone.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0]); });
     }
 
-    if (imageInput) {
-        imageInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
-    }
+    if (imageInput) imageInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+    if (cropToggleBtn) cropToggleBtn.addEventListener('click', toggleCropMode);
 
-    // আসল ছবির কন্টেইনারের জন্য হোভার ইভেন্ট
     if (originalPreviewContainer && removeOriginalBtn) {
-        // Initially hide the button via CSS or here
         removeOriginalBtn.style.opacity = '0';
         removeOriginalBtn.style.pointerEvents = 'none';
-
-        originalPreviewContainer.addEventListener('mouseenter', () => {
-             // Show button only if there is an actual image loaded
-            if (originalPreviewContainer.classList.contains('has-image')) {
-                removeOriginalBtn.style.opacity = '1';
-                removeOriginalBtn.style.pointerEvents = 'auto';
-            }
-        });
-        originalPreviewContainer.addEventListener('mouseleave', () => {
-            removeOriginalBtn.style.opacity = '0';
-            removeOriginalBtn.style.pointerEvents = 'none';
-        });
-        removeOriginalBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent triggering other click events if any
-            clearOriginalImage();
-            showCustomAlert("আসল ছবি মুছে ফেলা হয়েছে।");
-        });
+        originalPreviewContainer.addEventListener('mouseenter', () => { if (originalPreviewContainer.classList.contains('has-image')) { removeOriginalBtn.style.opacity = '1'; removeOriginalBtn.style.pointerEvents = 'auto'; } });
+        originalPreviewContainer.addEventListener('mouseleave', () => { removeOriginalBtn.style.opacity = '0'; removeOriginalBtn.style.pointerEvents = 'none'; });
+        removeOriginalBtn.addEventListener('click', (e) => { e.stopPropagation(); clearOriginalImage(); showCustomAlert("আসল ছবি মুছে ফেলা হয়েছে।"); });
     }
 
-
-    // --- Control Event Listeners with Debounce ---
     let debounceTimer;
-    const debouncedProcess = () => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(processImage, 300); // Slightly increased delay
-    };
+    const debouncedProcess = () => { clearTimeout(debounceTimer); debounceTimer = setTimeout(processImage, 300); };
 
     if (widthInput) {
         widthInput.addEventListener('input', () => {
-            if (aspectRatioLock.checked && originalImage && originalAspectRatio) {
+            if (cropper) {
+                // ক্রপ করার সময় স্বয়ংক্রিয় প্রসেসিং বন্ধ রাখুন
+                return;
+            }
+            if (aspectRatioLock.checked && originalImage) {
                 const newWidth = parseInt(widthInput.value);
-                if (!isNaN(newWidth) && newWidth > 0) {
-                    const newHeight = Math.round(newWidth / originalAspectRatio);
-                    heightInput.value = newHeight > 0 ? newHeight : 1; // Ensure height is at least 1
-                } else {
-                   heightInput.value = ''; // Clear height if width is invalid
-                }
+                if (!isNaN(newWidth) && newWidth > 0) heightInput.value = Math.round(newWidth / originalAspectRatio) || 1;
             }
             debouncedProcess();
         });
@@ -17013,49 +17068,69 @@ function initializeImageResizer() {
 
     if (heightInput) {
         heightInput.addEventListener('input', () => {
-            if (aspectRatioLock.checked && originalImage && originalAspectRatio) {
+            if (cropper) {
+                 // ক্রপ করার সময় স্বয়ংক্রিয় প্রসেসিং বন্ধ রাখুন
+                 return;
+            }
+            if (aspectRatioLock.checked && originalImage) {
                 const newHeight = parseInt(heightInput.value);
-                if (!isNaN(newHeight) && newHeight > 0) {
-                     const newWidth = Math.round(newHeight * originalAspectRatio);
-                     widthInput.value = newWidth > 0 ? newWidth : 1; // Ensure width is at least 1
-                 } else {
-                   widthInput.value = ''; // Clear width if height is invalid
-                }
+                if (!isNaN(newHeight) && newHeight > 0) widthInput.value = Math.round(newHeight * originalAspectRatio) || 1;
             }
             debouncedProcess();
         });
     }
-
-    if (qualitySlider) {
-        qualitySlider.addEventListener('input', () => {
-            qualityValue.textContent = qualitySlider.value;
-            if (formatSelect.value !== 'image/png') {
-                 debouncedProcess();
+    
+    if (aspectRatioLock) {
+        aspectRatioLock.addEventListener('change', () => {
+            if (cropper) {
+                cropper.setAspectRatio(aspectRatioLock.checked ? originalAspectRatio : NaN);
             }
         });
+    }
+
+    if (qualitySlider) {
+        qualitySlider.addEventListener('input', () => { qualityValue.textContent = qualitySlider.value; debouncedProcess(); });
     }
 
     if (formatSelect) {
-        formatSelect.addEventListener('change', () => {
-            qualitySlider.disabled = formatSelect.value === 'image/png';
-            processImage(); // Process immediately on format change
-        });
+        formatSelect.addEventListener('change', () => { qualitySlider.disabled = formatSelect.value === 'image/png'; processImage(); });
     }
 
     if (downloadBtn) {
-        downloadBtn.addEventListener('click', () => {
-             if (!currentProcessedObjectURL) { // Check if a processed image URL exists
-                showCustomAlert("ডাউনলোড করার জন্য কোনো প্রসেস করা ছবি নেই।");
-                return;
+        downloadBtn.addEventListener('click', async () => {
+            if (cropper) {
+                // ক্রপ মোডে থাকলে, বাটনটি "ক্রপ করুন" হিসেবে কাজ করবে
+                const croppedCanvas = cropper.getCroppedCanvas();
+                const fileType = imageInput.files[0]?.type || 'image/jpeg';
+                const fileName = imageInput.files[0]?.name || 'cropped.jpg';
+
+                croppedCanvas.toBlob((blob) => {
+                     const newFile = new File([blob], fileName, { type: blob.type });
+                     // ক্রপ মোড বন্ধ করুন
+                     toggleCropMode(); 
+                     // নতুন ক্রপ করা ছবিটি দিয়ে রিসাইজার পুনরায় চালু করুন
+                     handleFile(newFile);
+                     showCustomAlert('ছবি ক্রপ করা হয়েছে!');
+                }, fileType);
+
+            } else {
+                // সাধারণ মোডে, বাটনটি "ডাউনলোড করুন" হিসেবে কাজ করবে
+                await processImage(); 
+                setTimeout(() => { // ব্লব তৈরি হওয়ার জন্য অপেক্ষা করুন
+                     if (!currentProcessedObjectURL) {
+                        showCustomAlert("ডাউনলোড করার জন্য কোনো প্রসেস করা ছবি নেই।");
+                        return;
+                    }
+                    const link = document.createElement('a');
+                    link.href = currentProcessedObjectURL;
+                    const format = formatSelect.value.split('/')[1];
+                    const originalFileName = imageInput.files[0]?.name.split('.')[0] || 'resized-image';
+                    link.download = `${originalFileName}-resized.${format}`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }, 200);
             }
-            const link = document.createElement('a');
-            link.href = currentProcessedObjectURL; // Use the stored blob URL
-            const format = formatSelect.value.split('/')[1];
-            const originalFileName = imageInput.files[0]?.name.split('.')[0] || 'resized-image';
-            link.download = `${originalFileName}-resized.${format}`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
         });
     }
 }
@@ -17063,6 +17138,10 @@ function initializeImageResizer() {
 // ========================================================
 // END: Image Resizer Script
 // ========================================================
+
+
+
+
 
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
