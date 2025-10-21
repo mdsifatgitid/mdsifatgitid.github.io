@@ -5416,6 +5416,197 @@ body.sidebar-open #sidebarOverlay {
 /* ======================================================== */
 /* End: Sidebar */
 /* ======================================================== */
+/* ======================================================== */
+/* START: Image Resizer Styles (ছবি রিসাইজার) */
+/* ======================================================== */
+.image-resizer-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+    padding: 15px;
+}
+@media (min-width: 1024px) {
+    .image-resizer-container {
+        grid-template-columns: 350px 1fr;
+    }
+}
+
+.image-resizer-controls {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+.dark .image-resizer-controls {
+    background-color: #1f2937;
+    border-color: #4a5568;
+}
+
+.image-upload-area {
+    border: 2px dashed #9ca3af;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #f9fafb;
+    transition: background-color 0.3s ease, border-color 0.3s;
+    margin-bottom: 20px;
+}
+.dark .image-upload-area {
+    background-color: #374151;
+    border-color: #6b7280;
+}
+.image-upload-area.drag-over, .image-upload-area:hover {
+    background-color: #eff6ff;
+    border-color: #3b82f6;
+}
+.dark .image-upload-area.drag-over, .dark .image-upload-area:hover {
+    background-color: #2c3748;
+    border-color: #60a5fa;
+}
+.image-upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #6b7280;
+    font-weight: 500;
+    cursor: pointer;
+}
+.dark .image-upload-label {
+    color: #d1d5db;
+}
+
+.control-section {
+    margin-top: 20px;
+}
+.control-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e5e7eb;
+}
+.dark .control-title {
+    color: #d1d5db;
+    border-bottom-color: #4b5563;
+}
+.input-group {
+    text-align: left;
+}
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: #4b5569;
+}
+.dark .input-group label {
+    color: #9ca3af;
+}
+.resizer-input {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #f9fafb;
+}
+.dark .resizer-input {
+    background-color: #4a5568;
+    border-color: #718096;
+    color: #f7fafc;
+}
+
+.download-btn {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    margin-top: 25px;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.download-btn:hover:not(:disabled) {
+    background-color: #059669;
+    transform: translateY(-2px);
+}
+.download-btn:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.image-resizer-preview {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+@media (min-width: 768px) {
+    .image-resizer-preview {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+.preview-box {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+}
+.dark .preview-box {
+    background-color: #1f2937;
+    border-color: #4a5568;
+}
+.preview-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.image-container {
+    width: 100%;
+    height: 250px;
+    background-color: #f1f5f9;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+.dark .image-container {
+    background-color: #374151;
+}
+.image-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+.file-info-box {
+    background-color: #f8fafc;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 0.85rem;
+    color: #475569;
+}
+.dark .file-info-box {
+    background-color: #4a5568;
+    color: #d1d5db;
+}
+/* ======================================================== */
+/* END: Image Resizer Styles */
+/* ======================================================== */
+
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -5533,6 +5724,7 @@ body.sidebar-open #sidebarOverlay {
 				<button id="qrCodeTab" class="tab-button rounded-xl">কিউআর কোড</button>
 				<button id="colorPickerTab" class="tab-button rounded-xl">রঙ বাছাইকারী</button>
 				<button id="invoiceTab" class="tab-button rounded-xl">ইনভয়েজ</button>
+				<button id="imageResizerTab" class="tab-button rounded-xl">ছবি রিসাইজার</button>
 				<button id="emergencyNumbersTab" class="tab-button rounded-xl">জরুরি নম্বর</button>
 				<button id="healthLifestyleTab" class="tab-button rounded-xl">স্বাস্থ্য ও জীবনধারা</button>
 				<button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
@@ -7496,6 +7688,94 @@ body.sidebar-open #sidebarOverlay {
 </div>
 <!-- End Dashboard Content -->
 
+<!-- ======================================================== -->
+<!-- START: ধাপ ৩ এর জন্য (HTML কন্টেন্ট) -->
+<!-- ======================================================== -->
+<!-- START: Image Resizer Tab Content (ছবি রিসাইজার) -->
+<div id="imageResizerContent" class="calculator-content">
+    <div class="image-resizer-container">
+        <!-- Controls Section -->
+        <div class="image-resizer-controls">
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">ছবি রিসাইজ ও কম্প্রেস</h3>
+
+            <!-- Image Upload -->
+            <div id="image-drop-zone" class="image-upload-area">
+                <label for="imageUploadInput" class="image-upload-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-4-4V7a4 4 0 014-4h10a4 4 0 014 4v5a4 4 0 01-4 4H7z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 16v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4m12-4l-4-4-4 4m4 4v-4"></path></svg>
+                    <span>ছবি আপলোড করুন বা এখানে টেনে আনুন</span>
+                </label>
+                <input type="file" id="imageUploadInput" accept="image/png, image/jpeg, image/webp" class="hidden">
+            </div>
+
+            <!-- Resize Options -->
+            <div class="control-section">
+                <h4 class="control-title">রিসাইজ অপশন</h4>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="input-group">
+                        <label for="widthInput">প্রস্থ (px)</label>
+                        <input type="number" id="widthInput" class="resizer-input">
+                    </div>
+                    <div class="input-group">
+                        <label for="heightInput">উচ্চতা (px)</label>
+                        <input type="number" id="heightInput" class="resizer-input">
+                    </div>
+                </div>
+                <div class="flex items-center mt-2">
+                    <input type="checkbox" id="aspectRatioLock" class="h-4 w-4" checked>
+                    <label for="aspectRatioLock" class="ml-2 text-sm text-gray-600 dark:text-gray-300">অনুপাত ঠিক রাখুন</label>
+                </div>
+            </div>
+
+            <!-- Compress & Format Options -->
+            <div class="control-section">
+                <h4 class="control-title">কম্প্রেস ও ফরম্যাট</h4>
+                <div class="input-group">
+                    <label for="qualitySlider">কোয়ালিটি: <span id="qualityValue">90</span>%</label>
+                    <input type="range" id="qualitySlider" min="1" max="100" value="90" class="w-full">
+                </div>
+                <div class="input-group mt-4">
+                    <label for="formatSelect">ফরম্যাট পরিবর্তন</label>
+                    <select id="formatSelect" class="resizer-input">
+                        <option value="image/jpeg">JPG</option>
+                        <option value="image/png">PNG</option>
+                        <option value="image/webp">WEBP</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Download Button -->
+            <button id="downloadBtn" class="download-btn" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
+                <span>ডাউনলোড করুন</span>
+            </button>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="image-resizer-preview">
+            <div class="preview-box">
+                <h4 class="preview-title">আসল ছবি</h4>
+                <div class="image-container">
+                    <img id="originalPreview" src="https://placehold.co/400x300/e0e7ff/3f51b5?text=Original+Image" alt="Original">
+                </div>
+                <div class="file-info-box">
+                    <p>সাইজ: <span id="originalSize">N/A</span></p>
+                    <p>ডাইমেনশন: <span id="originalDimensions">N/A</span></p>
+                </div>
+            </div>
+            <div class="preview-box">
+                <h4 class="preview-title">প্রসেসড ছবি</h4>
+                 <div class="image-container">
+                    <img id="processedPreview" src="https://placehold.co/400x300/dcfce7/166534?text=Processed+Image" alt="Processed">
+                </div>
+                <div class="file-info-box">
+                    <p>সাইজ: <span id="processedSize">N/A</span></p>
+                    <p>ডাইমেনশন: <span id="processedDimensions">N/A</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Image Resizer Tab Content -->
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
 </div>
@@ -9708,7 +9988,8 @@ try {
                 const ageCalcTab = document.getElementById('ageCalcTab');
                 const dateCalcTab = document.getElementById('dateCalcTab');
                 const scientificCalcTab = document.getElementById('scientificCalcTab');
-                
+                const imageResizerTab = document.getElementById('imageResizerTab');
+				const imageResizerContent = document.getElementById('imageResizerContent');
                 const converterTab = document.getElementById('converterTab');
                 const measurementTab = document.getElementById('measurementTab'); // Add this line
                 const textAssistantTab = document.getElementById('textAssistantTab');
@@ -10018,7 +10299,7 @@ window.addEventListener('click', (e) => {
 function showTab(tabId) {
     // সমস্ত ট্যাব এর নাম এবং ট্যাব এর কন্টেন্ট নাম একানে বসাতে হয়, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয় বা বসাতে হয় ।
     const tabs = [
-        basicCalcTab,colorPickerTab, dashboardTab,
+        basicCalcTab,colorPickerTab, dashboardTab,imageResizerTab,
 		ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,
 		translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
 		qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab,
@@ -10026,7 +10307,7 @@ function showTab(tabId) {
 		allFeaturesTab
     ];
     const contents = [
-        basicCalculatorContent,colorPickerContent,dashboardContent,
+        basicCalculatorContent,colorPickerContent,dashboardContent,imageResizerContent,
 		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent,  converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent,
 		weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
@@ -10057,6 +10338,11 @@ function showTab(tabId) {
             activeTab = ageCalcTab;
             activeContent = ageCalculatorContent;
             break;
+			case 'imageResizer':
+				activeTab = imageResizerTab;
+				activeContent = imageResizerContent;
+				initializeImageResizer();
+			break;
         case 'date':
             activeTab = dateCalcTab;
             activeContent = dateCalculatorContent;
@@ -10233,6 +10519,7 @@ function showTab(tabId) {
 				if (clockTab) clockTab.addEventListener('click', () => showTab('clock'));
 				if (playerTab) playerTab.addEventListener('click', () => showTab('player'));
 				if (zakatCalcTab) zakatCalcTab.addEventListener('click', () => showTab('zakat'));
+				if (imageResizerTab) imageResizerTab.addEventListener('click', () => showTab('imageResizer'));
 				if (qrCodeTab) qrCodeTab.addEventListener('click', () => showTab('qrCode'));
 				if (importantLinksTab) importantLinksTab.addEventListener('click', () => showTab('importantLinks'));
                 if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
@@ -16414,6 +16701,191 @@ document.addEventListener('DOMContentLoaded', () => {
 // END: NEW SIDEBAR, DASHBOARD & INTERACTIVITY SCRIPT (UPDATED)
 // ====================================================================
 
+// ========================================================
+// START: Image Resizer Script (ছবি রিসাইজার)
+// ========================================================
+function initializeImageResizer() {
+    const dropZone = document.getElementById('image-drop-zone');
+    const imageInput = document.getElementById('imageUploadInput');
+    const widthInput = document.getElementById('widthInput');
+    const heightInput = document.getElementById('heightInput');
+    const aspectRatioLock = document.getElementById('aspectRatioLock');
+    const qualitySlider = document.getElementById('qualitySlider');
+    const qualityValue = document.getElementById('qualityValue');
+    const formatSelect = document.getElementById('formatSelect');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    const originalPreview = document.getElementById('originalPreview');
+    const processedPreview = document.getElementById('processedPreview');
+    const originalSize = document.getElementById('originalSize');
+    const originalDimensions = document.getElementById('originalDimensions');
+    const processedSize = document.getElementById('processedSize');
+    const processedDimensions = document.getElementById('processedDimensions');
+
+    let originalImage = null;
+    let originalAspectRatio = 1;
+    let isProcessing = false;
+
+    // --- File Handling ---
+    function handleFile(file) {
+        if (!file || !file.type.startsWith('image/')) {
+            showCustomAlert('অনুগ্রহ করে একটি ছবি ফাইল নির্বাচন করুন।');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            originalImage = new Image();
+            originalImage.onload = () => {
+                originalAspectRatio = originalImage.width / originalImage.height;
+                widthInput.value = originalImage.width;
+                heightInput.value = originalImage.height;
+                originalPreview.src = e.target.result;
+                originalDimensions.textContent = `${originalImage.width} x ${originalImage.height} px`;
+                
+                const sizeInKB = file.size / 1024;
+                originalSize.textContent = sizeInKB > 1024 
+                    ? `${(sizeInKB / 1024).toFixed(2)} MB` 
+                    : `${sizeInKB.toFixed(2)} KB`;
+
+                formatSelect.value = file.type;
+                processImage();
+            };
+            originalImage.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // --- Image Processing ---
+    async function processImage() {
+        if (!originalImage || isProcessing) return;
+        isProcessing = true;
+        downloadBtn.disabled = true;
+
+        const width = parseInt(widthInput.value);
+        const height = parseInt(heightInput.value);
+        const quality = parseInt(qualitySlider.value) / 100;
+        const format = formatSelect.value;
+
+        if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
+            isProcessing = false;
+            return;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(originalImage, 0, 0, width, height);
+
+        // Wait for the next frame to avoid blocking the UI thread
+        await new Promise(resolve => requestAnimationFrame(resolve));
+
+        canvas.toBlob((blob) => {
+            if (blob) {
+                const objectURL = URL.createObjectURL(blob);
+                processedPreview.src = objectURL;
+                processedDimensions.textContent = `${width} x ${height} px`;
+                const sizeInKB = blob.size / 1024;
+                 processedSize.textContent = sizeInKB > 1024 
+                    ? `${(sizeInKB / 1024).toFixed(2)} MB` 
+                    : `${sizeInKB.toFixed(2)} KB`;
+                downloadBtn.disabled = false;
+            }
+            isProcessing = false;
+        }, format, quality);
+    }
+
+    // --- Event Listeners ---
+    if (dropZone) {
+        dropZone.addEventListener('click', () => imageInput.click());
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.add('drag-over');
+        });
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('drag-over');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            handleFile(file);
+        });
+    }
+
+    if (imageInput) {
+        imageInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+    }
+    
+    // --- Control Event Listeners with Debounce ---
+    let debounceTimer;
+    const debouncedProcess = () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(processImage, 250);
+    };
+
+    if (widthInput) {
+        widthInput.addEventListener('input', () => {
+            if (aspectRatioLock.checked) {
+                const newWidth = parseInt(widthInput.value);
+                if (!isNaN(newWidth)) {
+                    heightInput.value = Math.round(newWidth / originalAspectRatio);
+                }
+            }
+            debouncedProcess();
+        });
+    }
+    
+    if (heightInput) {
+        heightInput.addEventListener('input', () => {
+            if (aspectRatioLock.checked) {
+                const newHeight = parseInt(heightInput.value);
+                if (!isNaN(newHeight)) {
+                    widthInput.value = Math.round(newHeight * originalAspectRatio);
+                }
+            }
+            debouncedProcess();
+        });
+    }
+
+    if (qualitySlider) {
+        qualitySlider.addEventListener('input', () => {
+            qualityValue.textContent = qualitySlider.value;
+            if (formatSelect.value !== 'image/png') { // PNG is lossless
+                debouncedProcess();
+            }
+        });
+    }
+
+    if (formatSelect) {
+        formatSelect.addEventListener('change', () => {
+            // PNG quality slider is irrelevant, but we show it for consistency.
+            // Hide/show logic can be added if desired.
+            qualitySlider.disabled = formatSelect.value === 'image/png';
+            processImage();
+        });
+    }
+
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.href = processedPreview.src;
+            const format = formatSelect.value.split('/')[1];
+            link.download = `resized-image.${format}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    }
+}
+// ========================================================
+// END: Image Resizer Script
+// ========================================================
 
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
