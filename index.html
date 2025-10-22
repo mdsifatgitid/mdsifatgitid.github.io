@@ -8144,7 +8144,6 @@ document.addEventListener('DOMContentLoaded', () => {
         accuracyDisplay.innerText = '100%';
         pauseResumeTypingBtn.innerText = 'থামান';
         pauseResumeTypingBtn.disabled = true;
-        resultReportContainer.classList.add('hidden');
     };
 
     const updateTimeDisplays = () => {
@@ -8205,7 +8204,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const typedChar = typedValue[index];
                 const originalChar = charSpan.innerText;
                 
-                // আপডেট করা লজিক: বাংলা ও ইংরেজি সংখ্যা উভয়ই সঠিক হিসেবে ধরা হবে
                 let isCorrect = (typedChar === originalChar) || (digitMap[originalChar] === typedChar);
 
                 if (originalChar === '\n' && (typedChar === '\n' || typedChar === ' ')) {
@@ -8316,17 +8314,18 @@ document.addEventListener('DOMContentLoaded', () => {
             history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]');
         }
 
-        if (history.length === 0) return;
-
         resultReportContainer.classList.remove('hidden');
 
-        /* গুরুত্বপূর্ণ নোট: ফলাফলের তালিকায় ক্রমিক নম্বর দেখতে হলে, আপনার HTML ফাইলের 
-         <table id="holidayTable"> এর ভেতরের <thead> অংশে "তারিখ" এর আগে 
-         একটি নতুন হেডার যোগ করুন: <th class="p-3 text-center">ক্রমিক</th>
-        */
+        if (history.length === 0) {
+            historyTableBody.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-gray-500">কোনো পরীক্ষার ইতিহাস পাওয়া যায়নি।</td></tr>';
+            renderPerformanceChart([]);
+            renderSlowestCharsChart([]);
+            return;
+        }
+
         historyTableBody.innerHTML = history.map((res, index) => `
             <tr>
-                <td class="p-3 text-center">${index + 1}</td>
+                <td class="p-3 text-center">${history.length - index}</td>
                 <td class="p-3">${new Date(res.timestamp).toLocaleString('bn-BD')}</td>
                 <td class="p-3 text-center">${res.wpm}</td>
                 <td class="p-3 text-center">${res.accuracy}%</td>
@@ -8341,7 +8340,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderPerformanceChart = (history) => {
         if (performanceChart) performanceChart.destroy();
         const reversedHistory = [...history].reverse();
-        const labels = reversedHistory.map((_, i) => `টেস্ট ${i + 1}`);
+        
+        const labels = reversedHistory.map((_, i) => `টেস্ট ${i + 1}`); 
         const wpmData = reversedHistory.map(res => res.wpm);
         const accuracyData = reversedHistory.map(res => res.accuracy);
 
@@ -8410,17 +8410,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const loadLastReport = async () => {
-        let history = [];
-         try {
-            history = await idbGet('typingTestHistory') || [];
-        } catch (error) {
-            console.error("Failed to load last report from IndexedDB:", error);
-            history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]');
-        }
-
-        if(history.length > 0) {
-            await displayResultReport();
-        }
+        await displayResultReport();
     };
 
     typingTestTab.addEventListener('click', () => {
@@ -8445,10 +8435,10 @@ document.addEventListener('DOMContentLoaded', () => {
         loadLastReport();
     }
 });
-
 // ====================================================================
 // End Typing Script
 // ====================================================================
+
 
 
 
