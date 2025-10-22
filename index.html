@@ -6318,6 +6318,7 @@ body.sidebar-open #sidebarOverlay {
                             <table class="min-w-full bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
                                 <thead class="bg-gray-100 dark:bg-gray-700">
                                     <tr>
+										<th class="p-3 text-center">ক্রমিক</th>
                                         <th class="p-3 text-left">তারিখ</th>
                                         <th class="p-3 text-center">WPM</th>
                                         <th class="p-3 text-center">নির্ভুলতা</th>
@@ -8102,7 +8103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let performanceChart, slowestCharsChart;
 
     const paragraphs = {
-        bn_1: "বাংলা আমার মাতৃভাষা এবং আমি এই ভাষাকে অনেক ভালোবাসি। এই ভাষার জন্য আমাদের পূর্বপুরুষেরা ১৯৫২ সালে রক্ত দিয়েছেন, যা বিশ্ব ইতিহাসে এক বিরল ঘটনা। তাঁদের সেই আত্মত্যাগের স্বীকৃতি হিসেবে একুশে ফেব্রুয়ারি আজ আন্তর্জাতিক মাতৃভাষা দিবস হিসেবে পালিত হয়, যা আমাদের জন্য একটি অত্যন্ত গর্বের দিন। এই ভাষা আমাদের সংস্কৃতি ও পরিচয়ের মূল ভিত্তি।",
+        bn_1: "বাংলা আমার মাতৃভাষা এবং আমি এই ভাষাকে অনেক ভালোবাসি। এই ভাষার জন্য আমাদের পূর্বপুরুষেরা ১৯৫২ সালে রক্ত দিয়েছেন, যা বিশ্ব ইতিহাসে এক বিরল ঘটনা। তাঁদের সেই আত্মত্যাগের স্বীকৃতি হিসেবে ২১শে ফেব্রুয়ারি আজ আন্তর্জাতিক মাতৃভাষা দিবস হিসেবে পালিত হয়, যা আমাদের জন্য একটি অত্যন্ত গর্বের দিন। এই ভাষা আমাদের সংস্কৃতি ও পরিচয়ের মূল ভিত্তি।",
         bn_2: "বাংলাদেশ দক্ষিণ এশিয়ার একটি সুন্দর দেশ, যা তার প্রাকৃতিক সৌন্দর্যের জন্য পরিচিত। এখানে ছয়টি ঋতু পর্যায়ক্রমে আসে এবং প্রতিটি ঋতুরই নিজস্ব রূপ ও বৈশিষ্ট্য রয়েছে। বর্ষাকালে প্রচুর বৃষ্টিপাত হয়, যার ফলে নদনদী, খালবিল পানিতে ভরে যায় এবং প্রকৃতি এক নতুন সজীবতা লাভ করে। এই ঋতু আমাদের কৃষি ও জীবনযাত্রায় গভীর প্রভাব ফেলে।",
         bn_3: "তথ্যপ্রযুক্তি আমাদের দৈনন্দিন জীবনকে অনেক সহজ ও গতিময় করে দিয়েছে। ইন্টারনেট ব্যবহার করে আমরা এখন বিশ্বের যেকোনো প্রান্তের মানুষের সাথে মুহূর্তের মধ্যে যোগাযোগ করতে পারি। শিক্ষা, স্বাস্থ্য, ব্যাংকিং এবং বিনোদনের মতো গুরুত্বপূর্ণ ক্ষেত্রেও তথ্যপ্রযুক্তির ব্যাপক ও ইতিবাচক প্রভাব পড়েছে, যা আধুনিক জীবনযাত্রাকে নতুন মাত্রা দিয়েছে।",
         en_1: "The quick brown fox jumps over the lazy dog. This famous pangram contains all twenty-six letters of the English alphabet, making it an excellent tool for testing typewriters and computer keyboards. It has been used for this purpose for many decades to ensure all keys are functioning correctly and to help people practice their typing skills.",
@@ -8112,6 +8113,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let timer, timeElapsed = 0, totalTestTime = 0, isTestActive = false, isPaused = false;
     let originalParagraphForTest = "", charTimings = [], lastKeyPressTime = 0;
+
+    // নতুন: বাংলা ও ইংরেজি সংখ্যার ম্যাপিং
+    const digitMap = {
+        '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯',
+        '০': '0', '১': '1', '২': '2', '৩': '3', '৪': '4', '৫': '5', '৬': '6', '৭': '7', '৮': '8', '৯': '9'
+    };
 
     const initializeTest = () => {
         clearInterval(timer);
@@ -8124,13 +8131,12 @@ document.addEventListener('DOMContentLoaded', () => {
         typingInput.disabled = false;
 
         const selection = textSelection.value;
-        // Updated to normalize newlines and handle them for display
         const customText = customTextInputContainer.value.replace(/\r\n?/g, '\n');
         originalParagraphForTest = (selection === 'custom' ? customText : paragraphs[selection]) || paragraphs['bn_1'];
 
         typingTextDisplay.innerHTML = originalParagraphForTest.split('').map(char => `<span>${char}</span>`).join('');
-        typingTextDisplay.style.whiteSpace = 'pre-wrap'; // This ensures \n creates a new line
-        typingTextDisplay.scrollTop = 0; // Scroll to top on restart
+        typingTextDisplay.style.whiteSpace = 'pre-wrap'; 
+        typingTextDisplay.scrollTop = 0;
         typingTextDisplay.querySelector('span')?.classList.add('current');
 
         updateTimeDisplays();
@@ -8160,7 +8166,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const typedValue = typingInput.value;
         const typedLength = typedValue.length;
 
-        // Record character timing (Keep existing logic)
         const now = Date.now();
         const timeTaken = now - lastKeyPressTime;
         lastKeyPressTime = now;
@@ -8172,24 +8177,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateDisplayAndStats();
 
-        // ** START: Auto-Scroll Logic **
         const currentSpan = typingTextDisplay.querySelector('span.current');
         if (currentSpan) {
             const containerRect = typingTextDisplay.getBoundingClientRect();
             const spanRect = currentSpan.getBoundingClientRect();
             const lineHeight = parseFloat(getComputedStyle(typingTextDisplay).lineHeight);
 
-            // Check if the current span is near the bottom edge of the visible area
-            // and towards the right side (e.g., last 20% of the width)
             if (spanRect.bottom > containerRect.bottom - lineHeight * 0.5 &&
                 spanRect.right > containerRect.left + containerRect.width * 0.8) {
-                // Scroll down by approximately one line height
                 typingTextDisplay.scrollBy({ top: lineHeight, behavior: 'smooth' });
             }
         }
-        // ** END: Auto-Scroll Logic **
-
-
+        
         if (typedLength >= originalParagraphForTest.length) {
             endTest();
         }
@@ -8206,8 +8205,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const typedChar = typedValue[index];
                 const originalChar = charSpan.innerText;
                 
-                // New logic: Check for newline and allow space as a valid input
-                let isCorrect = typedChar === originalChar;
+                // আপডেট করা লজিক: বাংলা ও ইংরেজি সংখ্যা উভয়ই সঠিক হিসেবে ধরা হবে
+                let isCorrect = (typedChar === originalChar) || (digitMap[originalChar] === typedChar);
+
                 if (originalChar === '\n' && (typedChar === '\n' || typedChar === ' ')) {
                     isCorrect = true;
                 }
@@ -8244,10 +8244,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const startTimer = () => {
         timer = setInterval(() => {
-            if (isPaused) return; // Don't increment time if paused
+            if (isPaused) return; 
             timeElapsed++;
             updateTimeDisplays();
-            updateDisplayAndStats(); // Update stats periodically
+            updateDisplayAndStats(); 
             if (totalTestTime > 0 && timeElapsed >= totalTestTime) endTest();
         }, 1000);
     };
@@ -8256,19 +8256,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isTestActive) return;
         isPaused = !isPaused;
         if (isPaused) {
-            // clearInterval(timer); // Timer interval continues, but timeElapsed doesn't increment
             typingInput.disabled = true;
             pauseResumeTypingBtn.innerText = 'চালু করুন';
         } else {
-            lastKeyPressTime = Date.now(); // Reset last key press time on resume
-            // startTimer(); // Timer is already running, just needs to resume incrementing
+            lastKeyPressTime = Date.now(); 
             typingInput.disabled = false;
             typingInput.focus();
             pauseResumeTypingBtn.innerText = 'থামান';
         }
     };
 
-    // **** বাগ ফিক্সড: ফাংশনটিকে async করা হয়েছে এবং await ব্যবহার করা হয়েছে ****
     const endTest = async () => {
         clearInterval(timer);
         isTestActive = false;
@@ -8284,29 +8281,25 @@ document.addEventListener('DOMContentLoaded', () => {
             charTimings: charTimings
         };
 
-        // প্রথমে ডেটা সেভ হওয়ার জন্য অপেক্ষা করবে
         await saveResult(resultData);
-        // তারপর সেভ করা ডেটা দিয়ে তালিকা ও চার্ট দেখাবে
         await displayResultReport();
 
         showCustomAlert('টাইপিং টেস্ট শেষ হয়েছে!');
     };
 
-    // IndexedDB ব্যবহার করে ফলাফল সেভ করার জন্য আপডেট করা ফাংশন
     const saveResult = async (result) => {
         try {
             let history = await idbGet('typingTestHistory') || [];
             history.unshift(result);
-            history = history.slice(0, 10); // শেষ ১০টি ফলাফল রাখুন
+            history = history.slice(0, 10);
             await idbSet('typingTestHistory', history);
             console.log("Typing test result saved to IndexedDB.");
         } catch (error) {
             console.error("Failed to save typing test result to IndexedDB:", error);
-            // IndexedDB ব্যর্থ হলে localStorage ব্যবহার করুন
             try {
                 let history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]');
                 history.unshift(result);
-                history = history.slice(0, 10); // শেষ ১০টি ফলাফল রাখুন
+                history = history.slice(0, 10); 
                 localStorage.setItem('typingTestHistory', JSON.stringify(history));
             } catch (localError) {
                 console.error("Failed to save to localStorage as well:", localError);
@@ -8314,14 +8307,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // IndexedDB থেকে রিপোর্ট দেখানোর জন্য আপডেট করা ফাংশন
     const displayResultReport = async () => {
         let history = [];
         try {
             history = await idbGet('typingTestHistory') || [];
         } catch (error) {
             console.error("Failed to get typing history from IndexedDB:", error);
-            // IndexedDB থেকে ডেটা পেতে ব্যর্থ হলে localStorage থেকে চেষ্টা করুন
             history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]');
         }
 
@@ -8329,9 +8320,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         resultReportContainer.classList.remove('hidden');
 
-        // ফলাফলের টেবিল পূরণ করুন
-        historyTableBody.innerHTML = history.map(res => `
+        /* গুরুত্বপূর্ণ নোট: ফলাফলের তালিকায় ক্রমিক নম্বর দেখতে হলে, আপনার HTML ফাইলের 
+         <table id="holidayTable"> এর ভেতরের <thead> অংশে "তারিখ" এর আগে 
+         একটি নতুন হেডার যোগ করুন: <th class="p-3 text-center">ক্রমিক</th>
+        */
+        historyTableBody.innerHTML = history.map((res, index) => `
             <tr>
+                <td class="p-3 text-center">${index + 1}</td>
                 <td class="p-3">${new Date(res.timestamp).toLocaleString('bn-BD')}</td>
                 <td class="p-3 text-center">${res.wpm}</td>
                 <td class="p-3 text-center">${res.accuracy}%</td>
@@ -8339,7 +8334,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </tr>
         `).join('');
 
-        // চার্ট রেন্ডার করুন
         renderPerformanceChart(history);
         renderSlowestCharsChart(history[0].charTimings);
     };
@@ -8351,24 +8345,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const wpmData = reversedHistory.map(res => res.wpm);
         const accuracyData = reversedHistory.map(res => res.accuracy);
 
-        // একটি মাত্র টেস্ট রেজাল্ট থাকলে চার্টের ধরন পরিবর্তন করুন
         const chartType = reversedHistory.length > 1 ? 'line' : 'bar';
 
         performanceChart = new Chart(performanceChartCanvas, {
-            type: chartType, // ডাইনামিক চার্ট টাইপ
+            type: chartType,
             data: {
                 labels: labels,
                 datasets: [{
                     label: 'WPM',
                     data: wpmData,
                     borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.5)', // বার চার্টের জন্য
+                    backgroundColor: 'rgba(59, 130, 246, 0.5)',
                     tension: 0.1
                 }, {
                     label: 'নির্ভুলতা (%)',
                     data: accuracyData,
                     borderColor: '#10b981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.5)', // বার চার্টের জন্য
+                    backgroundColor: 'rgba(16, 185, 129, 0.5)',
                     tension: 0.1
                 }]
             },
@@ -8416,7 +8409,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // IndexedDB থেকে সর্বশেষ রিপোর্ট লোড করার জন্য আপডেট করা ফাংশন
     const loadLastReport = async () => {
         let history = [];
          try {
@@ -8431,9 +8423,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Event Listeners (Keep existing ones)
     typingTestTab.addEventListener('click', () => {
-        showTab('typingTest'); // Ensure showTab function is accessible or define it here
+        showTab('typingTest');
         initializeTest();
         loadLastReport();
     });
@@ -8449,7 +8440,6 @@ document.addEventListener('DOMContentLoaded', () => {
     timeSelection.addEventListener('change', initializeTest);
     customTextInputContainer.addEventListener('input', () => { if(textSelection.value === 'custom') initializeTest(); });
 
-    // Initial Load (Keep existing logic)
     if (document.getElementById('typingTestContent').classList.contains('active')) {
         initializeTest();
         loadLastReport();
@@ -8459,6 +8449,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 // End Typing Script
 // ====================================================================
+
 
 
         // ====================================================================
