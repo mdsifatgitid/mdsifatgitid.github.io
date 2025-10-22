@@ -6301,7 +6301,7 @@ body.sidebar-open #sidebarOverlay {
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- চার্ট ১: পারফরম্যান্স ইতিহাস -->
                         <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-                            <h4 class="font-semibold mb-2 text-center dark:text-gray-200">শেষ ৫টি পরীক্ষার পারফরম্যান্স</h4>
+                            <h4 class="font-semibold mb-2 text-center dark:text-gray-200">শেষ ১০টি পরীক্ষার পারফরম্যান্স</h4>
                             <canvas id="performanceHistoryChart"></canvas>
                         </div>
                         <!-- চার্ট ২: ধীরগতির অক্ষর -->
@@ -8073,13 +8073,6 @@ async function clearExpiredItems() {
 // ====================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // IndexedDB Get Function (for saveResult and loadLastReport)
-    // Assuming idbGet is defined globally or imported elsewhere
-    // If not, you need to define or import it here.
-    // Example placeholder:
-    // async function idbGet(key) { /* implementation */ }
-    // async function idbSet(key, value) { /* implementation */ }
-
     const typingTestTab = document.getElementById('typingTestTab');
     if (!typingTestTab) return;
 
@@ -8128,32 +8121,29 @@ document.addEventListener('DOMContentLoaded', () => {
         charTimings = [];
         totalTestTime = parseInt(timeSelection.value, 10);
         typingInput.value = '';
-        typingInput.disabled = false; // Enable input when initializing
+        typingInput.disabled = false;
 
         const selection = textSelection.value;
-        originalParagraphForTest = (selection === 'custom' ? customTextInputContainer.value.trim() : paragraphs[selection]) || paragraphs['bn_1'];
+        // Updated to normalize newlines and handle them for display
+        const customText = customTextInputContainer.value.replace(/\r\n?/g, '\n');
+        originalParagraphForTest = (selection === 'custom' ? customText : paragraphs[selection]) || paragraphs['bn_1'];
 
         typingTextDisplay.innerHTML = originalParagraphForTest.split('').map(char => `<span>${char}</span>`).join('');
+        typingTextDisplay.style.whiteSpace = 'pre-wrap'; // This ensures \n creates a new line
         typingTextDisplay.scrollTop = 0; // Scroll to top on restart
         typingTextDisplay.querySelector('span')?.classList.add('current');
 
         updateTimeDisplays();
-        ['wpmDisplay', 'totalWordsDisplay', 'correctWordsDisplay', 'incorrectWordsDisplay'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.innerText = '0';
-        });
-        if (accuracyDisplay) accuracyDisplay.innerText = '100%';
-        if (pauseResumeTypingBtn) {
-            pauseResumeTypingBtn.innerText = 'থামান';
-            pauseResumeTypingBtn.disabled = true; // Disable initially
-        }
-        // Don't hide the report container here if we want it shown on load
-        // resultReportContainer.classList.add('hidden');
+        ['wpmDisplay', 'totalWordsDisplay', 'correctWordsDisplay', 'incorrectWordsDisplay'].forEach(id => document.getElementById(id).innerText = '0');
+        accuracyDisplay.innerText = '100%';
+        pauseResumeTypingBtn.innerText = 'থামান';
+        pauseResumeTypingBtn.disabled = true;
+        resultReportContainer.classList.add('hidden');
     };
 
     const updateTimeDisplays = () => {
-        if (elapsedTimeDisplay) elapsedTimeDisplay.innerText = formatTime(timeElapsed);
-        if (remainingTimeDisplay) remainingTimeDisplay.innerText = totalTestTime > 0 ? formatTime(Math.max(0, totalTestTime - timeElapsed)) : 'আনলিমিটেড';
+        elapsedTimeDisplay.innerText = formatTime(timeElapsed);
+        remainingTimeDisplay.innerText = totalTestTime > 0 ? formatTime(Math.max(0, totalTestTime - timeElapsed)) : 'আনলিমিটেড';
     };
 
     const formatTime = (sec) => `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
@@ -8164,7 +8154,7 @@ document.addEventListener('DOMContentLoaded', () => {
             isTestActive = true;
             lastKeyPressTime = Date.now();
             startTimer();
-            if (pauseResumeTypingBtn) pauseResumeTypingBtn.disabled = false;
+            pauseResumeTypingBtn.disabled = false;
         }
 
         const typedValue = typingInput.value;
@@ -8174,12 +8164,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const now = Date.now();
         const timeTaken = now - lastKeyPressTime;
         lastKeyPressTime = now;
-        if (typedLength > 0 && originalParagraphForTest) { // Add check for originalParagraphForTest
+        if (typedLength > 0) {
             const originalChar = originalParagraphForTest[typedLength - 1];
             const typedChar = typedValue[typedLength - 1];
-            // Ensure charTimings is initialized
-            if (!Array.isArray(charTimings)) charTimings = [];
-             charTimings.push({ char: originalChar, time: timeTaken, correct: originalChar === typedChar });
+            charTimings.push({ char: originalChar, time: timeTaken, correct: originalChar === typedChar });
         }
 
         updateDisplayAndStats();
@@ -8189,19 +8177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentSpan) {
             const containerRect = typingTextDisplay.getBoundingClientRect();
             const spanRect = currentSpan.getBoundingClientRect();
-            // Ensure lineHeight is calculated correctly
-            let lineHeight = parseFloat(getComputedStyle(typingTextDisplay).lineHeight);
-            if (isNaN(lineHeight)) {
-                // Fallback if lineHeight is 'normal' or not a number
-                const tempSpan = document.createElement('span');
-                tempSpan.innerHTML = 'Tg'; // Use characters with ascenders/descenders
-                tempSpan.style.visibility = 'hidden';
-                tempSpan.style.position = 'absolute';
-                typingTextDisplay.appendChild(tempSpan);
-                lineHeight = tempSpan.offsetHeight;
-                typingTextDisplay.removeChild(tempSpan);
-            }
-
+            const lineHeight = parseFloat(getComputedStyle(typingTextDisplay).lineHeight);
 
             // Check if the current span is near the bottom edge of the visible area
             // and towards the right side (e.g., last 20% of the width)
@@ -8214,7 +8190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // ** END: Auto-Scroll Logic **
 
 
-        if (originalParagraphForTest && typedLength >= originalParagraphForTest.length) { // Add check for originalParagraphForTest
+        if (typedLength >= originalParagraphForTest.length) {
             endTest();
         }
     };
@@ -8227,8 +8203,16 @@ document.addEventListener('DOMContentLoaded', () => {
         spans.forEach((charSpan, index) => {
             charSpan.classList.remove('correct', 'incorrect', 'current');
             if (index < typedValue.length) {
-                // Ensure charSpan.innerText exists
-                if (charSpan.innerText && typedValue[index] === charSpan.innerText) {
+                const typedChar = typedValue[index];
+                const originalChar = charSpan.innerText;
+                
+                // New logic: Check for newline and allow space as a valid input
+                let isCorrect = typedChar === originalChar;
+                if (originalChar === '\n' && (typedChar === '\n' || typedChar === ' ')) {
+                    isCorrect = true;
+                }
+
+                if (isCorrect) {
                     charSpan.classList.add('correct');
                     correctChars++;
                 } else {
@@ -8240,28 +8224,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const accuracy = typedValue.length > 0 ? (correctChars / typedValue.length) * 100 : 100;
-        if (accuracyDisplay) accuracyDisplay.innerText = `${Math.round(accuracy)}%`;
+        accuracyDisplay.innerText = `${Math.round(accuracy)}%`;
 
         const timeInMinutes = timeElapsed / 60;
         const grossWPM = timeInMinutes > 0 ? (typedValue.length / 5) / timeInMinutes : 0;
-        if (wpmDisplay) wpmDisplay.innerText = Math.round(grossWPM > 0 ? grossWPM : 0);
+        wpmDisplay.innerText = Math.round(grossWPM > 0 ? grossWPM : 0);
 
         const typedWords = typedValue.trim().split(/\s+/).filter(Boolean);
-        // Ensure originalParagraphForTest is defined before splitting
-        const originalWords = originalParagraphForTest ? originalParagraphForTest.split(/\s+/).filter(Boolean) : [];
+        const originalWords = originalParagraphForTest.split(/\s+/).filter(Boolean);
         let correctWords = 0;
         typedWords.forEach((word, index) => {
             if (originalWords[index] === word) correctWords++;
         });
-        if (totalWordsDisplay) totalWordsDisplay.innerText = typedWords.length;
-        if (correctWordsDisplay) correctWordsDisplay.innerText = correctWords;
-        if (incorrectWordsDisplay) incorrectWordsDisplay.innerText = typedWords.length - correctWords;
+        totalWordsDisplay.innerText = typedWords.length;
+        correctWordsDisplay.innerText = correctWords;
+        incorrectWordsDisplay.innerText = typedWords.length - correctWords;
     };
 
 
     const startTimer = () => {
-        // Clear existing timer before starting a new one
-        clearInterval(timer);
         timer = setInterval(() => {
             if (isPaused) return; // Don't increment time if paused
             timeElapsed++;
@@ -8276,16 +8257,14 @@ document.addEventListener('DOMContentLoaded', () => {
         isPaused = !isPaused;
         if (isPaused) {
             // clearInterval(timer); // Timer interval continues, but timeElapsed doesn't increment
-            if (typingInput) typingInput.disabled = true;
-            if (pauseResumeTypingBtn) pauseResumeTypingBtn.innerText = 'চালু করুন';
+            typingInput.disabled = true;
+            pauseResumeTypingBtn.innerText = 'চালু করুন';
         } else {
             lastKeyPressTime = Date.now(); // Reset last key press time on resume
             // startTimer(); // Timer is already running, just needs to resume incrementing
-            if (typingInput) {
-                typingInput.disabled = false;
-                typingInput.focus();
-            }
-            if (pauseResumeTypingBtn) pauseResumeTypingBtn.innerText = 'থামান';
+            typingInput.disabled = false;
+            typingInput.focus();
+            pauseResumeTypingBtn.innerText = 'থামান';
         }
     };
 
@@ -8293,53 +8272,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const endTest = async () => {
         clearInterval(timer);
         isTestActive = false;
-        if (typingInput) typingInput.disabled = true;
-        if (pauseResumeTypingBtn) pauseResumeTypingBtn.disabled = true;
+        typingInput.disabled = true;
+        pauseResumeTypingBtn.disabled = true;
         updateDisplayAndStats();
 
-        // Ensure charTimings is an array before saving
-        const timingsToSave = Array.isArray(charTimings) ? charTimings : [];
-
         const resultData = {
-            wpm: parseInt(wpmDisplay?.innerText || '0'),
-            accuracy: parseInt(accuracyDisplay?.innerText || '100'),
-            errors: parseInt(incorrectWordsDisplay?.innerText || '0'),
+            wpm: parseInt(wpmDisplay.innerText),
+            accuracy: parseInt(accuracyDisplay.innerText),
+            errors: parseInt(incorrectWordsDisplay.innerText),
             timestamp: new Date().toISOString(),
-            charTimings: timingsToSave // Save the validated array
+            charTimings: charTimings
         };
 
         // প্রথমে ডেটা সেভ হওয়ার জন্য অপেক্ষা করবে
-        // Ensure saveResult is defined and accessible (e.g., from global scope or imported)
-        if (typeof saveResult === 'function') {
-            await saveResult(resultData);
-        } else {
-            console.error('saveResult function is not defined or accessible.');
-        }
+        await saveResult(resultData);
         // তারপর সেভ করা ডেটা দিয়ে তালিকা ও চার্ট দেখাবে
-        // Ensure displayResultReport is defined and accessible
-        if (typeof displayResultReport === 'function') {
-            await displayResultReport();
-        } else {
-             console.error('displayResultReport function is not defined or accessible.');
-        }
+        await displayResultReport();
 
-        // Ensure showCustomAlert is defined
-        if (typeof showCustomAlert === 'function') {
-            showCustomAlert('টাইপিং টেস্ট শেষ হয়েছে!');
-        } else {
-             console.log('টাইপিং টেস্ট শেষ হয়েছে!');
-        }
+        showCustomAlert('টাইপিং টেস্ট শেষ হয়েছে!');
     };
 
     // IndexedDB ব্যবহার করে ফলাফল সেভ করার জন্য আপডেট করা ফাংশন
-    // Assuming idbGet and idbSet are defined globally or imported
     const saveResult = async (result) => {
         try {
-            if (typeof idbGet !== 'function' || typeof idbSet !== 'function') {
-                throw new Error('IndexedDB functions (idbGet, idbSet) are not available.');
-            }
             let history = await idbGet('typingTestHistory') || [];
-             if (!Array.isArray(history)) history = []; // Ensure history is an array
             history.unshift(result);
             history = history.slice(0, 10); // শেষ ১০টি ফলাফল রাখুন
             await idbSet('typingTestHistory', history);
@@ -8349,7 +8305,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // IndexedDB ব্যর্থ হলে localStorage ব্যবহার করুন
             try {
                 let history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]');
-                if (!Array.isArray(history)) history = []; // Ensure history is an array
                 history.unshift(result);
                 history = history.slice(0, 10); // শেষ ১০টি ফলাফল রাখুন
                 localStorage.setItem('typingTestHistory', JSON.stringify(history));
@@ -8361,69 +8316,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // IndexedDB থেকে রিপোর্ট দেখানোর জন্য আপডেট করা ফাংশন
     const displayResultReport = async () => {
-         let history = [];
+        let history = [];
         try {
-            if (typeof idbGet !== 'function') {
-                 throw new Error('idbGet function is not available.');
-            }
             history = await idbGet('typingTestHistory') || [];
-             if (!Array.isArray(history)) history = []; // Ensure history is an array
         } catch (error) {
             console.error("Failed to get typing history from IndexedDB:", error);
             // IndexedDB থেকে ডেটা পেতে ব্যর্থ হলে localStorage থেকে চেষ্টা করুন
-             try {
-                history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]');
-                if (!Array.isArray(history)) history = []; // Ensure history is an array
-            } catch (localError) {
-                 console.error("Failed to get history from localStorage:", localError);
-                 history = []; // Default to empty array on error
-            }
+            history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]');
         }
 
-        if (history.length === 0) {
-            if (resultReportContainer) resultReportContainer.classList.add('hidden'); // Hide if no history
-            return;
-        }
+        if (history.length === 0) return;
 
-        if (resultReportContainer) resultReportContainer.classList.remove('hidden'); // Show if history exists
+        resultReportContainer.classList.remove('hidden');
 
         // ফলাফলের টেবিল পূরণ করুন
-        if (historyTableBody) {
-             historyTableBody.innerHTML = history.map(res => `
-                <tr>
-                    <td class="p-3">${new Date(res.timestamp).toLocaleString('bn-BD')}</td>
-                    <td class="p-3 text-center">${res.wpm || 0}</td>
-                    <td class="p-3 text-center">${res.accuracy || 100}%</td>
-                    <td class="p-3 text-center">${res.errors || 0}</td>
-                </tr>
-            `).join('');
-        }
+        historyTableBody.innerHTML = history.map(res => `
+            <tr>
+                <td class="p-3">${new Date(res.timestamp).toLocaleString('bn-BD')}</td>
+                <td class="p-3 text-center">${res.wpm}</td>
+                <td class="p-3 text-center">${res.accuracy}%</td>
+                <td class="p-3 text-center">${res.errors}</td>
+            </tr>
+        `).join('');
 
-        // চার্ট রেন্ডার করুন (Check if Chart is defined)
-        if (typeof Chart !== 'undefined') {
-            renderPerformanceChart(history);
-            // Ensure charTimings exists and is an array before passing
-             const latestTimings = history[0]?.charTimings;
-            if (Array.isArray(latestTimings)) {
-                renderSlowestCharsChart(latestTimings);
-            } else if (history[0]) {
-                 console.warn("charTimings data is missing or not an array for the latest test result.");
-                 // Optionally clear or hide the slowest chars chart
-                 if (slowestCharsChart) slowestCharsChart.destroy();
-                 if (slowestCharsChartCanvas) slowestCharsChartCanvas.getContext('2d').clearRect(0, 0, slowestCharsChartCanvas.width, slowestCharsChartCanvas.height);
-            }
-        } else {
-             console.error("Chart.js is not loaded.");
-        }
+        // চার্ট রেন্ডার করুন
+        renderPerformanceChart(history);
+        renderSlowestCharsChart(history[0].charTimings);
     };
 
     const renderPerformanceChart = (history) => {
-         if (!performanceChartCanvas) return; // Ensure canvas exists
         if (performanceChart) performanceChart.destroy();
         const reversedHistory = [...history].reverse();
         const labels = reversedHistory.map((_, i) => `টেস্ট ${i + 1}`);
-        const wpmData = reversedHistory.map(res => res.wpm || 0); // Default to 0 if missing
-        const accuracyData = reversedHistory.map(res => res.accuracy || 100); // Default to 100 if missing
+        const wpmData = reversedHistory.map(res => res.wpm);
+        const accuracyData = reversedHistory.map(res => res.accuracy);
 
         // একটি মাত্র টেস্ট রেজাল্ট থাকলে চার্টের ধরন পরিবর্তন করুন
         const chartType = reversedHistory.length > 1 ? 'line' : 'bar';
@@ -8458,37 +8384,23 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderSlowestCharsChart = (timings) => {
-         if (!slowestCharsChartCanvas || !Array.isArray(timings) || timings.length === 0) { // Check canvas and data validity
-            if (slowestCharsChart) slowestCharsChart.destroy(); // Clear existing chart if data is invalid
-             return;
-        }
         if (slowestCharsChart) slowestCharsChart.destroy();
-
+        if (!timings || timings.length === 0) return;
 
         const charTimeMap = {};
         timings.forEach(({ char, time }) => {
-            // Ensure char and time are valid
-             if (typeof char !== 'string' || typeof time !== 'number' || isNaN(time)) return;
-            const normalizedChar = char.trim() === '' ? 'স্পেস' : char; // Handle space and potential whitespace
+            const normalizedChar = char === ' ' ? 'স্পেস' : char;
             if (!charTimeMap[normalizedChar]) charTimeMap[normalizedChar] = [];
             charTimeMap[normalizedChar].push(time);
         });
 
         const avgTimes = Object.keys(charTimeMap).map(char => {
             const times = charTimeMap[char];
-             if (!times || times.length === 0) return { char, avg: 0 }; // Handle empty time array
-            const sum = times.reduce((a, b) => a + b, 0);
-            const avg = sum / times.length;
+            const avg = times.reduce((a, b) => a + b, 0) / times.length;
             return { char, avg };
         });
 
-         // Filter out entries with 0 average time if necessary, before sorting
-         const validAvgTimes = avgTimes.filter(item => item.avg > 0);
-
-        const slowestChars = validAvgTimes.sort((a, b) => b.avg - a.avg).slice(0, 10);
-
-        // Don't render if no valid slowest characters found
-         if (slowestChars.length === 0) return;
+        const slowestChars = avgTimes.sort((a, b) => b.avg - a.avg).slice(0, 10);
 
         slowestCharsChart = new Chart(slowestCharsChartCanvas, {
             type: 'bar',
@@ -8506,83 +8418,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // IndexedDB থেকে সর্বশেষ রিপোর্ট লোড করার জন্য আপডেট করা ফাংশন
     const loadLastReport = async () => {
-         // Ensure necessary elements exist before proceeding
-         if (!resultReportContainer || !historyTableBody || !performanceChartCanvas || !slowestCharsChartCanvas) {
-             console.warn("Report elements not found. Skipping loadLastReport.");
-             return;
-         }
         let history = [];
          try {
-             if (typeof idbGet !== 'function') {
-                 throw new Error('idbGet function is not available.');
-             }
             history = await idbGet('typingTestHistory') || [];
-            if (!Array.isArray(history)) history = []; // Ensure it's an array
         } catch (error) {
             console.error("Failed to load last report from IndexedDB:", error);
-            // Fallback to localStorage
-             try {
-                 history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]');
-                 if (!Array.isArray(history)) history = []; // Ensure it's an array
-            } catch (localError) {
-                 console.error("Failed to load history from localStorage:", localError);
-                 history = [];
-            }
+            history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]');
         }
 
-        // Call displayResultReport only if history is available
         if(history.length > 0) {
-            await displayResultReport(); // displayResultReport handles showing/hiding container
-        } else {
-             resultReportContainer.classList.add('hidden'); // Explicitly hide if no history
+            await displayResultReport();
         }
     };
 
-    // Event Listeners (Ensure elements exist before adding listeners)
-    if (typingTestTab) {
-        typingTestTab.addEventListener('click', () => {
-            // Ensure showTab is defined
-            if (typeof showTab === 'function') {
-                showTab('typingTest');
-            } else {
-                console.error('showTab function is not defined.');
-            }
-            initializeTest();
-            loadLastReport(); // Load report when tab is clicked
-        });
-    }
+    // Event Listeners (Keep existing ones)
+    typingTestTab.addEventListener('click', () => {
+        showTab('typingTest'); // Ensure showTab function is accessible or define it here
+        initializeTest();
+        loadLastReport();
+    });
 
-    if (restartTypingBtn) restartTypingBtn.addEventListener('click', initializeTest);
-    if (pauseResumeTypingBtn) pauseResumeTypingBtn.addEventListener('click', togglePauseResume);
-    if (clearTypingBtn) clearTypingBtn.addEventListener('click', () => { if (typingInput) typingInput.value = ''; initializeTest(); });
-    if (typingInput) typingInput.addEventListener('input', handleTypingInput);
-    if (textSelection) {
-        textSelection.addEventListener('change', () => {
-             if (customTextInputContainer) { // Check if element exists
-                 customTextInputContainer.classList.toggle('hidden', textSelection.value !== 'custom');
-             }
-            initializeTest();
-        });
-    }
-     if (timeSelection) timeSelection.addEventListener('change', initializeTest);
-    if (customTextInputContainer) {
-        customTextInputContainer.addEventListener('input', () => { if(textSelection?.value === 'custom') initializeTest(); }); // Add null check for textSelection
-    }
+    restartTypingBtn.addEventListener('click', initializeTest);
+    pauseResumeTypingBtn.addEventListener('click', togglePauseResume);
+    clearTypingBtn.addEventListener('click', () => { typingInput.value = ''; initializeTest(); });
+    typingInput.addEventListener('input', handleTypingInput);
+    textSelection.addEventListener('change', () => {
+        customTextInputContainer.classList.toggle('hidden', textSelection.value !== 'custom');
+        initializeTest();
+    });
+    timeSelection.addEventListener('change', initializeTest);
+    customTextInputContainer.addEventListener('input', () => { if(textSelection.value === 'custom') initializeTest(); });
 
-    // --- পরিবর্তন: Initial Load ---
-    // DOMContentLoaded-এর মধ্যে এই কোডটি রাখুন
-    // কোনো শর্ত ছাড়াই loadLastReport কল করা হবে
-    initializeTest(); // Initialize the test state first
-    loadLastReport(); // Then load and display the last report unconditionally
+    // Initial Load (Keep existing logic)
+    if (document.getElementById('typingTestContent').classList.contains('active')) {
+        initializeTest();
+        loadLastReport();
+    }
 });
 
 // ====================================================================
 // End Typing Script
 // ====================================================================
-
-
-
-
 
 
         // ====================================================================
