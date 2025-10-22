@@ -10,7 +10,8 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.4.13/dist/easy.qrcode.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-
+   <!-- Chart.js CDN (গ্রাফের জন্য নতুন যুক্ত করা হয়েছে) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script
     <!-- Cropper.js CDN (নতুন যুক্ত করা হয়েছে) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
@@ -2034,7 +2035,23 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
-
+/* নতুন: টাইপিং টেস্ট ফলাফল রিপোর্টের জন্য স্টাইল */
+        #typingTestResultReport {
+            background-color: #f0f9ff; /* light blue background */
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e0f2fe;
+        }
+        .dark #typingTestResultReport {
+            background-color: #1f2937; /* dark blue-gray */
+            border-color: #374151;
+        }
+        #typingHistoryTableBody tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        .dark #typingHistoryTableBody tr:nth-child(even) {
+            background-color: #374151;
+        }
         /* নতুন: ট্রান্সলেটর স্টাইল */
         .translator-content {
             padding: 20px;
@@ -6276,9 +6293,47 @@ body.sidebar-open #sidebarOverlay {
                     <button id="pauseResumeTypingBtn" class="typing-btn pause">থামান</button>
                     <button id="clearTypingBtn" class="typing-btn clear">মুছুন</button>
                 </div>
+				
+               <!-- নতুন: পরীক্ষার ফলাফল রিপোর্ট বিভাগ -->
+                <div id="typingTestResultReport" class="mt-6 hidden">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200 border-t pt-4">বিস্তারিত ফলাফল</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- চার্ট ১: পারফরম্যান্স ইতিহাস -->
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+                            <h4 class="font-semibold mb-2 text-center dark:text-gray-200">শেষ ৫টি পরীক্ষার পারফরম্যান্স</h4>
+                            <canvas id="performanceHistoryChart"></canvas>
+                        </div>
+                        <!-- চার্ট ২: ধীরগতির অক্ষর -->
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+                            <h4 class="font-semibold mb-2 text-center dark:text-gray-200">যে অক্ষরগুলোতে বেশি সময় লেগেছে</h4>
+                            <canvas id="slowestCharsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- ফলাফলের ইতিহাস -->
+                    <div class="mt-6">
+                        <h4 class="text-lg font-bold text-gray-700 mb-3 dark:text-gray-200">ফলাফলের ইতিহাস</h4>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                                <thead class="bg-gray-100 dark:bg-gray-700">
+                                    <tr>
+                                        <th class="p-3 text-left">তারিখ</th>
+                                        <th class="p-3 text-center">WPM</th>
+                                        <th class="p-3 text-center">নির্ভুলতা</th>
+                                        <th class="p-3 text-center">ভুল শব্দ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="typingHistoryTableBody">
+                                    <!-- History rows will be injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
-
 
         <!-- ফন্ট কনভার্টার বিভাগ (আনডু/রিডু সহ আপডেট করা হয়েছে) -->
 <!-- ফন্ট কনভার্টার বিভাগ (প্রিসেট বাটনসহ আপডেট করা হয়েছে) -->
@@ -8018,314 +8073,362 @@ async function clearExpiredItems() {
 // ====================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Typing Test Tab এর জন্য প্রয়োজনীয় সকল DOM উপাদান নির্বাচন করা
     const typingTestTab = document.getElementById('typingTestTab');
+    if (!typingTestTab) return;
+
+    // DOM Elements
     const textSelection = document.getElementById('textSelection');
     const timeSelection = document.getElementById('timeSelection');
     const customTextInputContainer = document.getElementById('custom-text-input');
-    const clearTypingBtn = document.getElementById('clearTypingBtn');
-    const totalWordsDisplay = document.getElementById('totalWordsDisplay');
     const typingTextDisplay = document.getElementById('typingTextDisplay');
     const typingInput = document.getElementById('typingInput');
     const elapsedTimeDisplay = document.getElementById('elapsedTimeDisplay');
     const remainingTimeDisplay = document.getElementById('remainingTimeDisplay');
     const wpmDisplay = document.getElementById('wpmDisplay');
+    const totalWordsDisplay = document.getElementById('totalWordsDisplay');
     const correctWordsDisplay = document.getElementById('correctWordsDisplay');
     const incorrectWordsDisplay = document.getElementById('incorrectWordsDisplay');
     const accuracyDisplay = document.getElementById('accuracyDisplay');
     const restartTypingBtn = document.getElementById('restartTypingBtn');
-    const pauseResumeTypingBtn = document.getElementById('pauseResumeTypingBtn'); // পজ/রিজিউম বাটন
+    const pauseResumeTypingBtn = document.getElementById('pauseResumeTypingBtn');
+    const clearTypingBtn = document.getElementById('clearTypingBtn');
 
-    // বাংলা এবং ইংরেজি অনুচ্ছেদের নমুনা
+    // Result Report Elements
+    const resultReportContainer = document.getElementById('typingTestResultReport');
+    const historyTableBody = document.getElementById('typingHistoryTableBody');
+    const performanceChartCanvas = document.getElementById('performanceHistoryChart');
+    const slowestCharsChartCanvas = document.getElementById('slowestCharsChart');
+
+    let performanceChart, slowestCharsChart;
+
     const paragraphs = {
-        bn_1: "বাংলা আমার মাতৃভাষা এবং আমি এই ভাষাকে অনেক ভালোবাসি। এই ভাষার জন্য আমাদের পূর্বপুরুষেরা রক্ত দিয়েছেন। একুশে ফেব্রুয়ারি আমাদের জন্য একটি গর্বের দিন।",
-        bn_2: "বাংলাদেশ একটি সুন্দর দেশ। এখানে ছয়টি ঋতু পর্যায়ক্রমে আসে। প্রতিটি ঋতুরই নিজস্ব সৌন্দর্য ও বৈশিষ্ট্য রয়েছে। বর্ষাকালে প্রচুর বৃষ্টিপাত হয় এবং নদনদী পানিতে ভরে যায়।",
-        bn_3: "তথ্যপ্রযুক্তি আমাদের জীবনকে অনেক সহজ করে দিয়েছে। ইন্টারনেট ব্যবহার করে আমরা বিশ্বের যেকোনো প্রান্তের মানুষের সাথে যোগাযোগ করতে পারি। শিক্ষা, স্বাস্থ্য, এবং বিনোদনের ক্ষেত্রেও এর ব্যাপক প্রভাব রয়েছে।",
-        en_1: "The quick brown fox jumps over the lazy dog. This sentence contains all the letters of the English alphabet. It is often used for practicing typing.",
-        en_2: "Technology has revolutionized the way we live and work. The internet connects billions of people worldwide, providing access to information and endless opportunities.",
-        en_3: "To be successful in life, one needs dedication, hard work, and perseverance. Challenges are a part of the journey, but they make us stronger and more resilient."
+        bn_1: "বাংলা আমার মাতৃভাষা এবং আমি এই ভাষাকে অনেক ভালোবাসি। এই ভাষার জন্য আমাদের পূর্বপুরুষেরা ১৯৫২ সালে রক্ত দিয়েছেন, যা বিশ্ব ইতিহাসে এক বিরল ঘটনা। তাঁদের সেই আত্মত্যাগের স্বীকৃতি হিসেবে একুশে ফেব্রুয়ারি আজ আন্তর্জাতিক মাতৃভাষা দিবস হিসেবে পালিত হয়, যা আমাদের জন্য একটি অত্যন্ত গর্বের দিন। এই ভাষা আমাদের সংস্কৃতি ও পরিচয়ের মূল ভিত্তি।",
+        bn_2: "বাংলাদেশ দক্ষিণ এশিয়ার একটি সুন্দর দেশ, যা তার প্রাকৃতিক সৌন্দর্যের জন্য পরিচিত। এখানে ছয়টি ঋতু পর্যায়ক্রমে আসে এবং প্রতিটি ঋতুরই নিজস্ব রূপ ও বৈশিষ্ট্য রয়েছে। বর্ষাকালে প্রচুর বৃষ্টিপাত হয়, যার ফলে নদনদী, খালবিল পানিতে ভরে যায় এবং প্রকৃতি এক নতুন সজীবতা লাভ করে। এই ঋতু আমাদের কৃষি ও জীবনযাত্রায় গভীর প্রভাব ফেলে।",
+        bn_3: "তথ্যপ্রযুক্তি আমাদের দৈনন্দিন জীবনকে অনেক সহজ ও গতিময় করে দিয়েছে। ইন্টারনেট ব্যবহার করে আমরা এখন বিশ্বের যেকোনো প্রান্তের মানুষের সাথে মুহূর্তের মধ্যে যোগাযোগ করতে পারি। শিক্ষা, স্বাস্থ্য, ব্যাংকিং এবং বিনোদনের মতো গুরুত্বপূর্ণ ক্ষেত্রেও তথ্যপ্রযুক্তির ব্যাপক ও ইতিবাচক প্রভাব পড়েছে, যা আধুনিক জীবনযাত্রাকে নতুন মাত্রা দিয়েছে।",
+        en_1: "The quick brown fox jumps over the lazy dog. This famous pangram contains all twenty-six letters of the English alphabet, making it an excellent tool for testing typewriters and computer keyboards. It has been used for this purpose for many decades to ensure all keys are functioning correctly and to help people practice their typing skills.",
+        en_2: "Technology has profoundly revolutionized the way we live, work, and interact with one another. The internet, a global network of computers, now connects billions of people worldwide. This connectivity provides unprecedented access to information, facilitates instant communication, and creates endless opportunities for learning, business, and entertainment across the globe.",
+        en_3: "To be truly successful in life, one must cultivate dedication, embrace hard work, and demonstrate unwavering perseverance. Challenges are an inevitable and essential part of the journey toward achieving any significant goal. Overcoming these obstacles not only brings us closer to success but also makes us stronger, wiser, and more resilient individuals in the long run."
     };
 
-    let timer;
-    let timeElapsed = 0;
-    let totalTestTime = 0;
-    let isTestActive = false;
-    let isPaused = false;
-    let correctChars = 0;
-    let incorrectChars = 0;
-    let originalParagraphForTest = ""; // মূল অনুচ্ছেদ সংরক্ষণের জন্য ভ্যারিয়েবল
+    let timer, timeElapsed = 0, totalTestTime = 0, isTestActive = false, isPaused = false;
+    let originalParagraphForTest = "", charTimings = [], lastKeyPressTime = 0;
 
-    // টেস্ট শুরু বা রিসেট করার ফাংশন
-    function initializeTest() {
+    const initializeTest = () => {
         clearInterval(timer);
         isTestActive = false;
         isPaused = false;
         timeElapsed = 0;
+        charTimings = [];
         totalTestTime = parseInt(timeSelection.value, 10);
-
         typingInput.value = '';
         typingInput.disabled = false;
-        correctChars = 0;
-        incorrectChars = 0;
 
         const selection = textSelection.value;
-        let selectedParagraph = '';
-
-        if (selection === 'custom') {
-            selectedParagraph = customTextInputContainer.value; // Use raw value to preserve newlines
-            if (!selectedParagraph.trim()) {
-                showCustomAlert('অনুগ্রহ করে কাস্টম টেক্সট ইনপুট করুন। ডিফল্ট অনুচ্ছেদ লোড করা হচ্ছে।');
-                selectedParagraph = paragraphs['bn_1'];
-            }
-        } else {
-            selectedParagraph = paragraphs[selection];
-        }
+        originalParagraphForTest = (selection === 'custom' ? customTextInputContainer.value.trim() : paragraphs[selection]) || paragraphs['bn_1'];
         
-        originalParagraphForTest = selectedParagraph.normalize('NFC');
-
-        // **NEW LOGIC** for display with newlines
-        typingTextDisplay.innerHTML = originalParagraphForTest
-            .split('')
-            .map(char => {
-                if (char === '\n') {
-                    return `<span class="newline"></span><br>`; 
-                }
-                const escapedChar = char.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                return `<span>${escapedChar}</span>`;
-            })
-            .join('');
-
-        const firstSpan = typingTextDisplay.querySelector('span:not(.newline)'); // Select first visible char
-        if (firstSpan) {
-            firstSpan.classList.add('current');
-        }
+        typingTextDisplay.innerHTML = originalParagraphForTest.split('').map(char => `<span>${char}</span>`).join('');
+        typingTextDisplay.querySelector('span')?.classList.add('current');
 
         updateTimeDisplays();
-        wpmDisplay.innerText = '0';
-        correctWordsDisplay.innerText = '0';
-        incorrectWordsDisplay.innerText = '0';
+        ['wpmDisplay', 'totalWordsDisplay', 'correctWordsDisplay', 'incorrectWordsDisplay'].forEach(id => document.getElementById(id).innerText = '0');
         accuracyDisplay.innerText = '100%';
-        totalWordsDisplay.innerText = '0';
+        pauseResumeTypingBtn.innerText = 'থামান';
+        pauseResumeTypingBtn.disabled = true;
+        resultReportContainer.classList.add('hidden');
+    };
 
-        if (pauseResumeTypingBtn) {
-            pauseResumeTypingBtn.innerText = 'থামান';
-            pauseResumeTypingBtn.disabled = true;
-        }
-    }
-
-    // টাইমার প্রদর্শন আপডেট করার ফাংশন
-    function updateTimeDisplays() {
-        const elapsedMinutes = Math.floor(timeElapsed / 60);
-        const elapsedSeconds = timeElapsed % 60;
-        elapsedTimeDisplay.innerText = `${elapsedMinutes.toString().padStart(2, '0')}:${elapsedSeconds.toString().padStart(2, '0')}`;
-
-        if (totalTestTime > 0) {
-            const remainingTime = totalTestTime - timeElapsed;
-            if (remainingTime < 0) {
-                remainingTimeDisplay.innerText = '০০:০০';
-                if (isTestActive) endTest();
-                return;
-            }
-            const remainingMinutes = Math.floor(remainingTime / 60);
-            const remainingSeconds = remainingTime % 60;
-            remainingTimeDisplay.innerText = `${remainingMinutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-        } else {
-            remainingTimeDisplay.innerText = 'আনলিমিটেড';
-        }
-    }
+    const updateTimeDisplays = () => {
+        elapsedTimeDisplay.innerText = formatTime(timeElapsed);
+        remainingTimeDisplay.innerText = totalTestTime > 0 ? formatTime(Math.max(0, totalTestTime - timeElapsed)) : 'আনলিমিটেড';
+    };
     
-    // **পরিবর্তিত ফাংশন:** ইনপুট হ্যান্ডেল করার জন্য
-    function handleTypingInput() {
-        if (isPaused) return;
+    const formatTime = (sec) => `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
 
-        if (!isTestActive && typingInput.value.length > 0) {
-            startTimer();
+    const handleTypingInput = () => {
+        if (isPaused) return;
+        if (!isTestActive && typingInput.value) {
             isTestActive = true;
-            if (pauseResumeTypingBtn) pauseResumeTypingBtn.disabled = false;
+            lastKeyPressTime = Date.now();
+            startTimer();
+            pauseResumeTypingBtn.disabled = false;
         }
 
-        const spans = Array.from(typingTextDisplay.querySelectorAll('span'));
-        const typedValue = typingInput.value.normalize('NFC');
+        const typedValue = typingInput.value;
         const typedLength = typedValue.length;
 
-        let localCorrectChars = 0;
-        let localIncorrectChars = 0;
-
-        for (let i = 0; i < originalParagraphForTest.length; i++) {
-            const charSpan = spans[i];
-            if (!charSpan) continue;
-
-            charSpan.classList.remove('correct', 'incorrect', 'current');
-            const originalChar = originalParagraphForTest[i];
-
-            if (i < typedLength) {
-                const typedChar = typedValue[i];
-                if (originalChar === typedChar) {
-                    localCorrectChars++;
-                    if (originalChar !== '\n') {
-                        charSpan.classList.add('correct');
-                    }
-                } else {
-                    localIncorrectChars++;
-                    if (originalChar !== '\n') {
-                        charSpan.classList.add('incorrect');
-                    }
-                }
-            }
+        // Record character timing
+        const now = Date.now();
+        const timeTaken = now - lastKeyPressTime;
+        lastKeyPressTime = now;
+        if (typedLength > 0) {
+            const originalChar = originalParagraphForTest[typedLength - 1];
+            const typedChar = typedValue[typedLength - 1];
+            charTimings.push({ char: originalChar, time: timeTaken, correct: originalChar === typedChar });
         }
-        
-        correctChars = localCorrectChars;
-        incorrectChars = localIncorrectChars;
 
-        if (typedLength < originalParagraphForTest.length) {
-            const currentSpan = spans[typedLength];
-            if (currentSpan && !currentSpan.classList.contains('newline')) {
-                currentSpan.classList.add('current');
-            }
-        }
+        updateDisplayAndStats();
 
         if (typedLength >= originalParagraphForTest.length) {
             endTest();
         }
-        
-        updateStats();
-    }
+    };
 
-    // টাইমার শুরু করার ফাংশন
-    function startTimer() {
+    const updateDisplayAndStats = () => {
+        const spans = typingTextDisplay.querySelectorAll('span');
+        const typedValue = typingInput.value;
+        let correctChars = 0;
+
+        spans.forEach((charSpan, index) => {
+            charSpan.classList.remove('correct', 'incorrect', 'current');
+            if (index < typedValue.length) {
+                if (typedValue[index] === charSpan.innerText) {
+                    charSpan.classList.add('correct');
+                    correctChars++;
+                } else {
+                    charSpan.classList.add('incorrect');
+                }
+            } else if (index === typedValue.length) {
+                charSpan.classList.add('current');
+            }
+        });
+        
+        const accuracy = typedValue.length > 0 ? (correctChars / typedValue.length) * 100 : 100;
+        accuracyDisplay.innerText = `${Math.round(accuracy)}%`;
+        
+        const timeInMinutes = timeElapsed / 60;
+        const grossWPM = timeInMinutes > 0 ? (typedValue.length / 5) / timeInMinutes : 0;
+        wpmDisplay.innerText = Math.round(grossWPM > 0 ? grossWPM : 0);
+
+        const typedWords = typedValue.trim().split(/\s+/).filter(Boolean);
+        const originalWords = originalParagraphForTest.split(/\s+/).filter(Boolean);
+        let correctWords = 0;
+        typedWords.forEach((word, index) => {
+            if (originalWords[index] === word) correctWords++;
+        });
+        totalWordsDisplay.innerText = typedWords.length;
+        correctWordsDisplay.innerText = correctWords;
+        incorrectWordsDisplay.innerText = typedWords.length - correctWords;
+    };
+
+
+    const startTimer = () => {
         timer = setInterval(() => {
             timeElapsed++;
             updateTimeDisplays();
-            updateStats();
-            
-            if (totalTestTime > 0 && timeElapsed >= totalTestTime) {
-                endTest();
-            }
+            updateDisplayAndStats();
+            if (totalTestTime > 0 && timeElapsed >= totalTestTime) endTest();
         }, 1000);
-    }
+    };
 
-    // পজ এবং রিজিউম ফাংশন
-    function togglePauseResume() {
+    const togglePauseResume = () => {
         if (!isTestActive) return;
         isPaused = !isPaused;
-
         if (isPaused) {
             clearInterval(timer);
             typingInput.disabled = true;
             pauseResumeTypingBtn.innerText = 'চালু করুন';
-            showCustomAlert('টেস্ট থামানো হয়েছে।');
         } else {
+            lastKeyPressTime = Date.now();
             startTimer();
             typingInput.disabled = false;
             typingInput.focus();
             pauseResumeTypingBtn.innerText = 'থামান';
-            showCustomAlert('টেস্ট পুনরায় শুরু হয়েছে।');
         }
-    }
+    };
     
-    // **পরিবর্তিত ফাংশন:** পরিসংখ্যান আপডেট করার জন্য
-    function updateStats() {
-        const totalTypedChars = correctChars + incorrectChars;
-        const accuracy = (totalTypedChars > 0) ? (correctChars / totalTypedChars) * 100 : 100;
-        accuracyDisplay.innerText = `${Math.round(accuracy)}%`;
-        const timeElapsedInMinutes = timeElapsed / 60;
-        if (timeElapsedInMinutes > 0) {
-            const netWPM = (correctChars / 5) / timeElapsedInMinutes;
-            wpmDisplay.innerText = Math.round(netWPM > 0 ? netWPM : 0);
-        } else {
-            wpmDisplay.innerText = '0';
-        }
-        
-        const allOriginalWords = originalParagraphForTest.split(/\s+/).filter(Boolean);
-        const typedWordsArray = typingInput.value.normalize('NFC').trim().split(/\s+/).filter(Boolean);
-        
-        let correctWordsCount = 0;
-        typedWordsArray.forEach((typedWord, index) => {
-            if (index < allOriginalWords.length && typedWord === allOriginalWords[index]) {
-                correctWordsCount++;
-            }
-        });
-
-        const incorrectWordsCount = typedWordsArray.length > 0 ? typedWordsArray.length - correctWordsCount : 0;
-
-        totalWordsDisplay.innerText = typedWordsArray.length;
-        correctWordsDisplay.innerText = correctWordsCount;
-        incorrectWordsDisplay.innerText = incorrectWordsCount;
-    }
-
-
-    // টেস্ট শেষ করার ফাংশন
-    function endTest() {
+    // **** বাগ ফিক্সড: ফাংশনটিকে async করা হয়েছে এবং await ব্যবহার করা হয়েছে ****
+    const endTest = async () => {
         clearInterval(timer);
         isTestActive = false;
         typingInput.disabled = true;
-        if (pauseResumeTypingBtn) pauseResumeTypingBtn.disabled = true;
+        pauseResumeTypingBtn.disabled = true;
+        updateDisplayAndStats();
+        
+        const resultData = {
+            wpm: parseInt(wpmDisplay.innerText),
+            accuracy: parseInt(accuracyDisplay.innerText),
+            errors: parseInt(incorrectWordsDisplay.innerText),
+            timestamp: new Date().toISOString(),
+            charTimings: charTimings
+        };
+
+        // প্রথমে ডেটা সেভ হওয়ার জন্য অপেক্ষা করবে
+        await saveResult(resultData);
+        // তারপর সেভ করা ডেটা দিয়ে তালিকা ও চার্ট দেখাবে
+        await displayResultReport();
+        
         showCustomAlert('টাইপিং টেস্ট শেষ হয়েছে!');
-        updateStats();
-    }
+    };
 
-    // ইভেন্ট লিসেনার যোগ করা
-    if (typingTestTab) {
-        typingTestTab.addEventListener('click', () => {
-             showTab('typingTest');
-             initializeTest();
-        });
-    }
-    
-    if (restartTypingBtn) {
-        restartTypingBtn.addEventListener('click', initializeTest);
-    }
-    
-    if (pauseResumeTypingBtn) {
-        pauseResumeTypingBtn.addEventListener('click', togglePauseResume);
-    }
+    // IndexedDB ব্যবহার করে ফলাফল সেভ করার জন্য আপডেট করা ফাংশন
+    const saveResult = async (result) => {
+        try {
+            let history = await idbGet('typingTestHistory') || [];
+            history.unshift(result);
+            history = history.slice(0, 10); // শেষ ১০টি ফলাফল রাখুন
+            await idbSet('typingTestHistory', history);
+            console.log("Typing test result saved to IndexedDB.");
+        } catch (error) {
+            console.error("Failed to save typing test result to IndexedDB:", error);
+            // IndexedDB ব্যর্থ হলে localStorage ব্যবহার করুন
+            try {
+                let history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]');
+                history.unshift(result);
+                history = history.slice(0, 10); // শেষ ১০টি ফলাফল রাখুন
+                localStorage.setItem('typingTestHistory', JSON.stringify(history));
+            } catch (localError) {
+                console.error("Failed to save to localStorage as well:", localError);
+            }
+        }
+    };
 
-    if (clearTypingBtn) {
-        clearTypingBtn.addEventListener('click', () => {
-            initializeTest();
-            typingInput.value = '';
-            typingInput.disabled = true;
-            showCustomAlert('টেস্ট রিসেট করা হয়েছে।');
-        });
-    }
-    
-    if (typingInput) {
-        typingInput.addEventListener('input', handleTypingInput);
-    }
-    
-    if (customTextInputContainer) {
-        customTextInputContainer.addEventListener('input', () => {
-            if (textSelection.value === 'custom') {
-                 initializeTest();
+    // IndexedDB থেকে রিপোর্ট দেখানোর জন্য আপডেট করা ফাংশন
+    const displayResultReport = async () => {
+        let history = [];
+        try {
+            history = await idbGet('typingTestHistory') || [];
+        } catch (error) {
+            console.error("Failed to get typing history from IndexedDB:", error);
+            // IndexedDB থেকে ডেটা পেতে ব্যর্থ হলে localStorage থেকে চেষ্টা করুন
+            history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]');
+        }
+
+        if (history.length === 0) return;
+
+        resultReportContainer.classList.remove('hidden');
+
+        // ফলাফলের টেবিল পূরণ করুন
+        historyTableBody.innerHTML = history.map(res => `
+            <tr>
+                <td class="p-3">${new Date(res.timestamp).toLocaleString('bn-BD')}</td>
+                <td class="p-3 text-center">${res.wpm}</td>
+                <td class="p-3 text-center">${res.accuracy}%</td>
+                <td class="p-3 text-center">${res.errors}</td>
+            </tr>
+        `).join('');
+
+        // চার্ট রেন্ডার করুন
+        renderPerformanceChart(history);
+        renderSlowestCharsChart(history[0].charTimings);
+    };
+
+    const renderPerformanceChart = (history) => {
+        if (performanceChart) performanceChart.destroy();
+        const reversedHistory = [...history].reverse();
+        const labels = reversedHistory.map((_, i) => `টেস্ট ${i + 1}`);
+        const wpmData = reversedHistory.map(res => res.wpm);
+        const accuracyData = reversedHistory.map(res => res.accuracy);
+
+        // একটি মাত্র টেস্ট রেজাল্ট থাকলে চার্টের ধরন পরিবর্তন করুন
+        const chartType = reversedHistory.length > 1 ? 'line' : 'bar';
+
+        performanceChart = new Chart(performanceChartCanvas, {
+            type: chartType, // ডাইনামিক চার্ট টাইপ
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'WPM',
+                    data: wpmData,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.5)', // বার চার্টের জন্য
+                    tension: 0.1
+                }, {
+                    label: 'নির্ভুলতা (%)',
+                    data: accuracyData,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.5)', // বার চার্টের জন্য
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
             }
         });
-    }
+    };
 
-    if (textSelection) {
-        textSelection.addEventListener('change', (e) => {
-            if (e.target.value === 'custom') {
-                customTextInputContainer.classList.remove('hidden');
-            } else {
-                customTextInputContainer.classList.add('hidden');
-            }
-            initializeTest();
+    const renderSlowestCharsChart = (timings) => {
+        if (slowestCharsChart) slowestCharsChart.destroy();
+        if (!timings || timings.length === 0) return;
+
+        const charTimeMap = {};
+        timings.forEach(({ char, time }) => {
+            const normalizedChar = char === ' ' ? 'স্পেস' : char;
+            if (!charTimeMap[normalizedChar]) charTimeMap[normalizedChar] = [];
+            charTimeMap[normalizedChar].push(time);
         });
-    }
 
-    if (timeSelection) {
-        timeSelection.addEventListener('change', initializeTest);
-    }
+        const avgTimes = Object.keys(charTimeMap).map(char => {
+            const times = charTimeMap[char];
+            const avg = times.reduce((a, b) => a + b, 0) / times.length;
+            return { char, avg };
+        });
+
+        const slowestChars = avgTimes.sort((a, b) => b.avg - a.avg).slice(0, 10);
+        
+        slowestCharsChart = new Chart(slowestCharsChartCanvas, {
+            type: 'bar',
+            data: {
+                labels: slowestChars.map(c => c.char),
+                datasets: [{
+                    label: 'গড় সময় (ms)',
+                    data: slowestChars.map(c => c.avg.toFixed(0)),
+                    backgroundColor: '#fb923c'
+                }]
+            },
+            options: { responsive: true, indexAxis: 'y' }
+        });
+    };
     
-    // If the tab is already active on load, initialize it
-    if (document.getElementById('typingTestContent')?.classList.contains('active')) {
+    // IndexedDB থেকে সর্বশেষ রিপোর্ট লোড করার জন্য আপডেট করা ফাংশন
+    const loadLastReport = async () => {
+        let history = [];
+         try {
+            history = await idbGet('typingTestHistory') || [];
+        } catch (error) {
+            console.error("Failed to load last report from IndexedDB:", error);
+            history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]');
+        }
+
+        if(history.length > 0) {
+            await displayResultReport();
+        }
+    };
+
+    // Event Listeners
+    typingTestTab.addEventListener('click', () => {
+        showTab('typingTest');
         initializeTest();
-    }
- });
+        loadLastReport();
+    });
+    
+    restartTypingBtn.addEventListener('click', initializeTest);
+    pauseResumeTypingBtn.addEventListener('click', togglePauseResume);
+    clearTypingBtn.addEventListener('click', () => { typingInput.value = ''; initializeTest(); });
+    typingInput.addEventListener('input', handleTypingInput);
+    textSelection.addEventListener('change', () => {
+        customTextInputContainer.classList.toggle('hidden', textSelection.value !== 'custom');
+        initializeTest();
+    });
+    timeSelection.addEventListener('change', initializeTest);
+    customTextInputContainer.addEventListener('input', () => { if(textSelection.value === 'custom') initializeTest(); });
 
+    // Initial Load
+    if (document.getElementById('typingTestContent').classList.contains('active')) {
+        initializeTest();
+        loadLastReport();
+    }
+});
 
 // ====================================================================
 // End Typing Script
 // ====================================================================
+
+
 
         // ====================================================================
         // START: DATE AND TIME BANNER SCRIPT (নতুন যুক্ত করা হয়েছে)
