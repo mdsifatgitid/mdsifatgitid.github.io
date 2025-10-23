@@ -8122,7 +8122,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Helper function to compare words considering digit equivalence
     const compareWords = (originalWord, typedWord) => {
-        if (originalWord.length !== typedWord.length) {
+        if (!originalWord || !typedWord || originalWord.length !== typedWord.length) {
             return false;
         }
         for (let i = 0; i < originalWord.length; i++) {
@@ -8142,18 +8142,26 @@ document.addEventListener('DOMContentLoaded', () => {
         isPaused = false;
         timeElapsed = 0;
         charTimings = [];
-        totalTestTime = parseInt(timeSelection.value, 10);
-        typingInput.value = '';
-        typingInput.disabled = false;
+        // Ensure elements exist before accessing properties
+        if (timeSelection) totalTestTime = parseInt(timeSelection.value, 10);
+        if (typingInput) {
+            typingInput.value = '';
+            typingInput.disabled = false;
+        }
 
-        const selection = textSelection.value;
-        const customText = customTextInputContainer.value.replace(/\r\n?/g, '\n');
+
+        const selection = textSelection ? textSelection.value : 'bn_1'; // Default if not found
+        const customText = customTextInputContainer ? customTextInputContainer.value.replace(/\r\n?/g, '\n') : '';
         originalParagraphForTest = (selection === 'custom' ? customText : paragraphs[selection]) || paragraphs['bn_1'];
 
-        typingTextDisplay.innerHTML = originalParagraphForTest.split('').map(char => `<span>${char}</span>`).join('');
-        typingTextDisplay.style.whiteSpace = 'pre-wrap';
-        typingTextDisplay.scrollTop = 0;
-        typingTextDisplay.querySelector('span')?.classList.add('current');
+        if (typingTextDisplay) {
+            typingTextDisplay.innerHTML = originalParagraphForTest.split('').map(char => `<span>${char}</span>`).join('');
+            typingTextDisplay.style.whiteSpace = 'pre-wrap';
+            typingTextDisplay.scrollTop = 0;
+            const firstSpan = typingTextDisplay.querySelector('span');
+            if (firstSpan) firstSpan.classList.add('current');
+        }
+
 
         updateTimeDisplays();
         ['wpmDisplay', 'totalWordsDisplay', 'correctWordsDisplay', 'incorrectWordsDisplay'].forEach(id => {
@@ -8209,17 +8217,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const containerRect = typingTextDisplay.getBoundingClientRect();
             const spanRect = currentSpan.getBoundingClientRect();
             const lineHeightStyle = getComputedStyle(typingTextDisplay).lineHeight;
-            const lineHeight = parseFloat(lineHeightStyle) || 20; // Default line height if parse fails
+            // Handle 'normal' line height or provide a default
+            let lineHeight = 20; // Default line height
+            if (lineHeightStyle !== 'normal') {
+                lineHeight = parseFloat(lineHeightStyle);
+            } else {
+                 // Estimate line height based on font size if it's 'normal'
+                const fontSizeStyle = getComputedStyle(typingTextDisplay).fontSize;
+                const fontSize = parseFloat(fontSizeStyle);
+                if (!isNaN(fontSize)) {
+                    lineHeight = fontSize * 1.2; // Common multiplier for line height
+                }
+            }
+
 
             // Check if spanRect properties are valid numbers
-             if (!isNaN(spanRect.bottom) && !isNaN(containerRect.bottom) && !isNaN(lineHeight) &&
-                 !isNaN(spanRect.right) && !isNaN(containerRect.left) && !isNaN(containerRect.width)) {
+             if (!isNaN(spanRect.bottom) && !isNaN(containerRect.bottom) && !isNaN(lineHeight)) {
 
-                // Scroll logic - adjust conditions slightly for robustness
-                if (spanRect.bottom > (containerRect.bottom - lineHeight * 0.5) ||
-                    (spanRect.right > (containerRect.left + containerRect.width * 0.9) && spanRect.top > containerRect.top)) { // Add check for top boundary
+                // *** Scroll logic reverted to previous state ***
+                // Only scroll based on the bottom position
+                if (spanRect.bottom > (containerRect.bottom - lineHeight * 0.5)) {
                     typingTextDisplay.scrollBy({ top: lineHeight, behavior: 'smooth' });
                 }
+                // *** End of scroll logic change ***
             } else {
                  console.warn("Invalid rect or line height for scrolling calculation.");
             }
@@ -8585,6 +8605,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 // End Typing Script
 // ====================================================================
+
+
 
 
 
