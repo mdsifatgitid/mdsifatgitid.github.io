@@ -17174,44 +17174,99 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // --- "All Features" Tab Interactivity ---
-    function makeAllFeaturesInteractive() {
-        const featuresList = document.querySelector('#featuresDisplayArea ul');
-        if (!featuresList) return;
-        
-        const featureToTabIdMap = {
-            'সাধারণ ও সাইন্টিফিক ক্যালকুলেটর': 'basicCalcTab', 'বয়স ও তারিখ ক্যালকুলেটর': 'ageCalcTab',
-            'পরিমাপ (ইউনিট কনভার্টার)': 'measurementTab', 'টাইপিং টেস্ট': 'typingTestTab', 'ফন্ট কনভার্টার': 'converterTab',
-            'ওয়ার্ড কাউন্টার': 'wordCounterTab', 'ট্রান্সলেটর (জেমিনি)': 'translatorTab', 'বানান সংশোধন': 'spellCheckTab',
-            'লেখা সাজানো': 'textBeautifierTab', 'শব্দের অর্থ': 'wordMeaningTab', 'টেক্সট টু স্পিচ': 'ttsTab',
-            'স্পিচ টু টেক্সট (জেমিনি)': 'sttTab', 'ছবি থেকে লেখা (ocr - জেমিনি)': 'imageToTextTab',
-            'টেক্সট অ্যাসিস্ট্যান্ট (জেমিনি)': 'textAssistantTab', 'গুগল ম্যাপ': 'mapTab', 'আবহাওয়া': 'weatherTab',
-            'নামাজের সময়সূচি': 'prayerTimeTab', 'যাকাত ক্যালকুলেটর': 'zakatCalcTab', 'কিউআর কোড': 'qrCodeTab',
-            'জরুরি নম্বর': 'emergencyNumbersTab', 'ঘড়ি': 'clockTab', 'প্লেয়ার': 'playerTab', 'নোটপ্যাড / টু-ডু লিস্ট': 'notepadTab',
-            'ডেভেলোপার প্রোফাইল': 'importantLinksTab', 'স্বাস্থ্য ও জীবনধারা': 'healthLifestyleTab',
-            'দিবসসমূহ': 'daysObservancesTab', 'ছুটির তালিকা': 'holidayListTab', 'কুইজ': 'quizTab', 'ডোনেট': 'donateTab',
-            'ইনভয়েজ': 'invoiceTab', 'রঙ বাছাইকারী': 'colorPickerTab', 'আরও': 'allFeaturesTab', 'সেটিংস': 'settingsTab'
-        };
+// --- "All Features" Tab Interactivity ---
+function makeAllFeaturesInteractive() {
+    const featuresList = document.querySelector('#featuresDisplayArea ul');
+    if (!featuresList) return;
 
-        featuresList.querySelectorAll('li > strong').forEach(strongEl => {
-            const featureName = strongEl.textContent.trim().replace(/:$/, '');
-            const tabId = featureToTabIdMap[featureName];
-            
-            if (tabId) {
-                strongEl.style.cursor = 'pointer';
-                strongEl.style.textDecoration = 'underline';
-                strongEl.title = `"${featureName}" ট্যাবে যান`;
-                strongEl.addEventListener('click', () => {
-                    const tabButton = document.getElementById(tabId);
-                    if (tabButton) {
-                        tabButton.click();
+    // Corrected and updated map
+    const featureToTabIdMap = {
+        'সাধারণ ও সাইন্টিফিক ক্যালকুলেটর': 'basicCalcTab',
+        'বয়স ও তারিখ ক্যালকুলেটর': 'ageCalcTab',
+        'পরিমাপ (ইউনিট কনভার্টার)': 'measurementTab',
+        'স্বাস্থ্য ও জীবনধারা': 'healthLifestyleTab', // Added missing entry
+        'টাইপিং টেস্ট': 'typingTestTab',
+        'ফন্ট কনভার্টার': 'converterTab',
+        'ওয়ার্ড কাউন্টার': 'wordCounterTab',
+        'ট্রান্সলেটর (জেমিনি)': 'translatorTab',
+        'বানান সংশোধন': 'spellCheckTab',
+        'লেখা সাজানো': 'textBeautifierTab',
+        'শব্দের অর্থ': 'wordMeaningTab',
+        'টেক্সট টু স্পিচ': 'ttsTab',
+        'স্পিচ টু টেক্সট (জেমিনি)': 'sttTab',
+        'ছবি থেকে লেখা (OCR - জেমিনি)': 'imageToTextTab', // Corrected case and potential text match
+        'ছবি রিসাইজার': 'imageResizerTab', // Added missing entry
+        'টেক্সট অ্যাসিস্ট্যান্ট (জেমিনি)': 'textAssistantTab',
+        'গুগল ম্যাপ': 'mapTab',
+        'আবহাওয়া': 'weatherTab',
+        'নামাজের সময়সূচি': 'prayerTimeTab',
+        'দিবসসমূহ': 'daysObservancesTab',
+        'ছুটির তালিকা': 'holidayListTab',
+        'যাকাত ক্যালকুলেটর': 'zakatCalcTab',
+        'কিউআর কোড': 'qrCodeTab',
+        'রঙ বাছাইকারী': 'colorPickerTab',
+        'জরুরি নম্বর': 'emergencyNumbersTab',
+        'ইনভয়েজ': 'invoiceTab',
+        'ঘড়ি': 'clockTab',
+        'প্লেয়ার': 'playerTab',
+        'নোটপ্যাড / টু-ডু লিস্ট': 'notepadTab',
+        'কুইজ (জেমিনি)': 'quizTab', // Corrected name to match HTML
+        'ডোনেট': 'donateTab',
+        'ডেভেলোপার প্রোফাইল': 'importantLinksTab',
+        'আরও': 'allFeaturesTab', // Assuming this refers to the tab itself, if needed
+        'সেটিংস': 'settingsMenuBtn' // Map 'সেটিংস' to the settings button ID
+        // Note: 'সকল ফিচার' itself usually doesn't need mapping as it's the current tab content
+    };
+
+    featuresList.querySelectorAll('li > strong').forEach(strongEl => {
+        // Trim whitespace and remove trailing colon if present
+        const featureName = strongEl.textContent.trim().replace(/:$/, '').trim();
+        const tabId = featureToTabIdMap[featureName];
+
+        if (tabId) {
+            strongEl.style.cursor = 'pointer';
+            strongEl.style.textDecoration = 'underline';
+            strongEl.title = `"${featureName}" ট্যাবে যান`;
+            strongEl.addEventListener('click', () => {
+                const tabButton = document.getElementById(tabId);
+                if (tabButton) {
+                    // Check if the tab is inside a hidden dropdown
+                    const dropdown = tabButton.closest('.absolute'); // Find the parent dropdown if it exists
+                    if (dropdown && dropdown.classList.contains('hidden')) {
+                        // If it's in a hidden dropdown, simulate opening the dropdown first
+                        // Find the button that controls this dropdown (e.g., 'আরও' button)
+                        let dropdownToggleButton;
+                        if (dropdown.id === 'moreMenuDropdown') {
+                            dropdownToggleButton = document.getElementById('moreMenuBtn');
+                        } else if (dropdown.id === 'settingsMenuDropdown') {
+                            dropdownToggleButton = document.getElementById('settingsMenuBtn');
+                        }
+
+                        if (dropdownToggleButton) {
+                            // Briefly show the dropdown to allow the click to register
+                            dropdown.classList.remove('hidden');
+                            tabButton.click();
+                            // Optional: Hide the dropdown again after a short delay or keep it open
+                            // dropdown.classList.add('hidden');
+                        } else {
+                             tabButton.click(); // If toggle button not found, try clicking directly
+                        }
                     } else {
-                        showCustomAlert(`"${featureName}" ট্যাবটি খুঁজে পাওয়া যায়নি।`);
+                        tabButton.click(); // Click the tab button directly if not in a hidden dropdown
                     }
-                });
-            }
-        });
-    }
+                } else {
+                    showCustomAlert(`"${featureName}" ট্যাব (${tabId}) খুঁজে পাওয়া যায়নি।`);
+                    console.error(`Tab button with ID "${tabId}" not found for feature "${featureName}".`);
+                }
+            });
+        } else {
+             console.warn(`No tab ID found in map for feature: "${featureName}"`);
+             // Optionally add styling to indicate it's not clickable
+             // strongEl.style.textDecoration = 'none';
+             // strongEl.style.cursor = 'default';
+        }
+    });
+}
 });
 // ====================================================================
 // END: NEW SIDEBAR, DASHBOARD & INTERACTIVITY SCRIPT (UPDATED)
