@@ -8105,7 +8105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const paragraphs = {
         bn_1: "বাংলা আমার মাতৃভাষা এবং আমি এই ভাষাকে অনেক ভালোবাসি। এই ভাষার জন্য আমাদের পূর্বপুরুষেরা ১৯৫২ সালে রক্ত দিয়েছেন, যা বিশ্ব ইতিহাসে এক বিরল ঘটনা। তাঁদের সেই আত্মত্যাগের স্বীকৃতি হিসেবে ২১শে ফেব্রুয়ারি আজ আন্তর্জাতিক মাতৃভাষা দিবস হিসেবে পালিত হয়, যা আমাদের জন্য একটি অত্যন্ত গর্বের দিন। এই ভাষা আমাদের সংস্কৃতি ও পরিচয়ের মূল ভিত্তি।",
         bn_2: "বাংলাদেশ দক্ষিণ এশিয়ার একটি সুন্দর দেশ, যা তার প্রাকৃতিক সৌন্দর্যের জন্য পরিচিত। এখানে ছয়টি ঋতু পর্যায়ক্রমে আসে এবং প্রতিটি ঋতুরই নিজস্ব রূপ ও বৈশিষ্ট্য রয়েছে। বর্ষাকালে প্রচুর বৃষ্টিপাত হয়, যার ফলে নদনদী, খালবিল পানিতে ভরে যায় এবং প্রকৃতি এক নতুন সজীবতা লাভ করে। এই ঋতু আমাদের কৃষি ও জীবনযাত্রায় গভীর প্রভাব ফেলে।",
-        bn_3: "তথ্যপ্রযুক্তি আমাদের দৈনন্দিন জীবনকে অনেক সহজ ও গতিময় করে দিয়েছে। ইন্টারনেট ব্যবহার করে আমরা এখন বিশ্বের যেকোনো প্রান্তের মানুষের সাথে মুহূর্তের মধ্যে যোগাযোগ করতে পারি। শিক্ষা, স্বাস্থ্য, ব্যাংকিং এবং বিনোদনের মতো গুরুত্বপূর্ণ ক্ষেত্রেও তথ্যপ্রযুক্তির ব্যাপক ও ইতিবাচক প্রভাব পড়েছে, যা আধুনিক জীবনযাত্রাকে নতুন মাত্রা দিয়েছে।",
+        bn_3: "তথ্যপ্রযুক্তি আমাদের দৈনন্দিন জীবনকে অনেক সহজ ও গতিময় করে দিয়েছে। ইন্টারনেট ব্যবহার করে আমরা এখন বিশ্বের যেকোনো প্রান্তের মানুষের সাথে মুহূর্তের মধ্যে যোগাযোগ করতে পারি। শিক্ষা, স্বাস্থ্য, ব্যাংকিং এবং বিনোদনের মতো গুরুত্বপূর্ণ ক্ষেত্রেও তথ্যপ্রযুক্তি ব্যাপক ও ইতিবাচক প্রভাব পড়েছে, যা আধুনিক জীবনযাত্রাকে নতুন মাত্রা দিয়েছে।",
         en_1: "The quick brown fox jumps over the lazy dog. This famous pangram contains all twenty-six letters of the English alphabet, making it an excellent tool for testing typewriters and computer keyboards. It has been used for this purpose for many decades to ensure all keys are functioning correctly and to help people practice their typing skills.",
         en_2: "Technology has profoundly revolutionized the way we live, work, and interact with one another. The internet, a global network of computers, now connects billions of people worldwide. This connectivity provides unprecedented access to information, facilitates instant communication, and creates endless opportunities for learning, business, and entertainment across the globe.",
         en_3: "To be truly successful in life, one must cultivate dedication, embrace hard work, and demonstrate unwavering perseverance. Challenges are an inevitable and essential part of the journey toward achieving any significant goal. Overcoming these obstacles not only brings us closer to success but also makes us stronger, wiser, and more resilient individuals in the long run."
@@ -8114,11 +8114,27 @@ document.addEventListener('DOMContentLoaded', () => {
     let timer, timeElapsed = 0, totalTestTime = 0, isTestActive = false, isPaused = false;
     let originalParagraphForTest = "", charTimings = [], lastKeyPressTime = 0;
 
-    // নতুন: বাংলা ও ইংরেজি সংখ্যার ম্যাপিং
+    // বাংলা ও ইংরেজি সংখ্যার ম্যাপিং
     const digitMap = {
         '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯',
         '০': '0', '১': '1', '২': '2', '৩': '3', '৪': '4', '৫': '5', '৬': '6', '৭': '7', '৮': '8', '৯': '9'
     };
+
+    // Helper function to compare words considering digit equivalence
+    const compareWords = (originalWord, typedWord) => {
+        if (originalWord.length !== typedWord.length) {
+            return false;
+        }
+        for (let i = 0; i < originalWord.length; i++) {
+            const originalChar = originalWord[i];
+            const typedChar = typedWord[i];
+            if (originalChar !== typedChar && digitMap[originalChar] !== typedChar) {
+                return false;
+            }
+        }
+        return true;
+    };
+
 
     const initializeTest = () => {
         clearInterval(timer);
@@ -8135,31 +8151,34 @@ document.addEventListener('DOMContentLoaded', () => {
         originalParagraphForTest = (selection === 'custom' ? customText : paragraphs[selection]) || paragraphs['bn_1'];
 
         typingTextDisplay.innerHTML = originalParagraphForTest.split('').map(char => `<span>${char}</span>`).join('');
-        typingTextDisplay.style.whiteSpace = 'pre-wrap'; 
+        typingTextDisplay.style.whiteSpace = 'pre-wrap';
         typingTextDisplay.scrollTop = 0;
         typingTextDisplay.querySelector('span')?.classList.add('current');
 
         updateTimeDisplays();
-        ['wpmDisplay', 'totalWordsDisplay', 'correctWordsDisplay', 'incorrectWordsDisplay'].forEach(id => document.getElementById(id).innerText = '0');
-        accuracyDisplay.innerText = '100%';
-        pauseResumeTypingBtn.innerText = 'থামান';
-        pauseResumeTypingBtn.disabled = true;
+        ['wpmDisplay', 'totalWordsDisplay', 'correctWordsDisplay', 'incorrectWordsDisplay'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.innerText = '0';
+        });
+       if(accuracyDisplay) accuracyDisplay.innerText = '100%';
+       if(pauseResumeTypingBtn) pauseResumeTypingBtn.innerText = 'থামান';
+       if(pauseResumeTypingBtn) pauseResumeTypingBtn.disabled = true;
     };
 
     const updateTimeDisplays = () => {
-        elapsedTimeDisplay.innerText = formatTime(timeElapsed);
-        remainingTimeDisplay.innerText = totalTestTime > 0 ? formatTime(Math.max(0, totalTestTime - timeElapsed)) : 'আনলিমিটেড';
+       if(elapsedTimeDisplay) elapsedTimeDisplay.innerText = formatTime(timeElapsed);
+       if(remainingTimeDisplay) remainingTimeDisplay.innerText = totalTestTime > 0 ? formatTime(Math.max(0, totalTestTime - timeElapsed)) : 'আনলিমিটেড';
     };
 
     const formatTime = (sec) => `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
 
     const handleTypingInput = () => {
-        if (isPaused) return;
+        if (isPaused || !typingInput || !originalParagraphForTest) return; // Add null checks
         if (!isTestActive && typingInput.value) {
             isTestActive = true;
             lastKeyPressTime = Date.now();
             startTimer();
-            pauseResumeTypingBtn.disabled = false;
+            if(pauseResumeTypingBtn) pauseResumeTypingBtn.disabled = false;
         }
 
         const typedValue = typingInput.value;
@@ -8168,44 +8187,67 @@ document.addEventListener('DOMContentLoaded', () => {
         const now = Date.now();
         const timeTaken = now - lastKeyPressTime;
         lastKeyPressTime = now;
-        if (typedLength > 0) {
+
+        // Ensure originalParagraphForTest is long enough before accessing characters
+        if (typedLength > 0 && typedLength <= originalParagraphForTest.length) {
             const originalChar = originalParagraphForTest[typedLength - 1];
             const typedChar = typedValue[typedLength - 1];
-            charTimings.push({ char: originalChar, time: timeTaken, correct: originalChar === typedChar });
+            // এখানে digitMap ব্যবহার করে সঠিকতা যাচাই করা হচ্ছে
+            const isCorrect = (typedChar === originalChar) || (digitMap[originalChar] === typedChar) || (originalChar === '\n' && (typedChar === '\n' || typedChar === ' '));
+            charTimings.push({ char: originalChar, time: timeTaken, correct: isCorrect });
+        } else if (typedLength > originalParagraphForTest.length) {
+             // Handle cases where user types beyond the original text (optional)
+             // For now, we just update stats based on the available original text length
+             console.warn("Typed length exceeds original paragraph length.");
         }
+
 
         updateDisplayAndStats();
 
-        const currentSpan = typingTextDisplay.querySelector('span.current');
-        if (currentSpan) {
+        const currentSpan = typingTextDisplay?.querySelector('span.current');
+        if (currentSpan && typingTextDisplay) {
             const containerRect = typingTextDisplay.getBoundingClientRect();
             const spanRect = currentSpan.getBoundingClientRect();
-            const lineHeight = parseFloat(getComputedStyle(typingTextDisplay).lineHeight);
+            const lineHeightStyle = getComputedStyle(typingTextDisplay).lineHeight;
+            const lineHeight = parseFloat(lineHeightStyle) || 20; // Default line height if parse fails
 
-            if (spanRect.bottom > containerRect.bottom - lineHeight * 0.5 &&
-                spanRect.right > containerRect.left + containerRect.width * 0.8) {
-                typingTextDisplay.scrollBy({ top: lineHeight, behavior: 'smooth' });
+            // Check if spanRect properties are valid numbers
+             if (!isNaN(spanRect.bottom) && !isNaN(containerRect.bottom) && !isNaN(lineHeight) &&
+                 !isNaN(spanRect.right) && !isNaN(containerRect.left) && !isNaN(containerRect.width)) {
+
+                // Scroll logic - adjust conditions slightly for robustness
+                if (spanRect.bottom > (containerRect.bottom - lineHeight * 0.5) ||
+                    (spanRect.right > (containerRect.left + containerRect.width * 0.9) && spanRect.top > containerRect.top)) { // Add check for top boundary
+                    typingTextDisplay.scrollBy({ top: lineHeight, behavior: 'smooth' });
+                }
+            } else {
+                 console.warn("Invalid rect or line height for scrolling calculation.");
             }
         }
-        
+
+
         if (typedLength >= originalParagraphForTest.length) {
             endTest();
         }
     };
 
     const updateDisplayAndStats = () => {
+        if (!typingTextDisplay || !typingInput || !originalParagraphForTest) return; // Add null checks
+
         const spans = typingTextDisplay.querySelectorAll('span');
         const typedValue = typingInput.value;
         let correctChars = 0;
+        let incorrectCharsCount = 0; // ভুল অক্ষরের সংখ্যা গণনার জন্য
 
         spans.forEach((charSpan, index) => {
             charSpan.classList.remove('correct', 'incorrect', 'current');
             if (index < typedValue.length) {
                 const typedChar = typedValue[index];
                 const originalChar = charSpan.innerText;
-                
+
                 let isCorrect = (typedChar === originalChar) || (digitMap[originalChar] === typedChar);
 
+                // Handle newline characters (allow spacebar for newline)
                 if (originalChar === '\n' && (typedChar === '\n' || typedChar === ' ')) {
                     isCorrect = true;
                 }
@@ -8215,49 +8257,61 @@ document.addEventListener('DOMContentLoaded', () => {
                     correctChars++;
                 } else {
                     charSpan.classList.add('incorrect');
+                    incorrectCharsCount++; // ভুল অক্ষর গণনা
                 }
             } else if (index === typedValue.length) {
                 charSpan.classList.add('current');
             }
         });
 
-        const accuracy = typedValue.length > 0 ? (correctChars / typedValue.length) * 100 : 100;
-        accuracyDisplay.innerText = `${Math.round(accuracy)}%`;
+        // নির্ভুলতা গণনা আপডেট করা হয়েছে (ভুল অক্ষরের উপর ভিত্তি করে)
+        const accuracy = typedValue.length > 0 ? ((typedValue.length - incorrectCharsCount) / typedValue.length) * 100 : 100;
+       if(accuracyDisplay) accuracyDisplay.innerText = `${Math.max(0, Math.round(accuracy))}%`; // নিশ্চিত করুন যেন ০% এর নিচে না যায়
 
         const timeInMinutes = timeElapsed / 60;
+        // WPM গণনা: (মোট টাইপ করা অক্ষর / ৫) / সময় (মিনিটে)
         const grossWPM = timeInMinutes > 0 ? (typedValue.length / 5) / timeInMinutes : 0;
-        wpmDisplay.innerText = Math.round(grossWPM > 0 ? grossWPM : 0);
+       if(wpmDisplay) wpmDisplay.innerText = Math.round(grossWPM > 0 ? grossWPM : 0);
 
+        // শব্দ গণনা আপডেট করা হয়েছে (compareWords ব্যবহার করে)
         const typedWords = typedValue.trim().split(/\s+/).filter(Boolean);
-        const originalWords = originalParagraphForTest.split(/\s+/).filter(Boolean);
+        // Correct original words extraction for comparison
+        const originalWordsForComparison = originalParagraphForTest.split(/\s+/).filter(Boolean);
         let correctWords = 0;
-        typedWords.forEach((word, index) => {
-            if (originalWords[index] === word) correctWords++;
+        typedWords.forEach((typedWord, index) => {
+             // Ensure original word exists at the index before comparing
+            if (originalWordsForComparison[index] && compareWords(originalWordsForComparison[index], typedWord)) {
+                correctWords++;
+            }
         });
-        totalWordsDisplay.innerText = typedWords.length;
-        correctWordsDisplay.innerText = correctWords;
-        incorrectWordsDisplay.innerText = typedWords.length - correctWords;
+
+        if(totalWordsDisplay) totalWordsDisplay.innerText = typedWords.length;
+        if(correctWordsDisplay) correctWordsDisplay.innerText = correctWords;
+        // Calculate incorrect words based on the difference
+        if(incorrectWordsDisplay) incorrectWordsDisplay.innerText = typedWords.length - correctWords;
     };
 
 
     const startTimer = () => {
+        // Clear existing timer before starting a new one
+        if (timer) clearInterval(timer);
         timer = setInterval(() => {
-            if (isPaused) return; 
+            if (isPaused) return;
             timeElapsed++;
             updateTimeDisplays();
-            updateDisplayAndStats(); 
+            updateDisplayAndStats();
             if (totalTestTime > 0 && timeElapsed >= totalTestTime) endTest();
         }, 1000);
     };
 
     const togglePauseResume = () => {
-        if (!isTestActive) return;
+        if (!isTestActive || !typingInput || !pauseResumeTypingBtn) return; // Add null checks
         isPaused = !isPaused;
         if (isPaused) {
             typingInput.disabled = true;
             pauseResumeTypingBtn.innerText = 'চালু করুন';
         } else {
-            lastKeyPressTime = Date.now(); 
+            lastKeyPressTime = Date.now();
             typingInput.disabled = false;
             typingInput.focus();
             pauseResumeTypingBtn.innerText = 'থামান';
@@ -8267,17 +8321,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const endTest = async () => {
         clearInterval(timer);
         isTestActive = false;
-        typingInput.disabled = true;
-        pauseResumeTypingBtn.disabled = true;
-        updateDisplayAndStats();
+        if(typingInput) typingInput.disabled = true;
+        if(pauseResumeTypingBtn) pauseResumeTypingBtn.disabled = true;
+        updateDisplayAndStats(); // Final update
+
+        const wpmValue = wpmDisplay ? parseInt(wpmDisplay.innerText, 10) : 0;
+        const accuracyValue = accuracyDisplay ? parseInt(accuracyDisplay.innerText.replace('%', ''), 10) : 0;
+        const errorsValue = incorrectWordsDisplay ? parseInt(incorrectWordsDisplay.innerText, 10) : 0;
 
         const resultData = {
-            wpm: parseInt(wpmDisplay.innerText),
-            accuracy: parseInt(accuracyDisplay.innerText),
-            errors: parseInt(incorrectWordsDisplay.innerText),
+            wpm: isNaN(wpmValue) ? 0 : wpmValue,
+            accuracy: isNaN(accuracyValue) ? 0 : accuracyValue,
+            errors: isNaN(errorsValue) ? 0 : errorsValue,
             timestamp: new Date().toISOString(),
-            charTimings: charTimings
+            charTimings: charTimings // Ensure charTimings is captured correctly
         };
+
 
         await saveResult(resultData);
         await displayResultReport();
@@ -8286,6 +8345,22 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const saveResult = async (result) => {
+        // Ensure idbGet and idbSet are defined and imported/available
+        if (typeof idbGet !== 'function' || typeof idbSet !== 'function') {
+            console.error("IndexedDB functions (idbGet, idbSet) are not available.");
+            // Fallback to localStorage if IndexedDB functions are missing
+            try {
+                let history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]');
+                history.unshift(result);
+                history = history.slice(0, 10);
+                localStorage.setItem('typingTestHistory', JSON.stringify(history));
+                console.log("Typing test result saved to localStorage (fallback).");
+            } catch (localError) {
+                console.error("Failed to save to localStorage as well:", localError);
+            }
+            return;
+        }
+
         try {
             let history = await idbGet('typingTestHistory') || [];
             history.unshift(result);
@@ -8294,25 +8369,36 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Typing test result saved to IndexedDB.");
         } catch (error) {
             console.error("Failed to save typing test result to IndexedDB:", error);
+            // Fallback to localStorage on IndexedDB error
             try {
                 let history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]');
                 history.unshift(result);
-                history = history.slice(0, 10); 
+                history = history.slice(0, 10);
                 localStorage.setItem('typingTestHistory', JSON.stringify(history));
+                console.log("Typing test result saved to localStorage (fallback).");
             } catch (localError) {
                 console.error("Failed to save to localStorage as well:", localError);
             }
         }
     };
 
+
     const displayResultReport = async () => {
+        if (!resultReportContainer || !historyTableBody) return; // Add null checks
+
         let history = [];
-        try {
-            history = await idbGet('typingTestHistory') || [];
-        } catch (error) {
-            console.error("Failed to get typing history from IndexedDB:", error);
-            history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]');
+        // Ensure idbGet is available before trying to use it
+        if (typeof idbGet === 'function') {
+            try {
+                history = await idbGet('typingTestHistory') || [];
+            } catch (error) {
+                console.error("Failed to get typing history from IndexedDB:", error);
+                history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]'); // Fallback
+            }
+        } else {
+             history = JSON.parse(localStorage.getItem('typingTestHistory') || '[]'); // Fallback if idbGet is undefined
         }
+
 
         resultReportContainer.classList.remove('hidden');
 
@@ -8323,114 +8409,175 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        historyTableBody.innerHTML = history.map((res, index) => `
+        historyTableBody.innerHTML = history.map((res, index) => {
+            // Ensure res.accuracy and res.errors are numbers before formatting
+            const accuracy = typeof res.accuracy === 'number' ? res.accuracy : '-';
+            const errors = typeof res.errors === 'number' ? res.errors : '-';
+            const wpm = typeof res.wpm === 'number' ? res.wpm : '-';
+            let dateString = '-';
+            try {
+                 dateString = new Date(res.timestamp).toLocaleString('bn-BD');
+            } catch (e) { console.error("Error formatting date:", e); }
+
+            return `
             <tr>
                 <td class="p-3 text-center">${history.length - index}</td>
-                <td class="p-3">${new Date(res.timestamp).toLocaleString('bn-BD')}</td>
-                <td class="p-3 text-center">${res.wpm}</td>
-                <td class="p-3 text-center">${res.accuracy}%</td>
-                <td class="p-3 text-center">${res.errors}</td>
+                <td class="p-3">${dateString}</td>
+                <td class="p-3 text-center">${wpm}</td>
+                <td class="p-3 text-center">${accuracy}%</td>
+                <td class="p-3 text-center">${errors}</td>
             </tr>
-        `).join('');
+        `}).join('');
+
 
         renderPerformanceChart(history);
-        renderSlowestCharsChart(history[0].charTimings);
+        // Ensure the latest result and its charTimings exist
+        if (history[0] && history[0].charTimings) {
+            renderSlowestCharsChart(history[0].charTimings);
+        } else {
+             renderSlowestCharsChart([]); // Render empty chart if data is missing
+        }
     };
 
     const renderPerformanceChart = (history) => {
+        if (!performanceChartCanvas || typeof Chart === 'undefined') return; // Add Chart check
         if (performanceChart) performanceChart.destroy();
         const reversedHistory = [...history].reverse();
-        
-        const labels = reversedHistory.map((_, i) => `টেস্ট ${i + 1}`); 
-        const wpmData = reversedHistory.map(res => res.wpm);
-        const accuracyData = reversedHistory.map(res => res.accuracy);
+
+        const labels = reversedHistory.map((_, i) => `টেস্ট ${i + 1}`);
+        const wpmData = reversedHistory.map(res => typeof res.wpm === 'number' ? res.wpm : 0); // Default to 0 if undefined
+        const accuracyData = reversedHistory.map(res => typeof res.accuracy === 'number' ? res.accuracy : 0); // Default to 0
 
         const chartType = reversedHistory.length > 1 ? 'line' : 'bar';
 
-        performanceChart = new Chart(performanceChartCanvas, {
-            type: chartType,
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'WPM',
-                    data: wpmData,
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.5)',
-                    tension: 0.1
-                }, {
-                    label: 'নির্ভুলতা (%)',
-                    data: accuracyData,
-                    borderColor: '#10b981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.5)',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
+        try {
+            performanceChart = new Chart(performanceChartCanvas, {
+                type: chartType,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'WPM',
+                        data: wpmData,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                        tension: 0.1
+                    }, {
+                        label: 'নির্ভুলতা (%)',
+                        data: accuracyData,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.5)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        });
+            });
+        } catch (e) {
+            console.error("Error rendering performance chart:", e);
+        }
     };
 
     const renderSlowestCharsChart = (timings) => {
+        if (!slowestCharsChartCanvas || typeof Chart === 'undefined') return; // Add Chart check
         if (slowestCharsChart) slowestCharsChart.destroy();
-        if (!timings || timings.length === 0) return;
+        // Ensure timings is an array and has elements
+        if (!Array.isArray(timings) || timings.length === 0) {
+             console.warn("No timings data available for slowest chars chart.");
+             // Optionally clear the canvas or display a message
+             const ctx = slowestCharsChartCanvas.getContext('2d');
+             ctx.clearRect(0, 0, slowestCharsChartCanvas.width, slowestCharsChartCanvas.height);
+             ctx.textAlign = 'center';
+             ctx.fillText("কোনো ডেটা নেই", slowestCharsChartCanvas.width / 2, slowestCharsChartCanvas.height / 2);
+             return;
+        }
 
         const charTimeMap = {};
         timings.forEach(({ char, time }) => {
-            const normalizedChar = char === ' ' ? 'স্পেস' : char;
+            // Ensure char is a string and time is a number
+            if (typeof char !== 'string' || typeof time !== 'number' || isNaN(time)) return;
+
+            const normalizedChar = char === ' ' ? 'স্পেস' : (char === '\n' ? 'এন্টার' : char);
             if (!charTimeMap[normalizedChar]) charTimeMap[normalizedChar] = [];
             charTimeMap[normalizedChar].push(time);
         });
 
+
         const avgTimes = Object.keys(charTimeMap).map(char => {
             const times = charTimeMap[char];
-            const avg = times.reduce((a, b) => a + b, 0) / times.length;
+             // Ensure times array is not empty before reducing
+            if (!times || times.length === 0) return { char, avg: 0 };
+            const sum = times.reduce((a, b) => a + b, 0);
+            const avg = sum / times.length;
             return { char, avg };
-        });
+        }).filter(item => item.avg > 0); // Filter out items with 0 average time if necessary
 
         const slowestChars = avgTimes.sort((a, b) => b.avg - a.avg).slice(0, 10);
 
-        slowestCharsChart = new Chart(slowestCharsChartCanvas, {
-            type: 'bar',
-            data: {
-                labels: slowestChars.map(c => c.char),
-                datasets: [{
-                    label: 'গড় সময় (ms)',
-                    data: slowestChars.map(c => c.avg.toFixed(0)),
-                    backgroundColor: '#fb923c'
-                }]
-            },
-            options: { responsive: true, indexAxis: 'y' }
-        });
+        // Ensure slowestChars has data before rendering
+         if (slowestChars.length === 0) {
+             console.warn("No valid slowest character data to display.");
+             return;
+         }
+
+        try {
+            slowestCharsChart = new Chart(slowestCharsChartCanvas, {
+                type: 'bar',
+                data: {
+                    labels: slowestChars.map(c => c.char),
+                    datasets: [{
+                        label: 'গড় সময় (ms)',
+                        data: slowestChars.map(c => c.avg.toFixed(0)),
+                        backgroundColor: '#fb923c'
+                    }]
+                },
+                options: { responsive: true, indexAxis: 'y' }
+            });
+         } catch (e) {
+             console.error("Error rendering slowest chars chart:", e);
+         }
     };
+
 
     const loadLastReport = async () => {
         await displayResultReport();
     };
 
-    typingTestTab.addEventListener('click', () => {
-        showTab('typingTest');
-        initializeTest();
-        loadLastReport();
-    });
+    // Add event listeners only if elements exist
+    if (typingTestTab) {
+        typingTestTab.addEventListener('click', () => {
+            // Assuming showTab is defined elsewhere
+            if (typeof showTab === 'function') showTab('typingTest');
+            initializeTest();
+            loadLastReport();
+        });
+    }
 
-    restartTypingBtn.addEventListener('click', initializeTest);
-    pauseResumeTypingBtn.addEventListener('click', togglePauseResume);
-    clearTypingBtn.addEventListener('click', () => { typingInput.value = ''; initializeTest(); });
-    typingInput.addEventListener('input', handleTypingInput);
-    textSelection.addEventListener('change', () => {
-        customTextInputContainer.classList.toggle('hidden', textSelection.value !== 'custom');
-        initializeTest();
-    });
-    timeSelection.addEventListener('change', initializeTest);
-    customTextInputContainer.addEventListener('input', () => { if(textSelection.value === 'custom') initializeTest(); });
+    if (restartTypingBtn) restartTypingBtn.addEventListener('click', initializeTest);
+    if (pauseResumeTypingBtn) pauseResumeTypingBtn.addEventListener('click', togglePauseResume);
+    if (clearTypingBtn) clearTypingBtn.addEventListener('click', () => { if(typingInput) typingInput.value = ''; initializeTest(); });
+    if (typingInput) typingInput.addEventListener('input', handleTypingInput);
 
-    if (document.getElementById('typingTestContent').classList.contains('active')) {
+    if (textSelection) {
+        textSelection.addEventListener('change', () => {
+             if(customTextInputContainer) customTextInputContainer.classList.toggle('hidden', textSelection.value !== 'custom');
+            initializeTest();
+        });
+         // Initial check for custom text visibility
+         if(customTextInputContainer) customTextInputContainer.classList.toggle('hidden', textSelection.value !== 'custom');
+    }
+
+    if (timeSelection) timeSelection.addEventListener('change', initializeTest);
+    if (customTextInputContainer) customTextInputContainer.addEventListener('input', () => { if(textSelection && textSelection.value === 'custom') initializeTest(); });
+
+    // Initialize if the tab is already active on load
+    const typingTestContent = document.getElementById('typingTestContent');
+    if (typingTestContent && typingTestContent.classList.contains('active')) {
         initializeTest();
         loadLastReport();
     }
