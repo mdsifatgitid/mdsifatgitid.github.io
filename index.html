@@ -8807,7 +8807,7 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let i = 0; i < bengaliMonthNames.length; i++) {
                 if (daysPassedSinceBengaliYearStart < bengaliMonthLengths[i]) {
                     currentBengaliMonthIndex = i;
-                    currentBengaliDay = daysPassedSinceBengaliYearStart + 1; // দিন 1-ইনডেক্সড
+                    currentBengaliDay = daysPassedSinceBengaliYearStart + 0; // দিন 1-ইনডেক্সড, এখানে 1 থাকলে 1 দিন যুক্ত হবে বা অতিরিক্ত হবে।
                     break;
                 }
                 daysPassedSinceBengaliYearStart -= bengaliMonthLengths[i];
@@ -11606,7 +11606,7 @@ function showTab(tabId) {
                     for (let i = 0; i < bengaliMonthNames.length; i++) {
                         if (daysPassedSinceBengaliYearStart < bengaliMonthLengths[i]) {
                             currentBengaliMonthIndex = i;
-                            currentBengaliDay = daysPassedSinceBengaliYearStart + 1; // দিন 1-ইনডেক্সড
+                            currentBengaliDay = daysPassedSinceBengaliYearStart + 0; // দিন 1-ইনডেক্সড, এখানে 1 থাকলে 1 দিন যুক্ত হবে বা অতিরিক্ত হবে।
                             break;
                         }
                         daysPassedSinceBengaliYearStart -= bengaliMonthLengths[i];
