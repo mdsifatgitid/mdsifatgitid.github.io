@@ -13388,9 +13388,38 @@ async function initializeNotepad() {
     });
 
     let draggingItem = null;
-    taskList.addEventListener('dragstart', e => { if (e.target.classList.contains('task-item')) { draggingItem = e.target; setTimeout(() => e.target.classList.add('dragging'), 0); } });
+    
+	    // *** MODIFIED dragstart listener ***
+    taskList.addEventListener('dragstart', e => {
+        // Check if the target is a draggable item AND if a text element inside the taskList is currently being edited
+        const activeElement = document.activeElement;
+        const isEditingText = activeElement && activeElement.classList.contains('task-text') && taskList.contains(activeElement);
+
+        if (e.target.classList.contains('task-item') && !isEditingText) {
+            draggingItem = e.target;
+            setTimeout(() => e.target.classList.add('dragging'), 0);
+        } else {
+            // Prevent dragging if editing text
+            e.preventDefault();
+        }
+    });
+	
     taskList.addEventListener('dragend', async () => { if (draggingItem) { draggingItem.classList.remove('dragging'); draggingItem = null; await saveTasks(); updateTaskNumbers(); } });
-    taskList.addEventListener('dragover', e => { e.preventDefault(); if (draggingItem) { const afterElement = getDragAfterElement(taskList, e.clientY); taskList.insertBefore(draggingItem, afterElement); } });
+    
+	    // *** MODIFIED dragover listener ***
+    taskList.addEventListener('dragover', e => {
+        // Check if a text element inside the taskList is currently being edited
+        const activeElement = document.activeElement;
+        const isEditingText = activeElement && activeElement.classList.contains('task-text') && taskList.contains(activeElement);
+
+        // Allow dropping ONLY if not editing text and a valid item is being dragged
+        if (draggingItem && !isEditingText) {
+            e.preventDefault(); // Only prevent default if dropping is allowed
+            const afterElement = getDragAfterElement(taskList, e.clientY);
+            taskList.insertBefore(draggingItem, afterElement);
+        }
+        // If editing text, the default behavior (no drop) is allowed to happen
+    });
 
     function updateTaskNumbers() {
         taskList.querySelectorAll('.task-item').forEach((task, index) => { task.querySelector('.task-number').textContent = index + 1; });
