@@ -8103,7 +8103,7 @@ body.sidebar-open #sidebarOverlay {
 const DB_NAME = 'BanglaToolboxDB';
 const STORE_NAME = 'converterStore';
 const DB_VERSION = 1;
-const FOUR_DAYS_IN_MS = 4 * 24 * 60 * 60 * 1000;
+const TWO_YEARS_IN_MS = 730 * 24 * 60 * 60 * 1000;
 
 let dbPromise;
 
@@ -8132,7 +8132,7 @@ function getDb() {
     return dbPromise;
 }
 
-async function idbSet(key, value, ttl = FOUR_DAYS_IN_MS) {
+async function idbSet(key, value, ttl = TWO_YEARS_IN_MS) {
     const db = await getDb();
     const transaction = db.transaction(STORE_NAME, 'readwrite');
     const store = transaction.objectStore(STORE_NAME);
