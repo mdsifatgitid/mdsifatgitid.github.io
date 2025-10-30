@@ -4090,32 +4090,26 @@ input:checked + .slider:before {
 /* শেষ: যাকাত ক্যালকুলেটর স্টাইল */
 
 
-/* Animated News Ticker Styles (Updated with Vertical Slide Animation) */
 #news-ticker-container {
-    position: relative; /* For positioning nav icons */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden; /* Important for vertical animation */
-    height: 2em; /* Adjust based on font size/line height */
+    position: relative; 
+    overflow: hidden; 
+    transition: height 0.5s ease-in-out; 
 }
 
-/* Pause animation on hover */
 #news-ticker-container:hover #news-ticker-text.typing-animation {
-    animation-play-state: paused; /* Pause typing on hover */
+    animation-play-state: paused; 
 }
-/* Hover pause handled by JS interval for sliding */
 
 #news-ticker-content {
     width: 100%;
     text-align: center;
-    overflow: hidden; /* Hide overflowing text */
-    position: relative; /* Needed for absolute positioning of text */
-    height: 100%; /* Take full height of container */
+    overflow: hidden; 
+    position: relative; 
+    min-height: 2em; 
+    transition: height 0.5s ease-in-out; 
 }
 
 #news-ticker-text {
-    /* Base styles for VERTICAL SLIDE animation (when useTypingAnimation = false) */
     position: absolute;
     left: 0;
     right: 0;
@@ -4124,19 +4118,14 @@ input:checked + .slider:before {
     color: inherit;
     text-decoration: none;
     cursor: pointer;
-    /* Transition for vertical movement and opacity */
     transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
-    /* Initial position (hidden below) */
     top: 100%;
     opacity: 0;
-    /* Center vertically */
-    transform: translateY(-50%);
-    /* Prevent wrapping and show ellipsis if too long */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 2em; /* Match container height */
-    font-weight: 600; /* Make the text bold (semibold) */
+    
+    white-space: normal; 
+    overflow: visible; 
+    line-height: 1.5; 
+    font-weight: 600; 
 }
 
 
@@ -4144,9 +4133,7 @@ input:checked + .slider:before {
     text-decoration: underline;
 }
 
-/* Typing Animation Class and Keyframes (Restored for when useTypingAnimation = true) */
 #news-ticker-text.typing-animation {
-    /* Override vertical slide styles and restore original typing behavior */
     position: static;
     display: inline-block; 
     vertical-align: middle; 
@@ -4155,27 +4142,24 @@ input:checked + .slider:before {
     overflow: hidden;
     white-space: nowrap;
     animation-name: typing;
-    animation-timing-function: steps(60, end); /* Will be overridden by JS */
+    animation-timing-function: steps(60, end); 
     animation-fill-mode: forwards;
     transition: none;
     opacity: 1;
     top: auto;
-    line-height: normal; /* Use normal line height for inline-block */
+    line-height: normal; 
     text-overflow: clip;
-    /* font-weight: 600; বেস স্টাইল থেকে ইনহেরিট হবে, তাই বোল্ড থাকবে */
 }
 
 @keyframes typing {
     from { width: 0 }
-    to { width: 100% } /* Expand width to show text */
+    to { width: 100% } 
 }
 
-/* Scrolling animation keyframes are removed */
 
 .news-source {
     font-style: italic;
-    color: #4f46e5; /* Indigo color */
-    /* Boldness is inherited from parent now */
+    color: #4f46e5; 
 }
 .dark .news-source {
     color: #a5b4fc;
@@ -4195,7 +4179,7 @@ input:checked + .slider:before {
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0; /* Initially hidden */
+    opacity: 0; 
     transition: opacity 0.3s ease, background-color 0.3s ease;
     z-index: 10;
 }
@@ -4205,7 +4189,7 @@ input:checked + .slider:before {
 }
 
 #news-ticker-container:hover .news-nav-icon {
-    opacity: 1; /* Show on hover */
+    opacity: 1; 
 }
 
 .news-nav-icon:hover {
@@ -15221,45 +15205,51 @@ if (mainHeading) {
 // ====================================================================
 document.addEventListener('DOMContentLoaded', () => {
     const tickerContainer = document.getElementById('news-ticker-container');
-    const tickerContent = document.getElementById('news-ticker-content'); // <<< নতুন: কন্টেন্ট div সিলেক্ট
+    const tickerContent = document.getElementById('news-ticker-content'); // <<< এটি গুরুত্বপূর্ণ
     const tickerTextElement = document.getElementById('news-ticker-text');
     const prevBtn = document.getElementById('prev-news');
     const nextBtn = document.getElementById('next-news');
 
-    if (!tickerContainer || !tickerContent || !tickerTextElement || !prevBtn || !nextBtn) { // <<< আপডেট: কন্টেন্ট div চেক
+    if (!tickerContainer || !tickerContent || !tickerTextElement || !prevBtn || !nextBtn) {
         console.error("News ticker elements not found.");
         return;
     }
 
     // --- সেটিংস ---
     // true = টাইপিং অ্যানিমেশন, false = ভার্টিকাল স্লাইড অ্যানিমেশন
-    const useTypingAnimation = true; // <<-- এই ভ্যারিয়েবল পরিবর্তন করুন (true/false)
+    const useTypingAnimation = false; // <<-- আপনার সেটিং অনুযায়ী এটি false থাকবে
 
     // --- অ্যানিমেশন মোড অনুযায়ী কন্টেইনারের স্টাইল সেট করুন ---
     if (useTypingAnimation) {
-        // টাইপিং-এর জন্য (true): কোনো নির্দিষ্ট উচ্চতা বা overflow restriction নেই
+        // টাইপিং-এর জন্য (true):
         tickerContainer.style.height = 'auto';
         tickerContainer.style.overflow = 'visible';
-        tickerContainer.style.lineHeight = ''; // CSS থেকে ডিফল্ট (flex) ব্যবহার করবে
-        tickerContainer.style.minHeight = ''; // CSS থেকে ডিফল্ট ব্যবহার করবে
+        tickerContainer.style.lineHeight = ''; 
+        tickerContainer.style.minHeight = ''; 
+        tickerContainer.style.display = 'flex'; // ফ্লেক্সবক্স ব্যবহার করুন
+        tickerContainer.style.alignItems = 'center';
+        tickerContainer.style.justifyContent = 'center';
 
         tickerContent.style.overflow = 'visible';
         tickerContent.style.height = 'auto';
+        tickerContent.style.minHeight = '';
     } else {
-        // স্লাইডিং-এর জন্য (false): নির্দিষ্ট min-height এবং overflow hidden
-        tickerContainer.style.height = 'auto'; // র‍্যাপিং-এর জন্য auto
-        tickerContainer.style.overflow = 'hidden'; // স্লাইডিং ইফেক্টের জন্য hidden
-        tickerContainer.style.lineHeight = '1.5'; // ডিফল্ট line-height
-        tickerContainer.style.minHeight = '2em';  // এক লাইনের উচ্চতা
+        // স্লাইডিং-এর জন্য (false):
+        tickerContainer.style.height = 'auto'; // auto রাখুন
+        tickerContainer.style.overflow = 'hidden'; 
+        tickerContainer.style.lineHeight = '1.5'; 
+        tickerContainer.style.minHeight = '2em';  
+        tickerContainer.style.display = 'block'; // ফ্লেক্সবক্সের পরিবর্তে block ব্যবহার করুন
+        tickerContainer.style.alignItems = '';
+        tickerContainer.style.justifyContent = '';
 
-        tickerContent.style.overflow = 'hidden'; // স্লাইডিং ইফেক্টের জন্য hidden
-        tickerContent.style.height = 'auto';
+        tickerContent.style.overflow = 'hidden'; 
+        tickerContent.style.height = 'auto'; // auto রাখুন
         tickerContent.style.minHeight = '2em';
     }
 
-    // --- বাকি কোড ---
-    const showNewsHeadlines = true; // Keep fetching news
-    const baseTickerClasses = tickerTextElement.className; // <-- মূল ক্লাসগুলো সেভ করুন
+    const showNewsHeadlines = true; 
+    const baseTickerClasses = tickerTextElement.className; 
 
     const customMessages = [
         { title: "বাংলা টুলবক্স-এ আপনাকে স্বাগতম!", link: "#", source: "Bangla Toolbox" },
@@ -15270,11 +15260,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let allMessages = [];
     let messageIndex = 0;
     let autoPlayInterval = null;
-    let transitionTimeout = null; // Timeout for transition
-    let isTransitioning = false; // Flag to prevent rapid clicks during transition
-    const ANIMATION_DURATION = 500; // Transition duration in ms (match CSS)
-    // --- UPDATED: Use 10s for typing, 5s for sliding ---
-    const AUTO_PLAY_INTERVAL = useTypingAnimation ? 10000 : 5000; // Set interval based on initial animation type
+    let transitionTimeout = null; 
+    let isTransitioning = false; 
+    const ANIMATION_DURATION = 500; 
+    const AUTO_PLAY_INTERVAL = useTypingAnimation ? 10000 : 5000;
 
     // Function to fetch news (remains the same)
     async function fetchNewsHeadlines() {
@@ -15308,27 +15297,27 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.error('Error fetching news:', error); return customMessages; }
     }
 
-    // *** UPDATED function to display headline with vertical slide or typing animation ***
+    // *** UPDATED function to display headline ***
     function displayCurrentHeadline(direction = 'up') {
-        clearTimeout(transitionTimeout); // Clear previous transition timeout
-        isTransitioning = true; // Start transition flag
+        clearTimeout(transitionTimeout); 
+        isTransitioning = true; 
 
         if (allMessages.length === 0) {
             tickerTextElement.textContent = "বার্তা লোড হচ্ছে...";
-            tickerTextElement.className = `${baseTickerClasses} news-ticker-text`; // <-- Use base classes
+            tickerTextElement.className = `${baseTickerClasses} news-ticker-text`; 
             tickerTextElement.style.opacity = '1';
-
-            // --- Conditional default positioning ---
+            
             if (useTypingAnimation) {
                 tickerTextElement.style.position = 'static';
                 tickerTextElement.style.top = 'auto';
                 tickerTextElement.style.lineHeight = 'normal';
             } else {
+                // স্লাইডিং মোডের জন্য ডিফল্ট স্টাইল
                 tickerTextElement.style.position = 'absolute';
-                tickerTextElement.style.top = '50%';
-                tickerTextElement.style.lineHeight = 'normal'; // <<< পরিবর্তন: normal করা হয়েছে
+                tickerTextElement.style.top = '0'; // CHANGED from 50%
+                tickerTextElement.style.transform = 'none'; // CHANGED from translateY(-50%)
+                tickerTextElement.style.lineHeight = '1.5';
             }
-
             tickerTextElement.style.width = 'auto';
             tickerTextElement.style.animation = 'none';
             tickerTextElement.style.transition = 'none';
@@ -15342,17 +15331,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentMessage = allMessages[messageIndex];
         const displayText = ` ● ${currentMessage.title} - <span class="news-source">${currentMessage.source}</span>`;
 
-        // --- Apply selected display logic ---
         if (useTypingAnimation) {
-            // Typing Animation Logic
+            // --- Typing Animation Logic (Unchanged) ---
             tickerTextElement.className = `${baseTickerClasses} news-ticker-text typing-animation`;
             tickerTextElement.href = currentMessage.link;
             tickerTextElement.innerHTML = displayText;
-            tickerTextElement.style.cssText = '';
+            tickerTextElement.style.cssText = ''; 
             tickerTextElement.style.position = 'static';
-            tickerTextElement.style.lineHeight = 'normal'; // <<< নিশ্চিত করুন normal আছে
+            tickerTextElement.style.lineHeight = 'normal'; 
             tickerTextElement.style.animation = 'none';
-            tickerTextElement.offsetHeight;
+            tickerTextElement.offsetHeight; 
 
             const textLength = currentMessage.title.length + currentMessage.source.length + 5;
             const duration = Math.max(3.5, textLength * 0.1);
@@ -15372,41 +15360,54 @@ document.addEventListener('DOMContentLoaded', () => {
             tickerTextElement.removeEventListener('animationend', handleTypingEnd);
             tickerTextElement.addEventListener('animationend', handleTypingEnd, { once: true });
 
-
         } else {
-            // Vertical Slide Animation Logic
+            // --- Vertical Slide Animation Logic (HEAVILY UPDATED) ---
             tickerTextElement.className = `${baseTickerClasses} news-ticker-text`;
-            tickerTextElement.style.cssText = '';
+            tickerTextElement.style.cssText = ''; 
             tickerTextElement.style.animation = 'none';
-
-            // --- Apply styles for vertical slide ---
+            
+            // 1. Apply base styles for measurement
             tickerTextElement.style.position = 'absolute';
-            tickerTextElement.style.transform = 'translateY(-50%)';
             tickerTextElement.style.width = '100%';
-            tickerTextElement.style.lineHeight = 'normal'; // <<< পরিবর্তন: normal করা হয়েছে
-            tickerTextElement.style.whiteSpace = 'normal'; // <<< এটি র‍্যাপিং-এর অনুমতি দেয়
+            tickerTextElement.style.lineHeight = '1.5';
+            tickerTextElement.style.whiteSpace = 'normal';
             tickerTextElement.style.overflow = 'visible';
             tickerTextElement.style.textOverflow = 'clip';
-
-            // 1. Set new content
+            tickerTextElement.style.textAlign = 'center';
+            
+            // 2. Set new content
             tickerTextElement.href = currentMessage.link;
             tickerTextElement.innerHTML = displayText;
 
-            // 2. Position for entry
-            const startTop = (direction === 'up') ? '150%' : '-50%';
+            // 3. Measure new height
+            // Temporarily make it visible but off-screen to measure
             tickerTextElement.style.transition = 'none';
+            tickerTextElement.style.top = '-9999px'; // Move off-screen
+            tickerTextElement.style.opacity = '1';
+            tickerTextElement.style.transform = 'none';
+            
+            // --- THIS IS THE KEY ---
+            // টেক্সটের আসল উচ্চতা পরিমাপ করুন
+            const newHeight = tickerTextElement.offsetHeight;
+            // প্যারেন্ট কন্টেইনারের উচ্চতা সেট করুন, এটি CSS transition-কে ট্রিগার করবে
+            tickerContent.style.height = `${newHeight}px`; 
+            // --- END KEY ---
+
+            // 4. Position for entry
+            // নতুন উচ্চতার উপর ভিত্তি করে স্লাইড-ইন পজিশন গণনা করুন
+            const startTop = (direction === 'up') ? `${newHeight + 20}px` : `-${newHeight + 20}px`;
             tickerTextElement.style.top = startTop;
             tickerTextElement.style.opacity = '0';
 
-            // 3. Force reflow
+            // 5. Force reflow to apply new start position
             tickerTextElement.offsetHeight;
 
-            // 4. Slide in
+            // 6. Slide in
             tickerTextElement.style.transition = `top ${ANIMATION_DURATION / 1000}s ease-in-out, opacity ${ANIMATION_DURATION / 1000}s ease-in-out`;
-            tickerTextElement.style.top = '50%';
+            tickerTextElement.style.top = '0px'; // কন্টেইনারের উপরে স্লাইড করুন
             tickerTextElement.style.opacity = '1';
 
-            // 5. Mark transition end
+            // 7. Mark transition end
             transitionTimeout = setTimeout(() => {
                 isTransitioning = false;
             }, ANIMATION_DURATION);
@@ -15420,7 +15421,9 @@ document.addEventListener('DOMContentLoaded', () => {
         clearTimeout(transitionTimeout);
 
         // 1. Animate out
-        const exitTop = (exitDirection === 'up') ? '-50%' : '150%'; // <<< পরিবর্তন: Exit position adjusted
+        // বর্তমান টেক্সটের উচ্চতার উপর ভিত্তি করে স্লাইড-আউট পজিশন গণনা করুন
+        const currentHeight = tickerTextElement.offsetHeight;
+        const exitTop = (exitDirection === 'up') ? `-${currentHeight + 20}px` : `${currentHeight + 20}px`;
         tickerTextElement.style.top = exitTop;
         tickerTextElement.style.opacity = '0';
 
@@ -15428,7 +15431,7 @@ document.addEventListener('DOMContentLoaded', () => {
         transitionTimeout = setTimeout(() => {
             nextIndexFunction();
             const entryDirection = (exitDirection === 'up') ? 'up' : 'down';
-            displayCurrentHeadline(entryDirection);
+            displayCurrentHeadline(entryDirection); 
         }, ANIMATION_DURATION);
     }
 
@@ -15449,7 +15452,6 @@ document.addEventListener('DOMContentLoaded', () => {
              triggerTransition(() => { messageIndex--; }, 'down');
         }
     }
-
 
     function startAutoPlay() {
         stopAutoPlay();
