@@ -4090,45 +4090,92 @@ input:checked + .slider:before {
 /* শেষ: যাকাত ক্যালকুলেটর স্টাইল */
 
 
-/* Animated News Ticker Styles (Updated) */
+/* Animated News Ticker Styles (Updated with Vertical Slide Animation) */
 #news-ticker-container {
     position: relative; /* For positioning nav icons */
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden; /* Important for vertical animation */
+    height: 2em; /* Adjust based on font size/line height */
 }
 
-#news-ticker-container:hover #news-ticker-text {
-    animation-play-state: paused;
+/* Pause animation on hover */
+#news-ticker-container:hover #news-ticker-text.typing-animation {
+    animation-play-state: paused; /* Pause typing on hover */
 }
+/* Hover pause handled by JS interval for sliding */
 
 #news-ticker-content {
     width: 100%;
     text-align: center;
-    overflow: hidden;
+    overflow: hidden; /* Hide overflowing text */
+    position: relative; /* Needed for absolute positioning of text */
+    height: 100%; /* Take full height of container */
 }
 
 #news-ticker-text {
-    display: inline-block;
-    vertical-align: middle;
-    overflow: hidden;
-    white-space: nowrap; /* অ্যানিমেশনের সময় লেখা এক লাইনে থাকবে */
-    /* কার্সরের জন্য border-right এবং blink-caret অ্যানিমেশন সরানো হয়েছে */
-    animation: typing 3.5s steps(60, end);
+    /* Base styles for VERTICAL SLIDE animation (when useTypingAnimation = false) */
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 100%;
+    text-align: center;
     color: inherit;
     text-decoration: none;
-    /* লেখা ভাঙার জন্য এই প্রোপার্টিগুলো যোগ করা হয়েছে */
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    cursor: pointer;
+    /* Transition for vertical movement and opacity */
+    transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    /* Initial position (hidden below) */
+    top: 100%;
+    opacity: 0;
+    /* Center vertically */
+    transform: translateY(-50%);
+    /* Prevent wrapping and show ellipsis if too long */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 2em; /* Match container height */
+    font-weight: 600; /* Make the text bold (semibold) */
 }
+
 
 #news-ticker-text:hover {
     text-decoration: underline;
 }
 
+/* Typing Animation Class and Keyframes (Restored for when useTypingAnimation = true) */
+#news-ticker-text.typing-animation {
+    /* Override vertical slide styles and restore original typing behavior */
+    position: static;
+    display: inline-block; 
+    vertical-align: middle; 
+    transform: none;
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    animation-name: typing;
+    animation-timing-function: steps(60, end); /* Will be overridden by JS */
+    animation-fill-mode: forwards;
+    transition: none;
+    opacity: 1;
+    top: auto;
+    line-height: normal; /* Use normal line height for inline-block */
+    text-overflow: clip;
+    /* font-weight: 600; বেস স্টাইল থেকে ইনহেরিট হবে, তাই বোল্ড থাকবে */
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% } /* Expand width to show text */
+}
+
+/* Scrolling animation keyframes are removed */
+
 .news-source {
     font-style: italic;
-    color: #4f46e5; /* Indigo color to match */
+    color: #4f46e5; /* Indigo color */
+    /* Boldness is inherited from parent now */
 }
 .dark .news-source {
     color: #a5b4fc;
@@ -4170,14 +4217,8 @@ input:checked + .slider:before {
 
 #prev-news { left: 5px; }
 #next-news { right: 5px; }
-
-/* Typing animation */
-@keyframes typing {
-    from { width: 0 }
-    to { width: 100% }
-}
-/* blink-caret keyframes সরানো হয়েছে */
 /* Animated News Ticker Styles End */
+
 
 
 /* ======================================================== */
@@ -15176,227 +15217,303 @@ if (mainHeading) {
 // ====================================================================
 
 // ====================================================================
-// START: Animated News Ticker Script (Updated with Live News & Navigation)
+// START: Animated News Ticker Script (Updated with Vertical Slide Animation)
 // ====================================================================
 document.addEventListener('DOMContentLoaded', () => {
-const tickerContainer = document.getElementById('news-ticker-container');
-const tickerTextElement = document.getElementById('news-ticker-text');
-const prevBtn = document.getElementById('prev-news');
-const nextBtn = document.getElementById('next-news');
+    const tickerContainer = document.getElementById('news-ticker-container');
+    const tickerContent = document.getElementById('news-ticker-content'); // <<< নতুন: কন্টেন্ট div সিলেক্ট
+    const tickerTextElement = document.getElementById('news-ticker-text');
+    const prevBtn = document.getElementById('prev-news');
+    const nextBtn = document.getElementById('next-news');
 
-if (!tickerContainer || !tickerTextElement || !prevBtn || !nextBtn) {
-    console.error("News ticker elements not found.");
-    return;
-}
-// --- সেটিংস এখানে ট্রু বা true; সেট করলে নিউজ হেডলাইন দেখাবে এবং ফলস বা false; লিখে দিলে নিচের মেসেজগুলো দেখাবে ---
-const showNewsHeadlines = true;
-
-const customMessages = [
-    { title: "বাংলা টুলবক্স-এ আপনাকে স্বাগতম!", link: "#", source: "Bangla Toolbox" },
-    { title: "আপনার টুলস ব্যবহারের অভিজ্ঞতা কেমন?", link: "#", source: "Bangla Toolbox" },
-    { title: "যেকোনো মতামতের জন্য আমাদের সাথে যোগাযোগ করুন।", link: "https://bio.link/mdsifatbiolink", source: "Developer" }
-];
-
-let allMessages = [];
-let messageIndex = 0;
-let autoPlayInterval = null;
-const animationInterval = 10000; // ১০ সেকেন্ড
-
-async function fetchNewsHeadlines() {
-    const feeds = {
-        'ঢাকা পোস্ট': 'https://www.dhakapost.com/rss',
-        'বাংলাদেশ প্রতিদিন': 'https://www.bd-pratidin.com/rss.xml',
-        'কালের কণ্ঠ': 'https://www.kalerkantho.com/rss.xml',
-        'ইত্তেফাক': 'https://www.ittefaq.com.bd/rss.xml'
-    };
-    const eightHoursAgo = new Date(Date.now() - 8 * 60 * 60 * 1000);
-
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
-
-    try {
-        const promises = Object.entries(feeds).map(async ([source, url]) => {
-            try {
-                // নতুন: ব্রাউজার ক্যাশ এড়ানোর জন্য একটি ইউনিক প্যারামিটার যোগ করা হয়েছে
-                const cacheBuster = `&_=${new Date().getTime()}`;
-                const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}${cacheBuster}`);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch from ${url} with status ${response.status}`);
-                }
-                const data = await response.json();
-                if (data.status !== 'ok') {
-                    throw new Error(`rss2json API error for ${url}: ${data.message}`);
-                }
-                return { source, items: data.items };
-            } catch (err) {
-                console.warn(`Could not fetch or parse from ${source}: ${err.message}`);
-                return null;
-            }
-        });
-
-        const results = await Promise.all(promises);
-        let allHeadlines = [];
-
-        results.forEach(result => {
-            if (result && result.items) {
-                const { source, items } = result;
-                items.forEach(item => {
-                    const { title, link, pubDate } = item;
-                    if (title && link && pubDate) {
-                        try {
-                            const publicationDate = new Date(pubDate);
-                            if (publicationDate > eightHoursAgo) {
-                                allHeadlines.push({
-                                    title: title.trim(),
-                                    link: link.trim(),
-                                    source: source
-                                });
-                            }
-                        } catch (e) {
-                            console.error("Invalid date in feed:", pubDate);
-                        }
-                    }
-                });
-            }
-        });
-
-        if (allHeadlines.length === 0) {
-            console.log("No news found within the last 8 hours. Showing default message.");
-            return [{ title: "বাংলা টুলবক্স-এ আপনাকে স্বাগতম!", link: "#", source: "System" }];
-        }
-        
-        const uniqueHeadlines = [...new Map(allHeadlines.map(item => [item.title, item])).values()];
-        return shuffleArray(uniqueHeadlines);
-
-    } catch (error) {
-        console.error('A critical error occurred while fetching all news feeds:', error);
-        return [{ title: "এই মুহূর্তে কোনো খবর পাওয়া যায়নি। অনুগ্রহ করে ব্রাউজার রিফ্রেশ করুন।", link: "#", source: "System Error" }];
-    }
-}
-
-function displayCurrentHeadline() {
-    if (allMessages.length === 0) {
-        tickerTextElement.textContent = "বার্তা লোড হচ্ছে...";
+    if (!tickerContainer || !tickerContent || !tickerTextElement || !prevBtn || !nextBtn) { // <<< আপডেট: কন্টেন্ট div চেক
+        console.error("News ticker elements not found.");
         return;
     }
-    
-    if (messageIndex < 0) messageIndex = allMessages.length - 1;
-    if (messageIndex >= allMessages.length) messageIndex = 0;
 
-    const currentMessage = allMessages[messageIndex];
-    const displayText = ` ● ${currentMessage.title} - <span class="news-source">${currentMessage.source}</span>`;
-    
-    tickerTextElement.href = currentMessage.link;
-    
-    tickerTextElement.style.animation = 'none';
-    tickerTextElement.offsetHeight; 
-    tickerTextElement.style.whiteSpace = 'nowrap';
-    
-    const fullContent = document.createElement('div');
-    fullContent.innerHTML = displayText;
-    const textLength = fullContent.textContent.length;
-    
-    const duration = Math.max(3.5, textLength * 0.1);
+    // --- সেটিংস ---
+    // true = টাইপিং অ্যানিমেশন, false = ভার্টিকাল স্লাইড অ্যানিমেশন
+    const useTypingAnimation = true; // <<-- এই ভ্যারিয়েবল পরিবর্তন করুন (true/false)
 
-    tickerTextElement.innerHTML = displayText;
-    tickerTextElement.style.width = '0'; 
-    
-    tickerTextElement.style.animation = `typing ${duration}s steps(${textLength}, end)`;
-    tickerTextElement.style.animationFillMode = 'forwards';
+    // --- অ্যানিমেশন মোড অনুযায়ী কন্টেইনারের স্টাইল সেট করুন ---
+    if (useTypingAnimation) {
+        // টাইপিং-এর জন্য (true): কোনো নির্দিষ্ট উচ্চতা বা overflow restriction নেই
+        tickerContainer.style.height = 'auto';
+        tickerContainer.style.overflow = 'visible';
+        tickerContainer.style.lineHeight = ''; // CSS থেকে ডিফল্ট (flex) ব্যবহার করবে
+        tickerContainer.style.minHeight = ''; // CSS থেকে ডিফল্ট ব্যবহার করবে
 
-    const handleAnimationEnd = () => {
-        tickerTextElement.style.whiteSpace = 'normal';
-    };
-    
-    tickerTextElement.addEventListener('animationend', handleAnimationEnd, { once: true });
-}
+        tickerContent.style.overflow = 'visible';
+        tickerContent.style.height = 'auto';
+    } else {
+        // স্লাইডিং-এর জন্য (false): নির্দিষ্ট min-height এবং overflow hidden
+        tickerContainer.style.height = 'auto'; // র‍্যাপিং-এর জন্য auto
+        tickerContainer.style.overflow = 'hidden'; // স্লাইডিং ইফেক্টের জন্য hidden
+        tickerContainer.style.lineHeight = '1.5'; // ডিফল্ট line-height
+        tickerContainer.style.minHeight = '2em';  // এক লাইনের উচ্চতা
 
-function showNextHeadline() {
-    messageIndex++;
-    displayCurrentHeadline();
-}
+        tickerContent.style.overflow = 'hidden'; // স্লাইডিং ইফেক্টের জন্য hidden
+        tickerContent.style.height = 'auto';
+        tickerContent.style.minHeight = '2em';
+    }
 
-function showPrevHeadline() {
-    messageIndex--;
-    displayCurrentHeadline();
-}
+    // --- বাকি কোড ---
+    const showNewsHeadlines = true; // Keep fetching news
+    const baseTickerClasses = tickerTextElement.className; // <-- মূল ক্লাসগুলো সেভ করুন
 
-function startAutoPlay() {
-    stopAutoPlay();
-    autoPlayInterval = setInterval(showNextHeadline, animationInterval);
-}
+    const customMessages = [
+        { title: "বাংলা টুলবক্স-এ আপনাকে স্বাগতম!", link: "#", source: "Bangla Toolbox" },
+        { title: "আপনার টুলস ব্যবহারের অভিজ্ঞতা কেমন?", link: "#", source: "Bangla Toolbox" },
+        { title: "যেকোনো মতামতের জন্য আমাদের সাথে যোগাযোগ করুন।", link: "https://bio.link/mdsifatbiolink", source: "Developer" }
+    ];
 
-function stopAutoPlay() {
-    clearInterval(autoPlayInterval);
-}
+    let allMessages = [];
+    let messageIndex = 0;
+    let autoPlayInterval = null;
+    let transitionTimeout = null; // Timeout for transition
+    let isTransitioning = false; // Flag to prevent rapid clicks during transition
+    const ANIMATION_DURATION = 500; // Transition duration in ms (match CSS)
+    // --- UPDATED: Use 10s for typing, 5s for sliding ---
+    const AUTO_PLAY_INTERVAL = useTypingAnimation ? 10000 : 5000; // Set interval based on initial animation type
 
-async function initializeTicker() {
-    if (showNewsHeadlines) {
-        const news = await fetchNewsHeadlines();
-        if (news && news.length > 0) {
-            allMessages = news;
+    // Function to fetch news (remains the same)
+    async function fetchNewsHeadlines() {
+        const feeds = {
+            'ঢাকা পোস্ট': 'https://www.dhakapost.com/rss',
+            'বাংলাদেশ প্রতিদিন': 'https://www.bd-pratidin.com/rss.xml',
+            'কালের কণ্ঠ': 'https://www.kalerkantho.com/rss.xml',
+            'ইত্তেফাক': 'https://www.ittefaq.com.bd/rss.xml'
+        };
+        const eightHoursAgo = new Date(Date.now() - 8 * 60 * 60 * 1000);
+
+        function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[array[i], array[j]] = [array[j], array[i]]; } return array; }
+
+        try {
+            const promises = Object.entries(feeds).map(async ([source, url]) => {
+                try {
+                    const cacheBuster = `&_=${new Date().getTime()}`;
+                    const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}${cacheBuster}`);
+                    if (!response.ok) throw new Error(`Fetch failed for ${url}`);
+                    const data = await response.json();
+                    if (data.status !== 'ok') throw new Error(`API error for ${url}`);
+                    return { source, items: data.items };
+                } catch (err) { console.warn(`Fetch error for ${source}: ${err.message}`); return null; }
+            });
+            const results = await Promise.all(promises);
+            let allHeadlines = [];
+            results.forEach(result => { if (result && result.items) { const { source, items } = result; items.forEach(item => { const { title, link, pubDate } = item; if (title && link && pubDate) { try { const publicationDate = new Date(pubDate); if (publicationDate > eightHoursAgo) { allHeadlines.push({ title: title.trim(), link: link.trim(), source: source }); } } catch (e) { console.error("Invalid date:", pubDate); } } }); } });
+            if (allHeadlines.length === 0) return customMessages;
+            const uniqueHeadlines = [...new Map(allHeadlines.map(item => [item.title, item])).values()];
+            return shuffleArray(uniqueHeadlines);
+        } catch (error) { console.error('Error fetching news:', error); return customMessages; }
+    }
+
+    // *** UPDATED function to display headline with vertical slide or typing animation ***
+    function displayCurrentHeadline(direction = 'up') {
+        clearTimeout(transitionTimeout); // Clear previous transition timeout
+        isTransitioning = true; // Start transition flag
+
+        if (allMessages.length === 0) {
+            tickerTextElement.textContent = "বার্তা লোড হচ্ছে...";
+            tickerTextElement.className = `${baseTickerClasses} news-ticker-text`; // <-- Use base classes
+            tickerTextElement.style.opacity = '1';
+
+            // --- Conditional default positioning ---
+            if (useTypingAnimation) {
+                tickerTextElement.style.position = 'static';
+                tickerTextElement.style.top = 'auto';
+                tickerTextElement.style.lineHeight = 'normal';
+            } else {
+                tickerTextElement.style.position = 'absolute';
+                tickerTextElement.style.top = '50%';
+                tickerTextElement.style.lineHeight = 'normal'; // <<< পরিবর্তন: normal করা হয়েছে
+            }
+
+            tickerTextElement.style.width = 'auto';
+            tickerTextElement.style.animation = 'none';
+            tickerTextElement.style.transition = 'none';
+            isTransitioning = false;
+            return;
+        }
+
+        if (messageIndex < 0) messageIndex = allMessages.length - 1;
+        if (messageIndex >= allMessages.length) messageIndex = 0;
+
+        const currentMessage = allMessages[messageIndex];
+        const displayText = ` ● ${currentMessage.title} - <span class="news-source">${currentMessage.source}</span>`;
+
+        // --- Apply selected display logic ---
+        if (useTypingAnimation) {
+            // Typing Animation Logic
+            tickerTextElement.className = `${baseTickerClasses} news-ticker-text typing-animation`;
+            tickerTextElement.href = currentMessage.link;
+            tickerTextElement.innerHTML = displayText;
+            tickerTextElement.style.cssText = '';
+            tickerTextElement.style.position = 'static';
+            tickerTextElement.style.lineHeight = 'normal'; // <<< নিশ্চিত করুন normal আছে
+            tickerTextElement.style.animation = 'none';
+            tickerTextElement.offsetHeight;
+
+            const textLength = currentMessage.title.length + currentMessage.source.length + 5;
+            const duration = Math.max(3.5, textLength * 0.1);
+
+            tickerTextElement.style.whiteSpace = 'nowrap';
+            tickerTextElement.style.width = '0';
+            tickerTextElement.style.animationDuration = `${duration}s`;
+            tickerTextElement.style.animationTimingFunction = `steps(${textLength}, end)`;
+            tickerTextElement.style.animationName = 'typing';
+            tickerTextElement.style.animationFillMode = 'forwards';
+
+            const handleTypingEnd = () => {
+                tickerTextElement.style.whiteSpace = 'normal';
+                tickerTextElement.style.width = 'auto';
+                isTransitioning = false;
+            };
+            tickerTextElement.removeEventListener('animationend', handleTypingEnd);
+            tickerTextElement.addEventListener('animationend', handleTypingEnd, { once: true });
+
+
+        } else {
+            // Vertical Slide Animation Logic
+            tickerTextElement.className = `${baseTickerClasses} news-ticker-text`;
+            tickerTextElement.style.cssText = '';
+            tickerTextElement.style.animation = 'none';
+
+            // --- Apply styles for vertical slide ---
+            tickerTextElement.style.position = 'absolute';
+            tickerTextElement.style.transform = 'translateY(-50%)';
+            tickerTextElement.style.width = '100%';
+            tickerTextElement.style.lineHeight = 'normal'; // <<< পরিবর্তন: normal করা হয়েছে
+            tickerTextElement.style.whiteSpace = 'normal'; // <<< এটি র‍্যাপিং-এর অনুমতি দেয়
+            tickerTextElement.style.overflow = 'visible';
+            tickerTextElement.style.textOverflow = 'clip';
+
+            // 1. Set new content
+            tickerTextElement.href = currentMessage.link;
+            tickerTextElement.innerHTML = displayText;
+
+            // 2. Position for entry
+            const startTop = (direction === 'up') ? '150%' : '-50%';
+            tickerTextElement.style.transition = 'none';
+            tickerTextElement.style.top = startTop;
+            tickerTextElement.style.opacity = '0';
+
+            // 3. Force reflow
+            tickerTextElement.offsetHeight;
+
+            // 4. Slide in
+            tickerTextElement.style.transition = `top ${ANIMATION_DURATION / 1000}s ease-in-out, opacity ${ANIMATION_DURATION / 1000}s ease-in-out`;
+            tickerTextElement.style.top = '50%';
+            tickerTextElement.style.opacity = '1';
+
+            // 5. Mark transition end
+            transitionTimeout = setTimeout(() => {
+                isTransitioning = false;
+            }, ANIMATION_DURATION);
+        }
+    }
+
+    // *** UPDATED function for smooth transition (Handles Vertical Slide Only) ***
+    function triggerTransition(nextIndexFunction, exitDirection) {
+        if (useTypingAnimation || isTransitioning) return;
+        isTransitioning = true;
+        clearTimeout(transitionTimeout);
+
+        // 1. Animate out
+        const exitTop = (exitDirection === 'up') ? '-50%' : '150%'; // <<< পরিবর্তন: Exit position adjusted
+        tickerTextElement.style.top = exitTop;
+        tickerTextElement.style.opacity = '0';
+
+        // 2. After exit, update and slide in
+        transitionTimeout = setTimeout(() => {
+            nextIndexFunction();
+            const entryDirection = (exitDirection === 'up') ? 'up' : 'down';
+            displayCurrentHeadline(entryDirection);
+        }, ANIMATION_DURATION);
+    }
+
+    function showNextHeadline() {
+        if (useTypingAnimation) {
+            messageIndex++;
+            displayCurrentHeadline();
+        } else {
+            triggerTransition(() => { messageIndex++; }, 'up');
+        }
+    }
+
+    function showPrevHeadline() {
+        if (useTypingAnimation) {
+             messageIndex--;
+             displayCurrentHeadline();
+        } else {
+             triggerTransition(() => { messageIndex--; }, 'down');
+        }
+    }
+
+
+    function startAutoPlay() {
+        stopAutoPlay();
+        autoPlayInterval = setInterval(showNextHeadline, AUTO_PLAY_INTERVAL);
+    }
+
+    function stopAutoPlay() {
+        clearInterval(autoPlayInterval);
+        autoPlayInterval = null;
+    }
+
+    async function initializeTicker() {
+        if (showNewsHeadlines) {
+            allMessages = await fetchNewsHeadlines();
         } else {
             allMessages = customMessages;
         }
-    } else {
-        allMessages = customMessages;
+
+        displayCurrentHeadline(); // Initial display
+        startAutoPlay();
     }
-    
-    displayCurrentHeadline();
-    startAutoPlay();
-}
 
-// Event listeners
-nextBtn.addEventListener('click', () => {
-    showNextHeadline();
-    startAutoPlay();
-});
+    // Event listeners for next/prev buttons
+    nextBtn.addEventListener('click', () => {
+        showNextHeadline();
+        startAutoPlay();
+    });
 
-prevBtn.addEventListener('click', () => {
-    showPrevHeadline();
-    startAutoPlay();
-});
+    prevBtn.addEventListener('click', () => {
+        showPrevHeadline();
+        startAutoPlay();
+    });
 
-tickerContainer.addEventListener('mouseenter', stopAutoPlay);
-tickerContainer.addEventListener('mouseleave', startAutoPlay);
+    // Pause/Resume on hover
+    tickerContainer.addEventListener('mouseenter', stopAutoPlay);
+    tickerContainer.addEventListener('mouseleave', startAutoPlay);
 
-initializeTicker();
 
-// নতুন: ব্যাকগ্রাউন্ডে খবর আপডেট এবং ডিসপ্লে রিফ্রেশ (প্রতি ৫ মিনিটে)
-setInterval(async () => {
-    if(showNewsHeadlines) {
-        console.log("Background news update at 5-minute interval...");
-        const news = await fetchNewsHeadlines();
-        // নতুন খবর পাওয়া গেছে কিনা তা চেক করুন
-        if (news && news.length > 0 && JSON.stringify(news) !== JSON.stringify(allMessages)) {
-            console.log("New headlines found. Updating ticker.");
-            const currentLink = allMessages[messageIndex]?.link;
-            
-            allMessages = news;
-            
-            const newIndex = news.findIndex(item => item.link === currentLink);
-            messageIndex = (newIndex !== -1) ? newIndex : 0;
-            
-            // নতুন খবর তাৎক্ষণিকভাবে ডিসপ্লে করুন
-            displayCurrentHeadline();
-            
-            // অটো-প্লে পুনরায় শুরু করুন
-            startAutoPlay();
-        } else {
-            console.log("No new headlines found or data is the same.");
+    initializeTicker();
+
+    // Background news update
+    setInterval(async () => {
+        if (showNewsHeadlines) {
+            const news = await fetchNewsHeadlines();
+            if (news && news.length > 0 && JSON.stringify(news) !== JSON.stringify(allMessages)) {
+                const currentLink = allMessages[messageIndex]?.link;
+                allMessages = news;
+                const newIndex = news.findIndex(item => item.link === currentLink);
+                if (!isTransitioning) {
+                    messageIndex = (newIndex !== -1) ? newIndex : 0;
+                    displayCurrentHeadline();
+                } else {
+                     console.log("News updated during transition, index maintained.");
+                }
+                startAutoPlay();
+            }
         }
-    }
-}, 5 * 60 * 1000); // 5 minutes
+    }, 5 * 60 * 1000); // 5 minutes
 
 });
 // ====================================================================
 // END: Animated News Ticker Script
 // ====================================================================
+
 
 // ====================================================================
 // START: HEALTH & LIFESTYLE TAB SCRIPT
