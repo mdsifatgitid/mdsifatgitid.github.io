@@ -5843,6 +5843,43 @@ body.sidebar-open #sidebarOverlay {
 
 /* শেষ: সকল ফিচার ট্যাব */
 
+/* ======================================================== */
+/* START: আরও সেটিংস ট্যাব (More Settings) Styles */
+/* ======================================================== */
+.settings-page-container {
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 700px;
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+.dark .settings-page-container {
+    background-color: #2d3748;
+}
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+.dark .setting-item {
+    background-color: #1a202c;
+    border-color: #4a5568;
+}
+.setting-text {
+    flex-grow: 1;
+    margin-right: 16px;
+}
+/* ======================================================== */
+/* END: আরও সেটিংস ট্যাব Styles */
+/* ======================================================== */
+
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -5979,6 +6016,7 @@ body.sidebar-open #sidebarOverlay {
         <div id="settingsMenuDropdown" class="absolute right-0 mt-1 w-auto bg-white dark:bg-gray-800 rounded-lg shadow-xl z-20 hidden ring-1 ring-black ring-opacity-5">
             <div class="tab-menu-container">
                 <button id="setApiKeyBtn" class="tab-button rounded-xl">API কী সেট করুন</button>
+				<button id="moreSettingsTab" class="tab-button rounded-xl">আরও সেটিংস</button>
             </div>
         </div>
     </div>
@@ -8089,6 +8127,35 @@ body.sidebar-open #sidebarOverlay {
     </div>
 </div>
 <!-- END: Image Resizer Tab Content -->
+
+
+<!-- ======================================================== -->
+<!-- START: আরও সেটিংস ট্যাব (More Settings) -->
+<!-- ======================================================== -->
+<div id="moreSettingsContent" class="calculator-content">
+    <div class="settings-page-container">
+        <h3 class="text-xl font-bold text-gray-700 mb-6 dark:text-gray-200">সেটিংস সমূহ</h3>
+        
+        <!-- নিউজ এনিমেশন টগল -->
+        <div class="setting-item">
+            <div class="setting-text">
+                <label for="newsAnimationToggle" class="font-semibold text-gray-700 dark:text-gray-300">নিউজ এনিমেশন টগল</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">নিউজ টিকারের অ্যানিমেশন স্টাইল পরিবর্তন করুন। (চালু = টাইপিং, বন্ধ = স্লাইডিং)</p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="newsAnimationToggle">
+                <span class="slider round"></span>
+            </label>
+        </div>
+
+        <!-- ভবিষ্যতে আরও সেটিংস এখানে যোগ করা যাবে -->
+
+    </div>
+</div>
+<!-- ======================================================== -->
+<!-- END: আরও সেটিংস ট্যাব -->
+<!-- ======================================================== -->
+
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
 </div>
@@ -10840,7 +10907,7 @@ window.addEventListener('click', (e) => {
 function showTab(tabId) {
     // সমস্ত ট্যাব এর নাম এবং ট্যাব এর কন্টেন্ট নাম একানে বসাতে হয়, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয় বা বসাতে হয় ।
     const tabs = [
-        basicCalcTab,colorPickerTab, dashboardTab,imageResizerTab,
+        basicCalcTab,colorPickerTab, dashboardTab,imageResizerTab,moreSettingsTab,
 		ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,
 		translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
 		qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab,
@@ -10848,7 +10915,7 @@ function showTab(tabId) {
 		allFeaturesTab
     ];
     const contents = [
-        basicCalculatorContent,colorPickerContent,dashboardContent,imageResizerContent,
+        basicCalculatorContent,colorPickerContent,dashboardContent,imageResizerContent,moreSettingsContent,
 		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent,  converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent,
 		weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
@@ -11002,6 +11069,11 @@ function showTab(tabId) {
 			activeContent = quizContent;
 			initializeQuiz(); // এই ফাংশন কুইজ শুরু করবে
 		break;
+        case 'moreSettings': // <<<<<<< এই নতুন কেসটি যোগ করুন
+            activeTab = moreSettingsTab;
+            activeContent = moreSettingsContent;
+            initializeNewsAnimationToggle(); // <<<<<<< এই ফাংশনটি কল করুন
+        break;
 		    case 'colorPicker':
 				activeTab = colorPickerTab;
 				activeContent = colorPickerContent;
@@ -11071,6 +11143,7 @@ function showTab(tabId) {
 				if (invoiceTab) invoiceTab.addEventListener('click', () => showTab('invoice'));
 				if (colorPickerTab) colorPickerTab.addEventListener('click', () => showTab('colorPicker'));
 				if (dashboardTab) dashboardTab.addEventListener('click', () => showTab('dashboard'));
+				if (moreSettingsTab) moreSettingsTab.addEventListener('click', () => showTab('moreSettings'));
 
                 // API কী সেটিং বোতাম এবং মডেল লজিক
                 if (setApiKeyBtn) {
@@ -15217,7 +15290,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- সেটিংস ---
     // true = টাইপিং অ্যানিমেশন, false = ভার্টিকাল স্লাইড অ্যানিমেশন
-    const useTypingAnimation = false; // <<-- আপনার সেটিং অনুযায়ী এটি false থাকবে
+    // localStorage থেকে সেভ করা মান লোড করুন, ডিফল্ট 'sliding'
+    const useTypingAnimation = localStorage.getItem('newsAnimationType') === 'typing';
 
     // --- অ্যানিমেশন মোড অনুযায়ী কন্টেইনারের স্টাইল সেট করুন ---
     if (useTypingAnimation) {
@@ -18087,7 +18161,37 @@ function initializeImageResizer() {
 // ========================================================
 
 
+// ====================================================================
+// START: আরও সেটিংস (More Settings) TAB SCRIPT
+// ====================================================================
+function initializeNewsAnimationToggle() {
+    const toggle = document.getElementById('newsAnimationToggle');
+    if (!toggle) return;
 
+    // 1. পেইজ লোড হলে localStorage থেকে সেভ করা মান লোড করুন
+    // ডিফল্ট 'sliding'
+    const savedSetting = localStorage.getItem('newsAnimationType') || 'sliding';
+    toggle.checked = (savedSetting === 'typing');
+
+    // 2. টগল বাটন পরিবর্তনের জন্য ইভেন্ট লিসেনার
+    toggle.addEventListener('change', () => {
+        let newSetting;
+        if (toggle.checked) {
+            newSetting = 'typing';
+            showCustomAlert('নিউজ অ্যানিমেশন: টাইপিং (Typing) সেট করা হয়েছে।');
+        } else {
+            newSetting = 'sliding';
+            showCustomAlert('নিউজ অ্যানিমেশন: স্লাইডিং (Sliding) সেট করা হয়েছে।');
+        }
+        localStorage.setItem('newsAnimationType', newSetting);
+        
+        // নোট: পরিবর্তনটি দেখার জন্য পেইজটি রিফ্রেশ করতে হবে।
+        showCustomAlert('পরিবর্তনটি দেখতে অনুগ্রহ করে পেইজটি রিলোড করুন।');
+    });
+}
+// ====================================================================
+// END: আরও সেটিংস (More Settings) TAB SCRIPT
+// ====================================================================
 
 
 
