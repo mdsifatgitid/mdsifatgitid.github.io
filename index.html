@@ -4105,7 +4105,7 @@ input:checked + .slider:before {
     text-align: center;
     overflow: hidden; 
     position: relative; 
-    min-height: 2em; 
+    
     transition: height 0.5s ease-in-out; 
 }
 
@@ -15234,19 +15234,19 @@ document.addEventListener('DOMContentLoaded', () => {
         tickerContent.style.height = 'auto';
         tickerContent.style.minHeight = '';
     } else {
-        // স্লাইডিং-এর জন্য (false):
-        tickerContainer.style.height = 'auto'; // auto রাখুন
-        tickerContainer.style.overflow = 'hidden'; 
-        tickerContainer.style.lineHeight = '1.5'; 
-        tickerContainer.style.minHeight = '2em';  
-        tickerContainer.style.display = 'block'; // ফ্লেক্সবক্সের পরিবর্তে block ব্যবহার করুন
-        tickerContainer.style.alignItems = '';
-        tickerContainer.style.justifyContent = '';
+                // স্লাইডিং-এর জন্য (false):
+                tickerContainer.style.height = 'auto'; // auto রাখুন
+                tickerContainer.style.overflow = 'hidden'; 
+                tickerContainer.style.lineHeight = '1.5'; 
+                // tickerContainer.style.minHeight = '2em';  // <<< এই লাইনটি সরানো হয়েছে
+                tickerContainer.style.display = 'block'; // ফ্লেক্সবক্সের পরিবর্তে block ব্যবহার করুন
+                tickerContainer.style.alignItems = '';
+                tickerContainer.style.justifyContent = '';
 
-        tickerContent.style.overflow = 'hidden'; 
-        tickerContent.style.height = 'auto'; // auto রাখুন
-        tickerContent.style.minHeight = '2em';
-    }
+                tickerContent.style.overflow = 'hidden'; 
+                tickerContent.style.height = 'auto'; // auto রাখুন
+                // tickerContent.style.minHeight = '2em'; // <<< এই লাইনটি সরানো হয়েছে
+            }
 
     const showNewsHeadlines = true; 
     const baseTickerClasses = tickerTextElement.className; 
