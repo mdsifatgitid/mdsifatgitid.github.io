@@ -5880,6 +5880,97 @@ body.sidebar-open #sidebarOverlay {
 /* END: আরও সেটিংস ট্যাব Styles */
 /* ======================================================== */
 
+/* ======================================================== */
+/* START: ইতিহাস ট্যাব (History Tab) Styles */
+/* ======================================================== */
+.history-page-container {
+    position: relative; /* রিফ্রেশ বাটন পজিশন করার জন্য এটি যোগ করুন */
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 800px;
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+.dark .history-page-container {
+    background-color: #2d3748;
+}
+
+/* নতুন: ইতিহাস হেডার কার্ডের স্টাইল */
+.history-header-card {
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 1.5rem; /* 24px */
+}
+.history-header-card.today {
+    background: linear-gradient(135deg, #059669, #10b981); /* Green Gradient */
+}
+.history-header-card.tomorrow {
+    background: linear-gradient(135deg, #4f46e5, #6366f1); /* Blue/Purple Gradient */
+}
+.history-header-card .card-supertitle {
+    font-size: 1rem; /* 16px */
+    font-weight: 500;
+    opacity: 0.8;
+    margin-bottom: 4px;
+}
+.history-header-card .card-day-name {
+    font-size: 1.5rem; /* 24px */
+    font-weight: 700;
+    margin-bottom: 0;
+}
+/* শেষ: ইতিহাস হেডার কার্ডের স্টাইল */
+
+#history-display-area, #history-display-area-tomorrow {
+    text-align: left;
+    color: #374151;
+    line-height: 1.8;
+}
+.dark #history-display-area, .dark #history-display-area-tomorrow {
+    color: #cbd5e0;
+}
+/* জেমিনি থেকে আসা কন্টেন্টের জন্য স্টাইল */
+.history-section h4 {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 700;
+    color: #3f51b5;
+    margin-top: 1.5rem; /* 24px */
+    margin-bottom: 0.75rem; /* 12px */
+    padding-bottom: 0.5rem; /* 8px */
+    border-bottom: 2px solid #e0e7ff;
+}
+.dark .history-section h4 {
+    color: #90cdf4;
+    border-bottom-color: #4a5568;
+}
+.history-section ul {
+    list-style-type: disc;
+    padding-left: 1.75rem; /* 28px */
+}
+.history-section li {
+    margin-bottom: 0.5rem; /* 8px */
+}
+.history-section p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #1f2937;
+    background-color: #e6f7ff;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #b3e0ff;
+}
+.dark .history-section p {
+    color: #e5e7eb;
+    background-color: #1a202c;
+    border-color: #4a5568;
+}
+/* ======================================================== */
+/* END: ইতিহাস ট্যাব Styles */
+/* ======================================================== */
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -5991,6 +6082,7 @@ body.sidebar-open #sidebarOverlay {
 				<button id="clockTab" class="tab-button rounded-xl">ঘড়ি</button>
 				<button id="playerTab" class="tab-button rounded-xl">প্লেয়ার</button>
 				<button id="quizTab" class="tab-button rounded-xl">কুইজ</button>
+				<button id="historyTab" class="tab-button rounded-xl">ইতিহাস</button>
 				<button id="daysObservancesTab" class="tab-button rounded-xl">দিবসসমূহ</button>
 				<button id="holidayListTab" class="tab-button rounded-xl">ছুটির তালিকা</button>
 				<button id="zakatCalcTab" class="tab-button rounded-xl">যাকাতের হিসাব</button>
@@ -8156,6 +8248,84 @@ body.sidebar-open #sidebarOverlay {
 <!-- END: আরও সেটিংস ট্যাব -->
 <!-- ======================================================== -->
 
+<!-- ======================================================== -->
+<!-- START: ইতিহাস ট্যাব (History Tab) -->
+<!-- ======================================================== -->
+<div id="historyContent" class="calculator-content">
+    
+    <!-- আজকের ইতিহাস সেকশন -->
+    <div class="history-page-container">
+        
+        <!-- নতুন ডিজাইন কার্ড: আজকের ইতিহাস -->
+        <div class="history-header-card today">
+            <div class="card-supertitle">ইতিহাস</div>
+            <div id="history-title" class="card-day-name">আজকের দিনে</div>
+        </div>
+        
+        <!-- নতুন রিফ্রেশ বাটন (আজকের দিনের জন্য) -->
+        <button id="todayHistoryRefreshBtn" class="p-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition-colors absolute top-5 right-5" title="আজকের ইতিহাস রিফ্রেশ করুন" style="z-index: 10;">
+            <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+            </svg>
+        </button>
+
+
+        <!-- লোডিং স্পিনার (hidden ক্লাস সরানো হয়েছে) -->
+        <div id="history-loading" class="text-center p-8"> <!-- 'hidden' ক্লাস সরানো হয়েছে -->
+            <svg class="animate-spin h-10 w-10 text-indigo-600 dark:text-indigo-400 mx-auto" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="mt-4 text-gray-600 dark:text-gray-400">আজকের ইতিহাস লোড হচ্ছে...</p>
+        </div>
+
+        <!-- কন্টেন্ট দেখানোর স্থান -->
+        <div id="history-display-area" class="hidden"> <!-- কন্টেন্ট লোড হওয়ার আগে লুকানো থাকবে -->
+            <!-- জেমিনি থেকে পাওয়া কন্টেন্ট এখানে লোড হবে -->
+        </div>
+    </div>
+    
+    <!-- ======================================================== -->
+    <!-- START: আগামীকালের ইতিহাস (Tomorrow's History) -->
+    <!-- ======================================================== -->
+    <div class="history-page-container" style="margin-top: 2rem; border-top: 2px solid #e0e7ff; padding-top: 1.5rem;">
+        
+        <!-- নতুন ডিজাইন কার্ড: আগামীকালের ইতিহাস -->
+        <div class="history-header-card tomorrow">
+            <div class="card-supertitle">ইতিহাস</div>
+            <div id="history-title-tomorrow" class="card-day-name">আগামীকালের দিনে</div>
+        </div>
+        
+        <!-- নতুন রিফ্রেশ বাটন (আগামীকালের জন্য) -->
+        <button id="tomorrowHistoryRefreshBtn" class="p-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition-colors absolute top-5 right-5" title="আগামীকালের ইতিহাস রিফ্রেশ করুন" style="z-index: 10;">
+            <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+            </svg>
+        </button>
+
+        <!-- লোডিং স্পিনার (hidden ক্লাস সরানো হয়েছে) -->
+        <div id="history-loading-tomorrow" class="text-center p-8"> <!-- 'hidden' ক্লাস সরানো হয়েছে -->
+            <svg class="animate-spin h-10 w-10 text-indigo-600 dark:text-indigo-400 mx-auto" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="mt-4 text-gray-600 dark:text-gray-400">আগামীকালের ইতিহাস লোড হচ্ছে...</p>
+        </div>
+    
+        <div id="history-display-area-tomorrow" class="hidden"> <!-- কন্টেন্ট লোড হওয়ার আগে লুকানো থাকবে -->
+            <!-- জেমিনি থেকে পাওয়া কন্টেন্ট এখানে লোড হবে -->
+        </div>
+    </div>
+    <!-- ======================================================== -->
+    <!-- END: আগামীকালের ইতিহাস -->
+    <!-- ======================================================== -->
+    
+</div>
+<!-- ======================================================== -->
+<!-- END: ইতিহাস ট্যাব -->
+<!-- ======================================================== -->
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
 </div>
@@ -10651,6 +10821,7 @@ try {
 				const invoiceContent = document.getElementById('invoiceContent');
 				const colorPickerTab = document.getElementById('colorPickerTab');
 				const colorPickerContent = document.getElementById('colorPickerContent');
+				const historyTab = document.getElementById('historyTab');
 
 
 //pest button code start
@@ -10907,7 +11078,7 @@ window.addEventListener('click', (e) => {
 function showTab(tabId) {
     // সমস্ত ট্যাব এর নাম এবং ট্যাব এর কন্টেন্ট নাম একানে বসাতে হয়, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয় বা বসাতে হয় ।
     const tabs = [
-        basicCalcTab,colorPickerTab, dashboardTab,imageResizerTab,moreSettingsTab,
+        basicCalcTab,colorPickerTab, dashboardTab,imageResizerTab,moreSettingsTab,historyTab,
 		ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,
 		translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
 		qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab,
@@ -10915,7 +11086,7 @@ function showTab(tabId) {
 		allFeaturesTab
     ];
     const contents = [
-        basicCalculatorContent,colorPickerContent,dashboardContent,imageResizerContent,moreSettingsContent,
+        basicCalculatorContent,colorPickerContent,dashboardContent,imageResizerContent,moreSettingsContent,historyContent,
 		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent,  converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent,
 		weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
@@ -11022,6 +11193,11 @@ function showTab(tabId) {
             activeTab = qrCodeTab;
             activeContent = qrCodeContent;
             break;
+        case 'history':
+            activeTab = historyTab;
+            activeContent = historyContent;
+            initializeHistoryTab(); 
+        break;
 		case 'importantLinks':
 			activeTab = importantLinksTab;
 			activeContent = importantLinksContent;
@@ -11144,6 +11320,7 @@ function showTab(tabId) {
 				if (colorPickerTab) colorPickerTab.addEventListener('click', () => showTab('colorPicker'));
 				if (dashboardTab) dashboardTab.addEventListener('click', () => showTab('dashboard'));
 				if (moreSettingsTab) moreSettingsTab.addEventListener('click', () => showTab('moreSettings'));
+				if (historyTab) historyTab.addEventListener('click', () => showTab('history'));
 
                 // API কী সেটিং বোতাম এবং মডেল লজিক
                 if (setApiKeyBtn) {
@@ -18191,6 +18368,258 @@ function initializeNewsAnimationToggle() {
 }
 // ====================================================================
 // END: আরও সেটিংস (More Settings) TAB SCRIPT
+// ====================================================================
+
+// ====================================================================
+// START: ইতিহাস (History) TAB SCRIPT
+// ====================================================================
+
+// জেমিনি থেকে পাওয়া Markdown টেক্সটকে HTML-এ রূপান্তর করার সহজ ফাংশন
+function simpleMarkdownToHTML(text) {
+    return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')     // Italic
+        .replace(/####\s(.*?)\n/g, '<div class="history-section"><h4>$1</h4></div>') // H4
+        .replace(/-\s(.*?)\n/g, '<ul><li>$1</li></ul>') // List items
+        .replace(/<\/ul>\s*<ul>/g, '') // Join consecutive lists
+        .replace(/\n\n/g, '<br><br>') // Paragraph breaks
+        .replace(/\n(.*?)(?=\n####|\n<ul>|\n$)/g, '<p>$1</p>') // Wrap plain text in <p>
+        .replace(/<p><\/p>/g, ''); // Remove empty paragraphs
+}
+
+// আজকের ইতিহাস লোড করার ফাংশন
+async function loadOrFetchTodayHistory() {
+    const today = new Date().toISOString().split('T')[0];
+    const savedDate = sessionStorage.getItem('dailyHistoryDate');
+    const savedContent = sessionStorage.getItem('dailyHistoryContent');
+    const displayArea = document.getElementById('history-display-area');
+    const title = document.getElementById('history-title');
+    const loading = document.getElementById('history-loading');
+
+    // শিরোনাম আপডেট করুন (ক্যাশে বা নতুন)
+    const todayDate = new Date();
+    const todayString = todayDate.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long' });
+    const todayDayName = todayDate.toLocaleDateString('bn-BD', { weekday: 'long' });
+    title.innerText = `আজকের দিনে - ${todayString}, ${todayDayName}`;
+
+    if (savedDate === today && savedContent) {
+        console.log("Loading today's history from session cache.");
+        displayArea.innerHTML = savedContent;
+        loading.style.display = 'none'; // লোডার লুকান
+        displayArea.classList.remove('hidden'); // কন্টেন্ট দেখান
+    } else {
+        console.log("Fetching new data for today.");
+        loading.style.display = 'block'; // লোডার দেখানো নিশ্চিত করুন
+        displayArea.classList.add('hidden'); // কন্টেন্ট লুকানো নিশ্চিত করুন
+        await fetchDailyHistory();
+    }
+}
+
+// আগামীকালের ইতিহাস লোড করার ফাংশন
+async function loadOrFetchTomorrowHistory() {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowString = tomorrow.toISOString().split('T')[0];
+
+    const savedDate = sessionStorage.getItem('dailyHistoryDateTomorrow');
+    const savedContent = sessionStorage.getItem('dailyHistoryContentTomorrow');
+    const displayArea = document.getElementById('history-display-area-tomorrow');
+    const title = document.getElementById('history-title-tomorrow');
+    const loading = document.getElementById('history-loading-tomorrow');
+
+    // শিরোনাম আপডেট করুন (ক্যাশে বা নতুন)
+    const tomorrowDateString = tomorrow.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long' });
+    const tomorrowDayName = tomorrow.toLocaleDateString('bn-BD', { weekday: 'long' });
+    title.innerText = `আগামীকালের দিনে - ${tomorrowDateString}, ${tomorrowDayName}`;
+
+    if (savedDate === tomorrowString && savedContent) {
+        console.log("Loading tomorrow's history from session cache.");
+        displayArea.innerHTML = savedContent;
+        loading.style.display = 'none'; // লোডার লুকান
+        displayArea.classList.remove('hidden'); // কন্টেন্ট দেখান
+    } else {
+        console.log("Fetching new data for tomorrow.");
+        loading.style.display = 'block'; // লোডার দেখানো নিশ্চিত করুন
+        displayArea.classList.add('hidden'); // কন্টেন্ট লুকানো নিশ্চিত করুন
+        await fetchTomorrowHistory();
+    }
+}
+
+// আজকের ইতিহাস জেমিনি থেকে আনার ফাংশন
+async function fetchDailyHistory() {
+    const displayArea = document.getElementById('history-display-area');
+    const loading = document.getElementById('history-loading');
+    const title = document.getElementById('history-title');
+    const apiKey = localStorage.getItem('geminiApiKey');
+
+    if (!apiKey) {
+        displayArea.innerHTML = '<p class="text-red-500">অনুগ্রহ করে প্রথমে "সেটিংস" থেকে আপনার Gemini API কী সেট করুন।</p>';
+        displayArea.classList.remove('hidden'); // ত্রুটি দেখানোর জন্য কন্টেন্ট এলাকা দেখান
+        loading.style.display = 'none'; // লোডার লুকান
+        return;
+    }
+
+    // API কল করার আগে লোডার দেখান এবং কন্টেন্ট লুকান
+    loading.style.display = 'block';
+    displayArea.classList.add('hidden');
+
+    try {
+        const today = new Date();
+        const todayString = today.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long' });
+        const todayDayName = today.toLocaleDateString('bn-BD', { weekday: 'long' });
+        // title.innerText = `আজকের দিনে - ${todayString}, ${todayDayName}`; // এটি এখন loadOrFetchTodayHistory দ্বারা নিয়ন্ত্রিত
+
+        const prompt = `
+        আজ ${todayString}, ${todayDayName}। আজকের দিনের জন্য নিচের তথ্যগুলো দাও (বাংলাদেশ প্রেক্ষাপটে):
+        #### ঐতিহাসিক ঘটনা
+        - আজকের দিনে অতীতে ঘটে যাওয়া ৩-৪টি গুরুত্বপূর্ণ ঐতিহাসিক ঘটনা (সালসহ)।
+        #### গুরুত্বপূর্ণ দিবস (বাংলাদেশ)
+        - আজকের দিনে বাংলাদেশে পালিত কোনো স্মরণীয় দিবস বা ঘটনা থাকলে তা উল্লেখ করো। না থাকলে "আজ বাংলাদেশে কোনো বিশেষ দিবস নেই" লেখো।
+        #### গুরুত্বপূর্ণ দিবস (আন্তর্জাতিক)
+        - আজকের দিনে পালিত ৩-৪টি গুরুত্বপূর্ণ আন্তর্জাতিক দিবস উল্লেখ করো।
+        #### বাংলাদেশে ছুটির দিন?
+        - আজকের তারিখটি (${todayString}) কি বাংলাদেশে সরকারি ছুটির দিন? শুধু 'হ্যাঁ' বা 'না'-এর মাধ্যমে উত্তর দাও এবং ছুটির কারণ উল্লেখ করো (যদি থাকে)।
+        তোমার উত্তরটি সুন্দরভাবে Markdown ফরম্যাটে সাজিয়ে দাও। প্রতিটি সেকশনের শিরোনাম #### দিয়ে শুরু করবে।
+        `;
+
+        const payload = { contents: [{ parts: [{ text: prompt }] }] };
+        const model = "gemini-2.5-flash-preview-05-20";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error(`API Error: ${response.status}`);
+        const result = await response.json();
+        const rawText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (rawText) {
+            const htmlContent = simpleMarkdownToHTML(rawText);
+            displayArea.innerHTML = htmlContent;
+            sessionStorage.setItem('dailyHistoryDate', today.toISOString().split('T')[0]);
+            sessionStorage.setItem('dailyHistoryContent', htmlContent);
+        } else {
+            throw new Error("API থেকে কোনো তথ্য পাওয়া যায়নি।");
+        }
+    } catch (error) {
+        console.error("Today's History Fetch Error:", error);
+        displayArea.innerHTML = `<p class="text-red-500">তথ্য আনতে সমস্যা হয়েছে: ${error.message}</p>`;
+    } finally {
+        loading.style.display = 'none'; // লোডার লুকান
+        displayArea.classList.remove('hidden'); // কন্টেন্ট (বা ত্রুটি) দেখান
+    }
+}
+
+// আগামীকালের ইতিহাস জেমিনি থেকে আনার ফাংশন
+async function fetchTomorrowHistory() {
+    const displayArea = document.getElementById('history-display-area-tomorrow');
+    const loading = document.getElementById('history-loading-tomorrow');
+    const title = document.getElementById('history-title-tomorrow');
+    const apiKey = localStorage.getItem('geminiApiKey');
+
+    if (!apiKey) {
+        displayArea.innerHTML = '<p class="text-red-500">অনুগ্রহ করে প্রথমে "সেটিংস" থেকে আপনার Gemini API কী সেট করুন।</p>';
+        displayArea.classList.remove('hidden'); // ত্রুটি দেখানোর জন্য কন্টেন্ট এলাকা দেখান
+        loading.style.display = 'none'; // লোডার লুকান
+        return;
+    }
+
+    // API কল করার আগে লোডার দেখান এবং কন্টেন্ট লুকান
+    loading.style.display = 'block';
+    displayArea.classList.add('hidden');
+
+    try {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowString = tomorrow.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long' });
+        const tomorrowDayName = tomorrow.toLocaleDateString('bn-BD', { weekday: 'long' });
+        // title.innerText = `আগামীকালের দিনে - ${tomorrowString}, ${tomorrowDayName}`; // এটি এখন loadOrFetchTomorrowHistory দ্বারা নিয়ন্ত্রিত
+
+        const prompt = `
+        আগামীকাল ${tomorrowString}, ${tomorrowDayName}। আগামীকালের দিনের জন্য নিচের তথ্যগুলো দাও (বাংলাদেশ প্রেক্ষাপটে):
+        #### ঐতিহাসিক ঘটনা
+        - আগামীকালের দিনে অতীতে ঘটে যাওয়া ৩-৪টি গুরুত্বপূর্ণ ঐতিহাসিক ঘটনা (সালসহ)।
+        #### গুরুত্বপূর্ণ দিবস (বাংলাদেশ)
+        - আগামীকালের দিনে বাংলাদেশে পালিত কোনো স্মরণীয় দিবস বা ঘটনা থাকলে তা উল্লেখ করো। না থাকলে "আগামীকাল বাংলাদেশে কোনো বিশেষ দিবস নেই" লেখো।
+        #### গুরুত্বপূর্ণ দিবস (আন্তর্জাতিক)
+        - আগামীকালের দিনে পালিত ৩-৪টি গুরুত্বপূর্ণ আন্তর্জাতিক দিবস উল্লেখ করো।
+        #### বাংলাদেশে ছুটির দিন?
+        - আগামীকালের তারিখটি (${tomorrowString}) কি বাংলাদেশে সরকারি ছুটির দিন? শুধু 'হ্যাঁ' বা 'না'-এর মাধ্যমে উত্তর দাও এবং ছুটির কারণ উল্লেখ করো (যদি থাকে)।
+        তোমার উত্তরটি সুন্দরভাবে Markdown ফরম্যাটে সাজিয়ে দাও। প্রতিটি সেকশনের শিরোনাম #### দিয়ে শুরু করবে।
+        `;
+
+        const payload = { contents: [{ parts: [{ text: prompt }] }] };
+        const model = "gemini-2.5-flash-preview-05-20";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error(`API Error: ${response.status}`);
+        const result = await response.json();
+        const rawText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (rawText) {
+            const htmlContent = simpleMarkdownToHTML(rawText);
+            displayArea.innerHTML = htmlContent;
+            sessionStorage.setItem('dailyHistoryDateTomorrow', tomorrow.toISOString().split('T')[0]);
+            sessionStorage.setItem('dailyHistoryContentTomorrow', htmlContent);
+        } else {
+            throw new Error("API থেকে কোনো তথ্য পাওয়া যায়নি।");
+        }
+    } catch (error) {
+        console.error("Tomorrow's History Fetch Error:", error);
+        displayArea.innerHTML = `<p class="text-red-500">তথ্য আনতে সমস্যা হয়েছে: ${error.message}</p>`;
+    } finally {
+        loading.style.display = 'none'; // লোডার লুকান
+        displayArea.classList.remove('hidden'); // কন্টেন্ট (বা ত্রুটি) দেখান
+    }
+}
+
+// ট্যাব খোলার সময় এই ফাংশনটি কল হবে
+function initializeHistoryTab() {
+    // এই ফাংশনটি কল করার আগে লোডারগুলো দৃশ্যমান এবং কন্টেন্ট এলাকা লুকানো আছে কিনা তা নিশ্চিত করুন
+    document.getElementById('history-loading').style.display = 'block';
+    document.getElementById('history-display-area').classList.add('hidden');
+    document.getElementById('history-loading-tomorrow').style.display = 'block';
+    document.getElementById('history-display-area-tomorrow').classList.add('hidden');
+
+    loadOrFetchTodayHistory();
+    loadOrFetchTomorrowHistory();
+
+    // --- নতুন: রিফ্রেশ বাটন ইভেন্ট লিসেনার ---
+    const todayRefreshBtn = document.getElementById('todayHistoryRefreshBtn');
+    const tomorrowRefreshBtn = document.getElementById('tomorrowHistoryRefreshBtn');
+
+    // বাটনগুলো একবারই ইনিশিয়ালাইজ করা হয়েছে কিনা তা পরীক্ষা করুন (অপশনাল কিন্তু ভালো অভ্যাস)
+    if (todayRefreshBtn && !todayRefreshBtn.dataset.listenerAdded) {
+        todayRefreshBtn.addEventListener('click', () => {
+            showCustomAlert('আজকের ইতিহাস রিফ্রেশ করা হচ্ছে...');
+            sessionStorage.removeItem('dailyHistoryDate');
+            sessionStorage.removeItem('dailyHistoryContent');
+            fetchDailyHistory(); // ক্যাশে চেক না করে সরাসরি API কল করুন
+        });
+        todayRefreshBtn.dataset.listenerAdded = 'true'; // ডুপ্লিকেট লিসেনার এড়াতে
+    }
+
+    if (tomorrowRefreshBtn && !tomorrowRefreshBtn.dataset.listenerAdded) {
+        tomorrowRefreshBtn.addEventListener('click', () => {
+            showCustomAlert('আগামীকালের ইতিহাস রিফ্রেশ করা হচ্ছে...');
+            sessionStorage.removeItem('dailyHistoryDateTomorrow');
+            sessionStorage.removeItem('dailyHistoryContentTomorrow');
+            fetchTomorrowHistory(); // ক্যাশে চেক না করে সরাসরি API কল করুন
+        });
+        tomorrowRefreshBtn.dataset.listenerAdded = 'true';
+    }
+}
+// ====================================================================
+// END: ইতিহাস (History) TAB SCRIPT
 // ====================================================================
 
 
