@@ -4542,9 +4542,8 @@ input:checked + .slider:before {
 /* ======================================================== */
 
 /* ======================================================== */
-/* START: Days/Observances Tab Styles (দিবসসমূহ) */
+/* START: দিবসসমূহ কার্ডের জন্য CSS */
 /* ======================================================== */
-
 .days-observances-container {
     padding: 20px;
     border-radius: 16px;
@@ -4701,8 +4700,47 @@ input:checked + .slider:before {
 .dark .day-item .day-date {
     color: #cbd5e0;
 }
+.today-day-card {
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    min-height: 120px; /* একটি ন্যূনতম উচ্চতা যোগ করা হয়েছে */
+    display: flex; /* কন্টেন্ট উল্লম্বভাবে মাঝখানে রাখার জন্য */
+    flex-direction: column;
+    justify-content: center;
+}
+.today-day-card.national {
+    /* টিল রঙ */
+    background: linear-gradient(135deg, #0f766e, #14b8a6); 
+}
+.today-day-card.international {
+    /* কমলা রঙ */
+    background: linear-gradient(135deg, #c2410c, #f97316);
+}
+.today-day-card .card-supertitle {
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0.8;
+    margin-bottom: 4px;
+}
+.today-day-card .card-day-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.today-day-card .card-day-date {
+    font-size: 1.1rem;
+    font-weight: 500;
+    background-color: rgba(0,0,0,0.15);
+    padding: 5px 10px;
+    border-radius: 20px;
+    display: inline-block;
+}
 /* ======================================================== */
-/* END: Days/Observances Tab Styles */
+/* END: দিবসসমূহ CSS */
 /* ======================================================== */
 
     /* ======================================================== */
@@ -7740,7 +7778,16 @@ body.sidebar-open #sidebarOverlay {
                 <!-- JavaScript দ্বারা পূর্ণ হবে -->
             </div>
         </div>
-
+        <!-- ***** নতুন: আজকের দিবস সেকশন ***** -->
+        <div id="todayObservances" class="upcoming-observances-container mb-6">
+            <div id="todayNationalDay" class="today-day-card national">
+                <!-- JavaScript দ্বারা পূর্ণ হবে -->
+            </div>
+            <div id="todayInternationalDay" class="today-day-card international">
+                <!-- JavaScript দ্বারা পূর্ণ হবে -->
+            </div>
+        </div>
+        <!-- ***** নতুন সেকশন শেষ ***** -->
         <div class="year-selector-wrapper mb-6">
             <label for="observanceYearSelect" class="font-semibold text-gray-700 dark:text-gray-300 mr-2">বছর নির্বাচন করুন:</label>
             <input type="number" id="observanceYearSelect" class="year-input dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all">
@@ -15850,7 +15897,8 @@ function initializeDaysObservancesTab() {
     // নতুন সেকশনের জন্য DOM Elements
     const upcomingNationalDayCard = document.getElementById('upcomingNationalDay');
     const upcomingInternationalDayCard = document.getElementById('upcomingInternationalDay');
-
+    const todayNationalDayCard = document.getElementById('todayNationalDay');
+    const todayInternationalDayCard = document.getElementById('todayInternationalDay');
 
     if (!yearSelectInput || !bangladeshiDaysList || !internationalDaysList) return;
 
@@ -16137,7 +16185,24 @@ function initializeDaysObservancesTab() {
         date.setDate(date.getDate() + (n - 1) * 7);
         return date;
     }
-    
+    // নতুন ফাংশন: আজকের দিবস খুঁজে বের করার জন্য
+    function findTodayDay(observances, today) {
+        const currentYear = today.getFullYear();
+        const currentMonth = today.getMonth();
+        const currentDay = today.getDate();
+
+        const todayObservances = observances
+            .map(obs => {
+                const date = obs.dateFn ? obs.dateFn(currentYear) : new Date(currentYear, obs.month, obs.day);
+                return { name: obs.name, date: date };
+            })
+            .filter(obs => 
+                obs.date.getMonth() === currentMonth && 
+                obs.date.getDate() === currentDay
+            );
+
+        return todayObservances; // আজকের সকল দিবসের একটি অ্যারে রিটার্ন করুন
+    }
     // নতুন ফাংশন: আগত দিবস খুঁজে বের করার জন্য
     function findUpcomingDay(observances, today) {
         const currentYear = today.getFullYear();
@@ -16156,15 +16221,52 @@ function initializeDaysObservancesTab() {
     }
 
     // নতুন ফাংশন: আগত দিবসের কার্ড আপডেট করার জন্য
-    function displayUpcomingObservances() {
+    function displayTodayAndUpcomingObservances() {
         const today = new Date();
         today.setHours(0, 0, 0, 0); // শুধুমাত্র তারিখ তুলনা করার জন্য সময় রিসেট করুন
 
-        const upcomingNational = findUpcomingDay(bangladeshiObservances, today);
-        const upcomingInternational = findUpcomingDay(internationalObservances, today);
-
+        // --- ১. আজকের দিবস (নতুন) ---
+        const todayNational = findTodayDay(bangladeshiObservances, today);
+        const todayInternational = findTodayDay(internationalObservances, today);
+        
         const dateFormatter = new Intl.DateTimeFormat('bn-BD', { day: 'numeric', month: 'long' });
         const weekdayFormatter = new Intl.DateTimeFormat('bn-BD', { weekday: 'long' });
+
+        if (todayNationalDayCard) {
+            if (todayNational.length > 0) {
+                todayNationalDayCard.innerHTML = `
+                    <div class="card-supertitle">আজকের জাতীয় দিবস</div>
+                    <div class="card-day-name">${todayNational.map(d => d.name).join('<br>')}</div>
+                    <div class="card-day-date">${dateFormatter.format(today)} (${weekdayFormatter.format(today)})</div>
+                `;
+            } else {
+                todayNationalDayCard.innerHTML = `
+                    <div class="card-supertitle">আজকের জাতীয় দিবস</div>
+                    <div class="card-day-name">আজ কোনো জাতীয় দিবস নেই</div>
+                    <div class="card-day-date">${dateFormatter.format(today)}</div>
+                `;
+            }
+        }
+        
+        if (todayInternationalDayCard) {
+            if (todayInternational.length > 0) {
+                todayInternationalDayCard.innerHTML = `
+                    <div class="card-supertitle">আজকের আন্তর্জাতিক দিবস</div>
+                    <div class="card-day-name">${todayInternational.map(d => d.name).join('<br>')}</div>
+                    <div class="card-day-date">${dateFormatter.format(today)} (${weekdayFormatter.format(today)})</div>
+                `;
+            } else {
+                todayInternationalDayCard.innerHTML = `
+                    <div class="card-supertitle">আজকের আন্তর্জাতিক দিবস</div>
+                    <div class="card-day-name">আজ কোনো আন্তর্জাতিক দিবস নেই</div>
+                    <div class="card-day-date">${dateFormatter.format(today)}</div>
+                `;
+            }
+        }
+
+        // --- ২. আগত দিবস (বিদ্যমান) ---
+        const upcomingNational = findUpcomingDay(bangladeshiObservances, today);
+        const upcomingInternational = findUpcomingDay(internationalObservances, today);
 
         if (upcomingNationalDayCard && upcomingNational) {
             upcomingNationalDayCard.innerHTML = `
@@ -16226,7 +16328,7 @@ function initializeDaysObservancesTab() {
     const currentYear = new Date().getFullYear();
     yearSelectInput.value = currentYear;
     displayObservances(currentYear);
-    displayUpcomingObservances(); // নতুন ফাংশনটি কল করুন
+    displayTodayAndUpcomingObservances(); // আপডেট করা নতুন ফাংশনটি কল করুন
 }
 // ====================================================================
 // END: DAYS/OBSERVANCES SCRIPT
