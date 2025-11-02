@@ -15565,12 +15565,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to fetch news (remains the same)
     async function fetchNewsHeadlines() {
-        const feeds = {
-            'ঢাকা পোস্ট': 'https://www.dhakapost.com/rss',
-            'বাংলাদেশ প্রতিদিন': 'https://www.bd-pratidin.com/rss.xml',
-            'কালের কণ্ঠ': 'https://www.kalerkantho.com/rss.xml',
-            'ইত্তেফাক': 'https://www.ittefaq.com.bd/rss.xml'
-        };
+const feeds = {
+    'বাংলাদেশ প্রতিদিন': 'https://www.bd-pratidin.com/rss.xml', // (সঠিক আছে)
+    'কালের কণ্ঠ': 'https://www.kalerkantho.com/rss.xml', // (সঠিক আছে)
+	'প্রথম আলো': 'https://www.prothomalo.com/feed/', // (সঠিক আছে)
+	'সময়ের কণ্ঠস্বর': 'https://somoyerkonthosor.com/feed' // (সঠিক আছে)
+};
         const eightHoursAgo = new Date(Date.now() - 8 * 60 * 60 * 1000);
 
         function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[array[i], array[j]] = [array[j], array[i]]; } return array; }
@@ -18580,7 +18580,7 @@ async function fetchDailyHistory() {
         #### গুরুত্বপূর্ণ দিবস (আন্তর্জাতিক)
         - আজকের দিনে পালিত ৩-৪টি গুরুত্বপূর্ণ আন্তর্জাতিক দিবস উল্লেখ করো।
         #### বাংলাদেশে ছুটির দিন?
-        - আজকের তারিখটি (${todayString}) কি বাংলাদেশে সরকারি ছুটির দিন? শুধু 'হ্যাঁ' বা 'না'-এর মাধ্যমে উত্তর দাও এবং ছুটির কারণ উল্লেখ করো (যদি থাকে)।
+        - আজকের তারিখটি (${todayString}) কি বাংলাদেশে সরকারি ছুটির দিন? শুধু 'হ্যাঁ' বা 'না'-এর মাধ্যমে উত্তর দাও এবং ছুটির কারণ উল্লেখ করো (যদি থাকে, শুক্রবার বা শনিবার হলে সাপ্তাহিক ছুটি উল্লেখ করো)।
         তোমার উত্তরটি সুন্দরভাবে Markdown ফরম্যাটে সাজিয়ে দাও। প্রতিটি সেকশনের শিরোনাম #### দিয়ে শুরু করবে।
         `;
 
@@ -18649,7 +18649,7 @@ async function fetchTomorrowHistory() {
         #### গুরুত্বপূর্ণ দিবস (আন্তর্জাতিক)
         - আগামীকালের দিনে পালিত ৩-৪টি গুরুত্বপূর্ণ আন্তর্জাতিক দিবস উল্লেখ করো।
         #### বাংলাদেশে ছুটির দিন?
-        - আগামীকালের তারিখটি (${tomorrowString}) কি বাংলাদেশে সরকারি ছুটির দিন? শুধু 'হ্যাঁ' বা 'না'-এর মাধ্যমে উত্তর দাও এবং ছুটির কারণ উল্লেখ করো (যদি থাকে)।
+        - আগামীকালের তারিখটি (${tomorrowString}) কি বাংলাদেশে সরকারি ছুটির দিন? শুধু 'হ্যাঁ' বা 'না'-এর মাধ্যমে উত্তর দাও এবং ছুটির কারণ উল্লেখ করো (যদি থাকে, শুক্রবার বা শনিবার হলে সাপ্তাহিক ছুটি উল্লেখ করো)।
         তোমার উত্তরটি সুন্দরভাবে Markdown ফরম্যাটে সাজিয়ে দাও। প্রতিটি সেকশনের শিরোনাম #### দিয়ে শুরু করবে।
         `;
 
