@@ -15565,12 +15565,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to fetch news (remains the same)
     async function fetchNewsHeadlines() {
-        const feeds = {
-            'ঢাকা পোস্ট': 'https://www.dhakapost.com/rss',
-            'বাংলাদেশ প্রতিদিন': 'https://www.bd-pratidin.com/rss.xml',
-            'কালের কণ্ঠ': 'https://www.kalerkantho.com/rss.xml',
-            'ইত্তেফাক': 'https://www.ittefaq.com.bd/rss.xml'
-        };
+const feeds = {
+    'বাংলাদেশ প্রতিদিন': 'https://www.bd-pratidin.com/rss.xml', // (সঠিক আছে)
+    'কালের কণ্ঠ': 'https://www.kalerkantho.com/rss.xml', // (সঠিক আছে)
+	'প্রথম আলো': 'https://www.prothomalo.com/feed/', // (সঠিক আছে)
+	'সময়ের কণ্ঠস্বর': 'https://somoyerkonthosor.com/feed' // (সঠিক আছে)
+};
         const eightHoursAgo = new Date(Date.now() - 8 * 60 * 60 * 1000);
 
         function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[array[i], array[j]] = [array[j], array[i]]; } return array; }
