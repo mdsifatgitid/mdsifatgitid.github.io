@@ -5503,17 +5503,17 @@ body.sidebar-open #sidebarOverlay {
 /* ======================================================== */
 /* START: Image Resizer Styles (ছবি রিসাইজার) - পরিবর্তিত */
 /* ======================================================== */
-.image-resizer-container {
+#imageResizerContent {
     display: grid;
     grid-template-columns: 1fr;
     gap: 25px;
     padding: 15px;
 }
-@media (min-width: 1024px) {
+/* @media (min-width: 1024px) {
     .image-resizer-container {
         grid-template-columns: 350px 1fr; /* সাইডবার এবং প্রিভিউ এর জন্য কলাম */
-    }
-}
+    /* }
+} */
 
 .image-resizer-controls {
     background-color: #ffffff;
@@ -5697,7 +5697,7 @@ body.sidebar-open #sidebarOverlay {
 .image-container {
     width: 100%;
     height: auto; /* পরিবর্তিত: উচ্চতা auto করা হয়েছে */
-    min-height: 250px; /* একটি ন্যূনতম উচ্চতা দেওয়া হয়েছে */
+    min-height: 200px;
     background-color: #f1f5f9;
     border-radius: 8px;
     display: flex;
@@ -8165,107 +8165,170 @@ body.sidebar-open #sidebarOverlay {
 </div>
 <!-- End Dashboard Content -->
 
-<!-- ======================================================== -->
+
 <!-- START: Image Resizer Tab Content (ছবি রিসাইজার) -->
 <!-- ======================================================== -->
 <div id="imageResizerContent" class="calculator-content">
-    <div class="image-resizer-container">
-        <!-- Controls Section -->
-        <div class="image-resizer-controls">
-            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">ছবি রিসাইজ ও কম্প্রেস</h3>
-
-            <!-- Image Upload -->
-            <div id="image-drop-zone" class="image-upload-area">
-                <label for="imageUploadInput" class="image-upload-label">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-4-4V7a4 4 0 014-4h10a4 4 0 014 4v5a4 4 0 01-4 4H7z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 16v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4m12-4l-4-4-4 4m4 4v-4"></path></svg>
-                    <span>ছবি আপলোড করুন বা এখানে টেনে আনুন</span>
-                </label>
-                <input type="file" id="imageUploadInput" accept="image/png, image/jpeg, image/webp" class="hidden">
-            </div>
-
-            <!-- Resize Options -->
-            <div class="control-section">
-                <h4 class="control-title">রিসাইজ অপশন</h4>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="input-group">
-                        <label for="widthInput">প্রস্থ (px)</label>
-                        <input type="number" id="widthInput" class="resizer-input">
-                    </div>
-                    <div class="input-group">
-                        <label for="heightInput">উচ্চতা (px)</label>
-                        <input type="number" id="heightInput" class="resizer-input">
-                    </div>
-                </div>
-                <div class="flex items-center mt-2">
-                    <input type="checkbox" id="aspectRatioLock" class="h-4 w-4" checked>
-                    <label for="aspectRatioLock" class="ml-2 text-sm text-gray-600 dark:text-gray-300">অনুপাত ঠিক রাখুন</label>
-                </div>
-            </div>
-
-            <!-- Compress & Format Options -->
-            <div class="control-section">
-                <h4 class="control-title">কম্প্রেস ও ফরম্যাট</h4>
-                <div class="input-group">
-                    <label for="qualitySlider">কোয়ালিটি: <span id="qualityValue">90</span>%</label>
-                    <input type="range" id="qualitySlider" min="1" max="100" value="90" class="w-full">
-                </div>
-                <div class="input-group mt-4">
-                    <label for="formatSelect">ফরম্যাট পরিবর্তন</label>
-                    <select id="formatSelect" class="resizer-input">
-                        <option value="image/jpeg">JPG</option>
-                        <option value="image/png">PNG</option>
-                        <option value="image/webp">WEBP</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- নতুন: ক্রপ বাটন -->
-            <div class="control-section">
-                <button id="cropToggleBtn" class="crop-toggle-btn" disabled>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"></path><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"></path></svg>
-                    <span>ক্রপ মোড</span>
+    
+    <!-- START: Preview Section (Moved to top) -->
+    <div class="image-resizer-preview grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
+        <!-- আসল ছবির প্রিভিউ কন্টেইনার -->
+        <div class="preview-box">
+            <h4 class="preview-title">আসল ছবি</h4>
+            <div id="originalPreviewContainer" class="image-container relative group">
+                <img id="originalPreview" src="https://placehold.co/400x300/e0e7ff/3f51b5?text=Original+Image" alt="Original" class="transition-opacity duration-200">
+                <!-- নতুন: Remove Button -->
+                <button id="removeOriginalBtn" class="absolute top-2 right-2 z-10 w-8 h-8 bg-red-500 text-white rounded-full shadow-md flex items-center justify-center text-xl font-bold opacity-0 pointer-events-none group-hover:opacity-100 group-[.has-image]:pointer-events-auto transition-opacity duration-200" title="ছবি সরান">
+                    &times;
                 </button>
             </div>
-
-            <!-- Download Button -->
-            <button id="downloadBtn" class="download-btn" disabled>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
-                <span>প্রসেস ও ডাউনলোড করুন</span>
-            </button>
-        </div>
-
-        <!-- Preview Section -->
-        <div class="image-resizer-preview">
-            <!-- আসল ছবির প্রিভিউ কন্টেইনার (আপডেট করা) -->
-            <div class="preview-box">
-                <h4 class="preview-title">আসল ছবি</h4>
-                <div id="originalPreviewContainer" class="image-container relative group"> <!-- Relative positioning added -->
-                    <img id="originalPreview" src="https://placehold.co/400x300/e0e7ff/3f51b5?text=Original+Image" alt="Original" class="transition-opacity duration-200">
-                    <!-- নতুন: Remove Button -->
-                    <button id="removeOriginalBtn" class="absolute top-2 right-2 z-10 w-8 h-8 bg-red-500 text-white rounded-full shadow-md flex items-center justify-center text-xl font-bold opacity-0 pointer-events-none group-hover:opacity-100 group-[.has-image]:pointer-events-auto transition-opacity duration-200" title="ছবি সরান">
-                        &times;
-                    </button>
-                </div>
-                <div class="file-info-box">
-                    <p>সাইজ: <span id="originalSize">N/A</span></p>
-                    <p>ডাইমেনশন: <span id="originalDimensions">N/A</span></p>
-                </div>
+            <div class="file-info-box">
+                <p>সাইজ: <span id="originalSize">N/A</span></p>
+                <p>ডাইমেনশন: <span id="originalDimensions">N/A</span></p>
             </div>
-            <!-- প্রসেসড ছবির প্রিভিউ কন্টেইনার (অপরিবর্তিত) -->
-            <div class="preview-box">
-                <h4 class="preview-title">প্রসেসড ছবি</h4>
-                 <div class="image-container">
-                    <img id="processedPreview" src="https://placehold.co/400x300/dcfce7/166534?text=Processed+Image" alt="Processed">
-                </div>
-                <div class="file-info-box">
-                    <p>সাইজ: <span id="processedSize">N/A</span></p>
-                    <p>ডাইমেনশন: <span id="processedDimensions">N/A</span></p>
-                </div>
+        </div>
+        <!-- প্রসেসড ছবির প্রিভিউ কন্টেইনার -->
+        <div class="preview-box">
+            <h4 class="preview-title">প্রসেসড ছবি</h4>
+             <div class="image-container">
+                <img id="processedPreview" src="https://placehold.co/400x300/dcfce7/166534?text=Processed+Image" alt="Processed">
+            </div>
+            <div class="file-info-box">
+                <p>সাইজ: <span id="processedSize">N/A</span></p>
+                <p>ডাইমেনশন: <span id="processedDimensions">N/A</span></p>
             </div>
         </div>
     </div>
+    <!-- END: Preview Section -->
+
+    <!-- START: Controls Section (Moved to bottom) -->
+    <div class="image-resizer-controls p-4">
+        
+        <!-- Controls Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- Column 1: Upload & Resize -->
+            <div class="flex flex-col gap-6">
+                <!-- Image Upload -->
+                <div class="control-section mt-0"> <!-- mt-0 for first item -->
+                    <h4 class="control-title">ছবি আপলোড করুন</h4>
+                    <div id="image-drop-zone" class="image-upload-area mb-0"> <!-- mb-0 to remove extra space -->
+                        <label for="imageUploadInput" class="image-upload-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-4-4V7a4 4 0 014-4h10a4 4 0 014 4v5a4 4 0 01-4 4H7z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 16v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4m12-4l-4-4-4 4m4 4v-4"></path></svg>
+                            <span>ছবি আপলোড করুন বা এখানে টেনে আনুন</span>
+                        </label>
+                        <input type="file" id="imageUploadInput" accept="image/png, image/jpeg, image/webp" class="hidden">
+                    </div>
+                </div>
+
+                <!-- Resize Options -->
+                <div class="control-section">
+                    <h4 class="control-title">রিসাইজ অপশন</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="input-group">
+                            <label for="widthInput">প্রস্থ (px)</label>
+                            <input type="number" id="widthInput" class="resizer-input">
+                        </div>
+                        <div class="input-group">
+                            <label for="heightInput">উচ্চতা (px)</label>
+                            <input type="number" id="heightInput" class="resizer-input">
+                        </div>
+                    </div>
+                    <div class="flex items-center mt-2">
+                        <input type="checkbox" id="aspectRatioLock" class="h-4 w-4" checked>
+                        <label for="aspectRatioLock" class="ml-2 text-sm text-gray-600 dark:text-gray-300">অনুপাত ঠিক রাখুন</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 2: Format & Adjust -->
+            <div class="flex flex-col gap-6">
+                <!-- Compress & Format Options -->
+                <div class="control-section mt-0"> <!-- mt-0 for first item -->
+                    <h4 class="control-title">কম্প্রেস ও ফরম্যাট</h4>
+                    <div class="input-group">
+                        <label for="qualitySlider">কোয়ালিটি: <span id="qualityValue">90</span>%</label>
+                        <input type="range" id="qualitySlider" min="1" max="100" value="90" class="w-full">
+                    </div>
+                    <div class="input-group mt-4">
+                        <label for="formatSelect">ফরম্যাট পরিবর্তন</label>
+                        <select id="formatSelect" class="resizer-input">
+                            <option value="image/jpeg">JPG</option>
+                            <option value="image/png">PNG</option>
+                            <option value="image/webp">WEBP</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ছবি অ্যাডজাস্টমেন্ট -->
+                <div class="control-section">
+                    <h4 class="control-title">ছবি অ্যাডজাস্টমেন্ট</h4>
+                    <!-- Rotation -->
+                    <div class="mb-4">
+                        <label class="block text-sm text-gray-600 dark:text-gray-300 mb-2">রোটেট (Rotate)</label>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">রোটেট বা ফ্লিপ করার জন্য প্রথমে "ক্রপ মোড" চালু করুন।</p>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button id="rotateLeftBtn" title="Rotate -90°" class="p-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" disabled>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M6.354 1.146a.5.5 0 0 1 0 .708L3.207 5H6a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5H5a.5.5 0 0 1-.5-.5V6H2.5a.5.5 0 0 1-.354-.854l3-3a.5.5 0 0 1 .554-.146zM8.707 6.5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M12.354 10.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L8.5 12.793V6.5a.5.5 0 0 1 1 0v6.293l2.146-2.147a.5.5 0 0 1 .708 0z"/></svg>
+                            </button>
+                            <button id="rotateRightBtn" title="Rotate +90°" class="p-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" disabled>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M9.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L11.793 5H6a.5.5 0 0 1-.5-.5v-1A.5.5 0 0 1 6 3h.5a.5.5 0 0 1 .5.5v1h4.793L9.646 2.854a.5.5 0 0 1 0-.708z"/><path d="M7.293 10a.5.5 0 0 1 .707 0l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.707-.708L8.793 15H4a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h.5a.5.5 0 0 1 .5.5v1h4.793L7.293 11a.5.5 0 0 1 0-1z"/></svg>
+                            </button>
+                            <button id="flipHorizontalBtn" title="Flip Horizontal" class="p-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" disabled>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M2.854 3.146a.5.5 0 0 1 0 .708L.707 6H2.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m10.292 0a.5.5 0 0 0 0 .708L15.293 6H13.5a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h1.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0"/>
+<path fill-rule="evenodd" d="M8.5 3a.5.5 0 0 0-1 0v10a.5.5 0 0 0 1 0z"/></svg>
+                            </button>
+                            <button id="flipVerticalBtn" title="Flip Vertical" class="p-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" disabled>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M3.146 2.854a.5.5 0 0 1 .708 0L6 4.293V2.5a.5.5 0 0 1 1 0v1.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708M3.146 13.146a.5.5 0 0 0 .708 0L6 11.707v1.793a.5.5 0 0 0 1 0v-1.793l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 0 0 0 .708"/>
+<path fill-rule="evenodd" d="M3 7.5a.5.5 0 0 0 0 1h10a.5.5 0 0 0 0-1z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Brightness -->
+                    <div class="input-group mb-4">
+                        <label for="brightnessSlider">ব্রাইটনেস: <span id="brightnessValue">100</span>%</label>
+                        <input type="range" id="brightnessSlider" min="0" max="200" value="100" class="w-full" disabled>
+                    </div>
+                    <!-- Contrast -->
+                    <div class="input-group">
+                        <label for="contrastSlider">কনট্রাস্ট: <span id="contrastValue">100</span>%</label>
+                        <input type="range" id="contrastSlider" min="0" max="200" value="100" class="w-full" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 3: History & Actions -->
+            <div class="flex flex-col gap-6">
+                <!-- History section will be dynamically added here by JS -->
+
+                <!-- ক্রপ বাটন -->
+                <div class="control-section mt-0"> <!-- mt-0 for first item -->
+                     <h4 class="control-title">ক্রপ</h4>
+                    <button id="cropToggleBtn" class="crop-toggle-btn" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"></path><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"></path></svg>
+                        <span>ক্রপ মোড</span>
+                    </button>
+                </div>
+
+                <!-- Download Button -->
+                <div class="control-section">
+                    <h4 class="control-title">ফলাফল</h4>
+                    <button id="downloadBtn" class="download-btn" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
+                        <span>প্রসেস ও ডাউনলোড করুন</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- END: Controls Section -->
+
 </div>
 <!-- END: Image Resizer Tab Content -->
+<!-- ======================================================== -->
+<!-- START: আরও সেটিংস ট্যাব (More Settings) Styles
+
 
 
 <!-- ======================================================== -->
@@ -18023,7 +18086,7 @@ function makeAllFeaturesInteractive() {
 // ====================================================================
 
 // ========================================================
-// START: Image Resizer Script (ছবি রিসাইজার)
+// START: Image Resizer Script (ছবি রিসাইজার) - পরিবর্তিত ও সংশোধিত
 // ========================================================
 function initializeImageResizer() {
     const dropZone = document.getElementById('image-drop-zone');
@@ -18031,6 +18094,14 @@ function initializeImageResizer() {
     const widthInput = document.getElementById('widthInput');
     const heightInput = document.getElementById('heightInput');
     const aspectRatioLock = document.getElementById('aspectRatioLock');
+    
+    // --- START: নতুন পরিবর্তন ---
+    // ব্যবহারকারীর অনুরোধ অনুযায়ী: "অনুপাত ঠিক রাখুন" ডিফল্টভাবে আনচেক থাকবে
+    if (aspectRatioLock) {
+        aspectRatioLock.checked = false; 
+    }
+    // --- END: নতুন পরিবর্তন ---
+
     const qualitySlider = document.getElementById('qualitySlider');
     const qualityValue = document.getElementById('qualityValue');
     const formatSelect = document.getElementById('formatSelect');
@@ -18050,6 +18121,20 @@ function initializeImageResizer() {
     const cropToggleBtn = document.getElementById('cropToggleBtn');
     let cropper = null;
 
+    // নতুন: অ্যাডজাস্টমেন্টের জন্য ভ্যারিয়েবল
+    const rotateLeftBtn = document.getElementById('rotateLeftBtn');
+    const rotateRightBtn = document.getElementById('rotateRightBtn');
+    const flipHorizontalBtn = document.getElementById('flipHorizontalBtn');
+    const flipVerticalBtn = document.getElementById('flipVerticalBtn');
+    const brightnessSlider = document.getElementById('brightnessSlider');
+    const brightnessValue = document.getElementById('brightnessValue');
+    const contrastSlider = document.getElementById('contrastSlider');
+    const contrastValue = document.getElementById('contrastValue');
+    
+    // নতুন: ফ্লিপ করার জন্য ভ্যারিয়েবল
+    let scaleX = 1;
+    let scaleY = 1;
+
     let originalImage = null;
     let originalAspectRatio = 1;
     let isProcessing = false;
@@ -18065,7 +18150,7 @@ function initializeImageResizer() {
     if (controlsContainer && !document.getElementById('undoRedoSection')) {
         const undoRedoSection = document.createElement('div');
         undoRedoSection.id = 'undoRedoSection';
-        undoRedoSection.className = 'control-section';
+        undoRedoSection.className = 'control-section mt-0'; // Add mt-0 as it's the first item
         undoRedoSection.innerHTML = `
             <h4 class="control-title">ইতিহাস (History)</h4>
             <div class="flex gap-4">
@@ -18079,8 +18164,27 @@ function initializeImageResizer() {
                 </button>
             </div>
         `;
-        const cropSection = cropToggleBtn.parentElement;
-        controlsContainer.insertBefore(undoRedoSection, cropSection);
+
+        // --- START: সংশোধিত কোড ---
+        // কন্ট্রোল গ্রিডের তিনটি কলাম খুঁজুন
+        const gridColumns = controlsContainer.querySelectorAll('.grid > div.flex');
+        
+        if (gridColumns.length === 3) {
+            // তৃতীয় কলামটি (History & Actions) সিলেক্ট করুন
+            const column3 = gridColumns[2];
+            // কলামের শুরুতে History সেকশনটি যোগ করুন
+            column3.prepend(undoRedoSection);
+        } else {
+            // ফলব্যাক: যদি লেআউটটি প্রত্যাশিত না হয়, তবে পুরানো পদ্ধতিতে যোগ করার চেষ্টা করুন
+            console.warn("Expected 3-column grid not found for history. Using fallback insertion.");
+            const cropSection = cropToggleBtn.parentElement;
+            if (cropSection) {
+                cropSection.parentElement.insertBefore(undoRedoSection, cropSection);
+            } else {
+                controlsContainer.appendChild(undoRedoSection); // Last resort
+            }
+        }
+        // --- END: সংশোধিত কোড ---
     }
     
     undoCropBtn = document.getElementById('undoCropBtn');
@@ -18119,11 +18223,29 @@ function initializeImageResizer() {
     }
 
     function loadImageFromDataURL(dataUrl, isHistoryNavigation = false) {
+        // নতুন: ছবি লোড করার আগে যেকোনো চলমান ক্রপার থাকলে তা বন্ধ করুন
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+            cropToggleBtn.classList.remove('active');
+            cropToggleBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"></path><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"></path></svg>
+                <span>ক্রপ মোড</span>
+            `;
+            if(downloadBtn) downloadBtn.querySelector('span').textContent = 'ডাউনলোড করুন';
+        }
+
         originalImage = new Image();
         originalImage.onload = () => {
             originalAspectRatio = originalImage.width / originalImage.height;
+            
+            // --- START: স্ট্রেচ বাগ ফিক্স (সংশোধিত) ---
+            // ছবি লোড হওয়ার পর ইনপুট বক্স সবসময় আপডেট করুন
+            // এটি নিশ্চিত করে যে 'processImage' ফাংশন সঠিক ডাইমেনশন পায়
             widthInput.value = originalImage.width;
             heightInput.value = originalImage.height;
+            // --- END: স্ট্রেচ বাগ ফিক্স (সংশোধিত) ---
+
             originalPreview.src = dataUrl;
             originalDimensions.textContent = `${originalImage.width} x ${originalImage.height} px`;
 
@@ -18135,11 +18257,22 @@ function initializeImageResizer() {
                  if (dataUrl.startsWith('data:image/png')) fileType = 'image/png';
                  if (dataUrl.startsWith('data:image/webp')) fileType = 'image/webp';
                  formatSelect.value = fileType;
+
+                 // নতুন ছবি লোড হলে স্লাইডার রিসেট করুন
+                 brightnessSlider.value = 100;
+                 brightnessValue.textContent = 100;
+                 contrastSlider.value = 100;
+                 contrastValue.textContent = 100;
             }
 
             qualitySlider.disabled = formatSelect.value === 'image/png';
             if (originalPreviewContainer) originalPreviewContainer.classList.add('has-image');
             if (cropToggleBtn) cropToggleBtn.disabled = false;
+            
+            // নতুন: ফ্লিপ ভ্যারিয়েবল রিসেট করুন
+            scaleX = 1;
+            scaleY = 1;
+            
             processImage();
         };
         originalImage.src = dataUrl;
@@ -18157,6 +18290,14 @@ function initializeImageResizer() {
             historyIndex = -1;
             pushToHistory(e.target.result);
             loadImageFromDataURL(e.target.result, false);
+            
+            // নতুন: কন্ট্রোলগুলো সক্রিয় করুন
+            rotateLeftBtn.disabled = false;
+            rotateRightBtn.disabled = false;
+            flipHorizontalBtn.disabled = false;
+            flipVerticalBtn.disabled = false;
+            brightnessSlider.disabled = false;
+            contrastSlider.disabled = false;
         };
         reader.onerror = () => {
             showCustomAlert('ফাইলটি পড়া সম্ভব হয়নি।');
@@ -18197,6 +18338,7 @@ function initializeImageResizer() {
             `;
             if(downloadBtn) downloadBtn.querySelector('span').textContent = 'ডাউনলোড করুন';
             
+            // ক্রপ মোড বন্ধ করার পর অরিজিনাল ডাইমেনশন ফিরিয়ে আনা
             widthInput.value = originalImage.width;
             heightInput.value = originalImage.height;
             processImage();
@@ -18205,6 +18347,9 @@ function initializeImageResizer() {
                 viewMode: 1,
                 autoCropArea: 0.8,
                 background: false,
+                // নতুন: ফ্লিপড অবস্থা বজায় রাখুন
+                scaleX: scaleX,
+                scaleY: scaleY,
                 crop(event) {
                     const data = event.detail;
                     widthInput.value = Math.round(data.width);
@@ -18231,6 +18376,10 @@ function initializeImageResizer() {
         const height = parseInt(heightInput.value);
         const quality = parseInt(qualitySlider.value) / 100;
         const format = formatSelect.value;
+        
+        // নতুন: অ্যাডজাস্টমেন্ট ভ্যালু
+        const brightness = brightnessSlider.value;
+        const contrast = contrastSlider.value;
 
         if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
             showCustomAlert('অনুগ্রহ করে সঠিক প্রস্থ এবং উচ্চতা দিন।');
@@ -18247,19 +18396,33 @@ function initializeImageResizer() {
             try {
                 let sourceCanvas;
                 if (cropper) {
+                    // ক্রপ করার সময় রোটেট এবং ফ্লিপ হ্যান্ডেল করার জন্য getCroppedCanvas ব্যবহার করুন
                     sourceCanvas = cropper.getCroppedCanvas();
                 } else {
+                    // ক্রপ না করলে, ম্যানুয়ালি ক্যানভাস তৈরি করুন
                     sourceCanvas = document.createElement('canvas');
                     sourceCanvas.width = originalImage.width;
                     sourceCanvas.height = originalImage.height;
-                    sourceCanvas.getContext('2d').drawImage(originalImage, 0, 0);
+                    const tempCtx = sourceCanvas.getContext('2d');
+                    
+                    // এখানে ম্যানুয়াল রোটেশন বা ফ্লিপ প্রয়োগ করা যেত, 
+                    // কিন্তু ক্রপার না থাকলে রোটেট বা ফ্লিপ বাটন কাজ করবে না (নিচের লজিক অনুযায়ী)
+                    // তাই শুধু ছবিটি আঁকলেই চলবে
+                    tempCtx.drawImage(originalImage, 0, 0);
                 }
 
                 const finalCanvas = document.createElement('canvas');
                 finalCanvas.width = width;
                 finalCanvas.height = height;
                 const ctx = finalCanvas.getContext('2d');
+                
+                // নতুন: ফিল্টার প্রয়োগ
+                ctx.filter = `brightness(${brightness}%) contrast(${contrast}%)`;
+                
                 ctx.drawImage(sourceCanvas, 0, 0, width, height);
+                
+                // ফিল্টার রিসেট করুন
+                ctx.filter = 'none';
 
                 finalCanvas.toBlob((blob) => {
                     if (blob) {
@@ -18321,6 +18484,20 @@ function initializeImageResizer() {
         imageHistory = [];
         historyIndex = -1;
         updateUndoRedoButtons();
+        
+        // নতুন: কন্ট্রোলগুলো রিসেট এবং নিষ্ক্রিয় করুন
+        rotateLeftBtn.disabled = true;
+        rotateRightBtn.disabled = true;
+        flipHorizontalBtn.disabled = true;
+        flipVerticalBtn.disabled = true;
+        brightnessSlider.disabled = true;
+        contrastSlider.disabled = true;
+        brightnessSlider.value = 100;
+        contrastSlider.value = 100;
+        brightnessValue.textContent = 100;
+        contrastValue.textContent = 100;
+        scaleX = 1;
+        scaleY = 1;
     }
 
     function clearProcessedImage() {
@@ -18357,7 +18534,7 @@ function initializeImageResizer() {
     if (widthInput) {
         widthInput.addEventListener('input', () => {
             if (cropper) {
-                return;
+                return; // ক্রপ মোডে থাকলে ইনপুট পরিবর্তন ইগনোর করুন
             }
             if (aspectRatioLock.checked && originalImage) {
                 const newWidth = parseInt(widthInput.value);
@@ -18370,7 +18547,7 @@ function initializeImageResizer() {
     if (heightInput) {
         heightInput.addEventListener('input', () => {
             if (cropper) {
-                 return;
+                 return; // ক্রপ মোডে থাকলে ইনপুট পরিবর্তন ইগনোর করুন
             }
             if (aspectRatioLock.checked && originalImage) {
                 const newHeight = parseInt(heightInput.value);
@@ -18385,6 +18562,16 @@ function initializeImageResizer() {
             if (cropper) {
                 cropper.setAspectRatio(aspectRatioLock.checked ? originalAspectRatio : NaN);
             }
+             // --- START: নতুন পরিবর্তন ---
+            // ব্যবহারকারী টিক দেওয়া মাত্রই অনুপাত আপডেট করুন
+            if (aspectRatioLock.checked && originalImage && !cropper) {
+                const newWidth = parseInt(widthInput.value);
+                if (!isNaN(newWidth) && newWidth > 0) {
+                    heightInput.value = Math.round(newWidth / originalAspectRatio) || 1;
+                    debouncedProcess();
+                }
+            }
+            // --- END: নতুন পরিবর্তন ---
         });
     }
 
@@ -18395,24 +18582,102 @@ function initializeImageResizer() {
     if (formatSelect) {
         formatSelect.addEventListener('change', () => { qualitySlider.disabled = formatSelect.value === 'image/png'; processImage(); });
     }
+    
+    // --- নতুন: অ্যাডজাস্টমেন্ট ইভেন্ট লিসেনার ---
+    
+    // Cropper.js দিয়ে রোটেট করা
+    if (rotateLeftBtn) {
+        rotateLeftBtn.addEventListener('click', () => {
+            if (cropper) {
+                cropper.rotate(-90);
+                // processImage(); // ক্রপার থাকলে অটো-প্রসেস করার দরকার নেই, ডাউনলোড বাটনে ক্লিক করলেই হবে
+            } else {
+                showCustomAlert('রোটেট করার জন্য অনুগ্রহ করে প্রথমে "ক্রপ মোড" চালু করুন।');
+            }
+        });
+    }
+    
+    if (rotateRightBtn) {
+        rotateRightBtn.addEventListener('click', () => {
+            if (cropper) {
+                cropper.rotate(90);
+                // processImage();
+            } else {
+                showCustomAlert('রোটেট করার জন্য অনুগ্রহ করে প্রথমে "ক্রপ মোড" চালু করুন।');
+            }
+        });
+    }
+
+    // Cropper.js দিয়ে ফ্লিপ করা
+    if (flipHorizontalBtn) {
+        flipHorizontalBtn.addEventListener('click', () => {
+            if (cropper) {
+                scaleX = scaleX * -1; // টগল করুন
+                cropper.scaleX(scaleX);
+                // processImage(); 
+            } else {
+                showCustomAlert('ফ্লিপ করার জন্য অনুগ্রহ করে প্রথমে "ক্রপ মোড" চালু করুন।');
+            }
+        });
+    }
+
+    if (flipVerticalBtn) {
+        flipVerticalBtn.addEventListener('click', () => {
+            if (cropper) {
+                scaleY = scaleY * -1; // টগল করুন
+                cropper.scaleY(scaleY);
+                // processImage();
+            } else {
+                showCustomAlert('ফ্লিপ করার জন্য অনুগ্রহ করে প্রথমে "ক্রপ মোড" চালু করুন।');
+            }
+        });
+    }
+
+    // ব্রাইটনেস এবং কনট্রাস্ট স্লাইডার
+    if (brightnessSlider) {
+        brightnessSlider.addEventListener('input', () => {
+            brightnessValue.textContent = brightnessSlider.value;
+            debouncedProcess();
+        });
+    }
+    
+    if (contrastSlider) {
+        contrastSlider.addEventListener('input', () => {
+            contrastValue.textContent = contrastSlider.value;
+            debouncedProcess();
+        });
+    }
 
     if (downloadBtn) {
         downloadBtn.addEventListener('click', async () => {
             if (cropper) {
+                // ক্রপ মোডে থাকলে, প্রথমে ক্রপ করা ছবিটি পান
                 const croppedCanvas = cropper.getCroppedCanvas();
-                croppedCanvas.toBlob((blob) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        const newImageDataUrl = reader.result;
-                        pushToHistory(newImageDataUrl); 
-                        toggleCropMode(); 
-                        loadImageFromDataURL(newImageDataUrl, true); 
-                    };
-                    reader.readAsDataURL(blob);
-                    showCustomAlert('ছবি ক্রপ করা হয়েছে!');
-                });
+                
+                // --- START: স্ট্রেচ বাগ ফিক্স ---
+                // ক্রপ করা ক্যানভাস থেকে নতুন প্রস্থ ও উচ্চতা নিন
+                const newWidth = croppedCanvas.width;
+                const newHeight = croppedCanvas.height;
+                // --- END: স্ট্রেচ বাগ ফিক্স ---
+
+                const newImageDataUrl = croppedCanvas.toDataURL(formatSelect.value, parseInt(qualitySlider.value) / 100);
+                
+                // ক্রপ করা ছবিটিকে নতুন 'originalImage' হিসেবে সেট করুন
+                pushToHistory(newImageDataUrl); 
+                toggleCropMode(); // ক্রপ মোড বন্ধ করুন
+                
+                // --- START: স্ট্রেচ বাগ ফিক্স ---
+                // নতুন ছবি লোড করার *আগে* ইনপুট বক্স আপডেট করুন
+                widthInput.value = newWidth;
+                heightInput.value = newHeight;
+                // --- END: স্ট্রেচ বাগ ফিক্স ---
+                
+                loadImageFromDataURL(newImageDataUrl, true); // নতুন ছবি লোড করুন (true মানে এটি হিস্টোরি নেভিগেশন)
+                
+                showCustomAlert('ছবি ক্রপ করা হয়েছে! অ্যাডজাস্টমেন্ট প্রয়োগ করা হয়েছে।');
             } else {
-                await processImage(); 
+                // ক্রপ মোডে না থাকলে, সরাসরি প্রসেস ও ডাউনলোড করুন
+                await processImage(); // নিশ্চিত করুন যে শেষ পরিবর্তনগুলো প্রসেস হয়েছে
                 setTimeout(() => {
                      if (!currentProcessedObjectURL) {
                         showCustomAlert("ডাউনলোড করার জন্য কোনো প্রসেস করা ছবি নেই।");
@@ -18422,7 +18687,7 @@ function initializeImageResizer() {
                     link.href = currentProcessedObjectURL;
                     const format = formatSelect.value.split('/')[1];
                     const originalFileName = imageInput.files[0]?.name.split('.')[0] || 'resized-image';
-                    link.download = `${originalFileName}-resized.${format}`;
+                    link.download = `${originalFileName}-adjusted.${format}`;
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
@@ -18434,11 +18699,9 @@ function initializeImageResizer() {
     // Initial UI state
     updateUndoRedoButtons();
 }
-
 // ========================================================
 // END: Image Resizer Script
 // ========================================================
-
 
 // ====================================================================
 // START: আরও সেটিংস (More Settings) TAB SCRIPT
