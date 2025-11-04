@@ -9246,7 +9246,13 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (now.getSeconds() === 59) {
                 bannerElement.style.opacity = '0';
             }
-
+            // --- নতুন ফিক্স: রেস কন্ডিশন এড়ানোর জন্য ---
+            // যদি 0 সেকেন্ড মিস হয়, তবে 1 সেকেন্ডে এটি আবার দৃশ্যমান করুন
+            else if (now.getSeconds() === 1) {
+                if (bannerElement.style.opacity !== '1') {
+                    bannerElement.style.opacity = '1'; 
+                }
+            }
             // ইংরেজি সংখ্যাকে বাংলা সংখ্যায় রূপান্তর করার জন্য ফাংশন
             const toBengaliNumber = (num) => {
                 const numbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
