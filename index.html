@@ -16318,8 +16318,8 @@ function initializeDaysObservancesTab() {
         
         const upcoming = observances.map(obs => {
             let date = obs.dateFn ? obs.dateFn(currentYear) : new Date(currentYear, obs.month, obs.day);
-            // যদি তারিখটি ইতোমধ্যে চলে গিয়ে থাকে, তবে পরের বছরের তারিখ গণনা করুন
-            if (date < today) {
+            // যদি তারিখটি ইতোমধ্যে চলে গিয়ে থাকে (বা আজ হয়), তবে পরের বছরের তারিখ গণনা করুন
+            if (date <= today) {
                 date = obs.dateFn ? obs.dateFn(currentYear + 1) : new Date(currentYear + 1, obs.month, obs.day);
             }
             return { name: obs.name, date: date };
