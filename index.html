@@ -5504,10 +5504,13 @@ body.sidebar-open #sidebarOverlay {
 /* START: Image Resizer Styles (ছবি রিসাইজার) - পরিবর্তিত */
 /* ======================================================== */
 #imageResizerContent {
-    display: grid;
     grid-template-columns: 1fr;
     gap: 25px;
     padding: 15px;
+}
+
+.calculator-content.active#imageResizerContent {
+    display: grid;
 }
 /* @media (min-width: 1024px) {
     .image-resizer-container {
