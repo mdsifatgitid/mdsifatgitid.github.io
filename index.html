@@ -15997,7 +15997,28 @@ function initializeDaysObservancesTab() {
         { name: "সশস্ত্র বাহিনী দিবস", month: 10, day: 21 },
         { name: "শহীদ বুদ্ধিজীবী দিবস", month: 11, day: 14 },
         { name: "বিজয় দিবস", month: 11, day: 16 },
-        { name: "বড়দিন", month: 11, day: 25 }
+        { name: "বড়দিন", month: 11, day: 25 },
+        
+        // আপনার তালিকা থেকে নতুন যোগ করা হয়েছে (ক ও খ)
+        { name: "জাতীয় সমাজসেবা দিবস", month: 0, day: 2 },
+        { name: "জাতীয় গ্রন্থাগার দিবস", month: 1, day: 5 },
+        { name: "জাতীয় স্থানীয় সরকার দিবস", month: 1, day: 25 },
+        { name: "জাতীয় বিমা দিবস", month: 2, day: 1 },
+        { name: "জাতীয় ভোটার দিবস", month: 2, day: 2 },
+        { name: "জাতীয় পাট দিবস", month: 2, day: 6 },
+        { name: "জাতীয় চলচ্চিত্র দিবস", month: 3, day: 3 },
+        { name: "রবীন্দ্রজয়ন্তী (২৫ বৈশাখ)", month: 4, day: 8 },
+        { name: "নজরুলজয়ন্তী (১১ জ্যৈষ্ঠ)", month: 4, day: 25 },
+        { name: "নিরাপদ মাতৃত্ব দিবস", month: 4, day: 28 },
+        { name: "জাতীয় চা দিবস", month: 5, day: 4 },
+        { name: "জুলাই শহীদ দিবস", month: 6, day: 16 },
+        { name: "জাতীয় পাবলিক সার্ভিস দিবস", month: 6, day: 23 },
+        { name: "জাতীয় জ্বালানি নিরাপত্তা দিবস", month: 7, day: 9 },
+        { name: "জাতীয় উত্পাদনশীলতা দিবস", month: 9, day: 2 },
+        { name: "জাতীয় নিরাপদ সড়ক দিবস", month: 9, day: 22 },
+        { name: "জাতীয় সমবায় দিবস", dateFn: (year) => getNthWeekdayOfMonth(year, 10, 6, 1) }, // Nov 1st Sat
+        { name: "জাতীয় বস্ত্র দিবস", month: 11, day: 4 },
+        { name: "বেগম রোকেয়া দিবস", month: 11, day: 9 },
     ];
 
     // Data for International observances (Updated with the comprehensive list)
@@ -16246,6 +16267,21 @@ function initializeDaysObservancesTab() {
         { name: "আরবি ভাষা দিবস", month: 11, day: 18 },
         { name: "আন্তর্জাতিক মানব সংহতি দিবস", month: 11, day: 20 },
         { name: "আন্তর্জাতিক মহামারী প্রস্তুতি দিবস", month: 11, day: 27 },
+
+        // আপনার তালিকা থেকে নতুন যোগ করা হয়েছে (খ ও গ)
+        { name: "বার্ষিক প্রশিক্ষণ দিবস", month: 0, day: 23 },
+        { name: "জাতীয় নিরাপদ খাদ্য দিবস", month: 1, day: 2 },
+        { name: "জাতীয় শহীদ সেনা দিবস", month: 1, day: 25 },
+        { name: "জাতীয় দুর্যোগ প্রস্তুতি দিবস", month: 2, day: 10 },
+        { name: "জাতীয় আইনগত সহায়তা দিবস", month: 3, day: 28 },
+        { name: "আন্তর্জাতিক রেডক্রস ও রেড ক্রিসেন্ট দিবস", month: 4, day: 8 },
+        { name: "বিশ্ব অ্যাক্রেডিটেশন দিবস", month: 5, day: 9 },
+        { name: "বিশ্ব হার্ট দিবস", dateFn: (year) => getNthWeekdayOfMonth(year, 8, 0, 4) }, // Sep 4th Sun
+        { name: "শিশু অধিকার দিবস", dateFn: (year) => getNthWeekdayOfMonth(year, 9, 1, 1) }, // Oct 1st Mon
+        { name: "জাতীয় জন্ম ও মৃত্যু নিবন্ধন দিবস", month: 9, day: 6 },
+        { name: "বিশ্ব সাদা ছড়ি দিবস", month: 9, day: 15 },
+        { name: "জাতীয় স্বেচ্ছায় রক্তদান ও মরণোত্তর চক্ষুদান দিবস", month: 10, day: 2 },
+        { name: "জাতীয় জীববৈচিত্র্য দিবস", month: 11, day: 29 },
     ];
 
     function getNthWeekdayOfMonth(year, month, weekday, n) {
@@ -16366,7 +16402,7 @@ function initializeDaysObservancesTab() {
         const weekdayFormatter = new Intl.DateTimeFormat('bn-BD', { weekday: 'long' });
 
         bangladeshiObservances.forEach(obs => {
-            const date = new Date(year, obs.month, obs.day);
+            const date = obs.dateFn ? obs.dateFn(year) : new Date(year, obs.month, obs.day);
             renderDayItem(date, obs.name, bangladeshiDaysList, dateFormatter, weekdayFormatter);
         });
 
