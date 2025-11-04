@@ -18245,30 +18245,30 @@ function initializeImageResizer() {
             // --- START: স্ট্রেচ বাগ ফিক্স (সংশোধিত) ---
             // ছবি লোড হওয়ার পর ইনপুট বক্স সবসময় আপডেট করুন
             // এটি নিশ্চিত করে যে 'processImage' ফাংশন সঠিক ডাইমেনশন পায়
-            widthInput.value = originalImage.width;
-            heightInput.value = originalImage.height;
+            if (widthInput) widthInput.value = originalImage.width;
+            if (heightInput) heightInput.value = originalImage.height;
             // --- END: স্ট্রেচ বাগ ফিক্স (সংশোধিত) ---
 
-            originalPreview.src = dataUrl;
-            originalDimensions.textContent = `${originalImage.width} x ${originalImage.height} px`;
+            if(originalPreview) originalPreview.src = dataUrl;
+            if(originalDimensions) originalDimensions.textContent = `${originalImage.width} x ${originalImage.height} px`;
 
             const sizeInBytes = (dataUrl.length * (3/4)) - (dataUrl.endsWith('==') ? 2 : (dataUrl.endsWith('=') ? 1 : 0));
-            originalSize.textContent = formatBytes(sizeInBytes);
+            if(originalSize) originalSize.textContent = formatBytes(sizeInBytes);
 
             if (!isHistoryNavigation) {
                  let fileType = 'image/jpeg';
                  if (dataUrl.startsWith('data:image/png')) fileType = 'image/png';
                  if (dataUrl.startsWith('data:image/webp')) fileType = 'image/webp';
-                 formatSelect.value = fileType;
+                 if(formatSelect) formatSelect.value = fileType;
 
                  // নতুন ছবি লোড হলে স্লাইডার রিসেট করুন
-                 brightnessSlider.value = 100;
-                 brightnessValue.textContent = 100;
-                 contrastSlider.value = 100;
-                 contrastValue.textContent = 100;
+                 if(brightnessSlider) brightnessSlider.value = 100;
+                 if(brightnessValue) brightnessValue.textContent = 100;
+                 if(contrastSlider) contrastSlider.value = 100;
+                 if(contrastValue) contrastValue.textContent = 100;
             }
 
-            qualitySlider.disabled = formatSelect.value === 'image/png';
+            if(qualitySlider) qualitySlider.disabled = formatSelect.value === 'image/png';
             if (originalPreviewContainer) originalPreviewContainer.classList.add('has-image');
             if (cropToggleBtn) cropToggleBtn.disabled = false;
             
@@ -18295,12 +18295,12 @@ function initializeImageResizer() {
             loadImageFromDataURL(e.target.result, false);
             
             // নতুন: কন্ট্রোলগুলো সক্রিয় করুন
-            rotateLeftBtn.disabled = false;
-            rotateRightBtn.disabled = false;
-            flipHorizontalBtn.disabled = false;
-            flipVerticalBtn.disabled = false;
-            brightnessSlider.disabled = false;
-            contrastSlider.disabled = false;
+            if(rotateLeftBtn) rotateLeftBtn.disabled = false;
+            if(rotateRightBtn) rotateRightBtn.disabled = false;
+            if(flipHorizontalBtn) flipHorizontalBtn.disabled = false;
+            if(flipVerticalBtn) flipVerticalBtn.disabled = false;
+            if(brightnessSlider) brightnessSlider.disabled = false;
+            if(contrastSlider) contrastSlider.disabled = false;
         };
         reader.onerror = () => {
             showCustomAlert('ফাইলটি পড়া সম্ভব হয়নি।');
@@ -18371,9 +18371,9 @@ function initializeImageResizer() {
     async function processImage() {
         if (!originalImage || isProcessing) return;
         isProcessing = true;
-        downloadBtn.disabled = true;
-        processedSize.textContent = 'প্রসেসিং...';
-        processedDimensions.textContent = 'প্রসেসিং...';
+        if(downloadBtn) downloadBtn.disabled = true;
+        if(processedSize) processedSize.textContent = 'প্রসেসিং...';
+        if(processedDimensions) processedDimensions.textContent = 'প্রসেসিং...';
 
         const width = parseInt(widthInput.value);
         const height = parseInt(heightInput.value);
@@ -18386,10 +18386,10 @@ function initializeImageResizer() {
 
         if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
             showCustomAlert('অনুগ্রহ করে সঠিক প্রস্থ এবং উচ্চতা দিন।');
-            processedSize.textContent = 'ত্রুটি';
-            processedDimensions.textContent = 'অবৈধ মাপ';
+            if(processedSize) processedSize.textContent = 'ত্রুটি';
+            if(processedDimensions) processedDimensions.textContent = 'অবৈধ মাপ';
             if (!currentProcessedObjectURL) {
-                processedPreview.src = 'https://placehold.co/400x300/fee2e2/b91c1c?text=Invalid+Dimensions';
+                if(processedPreview) processedPreview.src = 'https://placehold.co/400x300/fee2e2/b91c1c?text=Invalid+Dimensions';
             }
             isProcessing = false;
             return;
@@ -18431,10 +18431,10 @@ function initializeImageResizer() {
                     if (blob) {
                         if (currentProcessedObjectURL) URL.revokeObjectURL(currentProcessedObjectURL);
                         currentProcessedObjectURL = URL.createObjectURL(blob);
-                        processedPreview.src = currentProcessedObjectURL;
-                        processedDimensions.textContent = `${width} x ${height} px`;
-                        processedSize.textContent = formatBytes(blob.size);
-                        downloadBtn.disabled = false;
+                        if(processedPreview) processedPreview.src = currentProcessedObjectURL;
+                        if(processedDimensions) processedDimensions.textContent = `${width} x ${height} px`;
+                        if(processedSize) processedSize.textContent = formatBytes(blob.size);
+                        if(downloadBtn) downloadBtn.disabled = false;
                     } else {
                          throw new Error("Blob could not be created.");
                     }
@@ -18444,8 +18444,8 @@ function initializeImageResizer() {
             } catch (error) {
                 console.error("Image processing error:", error);
                 showCustomAlert("ছবি প্রসেস করা সম্ভব হয়নি।");
-                processedSize.textContent = 'ত্রুটি';
-                processedDimensions.textContent = 'প্রসেসিং ত্রুটি';
+                if(processedSize) processedSize.textContent = 'ত্রুটি';
+                if(processedDimensions) processedDimensions.textContent = 'প্রসেসিং ত্রুটি';
                 isProcessing = false;
             }
         }, 10);
@@ -18489,16 +18489,16 @@ function initializeImageResizer() {
         updateUndoRedoButtons();
         
         // নতুন: কন্ট্রোলগুলো রিসেট এবং নিষ্ক্রিয় করুন
-        rotateLeftBtn.disabled = true;
-        rotateRightBtn.disabled = true;
-        flipHorizontalBtn.disabled = true;
-        flipVerticalBtn.disabled = true;
-        brightnessSlider.disabled = true;
-        contrastSlider.disabled = true;
-        brightnessSlider.value = 100;
-        contrastSlider.value = 100;
-        brightnessValue.textContent = 100;
-        contrastValue.textContent = 100;
+        if(rotateLeftBtn) rotateLeftBtn.disabled = true;
+        if(rotateRightBtn) rotateRightBtn.disabled = true;
+        if(flipHorizontalBtn) flipHorizontalBtn.disabled = true;
+        if(flipVerticalBtn) flipVerticalBtn.disabled = true;
+        if(brightnessSlider) brightnessSlider.disabled = true;
+        if(contrastSlider) contrastSlider.disabled = true;
+        if(brightnessSlider) brightnessSlider.value = 100;
+        if(contrastSlider) contrastSlider.value = 100;
+        if(brightnessValue) brightnessValue.textContent = 100;
+        if(contrastValue) contrastValue.textContent = 100;
         scaleX = 1;
         scaleY = 1;
     }
@@ -18639,14 +18639,14 @@ function initializeImageResizer() {
     // ব্রাইটনেস এবং কনট্রাস্ট স্লাইডার
     if (brightnessSlider) {
         brightnessSlider.addEventListener('input', () => {
-            brightnessValue.textContent = brightnessSlider.value;
+            if(brightnessValue) brightnessValue.textContent = brightnessSlider.value;
             debouncedProcess();
         });
     }
     
     if (contrastSlider) {
         contrastSlider.addEventListener('input', () => {
-            contrastValue.textContent = contrastSlider.value;
+            if(contrastValue) contrastValue.textContent = contrastSlider.value;
             debouncedProcess();
         });
     }
@@ -18669,14 +18669,36 @@ function initializeImageResizer() {
                 pushToHistory(newImageDataUrl); 
                 toggleCropMode(); // ক্রপ মোড বন্ধ করুন
                 
-                // --- START: স্ট্রেচ বাগ ফিক্স ---
-                // নতুন ছবি লোড করার *আগে* ইনপুট বক্স আপডেট করুন
-                widthInput.value = newWidth;
-                heightInput.value = newHeight;
+                // --- START: স্ট্রেচ বাগ ফিক্স (লাইন দুটি মুছে ফেলা হয়েছে) ---
+                // widthInput.value = newWidth; (এই লাইনটি মুছে ফেলা হয়েছে)
+                // heightInput.value = newHeight; (এই লাইনটি মুছে ফেলা হয়েছে)
                 // --- END: স্ট্রেচ বাগ ফিক্স ---
                 
-                loadImageFromDataURL(newImageDataUrl, true); // নতুন ছবি লোড করুন (true মানে এটি হিস্টোরি নেভিগেশন)
+                // এই কলটি প্রথমবার (স্ট্রেচড) ছবিটি লোড করবে
+                loadImageFromDataURL(newImageDataUrl, true); 
                 
+                // --- START: ব্যবহারকারীর পরামর্শ অনুযায়ী স্ট্রেচ বাগ ফিক্স করার হ্যাক ---
+                // প্রথম প্রসেসিং শেষ হওয়ার জন্য সামান্য অপেক্ষা করুন
+                setTimeout(() => {
+                    const currentQuality = parseInt(qualitySlider.value);
+                    // কোয়ালিটি সামান্য পরিবর্তন করুন
+                    const tempQuality = (currentQuality > 1) ? currentQuality - 1 : currentQuality + 1;
+                    
+                    // স্লাইডার সরানোর ভান করুন (১ম বার)
+                    qualitySlider.value = tempQuality;
+                    if(qualityValue) qualityValue.textContent = tempQuality;
+                    debouncedProcess(); // এটি দ্বিতীয়বার প্রসেস ট্রিগার করবে
+
+                    // স্লাইডার আগের জায়গায় ফিরিয়ে আনার ভান করুন (২য় বার)
+                    setTimeout(() => {
+                        qualitySlider.value = currentQuality;
+                        if(qualityValue) qualityValue.textContent = currentQuality;
+                        debouncedProcess(); // এটি চূড়ান্ত সঠিক প্রসেস ট্রিগার করবে
+                    }, 350); // প্রথম ডিবাউন্স ফায়ার করার জন্য অপেক্ষা
+                    
+                }, 150); // onload এবং প্রথম processImage কল হওয়ার জন্য অপেক্ষা
+                // --- END: ব্যবহারকারীর পরামর্শ অনুযায়ী স্ট্রেচ বাগ ফিক্স করার হ্যাক ---
+
                 showCustomAlert('ছবি ক্রপ করা হয়েছে! অ্যাডজাস্টমেন্ট প্রয়োগ করা হয়েছে।');
             } else {
                 // ক্রপ মোডে না থাকলে, সরাসরি প্রসেস ও ডাউনলোড করুন
