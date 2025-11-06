@@ -8611,7 +8611,10 @@ async function clearExpiredItems() {
 // ====================================================================
 // END: IndexedDB with Expiry
 // ====================================================================
-		
+
+// ====================================================================
+// START: PEST PRESET SCRIPT FOR FONT CONVERTER PART
+// ====================================================================	
 	// Paste Preset Functionality Variables
 	let pastePresetLeft = 'default';
 	let customPasteValueLeft = '';
@@ -8621,6 +8624,9 @@ async function clearExpiredItems() {
 	let customSerialCounterRight = 1;
 	let currentModalSide = null; // কোন পাশের ('left' বা 'right') মোডাল খোলা হয়েছে তা ট্র্যাক করে
 	let currentModalPreset = null; // কোন প্রিসেট ('custom' বা 'custom-serial') এর জন্য ইনপুট প্রয়োজন তা ট্র্যাক করে
+// ====================================================================
+// END: PEST PRESET SCRIPT FOR FONT CONVERTER PART
+// ====================================================================	
 
 // ====================================================================
 // Start Typing Script
@@ -9160,13 +9166,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 
 
-
-
-
-
-        // ====================================================================
-        // START: DATE AND TIME BANNER SCRIPT (নতুন যুক্ত করা হয়েছে)
-        // ====================================================================
+// ====================================================================
+// START: DATE AND TIME BANNER SCRIPT (নতুন যুক্ত করা হয়েছে)
+// ====================================================================
 
         // গ্রেগরিয়ান তারিখকে বাংলা তারিখে রূপান্তর করার ফাংশন (বাংলাদেশ স্ট্যান্ডার্ড)
         function getBengaliDate(gregorianDate) {
@@ -9355,14 +9357,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // প্রতি সেকেন্ডে ব্যানার আপডেট করুন
         setInterval(updateDateTimeBanner, 1000);
 
-        // ====================================================================
-        // END: DATE AND TIME BANNER SCRIPT
-        // ====================================================================
+// ====================================================================
+// END: DATE AND TIME BANNER SCRIPT
+// ====================================================================
 
 
-        // ====================================================================
-        // START: DARK MODE / LIGHT MODE TOGGLE SCRIPT
-        // ====================================================================
+// ====================================================================
+// START: DARK MODE / LIGHT MODE TOGGLE SCRIPT
+// ====================================================================
         const themeToggleBtn = document.getElementById('theme-toggle');
 
         // পৃষ্ঠা লোড হওয়ার সাথে সাথে থিম পরীক্ষা করুন
@@ -9384,11 +9386,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('color-theme', 'light');
             }
         });
-        // ====================================================================
-        // END: DARK MODE / LIGHT MODE TOGGLE SCRIPT
-        // ====================================================================
+// ====================================================================
+// END: DARK MODE / LIGHT MODE TOGGLE SCRIPT
+// ====================================================================
 
-
+// ====================================================================
+// START: FONT CONVERTER SCRIPT
+// ====================================================================
         // ইউনিকোড থেকে বিজয় রূপান্তরের জন্য ম্যাপিং
         const unicodeToBijoyMap = {
             // স্বরবর্ণ সেকশন
@@ -9744,9 +9748,6 @@ document.addEventListener('DOMContentLoaded', () => {
             fixAnsiText(false);
         }
 
-// ====================================================================
-        // START: UPDATED FUNCTION (বিজয় থেকে ইউনিকোড)
-        // ====================================================================
         function convertRightToLeft() {
             const textAreaLeft = document.getElementById('textAreaLeft');
             const textAreaRight = document.getElementById('textAreaRight');
@@ -9825,9 +9826,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // END: UPDATED FUNCTION
         // ====================================================================
 
-        // ====================================================================
-        // START: ANSI TEXT FIX FUNCTION (UPDATED FOR WORD LIST & SILENT MODE)
-        // ====================================================================
+// ====================================================================
+// START: ANSI TEXT FIX FUNCTION (UPDATED FOR WORD LIST & SILENT MODE)
+// ====================================================================
 
         // এই লিস্টে যে শব্দগুলো যোগ করবেন, "ফিক্স করুন" বাটন সেগুলোকে পরিবর্তন করবে না।
         const wordsToIgnore = [
@@ -9894,10 +9895,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 showCustomAlert('লেখা ফিক্স করা হয়েছে!');
             }
         }
-        // ====================================================================
-        // END: ANSI TEXT FIX FUNCTION
-        // ====================================================================
-
+// ====================================================================
+// END: ANSI TEXT FIX FUNCTION
+// ====================================================================
+		
+// ====================================================================
+// START: COPY SCRIT FOR FONT CONVERTER
+// ====================================================================
         function copyToClipboard(elementId) {
             const element = document.getElementById(elementId);
             if (element) {
@@ -9914,9 +9918,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-        // ====================================================================
-        // START: NEW FILE UPLOAD SCRIPT FOR TEXT ASSISTANT
-        // ====================================================================
+// ====================================================================
+// END: COPY SCRIT FOR FONT CONVERTER
+// ====================================================================
+
+// ====================================================================
+// END: FONT CONVERTER SCRIPT
+// ====================================================================
+
+// ====================================================================
+// START: NEW FILE UPLOAD SCRIPT FOR TEXT ASSISTANT
+// ====================================================================
 
         const fileUploadInput = document.getElementById('fileUploadInput');
         const filePreviewContainer = document.getElementById('filePreviewContainer');
@@ -10031,7 +10043,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 chatWindow.scrollTop = chatWindow.scrollHeight;
             }
         }
+ // ====================================================================
+ // END: NEW FILE UPLOAD SCRIPT FOR TEXT ASSISTANT PART
+ // ====================================================================
 		
+// ====================================================================
+// START: GOOGLE MAP SCRIPT
+// ====================================================================		
         // --- গুগল ম্যাপ ফিচার ---
     document.addEventListener('DOMContentLoaded', () => {
         const searchInput = document.getElementById('searchInput');
@@ -10094,6 +10112,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+// ====================================================================
+// END: GOOGLE MAP SCRIPT
+// ====================================================================
+	
+// ====================================================================
+// START: নামাজের সময়সূচি
+// ====================================================================
 
 // নতুন: নামাজের সময়সূচি ট্যাব এর জন্য ফাংশন (API ইন্টিগ্রেশন এবং লোকাল স্টোরেজ সহ)
 function initializePrayerTimeTab() {
@@ -10126,9 +10151,9 @@ function initializePrayerTimeTab() {
         "হবিগঞ্জ": "Habiganj", "মৌলভীবাজার": "Moulvibazar", "সুনামগঞ্জ": "Sunamganj", "সিলেট": "Sylhet"
     };
 
-    // ====================================================================
+
     // START: সেটিংস সেভ এবং লোড করার ফাংশন
-    // ====================================================================
+
 
     // সকল সেটিংস লোকাল স্টোরেজে সেভ করার ফাংশন
     const saveSettings = () => {
@@ -10178,10 +10203,10 @@ function initializePrayerTimeTab() {
         }
     };
 
-    // ====================================================================
-    // END: সেটিংস সেভ এবং লোড করার ফাংশন
-    // ====================================================================
 
+    // END: সেটিংস সেভ এবং লোড করার ফাংশন
+
+	
     // 24-ঘণ্টার সময়কে 12-ঘণ্টার ফরম্যাটে রূপান্তর করার ফাংশন
     function formatTo12Hour(time24) {
         if (!time24 || typeof time24 !== 'string') return '--:--';
@@ -10317,7 +10342,13 @@ function initializePrayerTimeTab() {
     if (document.getElementById('prayerTimeContent')?.classList.contains('active')) {
         initializePrayerTimeTab();
     }
+// ====================================================================
+// END: নামাজের সময়সূচি
+// ====================================================================
 
+// ====================================================================
+// START: NEW FILE UPLOAD FOR TEXT ASSISTANT SCRIPT
+// ====================================================================
         // জেমিনিকে জিজ্ঞাসা করার ফাংশন আপডেট করুন
         async function handleAskGemini() {
             const assistantInput = document.getElementById('assistantInput');
@@ -10408,9 +10439,9 @@ function initializePrayerTimeTab() {
                 if (askGeminiBtn) askGeminiBtn.disabled = false;
             }
         }
-        // ====================================================================
-        // END: NEW FILE UPLOAD SCRIPT
-        // ====================================================================
+// ====================================================================
+// END: NEW FILE UPLOAD FOR TEXT ASSISTANT SCRIPT
+// ====================================================================
 
 // ====================================================================
 // START: UNIT CONVERTER (MEASUREMENT) SCRIPT (CORRECTED)
@@ -10668,12 +10699,13 @@ initializeTimeConverter();
 // END: Time Converter Script
 
 
-
-
 // ====================================================================
 // END: UNIT CONVERTER (MEASUREMENT) SCRIPT (CORRECTED)
 // ====================================================================
 
+// ====================================================================
+// START: CUSTOM POPUP MESSAGE বার্তা দেখানোর স্ক্রিপ্ট
+// ====================================================================
 		// কাস্টম অ্যালার্ট বক্স বাস্তবায়ন New
 		function showCustomAlert(message) {
 		const alertBox = document.createElement('div');
@@ -10698,7 +10730,13 @@ initializeTimeConverter();
         setTimeout(() => alertBox.remove(), 100);
 		}, 2000);
 	}
+// ====================================================================
+// END: CUSTOM POPUP MESSAGE বার্তা দেখানোর স্ক্রিপ্ট
+// ====================================================================
 
+// ====================================================================
+// START: UNDO REDO FOR FONT CONVERTER
+// ====================================================================
         // টেক্সটএরিয়াগুলির জন্য আনডু/রিডু ইতিহাস
         let historyLeft = [];
         let historyIndexLeft = -1;
@@ -10854,12 +10892,15 @@ initializeTimeConverter();
             if (redoBtn) redoBtn.disabled = historyIndex >= history.length - 1;
         }
 
+// ====================================================================
+// END: UNDO REDO FOR FONT CONVERTER
+// ====================================================================
 
-        document.addEventListener('DOMContentLoaded', async () => {
-		
-		// ====================================================================
+// ====================================================================
 // START: Load Converter Data from IndexedDB on page load
 // ====================================================================
+document.addEventListener('DOMContentLoaded', async () => {
+		
 try {
     // Clear expired items on startup
     await clearExpiredItems();
@@ -10912,11 +10953,14 @@ try {
 // END: Load Converter Data from IndexedDB
 // ====================================================================
 
-			
+// ====================================================================
+// END: CONST SECTION FOR TAB
+// ====================================================================	
+// --- ট্যাব পরিবর্তন লজিক ---
+//এখানে নতুন ট্যাবের const দুটি যুক্ত করতে হয় বা বসাতে হয় ।
+
             console.log('DOMContentLoaded ইভেন্ট চালু হয়েছে। স্ক্রিপ্ট চলছে।');
             try {
-                // --- ট্যাব পরিবর্তন লজিক ---
-//এখানে নতুন ট্যাবের const দুটি যুক্ত করতে হয় বা বসাতে হয় ।
                 const basicCalcTab = document.getElementById('basicCalcTab');
                 const ageCalcTab = document.getElementById('ageCalcTab');
                 const dateCalcTab = document.getElementById('dateCalcTab');
@@ -10977,7 +11021,13 @@ try {
 				const colorPickerTab = document.getElementById('colorPickerTab');
 				const colorPickerContent = document.getElementById('colorPickerContent');
 				const historyTab = document.getElementById('historyTab');
+// ====================================================================
+// END: CONST SECTION FOR TAB
+// ====================================================================
 
+// ====================================================================
+// START: PASTE PRESET BUTTON SCRIPT PART
+// ====================================================================
 
 //pest button code start
 // প্রিসেট ড্রপডাউন এবং মোডাল এর উপাদানগুলো সিলেক্ট করুন
@@ -11151,8 +11201,13 @@ window.addEventListener('click', () => {
 });
 
 //paste button code end
+// ====================================================================
+// END: PASTE PRESET BUTTON SCRIPT PART
+// ====================================================================
 
-
+// ====================================================================
+// START: API KEY SCRIPT PART
+// ====================================================================
                 // API কী মডেল উপাদান
                 const apiKeyModal = document.getElementById('apiKeyModal');
                 const apiKeyInput = document.getElementById('apiKeyInput');
@@ -11185,6 +11240,10 @@ function updateApiKeyButton() {
 
                 // লোডে কল করুন
                 updateApiKeyButton();
+// ====================================================================
+// END: API KEY SCRIPT PART
+// ====================================================================
+
 // ====================================================================
 // START: DROPDOWN MENU LOGIC
 // ====================================================================
@@ -11230,8 +11289,12 @@ window.addEventListener('click', (e) => {
 // END: DROPDOWN MENU LOGIC
 // ====================================================================
 
+// ====================================================================
+// END: TAB AND CONTENT SECTION FOR TAB
+// ====================================================================
+// সমস্ত ট্যাব এর নাম এবং ট্যাব এর কন্টেন্ট নাম একানে বসাতে হয়, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয় বা বসাতে হয় ।
+
 function showTab(tabId) {
-    // সমস্ত ট্যাব এর নাম এবং ট্যাব এর কন্টেন্ট নাম একানে বসাতে হয়, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয় বা বসাতে হয় ।
     const tabs = [
         basicCalcTab,colorPickerTab, dashboardTab,imageResizerTab,moreSettingsTab,historyTab,
 		ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,
@@ -11261,8 +11324,15 @@ function showTab(tabId) {
 
     // নির্বাচিত ট্যাব সক্রিয় করুন এবং এর কন্টেন্ট দেখান
     let activeTab, activeContent;
-	
+// ====================================================================
+// END: TAB AND CONTENT SECTION FOR TAB
+// ====================================================================
+
+// ====================================================================
+// START: CASE AND BREAK SECTION FOR TAB
+// ====================================================================	
 //নিচের অংশে নতুন ট্যাবের কেস যুক্ত করতে হয় বা বসাতে হয় ।
+
     switch (tabId) {
         case 'basic':
             activeTab = basicCalcTab;
@@ -11433,7 +11503,13 @@ function showTab(tabId) {
 
 			console.log(`ট্যাব পরিবর্তন করা হয়েছে: ${tabId}`);
 	}
+// ====================================================================
+// END: CASE AND BREAK SECTION FOR TAB
+// ====================================================================
 
+// ====================================================================
+// START: IF SECTION FOR TAB
+// ====================================================================
 //নিচের এই সেকশনে নতুন ট্যাবের ইফ লাইনটি যুক্ত করতে হয় বা বসাতে হয় ।
 
                 if (basicCalcTab) basicCalcTab.addEventListener('click', () => showTab('basic'));
@@ -11476,7 +11552,13 @@ function showTab(tabId) {
 				if (dashboardTab) dashboardTab.addEventListener('click', () => showTab('dashboard'));
 				if (moreSettingsTab) moreSettingsTab.addEventListener('click', () => showTab('moreSettings'));
 				if (historyTab) historyTab.addEventListener('click', () => showTab('history'));
+// ====================================================================
+// END: IF SECTION FOR TAB
+// ====================================================================
 
+// ====================================================================
+// START: API KEY SCRIPT
+// ====================================================================
                 // API কী সেটিং বোতাম এবং মডেল লজিক
                 if (setApiKeyBtn) {
                     setApiKeyBtn.addEventListener('click', () => {
@@ -11527,8 +11609,13 @@ function showTab(tabId) {
                         if (apiKeyModal) apiKeyModal.classList.add('hidden');
                     });
                 }
+// ====================================================================
+// END: API KEY SCRIPT
+// ====================================================================
 
-
+// ====================================================================
+// START: ক্যালকুলেটর লজিক
+// ====================================================================
                 // --- মৌলিক ক্যালকুলেটর ক্লাস এবং লজিক ---
                 class Calculator {
                     constructor(previousOperandTextElement, currentOperandTextElement) {
@@ -11820,8 +11907,13 @@ function showTab(tabId) {
                 } else {
                     console.error('মৌলিক ব্যাখ্যা উপাদান পাওয়া যায়নি।');
                 }
+// ====================================================================
+// END: ক্যালকুলেটর লজিক
+// ====================================================================
 
-
+// ====================================================================
+// START:  বয়স ক্যালকুলেটর লজিক
+// ====================================================================
                 // --- বয়স ক্যালকুলেটর লজিক ---
                 const birthDateInput = document.getElementById('birthDate');
                 const currentDateInput = document.getElementById('currentDate');
@@ -11946,8 +12038,14 @@ function showTab(tabId) {
                         </div>
                     `;
                 }
+// ====================================================================
+// END:  বয়স ক্যালকুলেটর লজিক
+// ====================================================================
 
-                // --- তারিখ ও সময় ক্যালকুলেটর লজিক ---
+// ====================================================================
+// START:  তারিখ ও সময় ক্যালকুলেটর লজিক
+// ====================================================================
+                
                 const showTodayDatesBtn = document.getElementById('showTodayDatesBtn');
                 const showTomorrowDatesBtn = document.getElementById('showTomorrowDatesBtn');
 
@@ -12315,9 +12413,14 @@ function showTab(tabId) {
             convertedEnglishDayDisplay.innerHTML = `<strong>বার:</strong> ${dayOfWeek}`;
         });
     }
+// ====================================================================
+// END:  তারিখ ও সময় ক্যালকুলেটর লজিক
+// ====================================================================
 
-
-                // --- বৈজ্ঞানিক ক্যালকুলেটর লজিক ---
+// ====================================================================
+// START:  বৈজ্ঞানিক ক্যালকুলেটর লজিক
+// ====================================================================
+                
                 const scientificExpressionInput = document.getElementById('scientificExpressionInput');
                 const scientificButtons = document.querySelectorAll('.scientific-buttons-grid button');
                 const scientificResultDisplay = document.getElementById('scientificResult');
@@ -12502,9 +12605,13 @@ function showTab(tabId) {
                 } else {
                     console.error('বৈজ্ঞানিক ব্যাখ্যা উপাদান পাওয়া যায়নি।');
                 }
+// ====================================================================
+// END:  বৈজ্ঞানিক ক্যালকুলেটর লজিক
+// ====================================================================
 
-
-
+// ====================================================================
+// START: AUTO REPLACE FOR FONT CONVERTER য় ড় ঢ়
+// ====================================================================
                 if (textAreaLeft) {
                     addState('textAreaLeft');
                     textAreaLeft.addEventListener('input', () => {
@@ -12533,8 +12640,13 @@ function showTab(tabId) {
                     addState('textAreaRight');
                     textAreaRight.addEventListener('input', () => addState('textAreaRight'));
                 }
+// ====================================================================
+// END: AUTO REPLACE FOR FONT CONVERTER য় ড় ঢ়
+// ====================================================================
 
-                // --- নতুন: বাংলা বানান সংশোধন লজিক (অর্থসহ উন্নত) ---
+// ====================================================================
+// START: BANAN SHONGSHODHON বাংলা বানান সংশোধন লজিক (অর্থসহ উন্নত)
+// ==================================================================== 
                 const checkSpellingBtn = document.getElementById('checkSpellingBtn');
                 const spellCheckInput = document.getElementById('spellCheckInput');
                 const spellCheckResult = document.getElementById('spellCheckResult');
@@ -12617,8 +12729,13 @@ function showTab(tabId) {
                         showCustomAlert('বানান সংশোধনের লেখা পরিষ্কার করা হয়েছে!');
                     });
                 }
+// ====================================================================
+// END: BANAN SHONGSHODHON
+// ====================================================================
 
-                // --- নতুন: লেখা সাজানো লজিক ---
+// ====================================================================
+// START: LEKHA SHAJANO SCRIPT
+// ====================================================================
                 const beautifyTextBtn = document.getElementById('beautifyTextBtn');
                 const beautifyInput = document.getElementById('beautifyInput');
                 const beautifyResult = document.getElementById('beautifyResult');
@@ -12713,8 +12830,13 @@ function showTab(tabId) {
                         showCustomAlert('লেখা সাজানোর ইনপুট পরিষ্কার করা হয়েছে!');
                     });
                 }
+// ====================================================================
+// END: LEKHA SHAJANO SCRIPT
+// ====================================================================
 
-                // --- নতুন: শব্দের অর্থ খোঁজার লজিক ---
+// ====================================================================
+// START: WORD MEANING SCRIPT
+// ====================================================================
                 const findMeaningBtn = document.getElementById('findMeaningBtn');
                 const wordMeaningInput = document.getElementById('wordMeaningInput');
                 const wordMeaningResult = document.getElementById('wordMeaningResult');
@@ -12798,6 +12920,9 @@ function showTab(tabId) {
                         showCustomAlert('শব্দের অর্থ পরিষ্কার করা হয়েছে!');
                     });
                 }
+// ====================================================================
+// END: WORD MEANING SCRIPT
+// ====================================================================
 
 // ====================================================================
 // START: GEMINI API TEXT-TO-SPEECH (TTS) SCRIPT
@@ -13000,7 +13125,6 @@ if (downloadTtsBtn) {
 
 // ====================================================================
 // START: GEMINI API BASED SPEECH-TO-TEXT (STT) SCRIPT
-// This entire block replaces the old browser-based SpeechRecognition script.
 // ====================================================================
 const sttOutput = document.getElementById('sttOutput');
 const sttStatus = document.getElementById('sttStatus');
@@ -13343,6 +13467,9 @@ if (clearTranslatorTextBtn) {
 
 // স্ক্রিপ্ট লোড হওয়ার সময় ড্রপডাউনটি পূরণ করুন
 populateLanguageDropdown();
+// ====================================================================
+// END: TRANSLATOR SCRIPT (GEMINI API)
+// ====================================================================
 
 // ====================================================================
 // START: IMAGE TO TEXT (OCR) SCRIPT (Drag & Drop Updated)
@@ -14493,6 +14620,9 @@ if (importantLinksTabForCounter) {
 // END: TRANSLATOR SCRIPT
 // ====================================================================
 
+// ====================================================================
+// START: TEXT ASSISTANT PART
+// ====================================================================
                 // --- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) লজিক ---
                 const assistantInput = document.getElementById('assistantInput');
                 const askGeminiBtn = document.getElementById('askGeminiBtn');
@@ -14525,12 +14655,13 @@ if (importantLinksTabForCounter) {
                         }
                     });
                 }
+// ====================================================================
+// END: TEXT ASSISTANT PART
+// ====================================================================
 
-                // --- ফন্ট কনভার্টার লিসেনার যোগ করুন ---
-				// ====================================================================
+// --- ফন্ট কনভার্টার লিসেনার ---
 // ====================================================================
 // START: PASTE FROM CLIPBOARD FUNCTIONALITY (বাগ ফিক্সড)
-// এই ফাংশনটি আগেরটির জায়গায় সম্পূর্ণরূপে প্রতিস্থাপন করুন।
 // ====================================================================
 async function pasteFromClipboard(textareaId) {
     const textarea = document.getElementById(textareaId);
@@ -14644,7 +14775,9 @@ async function pasteFromClipboard(textareaId) {
 // ====================================================================
 // END: PASTE FROM CLIPBOARD FUNCTIONALITY
 // ====================================================================
-
+// ====================================================================
+// START: ANSI FIX AND PEST FOR LIVE CONVERT
+// ====================================================================
 			
                 const fixAnsiButton = document.getElementById('fixAnsiButton');
                 if (fixAnsiButton) {
@@ -14662,7 +14795,9 @@ async function pasteFromClipboard(textareaId) {
 // --- ফন্ট কনভার্টার লিসেনার যোগ করুন ---
 const pasteButtonLeft = document.getElementById('pasteButtonLeft');
 const pasteButtonRight = document.getElementById('pasteButtonRight');
-
+// ====================================================================
+// END: ANSI FIX AND PASTE FOR LIVE CONVERT
+// ====================================================================
 // ====================================================================
 // START: LIVE CONVERT TOGGLE FUNCTIONALITY (রিফ্রেশ-সহ আপডেট করা হয়েছে)
 // ====================================================================
@@ -14713,6 +14848,10 @@ if (liveConvertToggle && textAreaLeftForLive && textAreaRightForLive) {
 // ====================================================================
 // END: LIVE CONVERT TOGGLE FUNCTIONALITY
 // ====================================================================
+
+// ====================================================================
+// START: PASTE BUTTON SCRIPT FOR FONT CONVERTER
+// ====================================================================
 if (pasteButtonLeft) {
     pasteButtonLeft.addEventListener('click', () => pasteFromClipboard('textAreaLeft'));
 }
@@ -14733,7 +14872,10 @@ if (pasteButtonRight) {
             }
 			
         });
-		
+// ====================================================================
+// END: PASTE BUTTON FOR FONT CONVERTER
+// ====================================================================
+
 // ====================================================================
 // START: COMBINED & UPDATED WEATHER SCRIPT
 // ====================================================================
@@ -14946,7 +15088,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 
 // ====================================================================
-// START: RAPID UNDO/REDO ON HOLD SCRIPT (নতুন যুক্ত করা হয়েছে)
+// START: RAPID UNDO/REDO ON HOLD SCRIPT FOR FONT CONVERTER (নতুন যুক্ত করা হয়েছে)
 // ====================================================================
 
 /**
@@ -15016,7 +15158,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ====================================================================
-// END: RAPID UNDO/REDO ON HOLD SCRIPT
+// END: RAPID UNDO/REDO ON HOLD SCRIPT FOR FONT CONVERTE
 // ====================================================================
 
 // ====================================================================
@@ -15148,7 +15290,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ====================================================================
 // START: QR CODE GENERATOR SCRIPT (Updated with Live Generation & Unicode Fix)
-// এই ব্লকের কোডটি আপনার HTML ফাইলের পুরনো QR কোড স্ক্রিপ্ট ব্লকটির জায়গায় সম্পূর্ণরূপে প্রতিস্থাপন করুন।
 // ====================================================================
 document.addEventListener('DOMContentLoaded', () => {
     const qrContent = document.getElementById('qrCodeContent');
