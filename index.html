@@ -6270,10 +6270,9 @@ body.sidebar-open #sidebarOverlay {
                 </div>
 
                 <!-- ইংরেজি থেকে বাংলা তারিখ রূপান্তর বৈশিষ্ট্য -->
-				<h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200 p-5">ইংরেজি থেকে বাংলা তারিখ বের করুন</h3>
-                <div class="input-group mt-0">
+                <div class="input-group mt-6">
                     <label for="englishDateInput" class="text-gray-700 font-semibold text-left block mb-2">ইংরেজি তারিখ লিখুন:</label>
-                    <input type="date" id="englishDateInput" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full p-1 border border-gray-300">
+                    <input type="date" id="englishDateInput" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full p-2 border border-gray-300">
                 </div>
                 <button id="convertEnglishToBengaliBtn" class="show-date-button rounded-xl mt-4">বাংলা তারিখে রূপান্তর করুন</button>
                 <div id="bengaliConvertedDateDisplay" class="result-area mt-4">
@@ -6281,42 +6280,8 @@ body.sidebar-open #sidebarOverlay {
                     <p id="convertedBengaliDate"></p>
                     <p id="convertedDayDisplay"></p> <!-- রূপান্তরিত দিনের জন্য নতুন সারি -->
                 </div>
-<!-- বাংলা থেকে ইংরেজি তারিখ রূপান্তর বৈশিষ্ট্য (নতুন) -->
-<h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200 p-5">বাংলা থেকে ইংরেজি তারিখ তারিখ বের করুন</h3>
-    <div class="input-group mt-4">
-        <label for="bengaliDayInput" class="text-gray-700 font-semibold text-left block mb-2">বাংলা তারিখ (দিন) লিখুন:</label>
-        <input type="number" id="bengaliDayInput" placeholder="যেমন: ১" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full p-1 border border-gray-300">
-    </div>
-    <div class="input-group mt-4">
-        <label for="bengaliMonthInput" class="text-gray-700 font-semibold text-left block mb-2">বাংলা মাস নির্বাচন করুন:</label>
-        <select id="bengaliMonthInput" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full p-2 border border-gray-300 bg-white dark:bg-gray-700">
-            <option value="0">বৈশাখ</option>
-            <option value="1">জ্যৈষ্ঠ</option>
-            <option value="2">আষাঢ়</option>
-            <option value="3">শ্রাবণ</option>
-            <option value="4">ভাদ্র</option>
-            <option value="5">আশ্বিন</option>
-            <option value="6">কার্তিক</option>
-            <option value="7">অগ্রহায়ণ</option>
-            <option value="8">পৌষ</option>
-            <option value="9">মাঘ</option>
-            <option value="10">ফাল্গুন</option>
-            <option value="11">চৈত্র</option>
-        </select>
-    </div>
-    <div class="input-group mt-6">
-        <label for="bengaliYearInput" class="text-gray-700 font-semibold text-left block mb-2">বাংলা সন লিখুন:</label>
-        <input type="number" id="bengaliYearInput" placeholder="যেমন: ১৪৩১" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full p-2 border border-gray-300">
-    </div>
-    <button id="convertBengaliToEnglishBtn" class="show-date-button rounded-xl mt-4">ইংরেজি তারিখে রূপান্তর করুন</button>
-    <div id="englishConvertedDateDisplay" class="result-area mt-4">
-        <p class="result-section-title">রূপান্তরিত ইংরেজি তারিখ</p>
-        <p id="convertedEnglishDate"></p>
-        <p id="convertedEnglishDayDisplay"></p>
-    </div>
                 <!-- নতুন বোতাম এবং লিংক -->
                 <a href="https://ajkertarikh.com" target="_blank" class="show-date-button rounded-xl mt-4 block mx-auto text-center">প্রয়োজনে এখানে তারিখ দেখুন</a>
-				<a href="https://www.bangladatetoday.com/" target="_blank" class="show-date-button rounded-xl mt-4 block mx-auto text-center">অথবা এখানে তারিখ দেখুন</a>
             </div>
         </div>
 
@@ -12231,91 +12196,7 @@ function showTab(tabId) {
                     });
                 }
 
-// --- নতুন: বাংলা থেকে ইংরেজি তারিখ রূপান্তর লজিক ---
-    const bengaliYearInput = document.getElementById('bengaliYearInput');
-    const bengaliMonthInput = document.getElementById('bengaliMonthInput');
-    const bengaliDayInput = document.getElementById('bengaliDayInput');
-    const convertBengaliToEnglishBtn = document.getElementById('convertBengaliToEnglishBtn');
-    const convertedEnglishDate = document.getElementById('convertedEnglishDate');
-    const convertedEnglishDayDisplay = document.getElementById('convertedEnglishDayDisplay');
 
-    if (convertBengaliToEnglishBtn) {
-        
-        // হেল্পার ফাংশন (আপনার ফাইলে এই ফাংশনটি অন্যান্য জায়গায় থাকতে পারে,
-        // কিন্তু এখানে এটি আলাদাভাবে যুক্ত করা হলো যাতে কোডটি সঠিকভাবে কাজ করে)
-        const toBengaliNumber = (num) => {
-            const numbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-            return num.toString().split('').map(digit => {
-                if (!isNaN(parseInt(digit))) {
-                    return numbers[parseInt(digit)];
-                }
-                return digit;
-            }).join('');
-        };
-
-        convertBengaliToEnglishBtn.addEventListener('click', () => {
-            console.log('বাংলা থেকে ইংরেজি রূপান্তর বোতামে ক্লিক করা হয়েছে।');
-            
-            const bengaliYear = parseInt(bengaliYearInput.value, 10);
-            const bengaliMonthIndex = parseInt(bengaliMonthInput.value, 10);
-            const bengaliDay = parseInt(bengaliDayInput.value, 10);
-
-            if (isNaN(bengaliYear) || isNaN(bengaliMonthIndex) || isNaN(bengaliDay) || bengaliDay < 1) {
-                convertedEnglishDate.innerText = 'অনুগ্রহ করে সঠিক বাংলা সন, মাস ও দিন লিখুন।';
-                convertedEnglishDayDisplay.innerText = '';
-                return;
-            }
-
-            // বাংলা মাসের দিন সংখ্যা (বাংলাদেশ স্ট্যান্ডার্ড)
-            const bengaliMonthLengths = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30, 30];
-
-            // অধিবর্ষ পরীক্ষা
-            const gregorianYearForLeapCheck = bengaliYear + 593;
-            const isGregorianLeapYear = (gregorianYearForLeapCheck % 4 === 0 && gregorianYearForLeapCheck % 100 !== 0) || gregorianYearForLeapCheck % 400 === 0;
-
-            if (isGregorianLeapYear) {
-                bengaliMonthLengths[10] = 31; // অধিবর্ষে ফাল্গুন 31 দিন
-            }
-
-            // তারিখটি বৈধ কিনা তা পরীক্ষা করুন
-            if (bengaliDay > bengaliMonthLengths[bengaliMonthIndex]) {
-                const monthName = bengaliMonthInput.options[bengaliMonthIndex].text;
-                convertedEnglishDate.innerText = `অবৈধ তারিখ। ${monthName} মাস ${toBengaliNumber(bengaliMonthLengths[bengaliMonthIndex])} দিনের বেশি হতে পারে না।`;
-                convertedEnglishDayDisplay.innerText = '';
-                return;
-            }
-
-            // গণনা শুরু
-            // বাংলা বছরের শুরু (পহেলা বৈশাখ) গ্রেগরিয়ান তারিখে
-            const startOfBengaliYearGregorian = new Date(gregorianYearForLeapCheck, 3, 14); // এপ্রিল 14
-
-            let daysPassed = 0;
-            // নির্বাচিত মাসের আগ পর্যন্ত দিন যোগ করুন
-            for (let i = 0; i < bengaliMonthIndex; i++) {
-                daysPassed += bengaliMonthLengths[i];
-            }
-            // বর্তমান মাসের দিন যোগ করুন ( 0 অথবা 1 বিয়োগ করে অ্যাডযাস্ট করতে হবে, তাহলে সঠিক তারিখ দেখাবে)
-            daysPassed += (bengaliDay - 0);
-
-            // চূড়ান্ত গ্রেগরিয়ান তারিখ গণনা করুন
-            const targetGregorianDate = new Date(startOfBengaliYearGregorian.getTime());
-            targetGregorianDate.setDate(targetGregorianDate.getDate() + daysPassed);
-
-            // ফলাফল প্রদর্শন করুন
-            const gregorianDateFormatted = targetGregorianDate.toLocaleDateString('bn-BD', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-            const dayOfWeek = targetGregorianDate.toLocaleDateString('bn-BD', {
-                weekday: 'long'
-            });
-
-            convertedEnglishDate.innerHTML = `<strong>ইংরেজি তারিখ:</strong> ${gregorianDateFormatted}`;
-            convertedEnglishDayDisplay.innerHTML = `<strong>বার:</strong> ${dayOfWeek}`;
-        });
-    }
-	
                 // --- বৈজ্ঞানিক ক্যালকুলেটর লজিক ---
                 const scientificExpressionInput = document.getElementById('scientificExpressionInput');
                 const scientificButtons = document.querySelectorAll('.scientific-buttons-grid button');
