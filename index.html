@@ -11,7 +11,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.4.13/dist/easy.qrcode.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
    <!-- Chart.js CDN (গ্রাফের জন্য নতুন যুক্ত করা হয়েছে) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Cropper.js CDN (নতুন যুক্ত করা হয়েছে) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
@@ -6957,6 +6957,13 @@ body.sidebar-open #sidebarOverlay {
             <div class="text-assistant-content">
                 <div class="chat-header">
                     <h3>জেমিনির সাথে চ্যাট করুন</h3>
+                    <!-- নতুন: মডেল সিলেকশন ড্রপডাউন -->
+                    <select id="modelSelection" class="p-1 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-blue-500 text-sm" title="জেমিনি মডেল পরিবর্তন করুন">
+                        <option value="gemini-2.5-flash-preview-09-2025">Flash 2.5 Preview</option>
+                        <option value="gemini-2.0-flash">Flash 2.0</option>
+                        <option value="gemini-1.5-pro-latest">Pro 1.5</option>
+                        <option value="gemini-1.0-pro">Pro 1.0</option>
+                    </select>
                     <button id="clearChatBtn" class="clear-chat-button">চ্যাট মুছুন</button>
                 </div>
                 <div id="chatWindow" class="chat-window">
@@ -6978,6 +6985,7 @@ body.sidebar-open #sidebarOverlay {
                 </div>
             </div>
         </div>
+        <!-- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগ শেষ -->
 
 <!-- সকল ফিচার বিভাগ -->
 <div id="allFeaturesContent" class="calculator-content">
@@ -10346,102 +10354,108 @@ function initializePrayerTimeTab() {
 // END: নামাজের সময়সূচি
 // ====================================================================
 
-// ====================================================================
-// START: NEW FILE UPLOAD FOR TEXT ASSISTANT SCRIPT
-// ====================================================================
-        // জেমিনিকে জিজ্ঞাসা করার ফাংশন আপডেট করুন
-        async function handleAskGemini() {
-            const assistantInput = document.getElementById('assistantInput');
-            const assistantLoading = document.getElementById('assistantLoading');
-            const askGeminiBtn = document.getElementById('askGeminiBtn');
-            const chatWindow = document.getElementById('chatWindow');
-            let chatHistory = window.chatHistory || [];
+   // ====================================================================
+    // START: NEW FILE UPLOAD SCRIPT FOR TEXT ASSISTANT
+    // ====================================================================
 
-            const promptText = assistantInput.value.trim();
-            if (!promptText && !uploadedFile) return;
+    // জেমিনিকে জিজ্ঞাসা করার ফাংশন আপডেট করুন
+    async function handleAskGemini() {
+        const assistantInput = document.getElementById('assistantInput');
+        const assistantLoading = document.getElementById('assistantLoading');
+        const askGeminiBtn = document.getElementById('askGeminiBtn');
+        const chatWindow = document.getElementById('chatWindow');
+        const modelSelection = document.getElementById('modelSelection'); // নতুন: ড্রপডাউন এলিমেন্ট
+        let chatHistory = window.chatHistory || [];
 
-            // ব্যবহারকারীর বার্তা প্রদর্শন করুন
-            addMessageToChat(promptText, 'user', uploadedFile);
-            assistantInput.value = '';
+        const promptText = assistantInput.value.trim();
+        if (!promptText && !uploadedFile) return;
 
-            let userParts = [];
-            if (promptText) {
-                userParts.push({
-                    text: promptText
-                });
-            }
-            if (uploadedFile) {
-                userParts.push({
-                    inlineData: {
-                        mimeType: uploadedFile.type,
-                        data: uploadedFile.base64
-                    }
-                });
-            }
+        // ব্যবহারকারীর বার্তা প্রদর্শন করুন
+        addMessageToChat(promptText, 'user', uploadedFile);
+        assistantInput.value = '';
 
-            chatHistory.push({
-                role: "user",
-                parts: userParts
+        let userParts = [];
+        if (promptText) {
+            userParts.push({
+                text: promptText
             });
-            window.chatHistory = chatHistory;
-
-            // ফাইল পাঠানোর পর প্রিভিউ সরিয়ে ফেলুন
-            removeFile();
-
-            if (assistantLoading) assistantLoading.style.display = 'block';
-            if (askGeminiBtn) askGeminiBtn.disabled = true;
-
-            try {
-                const apiKey = localStorage.getItem('geminiApiKey');
-                if (!apiKey) {
-                    addMessageToChat('জেমিনি API কী সেট করা হয়নি। অনুগ্রহ করে "API কী সেট করুন" বাটনে ক্লিক করে কী সেট করুন।', 'gemini-error');
-                    return;
-                }
-
-                const payload = {
-                    contents: chatHistory
-                };
-                const model = "gemini-2.5-flash-preview-05-20";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-                let geminiText;
-
-                if (result.candidates && result.candidates[0]?.content?.parts?.[0]?.text) {
-                    geminiText = result.candidates[0].content.parts[0].text;
-                    chatHistory.push({
-                        role: "model",
-                        parts: [{
-                            text: geminiText
-                        }]
-                    });
-                    window.chatHistory = chatHistory;
-                } else {
-                    geminiText = 'দুঃখিত, আমি কোনো উত্তর খুঁজে পাইনি। অনুগ্রহ করে আবার চেষ্টা করুন।';
-                    console.error('API Response Error:', result);
-                }
-                addMessageToChat(geminiText, 'gemini');
-
-            } catch (error) {
-                const errorMessage = 'একটি ত্রুটি ঘটেছে: ' + error.message;
-                addMessageToChat(errorMessage, 'gemini-error');
-                console.error('API Call Error:', error);
-            } finally {
-                if (assistantLoading) assistantLoading.style.display = 'none';
-                if (askGeminiBtn) askGeminiBtn.disabled = false;
-            }
         }
-// ====================================================================
-// END: NEW FILE UPLOAD FOR TEXT ASSISTANT SCRIPT
-// ====================================================================
+        if (uploadedFile) {
+            userParts.push({
+                inlineData: {
+                    mimeType: uploadedFile.type,
+                    data: uploadedFile.base64
+                }
+            });
+        }
+
+        chatHistory.push({
+            role: "user",
+            parts: userParts
+        });
+        window.chatHistory = chatHistory;
+
+        // ফাইল পাঠানোর পর প্রিভিউ সরিয়ে ফেলুন
+        removeFile();
+
+        if (assistantLoading) assistantLoading.style.display = 'block';
+        if (askGeminiBtn) askGeminiBtn.disabled = true;
+
+        try {
+            const apiKey = localStorage.getItem('geminiApiKey');
+            if (!apiKey) {
+                addMessageToChat('জেমিনি API কী সেট করা হয়নি। অনুগ্রহ করে "API কী সেট করুন" বাটনে ক্লিক করে কী সেট করুন।', 'gemini-error');
+                return;
+            }
+
+            const payload = {
+                contents: chatHistory
+            };
+
+            // --- পরিবর্তিত ---
+            // ড্রপডাউন থেকে সিলেক্ট করা মডেল ব্যবহার করুন
+            const model = modelSelection ? modelSelection.value : "gemini-2.5-flash-preview-09-2025"; // আপডেটেড ফলব্যাক
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+            // --- পরিবর্তন শেষ ---
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+            let geminiText;
+
+            if (result.candidates && result.candidates[0]?.content?.parts?.[0]?.text) {
+                geminiText = result.candidates[0].content.parts[0].text;
+                chatHistory.push({
+                    role: "model",
+                    parts: [{
+                        text: geminiText
+                    }]
+                });
+                window.chatHistory = chatHistory;
+            } else {
+                geminiText = 'দুঃখিত, আমি কোনো উত্তর খুঁজে পাইনি। অনুগ্রহ করে আবার চেষ্টা করুন।';
+                console.error('API Response Error:', result);
+            }
+            addMessageToChat(geminiText, 'gemini');
+
+        } catch (error) {
+            const errorMessage = 'একটি ত্রুটি ঘটেছে: ' + error.message;
+            addMessageToChat(errorMessage, 'gemini-error');
+            console.error('API Call Error:', error);
+        } finally {
+            if (assistantLoading) assistantLoading.style.display = 'none';
+            if (askGeminiBtn) askGeminiBtn.disabled = false;
+        }
+    }
+    // ====================================================================
+    // END: NEW FILE UPLOAD SCRIPT FOR TEXT ASSISTANT SCRIPT
+    // ====================================================================
 
 // ====================================================================
 // START: UNIT CONVERTER (MEASUREMENT) SCRIPT (CORRECTED)
@@ -12692,7 +12706,7 @@ function showTab(tabId) {
                             const payload = {
                                 contents: chatHistory
                             };
-                            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
                             const response = await fetch(apiUrl, {
                                 method: 'POST',
@@ -12773,7 +12787,7 @@ function showTab(tabId) {
                             const payload = {
                                 contents: chatHistory
                             };
-                            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
                             const response = await fetch(apiUrl, {
                                 method: 'POST',
@@ -12884,7 +12898,7 @@ function showTab(tabId) {
                         const payload = {
                             contents: chatHistory
                         };
-                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
                         const response = await fetch(apiUrl, {
                             method: 'POST',
@@ -13190,8 +13204,8 @@ async function transcribeAudioWithGemini(audioFile) {
                 }]
             };
 
-            const model = "gemini-2.5-flash-preview-05-20"; // This model supports multimodal input
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+            const model = "gemini-2.5-flash-preview-09-2025"; // This model supports multimodal input
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -13410,8 +13424,8 @@ async function handleTranslate() {
                 parts: [{ text: prompt }]
             }]
         };
-        const model = "gemini-2.5-flash-preview-05-20";
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const model = "gemini-2.5-flash-preview-09-2025";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -13614,8 +13628,8 @@ if (extractTextBtn) {
                 }]
             };
 
-            const model = "gemini-2.5-flash-preview-05-20";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+            const model = "gemini-2.5-flash-preview-09-2025";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -16866,7 +16880,7 @@ function initializeHolidayListTab() {
             const payload = {
                 contents: [{ parts: [{ text: prompt }] }]
             };
-            const model = "gemini-2.5-flash-preview-05-20";
+            const model = "gemini-2.5-flash-preview-09-2025";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
@@ -17096,8 +17110,8 @@ async function fetchQuizDataFromGemini(category, difficulty, count) {
         `;
         
         const payload = { contents: [{ parts: [{ text: prompt }] }] };
-        const model = "gemini-2.5-flash-preview-05-20";
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const model = "gemini-2.5-flash-preview-09-2025";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -19207,8 +19221,8 @@ async function fetchDailyHistory() {
         `;
 
         const payload = { contents: [{ parts: [{ text: prompt }] }] };
-        const model = "gemini-2.5-flash-preview-05-20";
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const model = "gemini-2.5-flash-preview-09-2025";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -19276,8 +19290,8 @@ async function fetchTomorrowHistory() {
         `;
 
         const payload = { contents: [{ parts: [{ text: prompt }] }] };
-        const model = "gemini-2.5-flash-preview-05-20";
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const model = "gemini-2.5-flash-preview-09-2025";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
             method: 'POST',
