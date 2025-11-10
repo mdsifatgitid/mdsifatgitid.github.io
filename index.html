@@ -1429,7 +1429,50 @@
             border-radius: 8px;
             margin-top: 8px;
         }
-        
+/* Message copy button styles START */
+    .message {
+        position: relative; /* This is needed for the absolute positioning of the button */
+        /* আপনার .message ক্লাসের অন্যান্য স্টাইলগুলো এখানে থাকবে... */
+        /* যেমন: padding, border-radius, max-width, ইত্যাদি। */
+    }
+
+    .copy-message-btn {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        background-color: #e2e8f0; /* light gray */
+        color: #475569; /* dark gray text */
+        border: none;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out, background-color 0.2s;
+        z-index: 5;
+    }
+
+    .dark .copy-message-btn {
+        background-color: #4a5568; /* dark mode gray */
+        color: #e2e8f0; /* light text */
+    }
+
+    .message:hover .copy-message-btn {
+        opacity: 1; /* Show on hover */
+    }
+
+    .copy-message-btn:hover {
+        background-color: #cbd5e0; /* light gray hover */
+    }
+
+    .dark .copy-message-btn:hover {
+        background-color: #718096; /* dark mode gray hover */
+    }
+    /* Message copy button styles END */
+	
         /* নতুন: বাংলা বানান সংশোধন স্টাইল */
         .spell-checker-content {
             padding: 20px;
@@ -10039,26 +10082,83 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // চ্যাট উইন্ডোতে ফাইলসহ বার্তা যোগ করার জন্য ফাংশন আপডেট করুন
-        function addMessageToChat(text, sender, file = null) {
-            const chatWindow = document.getElementById('chatWindow');
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message', `${sender}-message`);
+    function addMessageToChat(text, sender, file = null) {
+        const chatWindow = document.getElementById('chatWindow');
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', `${sender}-message`);
 
-            const textElement = document.createElement('p');
-            textElement.innerText = text;
-            messageElement.appendChild(textElement);
+        // Text content
+        const textElement = document.createElement('p');
+        textElement.innerText = text;
+        messageElement.appendChild(textElement);
 
-            if (file && file.type.startsWith('image/')) {
-                const imgElement = document.createElement('img');
-                imgElement.src = file.dataUrl;
-                messageElement.appendChild(imgElement);
-            }
-
-            if (chatWindow) {
-                chatWindow.appendChild(messageElement);
-                chatWindow.scrollTop = chatWindow.scrollHeight;
-            }
+        // Image content (if any)
+        if (file && file.type.startsWith('image/')) {
+            const imgElement = document.createElement('img');
+            imgElement.src = file.dataUrl;
+            messageElement.appendChild(imgElement);
         }
+
+        // --- NEW: Copy Button ---
+        // Only add copy button if there is text to copy
+        if (text && text.trim().length > 0) {
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-message-btn';
+            copyBtn.title = 'কপি করুন';
+            // SVG icon for copy
+            copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg>`;
+            
+            // Set onclick to call the new copy function
+            copyBtn.onclick = function() { copyMessageToClipboard(this); };
+            
+            messageElement.appendChild(copyBtn);
+        }
+        // --- END: Copy Button ---
+
+        if (chatWindow) {
+            chatWindow.appendChild(messageElement);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+    }
+    // ====================================================================
+    // START: Copy to Clipboard FUNCTION
+    // (Add this near your other helper functions like copyToClipboard)
+    // ====================================================================
+    function copyMessageToClipboard(buttonElement) {
+        const messageElement = buttonElement.closest('.message');
+        if (!messageElement) return;
+
+        // Find the <p> tag which contains the text
+        const textElement = messageElement.querySelector('p');
+        if (!textElement) return;
+
+        const textToCopy = textElement.innerText;
+
+        // Create a temporary textarea to hold the text
+        const tempTextArea = document.createElement('textarea');
+        tempTextArea.value = textToCopy;
+        tempTextArea.style.position = 'absolute';
+        tempTextArea.style.left = '-9999px';
+        document.body.appendChild(tempTextArea);
+        
+        tempTextArea.select();
+        tempTextArea.setSelectionRange(0, 99999); // For mobile devices
+
+        try {
+            // Use execCommand for iframe compatibility
+            document.execCommand('copy');
+            showCustomAlert('চ্যাটের লেখা কপি করা হয়েছে!');
+        } catch (err) {
+            console.error('চ্যাট কপি করতে ব্যর্থ:', err);
+            showCustomAlert('কপি করতে ব্যর্থ হয়েছে।');
+        } finally {
+            document.body.removeChild(tempTextArea);
+        }
+    }
+    // ====================================================================
+    // END: Copy to Clipboard FUNCTION
+    // ====================================================================
+	
  // ====================================================================
  // END: NEW FILE UPLOAD SCRIPT FOR TEXT ASSISTANT PART
  // ====================================================================
