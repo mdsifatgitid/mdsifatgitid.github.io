@@ -6982,6 +6982,14 @@ body.sidebar-open #sidebarOverlay {
                     <input type="file" id="fileUploadInput" class="hidden" accept="image/png, image/jpeg, image/webp, text/*, audio/*, video/*">
                     <textarea id="assistantInput" placeholder="এখানে আপনার প্রশ্ন লিখুন..."></textarea>
                     <button id="askGeminiBtn" class="ask-button">পাঠান</button>
+			<div class="flex items-center justify-center my-3">
+				<label for="googleSearchToggle" class="flex items-center cursor-pointer" title="প্রশ্ন করার সময় গুগল থেকে লাইভ তথ্য নিতে এটি চেক করুন">
+				<input type="checkbox" id="googleSearchToggle" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
+					<span class="ml-2 text-gray-700 dark:text-gray-300 font-semibold">
+					Google থেকে তথ্য নিন
+					</span>
+				</label>
+				</div>
                 </div>
             </div>
         </div>
@@ -9935,8 +9943,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 
 // ====================================================================
-// START: NEW FILE UPLOAD SCRIPT FOR TEXT ASSISTANT
-// ====================================================================
+    // START: NEW FILE UPLOAD SCRIPT FOR TEXT ASSISTANT
+    // ====================================================================
 
         const fileUploadInput = document.getElementById('fileUploadInput');
         const filePreviewContainer = document.getElementById('filePreviewContainer');
@@ -10354,17 +10362,21 @@ function initializePrayerTimeTab() {
 // END: নামাজের সময়সূচি
 // ====================================================================
 
-   // ====================================================================
-    // START: NEW FILE UPLOAD SCRIPT FOR TEXT ASSISTANT
-    // ====================================================================
-
+// ====================================================================
+// START: NEW FILE UPLOAD SCRIPT FOR TEXT ASSISTANT
+// ====================================================================
     // জেমিনিকে জিজ্ঞাসা করার ফাংশন আপডেট করুন
     async function handleAskGemini() {
         const assistantInput = document.getElementById('assistantInput');
         const assistantLoading = document.getElementById('assistantLoading');
         const askGeminiBtn = document.getElementById('askGeminiBtn');
         const chatWindow = document.getElementById('chatWindow');
-        const modelSelection = document.getElementById('modelSelection'); // নতুন: ড্রপডাউন এলিমেন্ট
+        const modelSelection = document.getElementById('modelSelection');
+        
+        // --- নতুন: গুগল সার্চ টগল বাটনটি নিন ---
+        const googleSearchToggle = document.getElementById('googleSearchToggle');
+        // --- শেষ: নতুন ---
+
         let chatHistory = window.chatHistory || [];
 
         const promptText = assistantInput.value.trim();
@@ -10408,9 +10420,16 @@ function initializePrayerTimeTab() {
                 return;
             }
 
+            // --- নতুন: Payload-এ Google Search Tool যুক্ত করুন ---
             const payload = {
                 contents: chatHistory
             };
+
+            // যদি টগল বাটনটি চেক করা থাকে, তাহলে payload-এ 'tools' যুক্ত করুন
+            if (googleSearchToggle && googleSearchToggle.checked) {
+                payload.tools = [{ "google_search": {} }];
+            }
+            // --- শেষ: নতুন ---
 
             // --- পরিবর্তিত ---
             // ড্রপডাউন থেকে সিলেক্ট করা মডেল ব্যবহার করুন
@@ -10423,7 +10442,7 @@ function initializePrayerTimeTab() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(payload) // পরিবর্তিত payload এখানে ব্যবহৃত হচ্ছে
             });
 
             const result = await response.json();
