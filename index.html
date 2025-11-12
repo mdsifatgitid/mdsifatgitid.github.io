@@ -9251,7 +9251,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // বাংলা মাসের দিন সংখ্যা (বাংলাদেশ স্ট্যান্ডার্ড)
             // বৈশাখ থেকে ভাদ্র (5 মাস): 31 দিন
             // আশ্বিন থেকে চৈত্র (7 মাস): সাধারণত 30 দিন, অধিবর্ষে ফাল্গুন 31 দিন
-            const bengaliMonthLengths = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30, 30];
+            const bengaliMonthLengths = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29, 30];
 
             // বাংলা বছরের সাথে সম্পর্কিত গ্রেগরিয়ান বছরটি অধিবর্ষ কিনা তা নির্ধারণ করুন
             // এটি ফাল্গুনকে প্রভাবিত করে (11তম মাস, সূচক 10)
@@ -9259,11 +9259,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const isGregorianLeapYear = (gregorianYearForBengaliLeapCheck % 4 === 0 && gregorianYearForBengaliLeapCheck % 100 !== 0) || gregorianYearForBengaliLeapCheck % 400 === 0;
 
             if (isGregorianLeapYear) {
-                bengaliMonthLengths[10] = 31; // অধিবর্ষে ফাল্গুন 31 দিন
+                bengaliMonthLengths[10] = 30; // অধিবর্ষে ফাল্গুন 30 দিন
             }
 
             // বর্তমান বাংলা বছরের শুরু থেকে অতিবাহিত দিন গণনা করুন (14 এপ্রিল)
-            const startOfCurrentBengaliYearGregorian = new Date(year, 3, 14); // বর্তমান গ্রেগরিয়ান বছরের 14 এপ্রিল
+            const startOfCurrentBengaliYearGregorian = new Date(year, 3, 15); // বর্তমান গ্রেগরিয়ান বছরের 15 এপ্রিল, এখানে 14 অথবা 15 বসিয়ে বছরের একদিন সামঞ্জস্য করতে হবে।
             if (gregorianDate < startOfCurrentBengaliYearGregorian) {
                 // যদি বর্তমান তারিখ 14 এপ্রিলের আগে হয়, তবে পূর্ববর্তী গ্রেগরিয়ান বছরের 14 এপ্রিলকে রেফারেন্স হিসাবে সামঞ্জস্য করুন
                 startOfCurrentBengaliYearGregorian.setFullYear(year - 1);
@@ -9279,7 +9279,7 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let i = 0; i < bengaliMonthNames.length; i++) {
                 if (daysPassedSinceBengaliYearStart < bengaliMonthLengths[i]) {
                     currentBengaliMonthIndex = i;
-                    currentBengaliDay = daysPassedSinceBengaliYearStart + 0; // দিন 1-ইনডেক্সড, এখানে 1 থাকলে 1 দিন যুক্ত হবে বা অতিরিক্ত হবে।
+                    currentBengaliDay = daysPassedSinceBengaliYearStart + 1; // দিন 1-ইনডেক্সড, এখানে 1 থাকলে 1 দিন যুক্ত হবে বা অতিরিক্ত হবে।
                     break;
                 }
                 daysPassedSinceBengaliYearStart -= bengaliMonthLengths[i];
@@ -12239,7 +12239,7 @@ function showTab(tabId) {
                     // বাংলা মাসের দিন সংখ্যা (বাংলাদেশ স্ট্যান্ডার্ড)
                     // বৈশাখ থেকে ভাদ্র (5 মাস): 31 দিন
                     // আশ্বিন থেকে চৈত্র (7 মাস): সাধারণত 30 দিন, অধিবর্ষে ফাল্গুন 31 দিন
-                    const bengaliMonthLengths = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30, 30];
+                    const bengaliMonthLengths = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29, 30];
 
                     // বাংলা বছরের সাথে সম্পর্কিত গ্রেগরিয়ান বছরটি অধিবর্ষ কিনা তা নির্ধারণ করুন
                     // এটি ফাল্গুনকে প্রভাবিত করে (11তম মাস, সূচক 10)
@@ -12247,11 +12247,11 @@ function showTab(tabId) {
                     const isGregorianLeapYear = (gregorianYearForBengaliLeapCheck % 4 === 0 && gregorianYearForBengaliLeapCheck % 100 !== 0) || gregorianYearForBengaliLeapCheck % 400 === 0;
 
                     if (isGregorianLeapYear) {
-                        bengaliMonthLengths[10] = 31; // অধিবর্ষে ফাল্গুন 31 দিন
+                        bengaliMonthLengths[10] = 30; // অধিবর্ষে ফাল্গুন 30 দিন
                     }
 
                     // বর্তমান বাংলা বছরের শুরু থেকে অতিবাহিত দিন গণনা করুন (14 এপ্রিল)
-                    const startOfCurrentBengaliYearGregorian = new Date(year, 3, 14); // বর্তমান গ্রেগরিয়ান বছরের 14 এপ্রিল
+                    const startOfCurrentBengaliYearGregorian = new Date(year, 3, 15); // বর্তমান গ্রেগরিয়ান বছরের 15 এপ্রিল, এখানে 14 অথবা 15 বসিয়ে বছরের একদিন সামঞ্জস্য করতে হবে।
                     if (gregorianDate < startOfCurrentBengaliYearGregorian) {
                         // যদি বর্তমান তারিখ 14 এপ্রিলের আগে হয়, তবে পূর্ববর্তী গ্রেগরিয়ান বছরের 14 এপ্রিলকে রেফারেন্স হিসাবে সামঞ্জস্য করুন
                         startOfCurrentBengaliYearGregorian.setFullYear(year - 1);
@@ -12267,7 +12267,7 @@ function showTab(tabId) {
                     for (let i = 0; i < bengaliMonthNames.length; i++) {
                         if (daysPassedSinceBengaliYearStart < bengaliMonthLengths[i]) {
                             currentBengaliMonthIndex = i;
-                            currentBengaliDay = daysPassedSinceBengaliYearStart + 0; // দিন 1-ইনডেক্সড, এখানে 1 থাকলে 1 দিন যুক্ত হবে বা অতিরিক্ত হবে।
+                            currentBengaliDay = daysPassedSinceBengaliYearStart + 1; // দিন 1-ইনডেক্সড, এখানে 1 থাকলে 1 দিন যুক্ত হবে বা অতিরিক্ত হবে।
                             break;
                         }
                         daysPassedSinceBengaliYearStart -= bengaliMonthLengths[i];
