@@ -9226,7 +9226,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // ====================================================================
-// START: DATE AND TIME BANNER SCRIPT (নতুন যুক্ত করা হয়েছে)
+// START: DATE AND TIME BANNER SCRIPT (ঋতুসহ আপডেট করা হয়েছে)
 // ====================================================================
 
         // গ্রেগরিয়ান তারিখকে বাংলা তারিখে রূপান্তর করার ফাংশন (বাংলাদেশ স্ট্যান্ডার্ড)
@@ -9299,9 +9299,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 month: bengaliMonthNames[currentBengaliMonthIndex],
                 year: bengaliYear,
                 totalDays: totalDaysInBengaliMonth,
+                monthIndex: currentBengaliMonthIndex, // *** নতুন: ঋতু বের করার জন্য মাস ইনডেক্স যোগ করা হয়েছে ***
                 formatted: `${toBengaliNumber(currentBengaliDay)} ${bengaliMonthNames[currentBengaliMonthIndex]} ${toBengaliNumber(bengaliYear)} বঙ্গাব্দ`
             };
         }
+
+        // *** নতুন: বাংলা মাস অনুযায়ী ঋতু (কাল) বের করার ফাংশন ***
+        function getBengaliSeason(monthIndex) {
+            const seasons = [
+                "গ্রীষ্মকাল", "গ্রীষ্মকাল", // বৈশাখ (0), জ্যৈষ্ঠ (1)
+                "বর্ষাকাল", "বর্ষাকাল",   // আষাঢ় (2), শ্রাবণ (3)
+                "শরৎকাল", "শরৎকাল",   // ভাদ্র (4), আশ্বিন (5)
+                "হেমন্তকাল", "হেমন্তকাল", // কার্তিক (6), অগ্রহায়ণ (7)
+                "শীতকাল", "শীতকাল",     // পৌষ (8), মাঘ (9)
+                "বসন্তকাল", "বসন্তকাল"  // ফাল্গুন (10), চৈত্র (11)
+            ];
+            return seasons[monthIndex] || ""; // মাস ইনডেক্স 0-11
+        }
+        // *** নতুন ফাংশন শেষ ***
 
         // আরবি সংখ্যাকে বাংলা সংখ্যায় রূপান্তর করার ফাংশন
         const arabicToBengaliNumbers = (text) => {
@@ -9372,6 +9387,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Bengali Date (বাংলা তারিখ)
             const bengaliDateInfo = getBengaliDate(now);
             const bengaliDateString = bengaliDateInfo.formatted;
+            const bengaliSeason = getBengaliSeason(bengaliDateInfo.monthIndex); // *** নতুন: ঋতু আনা হয়েছে ***
 
             // Hijri Date (হিজরি তারিখ)
             let hijriCalculationDate = new Date(now);
@@ -9409,8 +9425,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 timeZone: 'Asia/Dhaka'
             });
 
-            // ব্যানার আপডেট করুন
-            bannerElement.innerHTML = `<span class="text-green-700 dark:text-green-300">আজ</span> <span class="text-green-700 dark:text-green-300">${dayOfWeekBengali}</span>, <span class="text-blue-700 dark:text-blue-300">${gregorianDateString} ইং</span>, <span class="text-green-700 dark:text-green-300">${bengaliDateString.replace('বঙ্গাব্দ', '')} বঙ্গাব্দ</span>, <span class="text-purple-700 dark:text-purple-300">${hijriDateString}</span>, <span class="text-green-700 dark:text-green-300">এখন সময়</span><span class="text-green-700 dark:text-green-300">${timeString}</span>`;
+            // *** ব্যানার আপডেট করুন (ঋতুসহ) ***
+            bannerElement.innerHTML = `<span class="text-green-700 dark:text-green-300">আজ</span> <span class="text-green-700 dark:text-green-300">${dayOfWeekBengali}</span>, <span class="text-blue-700 dark:text-blue-300">${gregorianDateString} ইং</span>, <span class="text-green-700 dark:text-green-300">${bengaliDateString.replace('বঙ্গাব্দ', '')} বঙ্গাব্দ, ${bengaliSeason}</span>, <span class="text-purple-700 dark:text-purple-300">${hijriDateString}</span>, <span class="text-green-700 dark:text-green-300">এখন সময়</span><span class="text-green-700 dark:text-green-300">${timeString}</span>`;
         }
 
         // প্রতি সেকেন্ডে ব্যানার আপডেট করুন
