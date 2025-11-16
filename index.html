@@ -12234,105 +12234,17 @@ function showTab(tabId) {
                 }
 
                 // গ্রেগরিয়ান তারিখকে বাংলা তারিখে রূপান্তর করার ফাংশন (বাংলাদেশ স্ট্যান্ডার্ড)
-                function getBengaliDate(gregorianDate) {
-                    const year = gregorianDate.getFullYear();
-                    const month = gregorianDate.getMonth(); // 0-11
-                    const day = gregorianDate.getDate();
+                // এই ফাংশনটি এখন টাইম ব্যানার স্ক্রিপ্টের সাথে গ্লোবালি ডিফাইন করা আছে, 
+                // তাই এখানে পুনরায় ডিফাইন করার প্রয়োজন নেই। 
+                // getBengaliDate() এবং getBengaliSeason() এখন সরাসরি ব্যবহার করা যাবে।
 
-                    let bengaliYear;
-                    const bengaliMonthNames = [
-                        "বৈশাখ", "জ্যৈষ্ঠ", "আষাঢ়", "শ্রাবণ", "ভাদ্র", "আশ্বিন",
-                        "কার্তিক", "অগ্রহায়ণ", "পৌষ", "মাঘ", "ফাল্গুন", "চৈত্র"
-                    ];
-
-                    // বাংলা বছর গণনা করুন (বাংলাদেশ স্ট্যান্ডার্ড: পহেলা বৈশাখ 14 এপ্রিল)
-                    if (month < 3 || (month === 3 && day < 14)) { // 14 এপ্রিলের আগে
-                        bengaliYear = year - 594;
-                    } else { // 14 এপ্রিল বা তার পরে
-                        bengaliYear = year - 593;
-                    }
-
-                    // বাংলা মাসের দিন সংখ্যা (বাংলাদেশ স্ট্যান্ডার্ড)
-                    // বৈশাখ থেকে ভাদ্র (5 মাস): 31 দিন
-                    // আশ্বিন থেকে চৈত্র (7 মাস): সাধারণত 30 দিন, অধিবর্ষে ফাল্গুন 31 দিন
-                    const bengaliMonthLengths = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29, 30];
-
-                    // বাংলা বছরের সাথে সম্পর্কিত গ্রেগরিয়ান বছরটি অধিবর্ষ কিনা তা নির্ধারণ করুন
-                    // এটি ফাল্গুনকে প্রভাবিত করে (11তম মাস, সূচক 10)
-                    const gregorianYearForBengaliLeapCheck = bengaliYear + 593;
-                    const isGregorianLeapYear = (gregorianYearForBengaliLeapCheck % 4 === 0 && gregorianYearForBengaliLeapCheck % 100 !== 0) || gregorianYearForBengaliLeapCheck % 400 === 0;
-
-                    if (isGregorianLeapYear) {
-                        bengaliMonthLengths[10] = 30; // অধিবর্ষে ফাল্গুন 30 দিন
-                    }
-
-                    // বর্তমান বাংলা বছরের শুরু থেকে অতিবাহিত দিন গণনা করুন (14 এপ্রিল)
-                    const startOfCurrentBengaliYearGregorian = new Date(year, 3, 15); // বর্তমান গ্রেগরিয়ান বছরের 15 এপ্রিল, এখানে 14 অথবা 15 বসিয়ে বছরের একদিন সামঞ্জস্য করতে হবে।
-                    if (gregorianDate < startOfCurrentBengaliYearGregorian) {
-                        // যদি বর্তমান তারিখ 14 এপ্রিলের আগে হয়, তবে পূর্ববর্তী গ্রেগরিয়ান বছরের 14 এপ্রিলকে রেফারেন্স হিসাবে সামঞ্জস্য করুন
-                        startOfCurrentBengaliYearGregorian.setFullYear(year - 1);
-                    }
-
-                    const diffTime = gregorianDate.getTime() - startOfCurrentBengaliYearGregorian.getTime();
-                    let daysPassedSinceBengaliYearStart = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-                    let currentBengaliMonthIndex = 0;
-                    let currentBengaliDay = 0;
-
-                    // সঠিক মাস এবং দিন খুঁজে বের করতে বাংলা মাসগুলির মধ্যে পুনরাবৃত্তি করুন
-                    for (let i = 0; i < bengaliMonthNames.length; i++) {
-                        if (daysPassedSinceBengaliYearStart < bengaliMonthLengths[i]) {
-                            currentBengaliMonthIndex = i;
-                            currentBengaliDay = daysPassedSinceBengaliYearStart + 1; // দিন 1-ইনডেক্সড, এখানে 1 থাকলে 1 দিন যুক্ত হবে বা অতিরিক্ত হবে।
-                            break;
-                        }
-                        daysPassedSinceBengaliYearStart -= bengaliMonthLengths[i];
-                    }
-
-                    // সংখ্যাগুলিকে বাংলা সংখ্যায় রূপান্তর করুন
-                    const toBengaliNumber = (num) => {
-                        const numbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-                        return num.toString().split('').map(digit => numbers[parseInt(digit)]).join('');
-                    };
-
-                    // বাংলা মাসের মোট দিন
-                    const totalDaysInBengaliMonth = bengaliMonthLengths[currentBengaliMonthIndex];
-
-                    return {
-                        day: currentBengaliDay,
-                        month: bengaliMonthNames[currentBengaliMonthIndex],
-                        year: bengaliYear,
-                        totalDays: totalDaysInBengaliMonth,
-                        formatted: `${toBengaliNumber(currentBengaliDay)} ${bengaliMonthNames[currentBengaliMonthIndex]}, ${toBengaliNumber(bengaliYear)} বঙ্গাব্দ`
-                    };
-                }
 
                 // আরবি সংখ্যাকে বাংলা সংখ্যায় রূপান্তর করার ফাংশন
-                const arabicToBengaliNumbers = (text) => {
-                    const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-                    const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-                    let converted = text;
-                    for (let i = 0; i < arabicDigits.length; i++) {
-                        converted = converted.replace(new RegExp(arabicDigits[i], 'g'), bengaliDigits[i]);
-                    }
-                    return converted;
-                };
+                // এই ফাংশনটি এখন টাইম ব্যানার স্ক্রিপ্টের সাথে গ্লোবালি ডিফাইন করা আছে।
+
 
                 // আরবি হিজরি মাসের নামগুলিকে বাংলা নামে ম্যাপ করুন
-                const hijriMonthArabicToBengali = {
-                    'محرم': 'মুহাররম',
-                    'صفر': 'সফর',
-                    'ربيع الأول': 'রবিউল আউয়াল',
-                    'ربيع الآخر': 'রবিউস সানি',
-                    'جمادى الأولى': 'জমাদিউল আউয়াল',
-                    'جمادى الآخرة': 'জমাদিউস সানি',
-                    'رجب': 'রজব',
-                    'شعبان': 'শাবান',
-                    'رمضان': 'রমজান',
-                    'شوال': 'শাওয়াল',
-                    'ذو القعدة': 'জিলকদ',
-                    'ذو الحجة': 'জিলহজ'
-                };
+                // এই অবজেক্টটি এখন টাইম ব্যানার স্ক্রিপ্টের সাথে গ্লোবালি ডিফাইন করা আছে।
 
                 function displayDates(period) {
                     console.log(`তারিখগুলি প্রদর্শন করা হচ্ছে: ${period}`);
@@ -12372,6 +12284,7 @@ function showTab(tabId) {
                     // বাংলা তারিখ
                     const bengaliDateInfo = getBengaliDate(dateToDisplay);
                     const bengaliDateFormatted = bengaliDateInfo.formatted;
+                    const bengaliSeason = getBengaliSeason(bengaliDateInfo.monthIndex); // *** নতুন: ঋতু আনা হয়েছে ***
 
                     // হিজরি তারিখ (প্রয়োজনে স্থানীয় কনভেনশনের জন্য সামঞ্জস্য করা হয়েছে)
                     let hijriCalculationDate = new Date(dateToDisplay);
@@ -12436,14 +12349,14 @@ function showTab(tabId) {
                     if (period === 'today') {
                         if (todayResultSection) todayResultSection.style.display = 'block';
                         if (todayGregorianDateDisplay) todayGregorianDateDisplay.innerHTML = `<strong>খ্রিষ্টাব্দ:</strong> <span class="${gregorianHighlightClass}">${gregorianDateFormatted}</span>`;
-                        if (todayBengaliDateDisplay) todayBengaliDateDisplay.innerHTML = `<strong>বাংলা তারিখ:</strong> <span class="${bengaliHighlightClass}">${bengaliDateFormatted}</span>`;
+                        if (todayBengaliDateDisplay) todayBengaliDateDisplay.innerHTML = `<strong>বাংলা তারিখ:</strong> <span class="${bengaliHighlightClass}">${bengaliDateFormatted.replace('বঙ্গাব্দ', '')}, ${bengaliSeason}</span>`; // *** পরিবর্তিত: ঋতু যোগ করা হয়েছে ***
                         if (todayHijriDateDisplay) todayHijriDateDisplay.innerHTML = `<strong>হিজরি:</strong> <span class="${hijriHighlightClass}">${hijriDateFormatted}</span>`;
                         if (todayDayDisplay) todayDayDisplay.innerHTML = `<strong>বার:</strong> ${dayOfWeek}`; // দিন প্রদর্শন করুন
                         if (todayTimeDisplay) todayTimeDisplay.innerHTML = `<strong>সময়:</strong> ${timeFormatted}`;
                     } else if (period === 'tomorrow') {
                         if (tomorrowResultSection) tomorrowResultSection.style.display = 'block';
                         if (tomorrowGregorianDateDisplay) tomorrowGregorianDateDisplay.innerHTML = `<strong>খ্রিষ্টাব্দ:</strong> <span class="${gregorianHighlightClass}">${gregorianDateFormatted}</span>`;
-                        if (tomorrowBengaliDateDisplay) tomorrowBengaliDateDisplay.innerHTML = `<strong>বাংলা তারিখ:</strong> <span class="${bengaliHighlightClass}">${bengaliDateFormatted}</span>`;
+                        if (tomorrowBengaliDateDisplay) tomorrowBengaliDateDisplay.innerHTML = `<strong>বাংলা তারিখ:</strong> <span class="${bengaliHighlightClass}">${bengaliDateFormatted.replace('বঙ্গাব্দ', '')}, ${bengaliSeason}</span>`; // *** পরিবর্তিত: ঋতু যোগ করা হয়েছে ***
                         if (tomorrowHijriDateDisplay) tomorrowHijriDateDisplay.innerHTML = `<strong>হিজরি:</strong> <span class="${hijriHighlightClass}">${hijriDateFormatted}</span>`;
                         if (tomorrowDayDisplay) tomorrowDayDisplay.innerHTML = `<strong>বার:</strong> ${dayOfWeek}`; // দিন প্রদর্শন করুন
                         if (tomorrowTimeDisplay) tomorrowTimeDisplay.innerHTML = `<strong>সময়:</strong> ${timeFormatted}`;
@@ -12469,11 +12382,12 @@ function showTab(tabId) {
                         }
 
                         const bengaliDateInfo = getBengaliDate(gregorianDate);
+                        const bengaliSeason = getBengaliSeason(bengaliDateInfo.monthIndex); // *** নতুন: ঋতু আনা হয়েছে ***
                         const dayOfWeek = gregorianDate.toLocaleDateString('bn-BD', {
                             weekday: 'long'
                         }); // সপ্তাহের দিন পান
 
-                        if (convertedBengaliDate) convertedBengaliDate.innerHTML = `<strong>বাংলা তারিখ:</strong> ${bengaliDateInfo.formatted}`;
+                        if (convertedBengaliDate) convertedBengaliDate.innerHTML = `<strong>বাংলা তারিখ:</strong> ${bengaliDateInfo.formatted.replace('বঙ্গাব্দ', '')}, ${bengaliSeason}`; // *** পরিবর্তিত: ঋতু যোগ করা হয়েছে ***
                         if (convertedDayDisplay) convertedDayDisplay.innerHTML = `<strong>বার:</strong> ${dayOfWeek}`;
                     });
                 }
