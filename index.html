@@ -7363,27 +7363,43 @@ body.sidebar-open #sidebarOverlay {
     <div class="notepad-container relative"> <!-- Toolbar-এর পজিশনের জন্য relative ক্লাস যুক্ত করা হয়েছে -->
         <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">নোটপ্যাড / টু-ডু লিস্ট</h3>
 		<div class="notepad-controls flex flex-wrap justify-between items-center gap-4 mb-4 p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
-    <!-- Find Feature -->
-    <div class="find-feature flex items-center gap-2">
-        <input type="text" id="notepadFindInput" placeholder="নোটে খুঁজুন..." class="p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white text-sm">
-        <button id="notepadFindBtn" class="px-3 py-2 bg-blue-500 text-white text-sm font-semibold rounded-lg hover:bg-blue-600">খুঁজুন</button>
-    </div>
-    <!-- Export Feature -->
-    <div class="export-feature flex items-center gap-2">
-        <button id="exportTxtBtn" class="px-3 py-2 bg-green-500 text-white text-sm font-semibold rounded-lg hover:bg-green-600">.txt এক্সপোর্ট</button>
-        <button id="exportHtmlBtn" class="px-3 py-2 bg-purple-500 text-white text-sm font-semibold rounded-lg hover:bg-purple-600">.html এক্সপোর্ট</button>
-    </div>
-</div>
+            <!-- Find Feature -->
+            <div class="find-feature flex items-center gap-2">
+                <input type="text" id="notepadFindInput" placeholder="নোটে খুঁজুন..." class="p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white text-sm">
+                <button id="notepadFindBtn" class="px-3 py-2 bg-blue-500 text-white text-sm font-semibold rounded-lg hover:bg-blue-600">খুঁজুন</button>
+            </div>
+            <!-- Export Feature -->
+            <div class="export-feature flex items-center gap-2">
+                <button id="exportTxtBtn" class="px-3 py-2 bg-green-500 text-white text-sm font-semibold rounded-lg hover:bg-green-600">.txt এক্সপোর্ট</button>
+                <button id="exportHtmlBtn" class="px-3 py-2 bg-purple-500 text-white text-sm font-semibold rounded-lg hover:bg-purple-600">.html এক্সপোর্ট</button>
+            </div>
+        </div>
         <p class="text-gray-600 dark:text-gray-400 mb-4">আপনার কাজ বা নোট যোগ করুন। ব্রাউজার বন্ধ করলেও আপনার ডেটা সেভ থাকবে। ছবিও পেস্ট করে যুক্ত করা যাবে।</p>
         
         <!-- ফরম্যাটিং অ্যাকশন বার -->
-        <div id="notepadActionToolbar" class="notepad-action-toolbar flex">
+        <div id="notepadActionToolbar" class="notepad-action-toolbar flex items-center">
             <button class="toolbar-btn" data-command="bold" title="বোল্ড (Ctrl+B)"><b>B</b></button>
             <button class="toolbar-btn" data-command="italic" title="ইটালিক (Ctrl+I)"><i>I</i></button>
             <button class="toolbar-btn" data-command="underline" title="আন্ডারলাইন (Ctrl+U)"><u>U</u></button>
             <button class="toolbar-btn" data-command="strikeThrough" title="স্ট্রাইকথ্রু"><s>S</s></button>
+            
+            <!-- ফন্ট সাইজ বাটন -->
             <button class="toolbar-btn" data-command="increaseFontSize" title="ফন্ট বড় করুন">A+</button>
             <button class="toolbar-btn" data-command="decreaseFontSize" title="ফন্ট ছোট করুন">A-</button>
+
+            <!-- নতুন: টেক্সট কালার পিকার -->
+            <div class="toolbar-btn relative flex items-center justify-center cursor-pointer" title="লেখার রঙ">
+                <span style="font-weight:bold; font-family:serif; position: relative; top: -2px;">A</span>
+                <span style="position:absolute; bottom:4px; left:4px; right:4px; height:3px; background:red; border-radius:1px;"></span>
+                <input type="color" data-command="foreColor" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" style="padding:0; border:none;">
+            </div>
+
+            <!-- নতুন: হাইলাইট কালার পিকার -->
+            <div class="toolbar-btn relative flex items-center justify-center cursor-pointer" title="হাইলাইট কালার">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16.56 3.44L19.14 6.02C19.4526 6.33266 19.6282 6.75674 19.6282 7.19902C19.6282 7.64131 19.4526 8.06539 19.14 8.37805L18.56 8.96L14.08 4.48L14.66 3.9C14.9708 3.5859 15.3946 3.40918 15.837 3.40918C16.1139 3.40794 16.3887 3.46131 16.646 3.56631L16.56 3.44ZM12.66 5.9L17.14 10.38L7.94 19.5H3.5V15.06L12.66 5.9ZM2 21.5H21V23.5H2V21.5Z"></path></svg>
+                <input type="color" data-command="hiliteColor" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" style="padding:0; border:none;">
+            </div>
+
             <button class="toolbar-btn" data-command="justifyLeft" title="বামে অ্যালাইন">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18v2H3V4zm0 14h12v2H3v-2zm0-7h18v2H3v-2z"></path></svg>
             </button>
@@ -13822,6 +13838,9 @@ async function initializeNotepad() {
     };
 
     const hideToolbar = () => {
+        // কালার পিকার ওপেন থাকলে টুলবার হাইড করবেন না
+        if (document.activeElement && document.activeElement.type === 'color') return;
+
         actionToolbar.style.opacity = '0';
         actionToolbar.style.transform = 'translateY(-10px)';
         setTimeout(() => {
@@ -13831,15 +13850,16 @@ async function initializeNotepad() {
         }, 150); 
     };
     
-    // ফরম্যাটিং কমান্ড প্রয়োগ করার ফাংশন (আপডেট করা)
-    const applyFormat = (command) => {
+    // ফরম্যাটিং কমান্ড প্রয়োগ করার ফাংশন (আপডেট করা - ভ্যালু প্যারামিটার সহ)
+    const applyFormat = (command, value = null) => {
         const selection = window.getSelection();
-        if (savedRange && selection.rangeCount === 0) {
-             selection.addRange(savedRange);
+        // যদি সিলেকশন হারিয়ে যায়, সেভ করা রেঞ্জ ব্যবহার করুন
+        if ((!selection || selection.rangeCount === 0) && savedRange) {
+            selection.removeAllRanges();
+            selection.addRange(savedRange);
         } else if (selection.rangeCount > 0) {
-             savedRange = selection.getRangeAt(0).cloneRange();
+            savedRange = selection.getRangeAt(0).cloneRange();
         }
-
 
         if (command === 'increaseFontSize' || command === 'decreaseFontSize') {
             document.execCommand("fontSize", false, "1"); // একটি অস্থায়ী ফন্ট সাইজ প্রয়োগ করা হয়
@@ -13872,15 +13892,15 @@ async function initializeNotepad() {
             const cleanedHtml = processedHtml.replace(/<\/?(?!(br|BR)\s*\/?)[^>]+>/g, '');
             
             document.execCommand('insertHTML', false, cleanedHtml);
-            
             saveTasks();
 
         } else {
-            document.execCommand(command, false, null);
+            // সাধারণ কমান্ড এবং কালার কমান্ড হ্যান্ডলিং
+            document.execCommand(command, false, value);
         }
 
         if(currentTargetElement) {
-            currentTargetElement.focus();
+            // currentTargetElement.focus(); // ফোকাস রাখলে কালার পিকার বারবার বন্ধ হতে পারে, তাই এটি শর্তসাপেক্ষ
             const currentSelection = window.getSelection();
             if (currentSelection.rangeCount > 0) {
                 savedRange = currentSelection.getRangeAt(0).cloneRange();
@@ -13888,12 +13908,24 @@ async function initializeNotepad() {
         }
     };
 
+    // সাধারণ বাটনের জন্য মাউস ইভেন্ট
     actionToolbar.addEventListener('mousedown', (e) => {
-        e.preventDefault(); 
         const button = e.target.closest('.toolbar-btn');
-        if (button) {
+        // কালার ইনপুট হলে preventDefault করবেন না
+        if (button && !button.querySelector('input[type="color"]')) {
+            e.preventDefault(); 
             const command = button.dataset.command;
             applyFormat(command);
+        }
+    });
+
+    // কালার ইনপুটের জন্য ইনপুট ইভেন্ট লিসেনার
+    actionToolbar.addEventListener('input', (e) => {
+        const target = e.target;
+        if (target.tagName === 'INPUT' && target.type === 'color') {
+            const command = target.dataset.command;
+            const value = target.value;
+            applyFormat(command, value);
         }
     });
     
@@ -14020,7 +14052,7 @@ async function initializeNotepad() {
         actionsDiv.className = 'actions';
         actionsDiv.innerHTML = `
             <button class="action-btn pin ${pinned ? 'active' : ''}" title="পিন/আনপিন করুন"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4.146.146A.5.5 0 0 1 4.5 0h7a.5.5 0 0 1 .5.5c0 .68-.342 1.174-.646 1.479-.126.125-.25.224-.354.298v4.431l.078.048c.203.127.476.314.751.555C12.36 7.775 13 8.527 13 9.5a.5.5 0 0 1-.5.5h-4v4.5c0 .276-.224 1.5-.5 1.5s-.5-1.224-.5-1.5V10h-4a.5.5 0 0 1-.5-.5c0-.973.64-1.725 1.17-2.176a6 6 0 0 1 .751-.555l.078-.048V2.147a3.2 3.2 0 0 1-.354-.298C3.842 1.674 3.5 1.18 3.5.5a.5.5 0 0 1 .646-.354m.354 1.354a.5.5 0 0 0-.708 0l-.5.5A.5.5 0 0 0 3 2.5V3h10V2.5a.5.5 0 0 0-.293-.45l-.5-.5a.5.5 0 0 0-.707 0l-.001.002-.002.001-.002.001a.5.5 0 0 1-.17.036H5.02a.5.5 0 0 1-.17-.036l-.002-.001-.002-.001L4.5 1.5z"/></svg></button>
-            <button class="action-btn copy" title="কপি করুন"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg></button>
+            <button class="action-btn copy" title="কপি করুন"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/></svg></button>
             <button class="action-btn delete" title="মুছে ফেলুন"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>
         `;
 
