@@ -13801,7 +13801,12 @@ async function initializeNotepad() {
     let lastSearchQuery = '';
 
     if (!taskInput || !addTaskBtn || !taskList || !actionToolbar) return;
-
+	
+    if (taskInput.getAttribute('data-notepad-initialized') === 'true') {
+        return; 
+    }
+    taskInput.setAttribute('data-notepad-initialized', 'true');
+	
     // --- Action Toolbar Logic ---
     let currentTargetElement = null; // কোন এলিমেন্ট এডিট করা হচ্ছে তা ট্র্যাক করার জন্য
     let savedRange = null; // সিলেকশন সেভ করার জন্য
@@ -14210,26 +14215,80 @@ async function initializeNotepad() {
         downloadFile(textContent, 'bangla-toolbox-notes.txt', 'text/plain');
     };
 
-    const exportNotepadAsHTML = () => {
+const exportNotepadAsHTML = () => {
         const tasks = Array.from(taskList.querySelectorAll('.task-item'));
         if (tasks.length === 0) {
             showCustomAlert('এক্সপোর্ট করার জন্য কোনো নোট নেই।');
             return;
         }
+        
         let bodyContent = '';
+        
         tasks.forEach((item, index) => {
-            bodyContent += `<div class="note-item"><h3>নোট ${index + 1}</h3>`;
-            const contentDiv = item.querySelector('.task-text, div > .task-image');
-            if(contentDiv){
-                 bodyContent += contentDiv.parentElement.innerHTML;
+            // পিন করা নোট কিনা যাচাই করা হচ্ছে
+            const isPinned = item.classList.contains('pinned');
+            
+            // পিন করা হলে ব্যাকগ্রাউন্ড কালার এবং বর্ডার স্টাইল সেট করা হচ্ছে
+            const itemStyle = isPinned 
+                ? 'background-color: #fef3c7; border: 1px solid #f59e0b; border-left: 5px solid #f59e0b;' 
+                : 'background-color: #ffffff; border: 1px solid #e2e8f0;';
+
+            bodyContent += `<div class="note-item" style="${itemStyle}">`;
+            
+            // নোটের শিরোনাম বা নম্বর (পিন আইকন সহ যদি পিন করা থাকে)
+            bodyContent += `<div class="note-header" style="display:flex; justify-content:space-between; align-items:center;">
+                                <strong>নোট ${index + 1}</strong>
+                                ${isPinned ? '<span style="font-size:12px; background:#f59e0b; color:white; padding:2px 6px; border-radius:4px;">📌 Pinned</span>' : ''}
+                            </div>`;
+            
+            const textEl = item.querySelector('.task-text');
+            const imgEl = item.querySelector('.task-image');
+
+            if (textEl) {
+                // টেক্সট ফরম্যাটিং (কালার, বোল্ড, হাইলাইট) হুবহু কপি করা হচ্ছে
+                bodyContent += `<div class="note-content">${textEl.innerHTML}</div>`;
+            } else if (imgEl) {
+                // ছবির ক্ষেত্রে
+                const captionEl = item.querySelector('.task-image-caption');
+                const captionText = (captionEl && captionEl.innerText !== 'ক্যাপশন যোগ করতে ডাবল-ক্লিক করুন...') ? captionEl.innerText : '';
+                
+                bodyContent += `<div class="note-content" style="text-align:center;">
+                                    <img src="${imgEl.src}" style="max-width: 100%; border-radius: 8px; margin-bottom: 10px;">
+                                    ${captionText ? `<p style="font-style: italic; color: #555; background: #eee; padding: 5px; border-radius: 4px;">${captionText}</p>` : ''}
+                                </div>`;
             }
             bodyContent += `</div>`;
         });
 
+        // HTML ফাইলের পূর্ণাঙ্গ স্ট্রাকচার
         const htmlContent = `
-            <!DOCTYPE html><html lang="bn"><head><meta charset="UTF-8"><title>নোটসমূহ</title>
-            <style>body{font-family: sans-serif; line-height: 1.6; padding: 20px; max-width: 800px; margin: auto;} .note-item{border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 20px; word-wrap: break-word;} h1, h2{border-bottom: 2px solid #eee; padding-bottom: 10px;} img{max-width: 100%; height: auto; border-radius: 8px;}</style>
-            </head><body><h1>বাংলা টুলবক্স - নোটসমূহ</h1><h2>${new Date().toLocaleString('bn-BD')}</h2>${bodyContent}</body></html>`;
+            <!DOCTYPE html>
+            <html lang="bn">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>এক্সপোর্ট করা নোটসমূহ - বাংলা টুলবক্স</title>
+                <style>
+                    body { font-family: 'SolaimanLipi', 'Arial', sans-serif; line-height: 1.6; padding: 40px 20px; max-width: 800px; margin: auto; background-color: #f8f9fa; }
+                    h1 { text-align: center; color: #3f51b5; border-bottom: 2px solid #e0e7ff; padding-bottom: 15px; }
+                    .meta-info { text-align: center; color: #666; margin-bottom: 30px; font-size: 0.9rem; }
+                    .note-item { border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+                    .note-header { border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px; margin-bottom: 15px; color: #555; font-size: 0.95rem; }
+                    .note-content { font-size: 1.1rem; color: #333; white-space: pre-wrap; word-wrap: break-word; }
+                    /* ফরম্যাটিং ঠিক রাখার জন্য */
+                    .note-content b { font-weight: bold; }
+                    .note-content i { font-style: italic; }
+                    .note-content u { text-decoration: underline; }
+                    .note-content s { text-decoration: line-through; }
+                </style>
+            </head>
+            <body>
+                <h1>আমার নোটসমূহ</h1>
+                <p class="meta-info">তৈরির সময়: ${new Date().toLocaleString('bn-BD')}</p>
+                ${bodyContent}
+                <div style="text-align:center; margin-top:50px; color:#aaa; font-size:12px;">Generated by Bangla Toolbox</div>
+            </body>
+            </html>`;
         
         downloadFile(htmlContent, 'bangla-toolbox-notes.html', 'text/html');
     };
