@@ -284,6 +284,19 @@
             --tab-radius: 14px;
             --shadow-soft: 0 20px 40px rgba(22, 163, 74, 0.15);
         }
+/* রয়াল পার্পল থিম (Royal Purple) */
+        [data-theme="purple"] {
+            --bg-main: rgba(250, 245, 255, 0.95); /* হালকা ল্যাভেন্ডার */
+            --bg-main-dark: rgba(59, 7, 100, 0.92); /* গাঢ় পার্পল */
+            --tab-bg: #f3e8ff; /* বাটন ব্যাকগ্রাউন্ড */
+            --tab-text: #6b21a8; /* বাটন টেক্সট */
+            --tab-active-bg: #9333ea;
+            --tab-active-gradient: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); /* পার্পল গ্রেডিয়েন্ট */
+            --converter-bg: #ffffff;
+            --tab-border: 1px solid #d8b4fe;
+            --tab-radius: 14px;
+            --shadow-soft: 0 20px 40px rgba(147, 51, 234, 0.15);
+        }
         /* ২. মেইন কন্টেইনার (ভেরিয়েবল ব্যবহার করে আপডেট করা) */
         .main-container {
             background-color: var(--bg-main); 
@@ -8564,6 +8577,7 @@ body.sidebar-open #sidebarOverlay {
                 <option value="modern">Classic</option>
                 <option value="classic">Soft Blue</option>
                 <option value="nature">Nature</option>
+				<option value="purple">Royal Purple</option>
             </select>
         </div>
 		
@@ -19368,7 +19382,9 @@ function applyAppTheme(themeName) {
     if (themeName === 'classic') {
         rootElement.setAttribute('data-theme', 'classic');
     } else if (themeName === 'nature') {
-        rootElement.setAttribute('data-theme', 'nature'); // নতুন নেচার থিম
+        rootElement.setAttribute('data-theme', 'nature');
+    } else if (themeName === 'purple') {
+        rootElement.setAttribute('data-theme', 'purple'); // নতুন পার্পল থিম
     }
     // 'modern' হলে কোনো অ্যাট্রিবিউট লাগবে না, ডিফল্ট CSS ভেরিয়েবল কাজ করবে
 }
