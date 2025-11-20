@@ -238,40 +238,132 @@
             flex-wrap: wrap; /* ছোট স্ক্রিনে ট্যাবগুলি মোড়ানো */
         }
 
+        
+/* ========================================= */
+/* START: ট্যাব থিম ভেরিয়েবল ও ডায়নামিক স্টাইল */
+/* ========================================= */
+        
+        /* ১. কালার ভেরিয়েবল ডিক্লারেশন */
+        :root {
+            /* ডিফল্ট: নতুন থিম (Modern/Soft Blue) */
+            --bg-main: rgba(240, 249, 255, 0.92);
+            --bg-main-dark: rgba(30, 41, 59, 0.9);
+            --tab-bg: #f1f5f9;
+            --tab-text: #475569;
+            --tab-active-bg: #4f46e5;
+            --tab-active-gradient: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
+            --converter-bg: #ffffff;
+            --tab-border: 1px solid #e2e8f0;
+            --tab-radius: 12px;
+            --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* পুরাতন থিম (Classic) যখন সিলেক্ট করা হবে */
+        [data-theme="classic"] {
+            --bg-main: rgba(255, 255, 255, 0.85);
+            --bg-main-dark: rgba(26, 32, 44, 0.85);
+            --tab-bg: #e0e7ff;
+            --tab-text: #3f51b5;
+            --tab-active-bg: #3f51b5;
+            --tab-active-gradient: none; /* ক্লাসিকে গ্রেডিয়েন্ট ছিল না */
+            --converter-bg: #ffffff;
+            --tab-border: none;
+            --tab-radius: 10px;
+            --shadow-soft: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+/* প্রকৃতি থিম (Nature) */
+        [data-theme="nature"] {
+            --bg-main: rgba(240, 253, 244, 0.95); /* হালকা মিন্ট গ্রিন */
+            --bg-main-dark: rgba(20, 83, 45, 0.92); /* গাঢ় ফরেস্ট গ্রিন */
+            --tab-bg: #dcfce7; /* বাটন ব্যাকগ্রাউন্ড */
+            --tab-text: #14532d; /* বাটন টেক্সট */
+            --tab-active-bg: #16a34a;
+            --tab-active-gradient: linear-gradient(135deg, #22c55e 0%, #15803d 100%); /* সবুজ গ্রেডিয়েন্ট */
+            --converter-bg: #ffffff;
+            --tab-border: 1px solid #86efac;
+            --tab-radius: 14px;
+            --shadow-soft: 0 20px 40px rgba(22, 163, 74, 0.15);
+        }
+        /* ২. মেইন কন্টেইনার (ভেরিয়েবল ব্যবহার করে আপডেট করা) */
+        .main-container {
+            background-color: var(--bg-main); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 15px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-soft);
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            visibility: hidden;
+            transition: background-color 0.5s ease;
+        }
+        .dark .main-container {
+            background-color: var(--bg-main-dark);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ৩. ট্যাব বাটন (ভেরিয়েবল ব্যবহার করে আপডেট করা) */
         .tab-button {
-            padding: 10px 16px; /* বর্ধিত প্যাডিং */
-            background-color: #e0e7ff; /* হালকা নীল */
-            border: none;
-            border-radius: 10px;
+            padding: 10px 16px;
+            background-color: var(--tab-bg); 
+            border: var(--tab-border);
+            border-radius: var(--tab-radius);
             cursor: pointer;
-            font-size: 0.9rem; /* সামঞ্জস্যপূর্ণ ফন্ট সাইজ */
+            font-size: 0.9rem;
             font-weight: 600;
-            color: #3f51b5; /* গাঢ় নীল টেক্সট */
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            color: var(--tab-text); 
+            transition: all 0.3s ease;
         }
         .dark .tab-button {
-            background-color: #2d3748;
-            color: #cbd5e0;
+            background-color: #334155;
+            color: #cbd5e1;
+            border-color: #475569;
         }
 
         .tab-button.active {
-            background-color: #3f51b5; /* সক্রিয় ট্যাবের রঙ (গভীর নীল) */
+            background-image: var(--tab-active-gradient); 
+            background-color: var(--tab-active-bg);      
             color: white;
-            box-shadow: 0 4px 8px rgba(63, 81, 181, 0.3);
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(63, 81, 181, 0.3);
             transform: translateY(-2px);
         }
         .dark .tab-button.active {
-            background-color: #4c51bf;
-            color: #f7fafc;
+            background-image: linear-gradient(135deg, #6366f1 0%, #38bdf8 100%);
         }
-
+        
         .tab-button:hover:not(.active) {
-            background-color: #c5cae9; /* হোভারে হালকা নীল */
+            background-color: #e0f2fe;
             transform: translateY(-1px);
         }
-        .dark .tab-button:hover:not(.active) {
-            background-color: #4a5568;
+
+        /* ৪. ফন্ট কনভার্টার সেকশন (ভেরিয়েবল ব্যবহার করে আপডেট করা) */
+        .font-converter-content {
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--converter-bg); 
+            border: 1px solid #f1f5f9;
+            transition: background-color 0.5s ease;
         }
+        .dark .font-converter-content {
+            background-color: #1e293b;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-color: #334155;
+        }
+		
+/* ========================================= */
+/* END: ট্যাব থিম ভেরিয়েবল ও ডায়নামিক স্টাইল */
+/* ========================================= */
+
 
         /* মৌলিক ক্যালকুলেটর স্টাইল */
         .basic-calculator-wrapper {
@@ -8450,8 +8542,7 @@ body.sidebar-open #sidebarOverlay {
 <!-- ======================================================== -->
 <div id="moreSettingsContent" class="calculator-content">
     <div class="settings-page-container">
-        <h3 class="text-xl font-bold text-gray-700 mb-6 dark:text-gray-200">সেটিংস সমূহ</h3>
-        
+        <h3 class="text-xl font-bold text-gray-700 mb-6 dark:text-gray-200">সেটিংস সমূহ</h3>        
         <!-- নিউজ এনিমেশন টগল -->
         <div class="setting-item">
             <div class="setting-text">
@@ -8463,8 +8554,23 @@ body.sidebar-open #sidebarOverlay {
                 <span class="slider round"></span>
             </label>
         </div>
+<!-- অ্যাপ থিম সিলেকশন -->
+        <div class="setting-item" style="margin-top: 15px;">
+            <div class="setting-text">
+                <label for="appThemeSelect" class="font-semibold text-gray-700 dark:text-gray-300">অ্যাপ থিম</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">আপনার পছন্দমতো ডিজাইন বেছে নিন।</p>
+            </div>
+<select id="appThemeSelect" class="p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-indigo-500">
+                <option value="modern">Classic</option>
+                <option value="classic">Soft Blue</option>
+                <option value="nature">Nature</option>
+            </select>
+        </div>
+		
+<!-- ভবিষ্যতে আরও সেটিংস এখানে যোগ করা যাবে -->
 
-        <!-- ভবিষ্যতে আরও সেটিংস এখানে যোগ করা যাবে -->
+
+<!-- ভবিষ্যতে আরও সেটিংস এখানে যোগ করা যাবে -->
 
     </div>
 </div>
@@ -11635,10 +11741,10 @@ function showTab(tabId) {
 			activeContent = quizContent;
 			initializeQuiz(); // এই ফাংশন কুইজ শুরু করবে
 		break;
-        case 'moreSettings': // <<<<<<< এই নতুন কেসটি যোগ করুন
+case 'moreSettings': 
             activeTab = moreSettingsTab;
             activeContent = moreSettingsContent;
-            initializeNewsAnimationToggle(); // <<<<<<< এই ফাংশনটি কল করুন
+            initializeMoreSettings(); // শুধুমাত্র এই নতুন ফাংশনটি থাকবে
         break;
 		    case 'colorPicker':
 				activeTab = colorPickerTab;
@@ -19219,31 +19325,59 @@ function initializeImageResizer() {
 // ====================================================================
 // START: আরও সেটিংস (More Settings) TAB SCRIPT
 // ====================================================================
-function initializeNewsAnimationToggle() {
-    const toggle = document.getElementById('newsAnimationToggle');
-    if (!toggle) return;
+function initializeMoreSettings() {
+    // ১. নিউজ অ্যানিমেশন টগল লজিক
+    const newsToggle = document.getElementById('newsAnimationToggle');
+    if (newsToggle) {
+        const savedNewsSetting = localStorage.getItem('newsAnimationType') || 'sliding';
+        newsToggle.checked = (savedNewsSetting === 'typing');
 
-    // 1. পেইজ লোড হলে localStorage থেকে সেভ করা মান লোড করুন
-    // ডিফল্ট 'sliding'
-    const savedSetting = localStorage.getItem('newsAnimationType') || 'sliding';
-    toggle.checked = (savedSetting === 'typing');
+        newsToggle.addEventListener('change', () => {
+            let newSetting = newsToggle.checked ? 'typing' : 'sliding';
+            localStorage.setItem('newsAnimationType', newSetting);
+            showCustomAlert(`নিউজ অ্যানিমেশন: ${newSetting === 'typing' ? 'টাইপিং' : 'স্লাইডিং'} সেট করা হয়েছে।`);
+            // পেজ রিলোড করার পরামর্শ (অপশনাল)
+            // location.reload(); 
+        });
+    }
 
-    // 2. টগল বাটন পরিবর্তনের জন্য ইভেন্ট লিসেনার
-    toggle.addEventListener('change', () => {
-        let newSetting;
-        if (toggle.checked) {
-            newSetting = 'typing';
-            showCustomAlert('নিউজ অ্যানিমেশন: টাইপিং (Typing) সেট করা হয়েছে।');
-        } else {
-            newSetting = 'sliding';
-            showCustomAlert('নিউজ অ্যানিমেশন: স্লাইডিং (Sliding) সেট করা হয়েছে।');
-        }
-        localStorage.setItem('newsAnimationType', newSetting);
-        
-        // নোট: পরিবর্তনটি দেখার জন্য পেইজটি রিফ্রেশ করতে হবে।
-        showCustomAlert('পরিবর্তনটি দেখতে অনুগ্রহ করে পেইজটি রিলোড করুন।');
-    });
+    // ২. অ্যাপ থিম সিলেকশন লজিক (নতুন যুক্ত করা হয়েছে)
+    const themeSelect = document.getElementById('appThemeSelect');
+    if (themeSelect) {
+        // সেভ করা থিম লোড করুন
+        const savedTheme = localStorage.getItem('selectedAppTheme') || 'modern';
+        themeSelect.value = savedTheme;
+        applyAppTheme(savedTheme); // পেজ লোড বা ট্যাব খোলার সাথে সাথে থিম অ্যাপ্লাই হবে
+
+        themeSelect.addEventListener('change', (e) => {
+            const selectedTheme = e.target.value;
+            localStorage.setItem('selectedAppTheme', selectedTheme);
+            applyAppTheme(selectedTheme);
+            showCustomAlert('থিম পরিবর্তন করা হয়েছে!');
+        });
+    }
 }
+
+// থিম অ্যাপ্লাই করার হেল্পার ফাংশন (আপডেটেড)
+function applyAppTheme(themeName) {
+    const rootElement = document.documentElement;
+    
+    // আগে সেট করা যেকোনো থিম মুছে ফেলুন
+    rootElement.removeAttribute('data-theme');
+
+    if (themeName === 'classic') {
+        rootElement.setAttribute('data-theme', 'classic');
+    } else if (themeName === 'nature') {
+        rootElement.setAttribute('data-theme', 'nature'); // নতুন নেচার থিম
+    }
+    // 'modern' হলে কোনো অ্যাট্রিবিউট লাগবে না, ডিফল্ট CSS ভেরিয়েবল কাজ করবে
+}
+
+// পেজ লোড হওয়ার সাথে সাথেই থিম অ্যাপ্লাই করার জন্য (ট্যাব এ ক্লিক না করলেও যাতে কাজ করে)
+document.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('selectedAppTheme') || 'modern';
+    applyAppTheme(savedTheme);
+});
 // ====================================================================
 // END: আরও সেটিংস (More Settings) TAB SCRIPT
 // ====================================================================
