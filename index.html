@@ -297,6 +297,19 @@
             --tab-radius: 14px;
             --shadow-soft: 0 20px 40px rgba(147, 51, 234, 0.15);
         }
+/* উষ্ণ সূর্যাস্ত থিম (Sunset Orange) */
+        [data-theme="sunset"] {
+            --bg-main: rgba(255, 247, 237, 0.95); /* হালকা কমলা */
+            --bg-main-dark: rgba(67, 20, 7, 0.92); /* গাঢ় বাদামী */
+            --tab-bg: #ffedd5; /* বাটন ব্যাকগ্রাউন্ড */
+            --tab-text: #c2410c; /* বাটন টেক্সট */
+            --tab-active-bg: #f97316;
+            --tab-active-gradient: linear-gradient(135deg, #f97316 0%, #ea580c 100%); /* অরেঞ্জ গ্রেডিয়েন্ট */
+            --converter-bg: #ffffff;
+            --tab-border: 1px solid #fdba74;
+            --tab-radius: 14px;
+            --shadow-soft: 0 20px 40px rgba(249, 115, 22, 0.15);
+        }
         /* ২. মেইন কন্টেইনার (ভেরিয়েবল ব্যবহার করে আপডেট করা) */
         .main-container {
             background-color: var(--bg-main); 
@@ -8578,6 +8591,7 @@ body.sidebar-open #sidebarOverlay {
                 <option value="classic">Soft Blue</option>
                 <option value="nature">Nature</option>
 				<option value="purple">Royal Purple</option>
+				<option value="sunset">Sunset</option>
             </select>
         </div>
 		
@@ -19384,7 +19398,9 @@ function applyAppTheme(themeName) {
     } else if (themeName === 'nature') {
         rootElement.setAttribute('data-theme', 'nature');
     } else if (themeName === 'purple') {
-        rootElement.setAttribute('data-theme', 'purple'); // নতুন পার্পল থিম
+        rootElement.setAttribute('data-theme', 'purple');
+    } else if (themeName === 'sunset') {
+        rootElement.setAttribute('data-theme', 'sunset'); // নতুন সূর্যাস্ত থিম
     }
     // 'modern' হলে কোনো অ্যাট্রিবিউট লাগবে না, ডিফল্ট CSS ভেরিয়েবল কাজ করবে
 }
