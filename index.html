@@ -8595,6 +8595,16 @@ body.sidebar-open #sidebarOverlay {
             </select>
         </div>
 		
+<!-- ক্লিয়ার অ্যাপ ডাটা বাটন -->
+        <div class="setting-item" style="margin-top: 15px;">
+            <div class="setting-text">
+                <label class="font-semibold text-gray-700 dark:text-gray-300">অ্যাপ ডাটা মুছুন</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">সমস্ত সেভ করা ডাটা (নোট, ইনভয়েজ, সেটিংস ইত্যাদি) মুছে ফেলুন। এটি পূর্বাবস্থায় ফেরানো যাবে না।</p>
+            </div>
+            <button id="clearAppDataBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                মুছুন
+            </button>
+        </div>
 <!-- ভবিষ্যতে আরও সেটিংস এখানে যোগ করা যাবে -->
 
 
@@ -19360,7 +19370,7 @@ function initializeImageResizer() {
 // ========================================================
 
 // ====================================================================
-// START: আরও সেটিংস (More Settings) TAB SCRIPT
+// START: আরও সেটিংস (More Settings) TAB SCRIPT (Updated)
 // ====================================================================
 function initializeMoreSettings() {
     // ১. নিউজ অ্যানিমেশন টগল লজিক
@@ -19378,7 +19388,7 @@ function initializeMoreSettings() {
         });
     }
 
-    // ২. অ্যাপ থিম সিলেকশন লজিক (নতুন যুক্ত করা হয়েছে)
+    // ২. অ্যাপ থিম সিলেকশন লজিক
     const themeSelect = document.getElementById('appThemeSelect');
     if (themeSelect) {
         // সেভ করা থিম লোড করুন
@@ -19391,6 +19401,45 @@ function initializeMoreSettings() {
             localStorage.setItem('selectedAppTheme', selectedTheme);
             applyAppTheme(selectedTheme);
             showCustomAlert('থিম পরিবর্তন করা হয়েছে!');
+        });
+    }
+
+    // ৩. ক্লিয়ার অ্যাপ ডাটা লজিক (নতুন)
+    const clearAppDataBtn = document.getElementById('clearAppDataBtn');
+    if (clearAppDataBtn) {
+        clearAppDataBtn.addEventListener('click', async () => {
+            const confirmed = confirm("সতর্কতা: আপনি কি নিশ্চিত যে আপনি সমস্ত অ্যাপ ডাটা মুছে ফেলতে চান? নোটপ্যাড, ইনভয়েজ এবং অন্যান্য সেভ করা তথ্য স্থায়ীভাবে মুছে যাবে।");
+            
+            if (confirmed) {
+                try {
+                    // ১. LocalStorage পরিষ্কার করা
+                    localStorage.clear();
+
+                    // ২. IndexedDB ডাটাবেসগুলো মুছে ফেলা
+                    // আপনার অ্যাপে ব্যবহৃত সব DB এর নাম এখানে দিন
+                    const dbsToDelete = ['BanglaToolboxDB', 'invoiceDB']; 
+                    
+                    for (const dbName of dbsToDelete) {
+                        await new Promise((resolve, reject) => {
+                            const req = indexedDB.deleteDatabase(dbName);
+                            req.onsuccess = () => resolve();
+                            req.onerror = () => reject(`Failed to delete ${dbName}`);
+                            req.onblocked = () => console.warn(`${dbName} delete blocked`);
+                        });
+                    }
+
+                    showCustomAlert('সমস্ত অ্যাপ ডাটা সফলভাবে মুছে ফেলা হয়েছে। পেজ রিলোড হচ্ছে...');
+                    
+                    // ৩. পেজ রিলোড করা (যাতে সব স্টেট রিসেট হয়)
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+
+                } catch (error) {
+                    console.error("Error clearing app data:", error);
+                    showCustomAlert('ডাটা মুছতে সমস্যা হয়েছে। কনসোল চেক করুন।');
+                }
+            }
         });
     }
 }
