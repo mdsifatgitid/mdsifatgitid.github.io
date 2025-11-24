@@ -9376,7 +9376,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // ====================================================================
-// START: DATE AND TIME BANNER SCRIPT (ঋতুসহ আপডেট করা হয়েছে)
+// START: DATE AND TIME BANNER SCRIPT (ঋতুসহ আপডেট করা হয়েছে - CPU Optimized)
 // ====================================================================
 
         // গ্রেগরিয়ান তারিখকে বাংলা তারিখে রূপান্তর করার ফাংশন (বাংলাদেশ স্ট্যান্ডার্ড)
@@ -9391,31 +9391,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 "কার্তিক", "অগ্রহায়ণ", "পৌষ", "মাঘ", "ফাল্গুন", "চৈত্র"
             ];
 
-            // বাংলা বছর গণনা করুন (বাংলাদেশ স্ট্যান্ডার্ড: পহেলা বৈশাখ 14 এপ্রিল)
-            if (month < 3 || (month === 3 && day < 14)) { // 14 এপ্রিলের আগে
+            if (month < 3 || (month === 3 && day < 14)) { 
                 bengaliYear = year - 594;
-            } else { // 14 এপ্রিল বা তার পরে
+            } else { 
                 bengaliYear = year - 593;
             }
 
-            // বাংলা মাসের দিন সংখ্যা (বাংলাদেশ স্ট্যান্ডার্ড)
-            // বৈশাখ থেকে ভাদ্র (5 মাস): 31 দিন
-            // আশ্বিন থেকে চৈত্র (7 মাস): সাধারণত 30 দিন, অধিবর্ষে ফাল্গুন 31 দিন
             const bengaliMonthLengths = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29, 30];
-
-            // বাংলা বছরের সাথে সম্পর্কিত গ্রেগরিয়ান বছরটি অধিবর্ষ কিনা তা নির্ধারণ করুন
-            // এটি ফাল্গুনকে প্রভাবিত করে (11তম মাস, সূচক 10)
             const gregorianYearForBengaliLeapCheck = bengaliYear + 593;
             const isGregorianLeapYear = (gregorianYearForBengaliLeapCheck % 4 === 0 && gregorianYearForBengaliLeapCheck % 100 !== 0) || gregorianYearForBengaliLeapCheck % 400 === 0;
 
             if (isGregorianLeapYear) {
-                bengaliMonthLengths[10] = 30; // অধিবর্ষে ফাল্গুন 30 দিন
+                bengaliMonthLengths[10] = 30; 
             }
 
-            // বর্তমান বাংলা বছরের শুরু থেকে অতিবাহিত দিন গণনা করুন (14 এপ্রিল)
-            const startOfCurrentBengaliYearGregorian = new Date(year, 3, 15); // বর্তমান গ্রেগরিয়ান বছরের 15 এপ্রিল, এখানে 14 অথবা 15 বসিয়ে বছরের একদিন সামঞ্জস্য করতে হবে।
+            const startOfCurrentBengaliYearGregorian = new Date(year, 3, 15); 
             if (gregorianDate < startOfCurrentBengaliYearGregorian) {
-                // যদি বর্তমান তারিখ 14 এপ্রিলের আগে হয়, তবে পূর্ববর্তী গ্রেগরিয়ান বছরের 14 এপ্রিলকে রেফারেন্স হিসাবে সামঞ্জস্য করুন
                 startOfCurrentBengaliYearGregorian.setFullYear(year - 1);
             }
 
@@ -9425,50 +9416,42 @@ document.addEventListener('DOMContentLoaded', () => {
             let currentBengaliMonthIndex = 0;
             let currentBengaliDay = 0;
 
-            // সঠিক মাস এবং দিন খুঁজে বের করতে বাংলা মাসগুলির মধ্যে পুনরাবৃত্তি করুন
             for (let i = 0; i < bengaliMonthNames.length; i++) {
                 if (daysPassedSinceBengaliYearStart < bengaliMonthLengths[i]) {
                     currentBengaliMonthIndex = i;
-                    currentBengaliDay = daysPassedSinceBengaliYearStart + 1; // দিন 1-ইনডেক্সড, এখানে 1 থাকলে 1 দিন যুক্ত হবে বা অতিরিক্ত হবে।
+                    currentBengaliDay = daysPassedSinceBengaliYearStart + 1; 
                     break;
                 }
                 daysPassedSinceBengaliYearStart -= bengaliMonthLengths[i];
             }
 
-            // সংখ্যাগুলিকে বাংলা সংখ্যায় রূপান্তর করুন
             const toBengaliNumber = (num) => {
                 const numbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
                 return num.toString().split('').map(digit => numbers[parseInt(digit)]).join('');
             };
 
-            // বাংলা মাসের মোট দিন
-            const totalDaysInBengaliMonth = bengaliMonthLengths[currentBengaliMonthIndex];
-
             return {
                 day: currentBengaliDay,
                 month: bengaliMonthNames[currentBengaliMonthIndex],
                 year: bengaliYear,
-                totalDays: totalDaysInBengaliMonth,
-                monthIndex: currentBengaliMonthIndex, // *** নতুন: ঋতু বের করার জন্য মাস ইনডেক্স যোগ করা হয়েছে ***
+                monthIndex: currentBengaliMonthIndex, 
                 formatted: `${toBengaliNumber(currentBengaliDay)} ${bengaliMonthNames[currentBengaliMonthIndex]} ${toBengaliNumber(bengaliYear)} বঙ্গাব্দ`
             };
         }
 
-        // *** নতুন: বাংলা মাস অনুযায়ী ঋতু (কাল) বের করার ফাংশন ***
+        // ঋতু বের করার ফাংশন
         function getBengaliSeason(monthIndex) {
             const seasons = [
-                "গ্রীষ্মকাল", "গ্রীষ্মকাল", // বৈশাখ (0), জ্যৈষ্ঠ (1)
-                "বর্ষাকাল", "বর্ষাকাল",   // আষাঢ় (2), শ্রাবণ (3)
-                "শরৎকাল", "শরৎকাল",   // ভাদ্র (4), আশ্বিন (5)
-                "হেমন্তকাল", "হেমন্তকাল", // কার্তিক (6), অগ্রহায়ণ (7)
-                "শীতকাল", "শীতকাল",     // পৌষ (8), মাঘ (9)
-                "বসন্তকাল", "বসন্তকাল"  // ফাল্গুন (10), চৈত্র (11)
+                "গ্রীষ্মকাল", "গ্রীষ্মকাল", 
+                "বর্ষাকাল", "বর্ষাকাল",   
+                "শরৎকাল", "শরৎকাল",   
+                "হেমন্তকাল", "হেমন্তকাল", 
+                "শীতকাল", "শীতকাল",     
+                "বসন্তকাল", "বসন্তকাল"  
             ];
-            return seasons[monthIndex] || ""; // মাস ইনডেক্স 0-11
+            return seasons[monthIndex] || ""; 
         }
-        // *** নতুন ফাংশন শেষ ***
 
-        // আরবি সংখ্যাকে বাংলা সংখ্যায় রূপান্তর করার ফাংশন
         const arabicToBengaliNumbers = (text) => {
             const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
             const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
@@ -9479,108 +9462,88 @@ document.addEventListener('DOMContentLoaded', () => {
             return converted;
         };
 
-        // আরবি হিজরি মাসের নামগুলিকে বাংলা নামে ম্যাপ করুন
         const hijriMonthArabicToBengali = {
-            'محرم': 'মুহাররম',
-            'صفر': 'সফর',
-            'ربيع الأول': 'রবিউল আউয়াল',
-            'ربيع الآخر': 'রবিউস সানি',
-            'جمادى الأولى': 'জমাদিউল আউয়াল',
-            'جمادى الآخرة': 'জমাদিউস সানি',
-            'رجب': 'রজব',
-            'شعبان': 'শাবান',
-            'رمضان': 'রমজান',
-            'شوال': 'শাওয়াল',
-            'ذو القعدة': 'জিলকদ',
-            'ذو الحجة': 'জিলহজ'
+            'محرم': 'মুহাররম', 'صفر': 'সফর', 'ربيع الأول': 'রবিউল আউয়াল', 'ربيع الآخر': 'রবিউস সানি',
+            'جمادى الأولى': 'জমাদিউল আউয়াল', 'جمادى الآخرة': 'জমাদিউস সানি', 'رجب': 'রজব', 'شعبان': 'শাবান',
+            'رمضان': 'রমজান', 'شوال': 'শাওয়াল', 'ذو القعدة': 'জিলকদ', 'ذو الحجة': 'জিলহজ'
         };
+
+        // ক্যাশিং ভেরিয়েবল (CPU অপ্টিমাইজেশনের জন্য)
+        let cachedDatePartHTML = "";
+        let lastDateUpdateTimestamp = 0;
+        const UPDATE_INTERVAL_MS = 10 * 60 * 1000; // ১০ মিনিট
 
        function updateDateTimeBanner() {
             const bannerElement = document.getElementById('currentDateTimeBanner');
             if (!bannerElement) return;
 
             const now = new Date();
+            const currentTime = Date.now();
 
-            // ব্যানার ফেড ইন/আউট করার জন্য
+            // সেকেন্ডের ফেড এফেক্ট (প্রতি মিনিটে)
             if (now.getSeconds() === 0) {
                 bannerElement.style.opacity = '1';
-            }
-            else if (now.getSeconds() === 59) {
+            } else if (now.getSeconds() === 59) {
                 bannerElement.style.opacity = '0';
+            } else if (now.getSeconds() === 1 && bannerElement.style.opacity !== '1') {
+                bannerElement.style.opacity = '1'; 
             }
-            // --- নতুন ফিক্স: রেস কন্ডিশন এড়ানোর জন্য ---
-            // যদি 0 সেকেন্ড মিস হয়, তবে 1 সেকেন্ডে এটি আবার দৃশ্যমান করুন
-            else if (now.getSeconds() === 1) {
-                if (bannerElement.style.opacity !== '1') {
-                    bannerElement.style.opacity = '1'; 
+
+            // ১০ মিনিট পর পর অথবা প্রথমে তারিখ আপডেট হবে (ভারী কাজ)
+            if (currentTime - lastDateUpdateTimestamp > UPDATE_INTERVAL_MS || !cachedDatePartHTML) {
+                const toBengaliNumber = (num) => {
+                    const numbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+                    return String(num).split('').map(digit => !isNaN(parseInt(digit)) ? numbers[parseInt(digit)] : digit).join('');
+                };
+
+                // Gregorian Date
+                const gregorianDay = toBengaliNumber(now.getDate());
+                const gregorianMonth = now.toLocaleDateString('bn-BD', { month: 'long' });
+                const gregorianYear = toBengaliNumber(now.getFullYear());
+                const gregorianDateString = `${gregorianDay} ${gregorianMonth} ${gregorianYear}`;
+                const dayOfWeekBengali = now.toLocaleDateString('bn-BD', { weekday: 'long' });
+
+                // Bengali Date
+                const bengaliDateInfo = getBengaliDate(now);
+                const bengaliDateString = bengaliDateInfo.formatted;
+                const bengaliSeason = getBengaliSeason(bengaliDateInfo.monthIndex);
+
+                // Hijri Date
+                let hijriCalculationDate = new Date(now);
+                hijriCalculationDate.setDate(hijriCalculationDate.getDate() - 2); 
+                const hijriDateFormatter = new Intl.DateTimeFormat('ar-SA', {
+                    calendar: 'islamic', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Dhaka'
+                });
+                const hijriParts = hijriDateFormatter.formatToParts(hijriCalculationDate);
+
+                let hijriDay = '', hijriMonthArabic = '', hijriYear = '';
+                for (const part of hijriParts) {
+                    if (part.type === 'day') hijriDay = arabicToBengaliNumbers(part.value);
+                    else if (part.type === 'month') hijriMonthArabic = part.value;
+                    else if (part.type === 'year') hijriYear = arabicToBengaliNumbers(part.value);
                 }
+                const hijriMonthBengali = hijriMonthArabicToBengali[hijriMonthArabic] || hijriMonthArabic;
+                const hijriDateString = `${hijriDay} ${hijriMonthBengali} ${hijriYear} হিজরি`;
+
+                // ক্যাশ করা HTML (সময় বাদে বাকি অংশ)
+                cachedDatePartHTML = `<span class="text-green-700 dark:text-green-300">আজ</span> <span class="text-green-700 dark:text-green-300">${dayOfWeekBengali}</span>, <span class="text-blue-700 dark:text-blue-300">${gregorianDateString} ইং</span>, <span class="text-green-700 dark:text-green-300">${bengaliDateString.replace('বঙ্গাব্দ', '')} বঙ্গাব্দ, ${bengaliSeason}</span>, <span class="text-purple-700 dark:text-purple-300">${hijriDateString}</span>, <span class="text-green-700 dark:text-green-300">এখন সময়</span>`;
+                
+                lastDateUpdateTimestamp = currentTime;
+                console.log("Banner Date Updated (Next update in 10 mins)");
             }
-            // ইংরেজি সংখ্যাকে বাংলা সংখ্যায় রূপান্তর করার জন্য ফাংশন
-            const toBengaliNumber = (num) => {
-                const numbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-                return String(num).split('').map(digit => {
-                    // এটি সংখ্যা কিনা তা পরীক্ষা করে
-                    if (!isNaN(parseInt(digit))) {
-                        return numbers[parseInt(digit)];
-                    }
-                    return digit; // সংখ্যা না হলে যেমন আছে তেমনই থাকবে
-                }).join('');
-            };
 
-            // Gregorian Date (ইংরেজি তারিখ)
-            const gregorianDay = toBengaliNumber(now.getDate());
-            const gregorianMonth = now.toLocaleDateString('bn-BD', { month: 'long' });
-            const gregorianYear = toBengaliNumber(now.getFullYear());
-            const gregorianDateString = `${gregorianDay} ${gregorianMonth} ${gregorianYear}`;
-            const dayOfWeekBengali = now.toLocaleDateString('bn-BD', { weekday: 'long' });
-
-            // Bengali Date (বাংলা তারিখ)
-            const bengaliDateInfo = getBengaliDate(now);
-            const bengaliDateString = bengaliDateInfo.formatted;
-            const bengaliSeason = getBengaliSeason(bengaliDateInfo.monthIndex); // *** নতুন: ঋতু আনা হয়েছে ***
-
-            // Hijri Date (হিজরি তারিখ)
-            let hijriCalculationDate = new Date(now);
-            hijriCalculationDate.setDate(hijriCalculationDate.getDate() - 2); // স্থানীয় রীতি অনুযায়ী তারিখ সামঞ্জস্য
-            const hijriDateFormatter = new Intl.DateTimeFormat('ar-SA', {
-                calendar: 'islamic',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                timeZone: 'Asia/Dhaka'
-            });
-            const hijriParts = hijriDateFormatter.formatToParts(hijriCalculationDate);
-
-            let hijriDay = '';
-            let hijriMonthArabic = '';
-            let hijriYear = '';
-            for (const part of hijriParts) {
-                if (part.type === 'day') {
-                    hijriDay = arabicToBengaliNumbers(part.value);
-                } else if (part.type === 'month') {
-                    hijriMonthArabic = part.value;
-                } else if (part.type === 'year') {
-                    hijriYear = arabicToBengaliNumbers(part.value);
-                }
-            }
-            const hijriMonthBengali = hijriMonthArabicToBengali[hijriMonthArabic] || hijriMonthArabic;
-            const hijriDateString = `${hijriDay} ${hijriMonthBengali} ${hijriYear} হিজরি`;
-
-            // Time (সময়)
+            // Time (সময়) - প্রতি সেকেন্ডে শুধু এটিই নতুন করে জেনারেট হবে
             const timeString = now.toLocaleTimeString('bn-BD', {
-                hour: '2-digit',
-                minute: '2-digit',
-				second: '2-digit',
-                hour12: true,
-                timeZone: 'Asia/Dhaka'
+                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true, timeZone: 'Asia/Dhaka'
             });
 
-            // *** ব্যানার আপডেট করুন (ঋতুসহ) ***
-            bannerElement.innerHTML = `<span class="text-green-700 dark:text-green-300">আজ</span> <span class="text-green-700 dark:text-green-300">${dayOfWeekBengali}</span>, <span class="text-blue-700 dark:text-blue-300">${gregorianDateString} ইং</span>, <span class="text-green-700 dark:text-green-300">${bengaliDateString.replace('বঙ্গাব্দ', '')} বঙ্গাব্দ, ${bengaliSeason}</span>, <span class="text-purple-700 dark:text-purple-300">${hijriDateString}</span>, <span class="text-green-700 dark:text-green-300">এখন সময়</span><span class="text-green-700 dark:text-green-300">${timeString}</span>`;
+            // ফাইনাল আউটপুট
+            bannerElement.innerHTML = `${cachedDatePartHTML}<span class="text-green-700 dark:text-green-300"> ${timeString}</span>`;
         }
 
-        // প্রতি সেকেন্ডে ব্যানার আপডেট করুন
+        // প্রতি সেকেন্ডে আপডেট হবে, কিন্তু ভারী ক্যালকুলেশন ১০ মিনিটে একবার হবে
         setInterval(updateDateTimeBanner, 1000);
+        updateDateTimeBanner(); // শুরুতে একবার কল করা
 
 // ====================================================================
 // END: DATE AND TIME BANNER SCRIPT
@@ -11034,49 +10997,57 @@ initializeTimeConverter();
 // ====================================================================
 
 // ====================================================================
-// START: UNDO REDO FOR FONT CONVERTER
+// START: UNDO REDO FOR FONT CONVERTER (History Limit Added)
 // ====================================================================
         // টেক্সটএরিয়াগুলির জন্য আনডু/রিডু ইতিহাস
+        const MAX_HISTORY_SIZE = 50; // সর্বোচ্চ ৫০টি ধাপ মনে রাখবে (মেমোরি বাঁচাতে)
         let historyLeft = [];
         let historyIndexLeft = -1;
         let historyRight = [];
         let historyIndexRight = -1;
 
         async function addState(textareaId) {
-    const textarea = document.getElementById(textareaId);
-    let history, historyIndex;
+            const textarea = document.getElementById(textareaId);
+            let history, historyIndex;
 
-    if (textareaId === 'textAreaLeft') {
-        history = historyLeft;
-        historyIndex = historyIndexLeft;
-    } else {
-        history = historyRight;
-        historyIndex = historyIndexRight;
-    }
+            if (textareaId === 'textAreaLeft') {
+                history = historyLeft;
+                historyIndex = historyIndexLeft;
+            } else {
+                history = historyRight;
+                historyIndex = historyIndexRight;
+            }
 
-    // If we are not at the end of history, clear subsequent states
-    if (historyIndex < history.length - 1) {
-        history.splice(historyIndex + 1);
-    }
+            // যদি আমরা ইতিহাসের শেষে না থাকি, তবে পরবর্তী ধাপগুলো মুছে ফেলুন (নতুন ব্রাঞ্চ তৈরি করতে)
+            if (historyIndex < history.length - 1) {
+                history.splice(historyIndex + 1);
+            }
 
-    history.push(textarea.value);
-    historyIndex = history.length - 1;
+            history.push(textarea.value);
 
-    if (textareaId === 'textAreaLeft') {
-        historyLeft = history;
-        historyIndexLeft = historyIndex;
-        // Save state to IndexedDB
-        await idbSet('converterTextLeft', textarea.value);
-        await idbSet('converterHistoryLeft', { history: historyLeft, index: historyIndexLeft });
-    } else {
-        historyRight = history;
-        historyIndexRight = historyIndex;
-        // Save state to IndexedDB
-        await idbSet('converterTextRight', textarea.value);
-        await idbSet('converterHistoryRight', { history: historyRight, index: historyIndexRight });
-    }
-    updateButtonStates(textareaId);
-}
+            // --- নতুন: হিস্টোরি লিমিট চেক ---
+            // যদি ইতিহাসের আকার সীমার বেশি হয়, তবে সবচেয়ে পুরনো এন্ট্রিটি সরিয়ে ফেলুন
+            if (history.length > MAX_HISTORY_SIZE) {
+                history.shift(); 
+            }
+            
+            historyIndex = history.length - 1;
+
+            if (textareaId === 'textAreaLeft') {
+                historyLeft = history;
+                historyIndexLeft = historyIndex;
+                // Save state to IndexedDB
+                await idbSet('converterTextLeft', textarea.value);
+                await idbSet('converterHistoryLeft', { history: historyLeft, index: historyIndexLeft });
+            } else {
+                historyRight = history;
+                historyIndexRight = historyIndex;
+                // Save state to IndexedDB
+                await idbSet('converterTextRight', textarea.value);
+                await idbSet('converterHistoryRight', { history: historyRight, index: historyIndexRight });
+            }
+            updateButtonStates(textareaId);
+        }
 
         function undoText(textareaId) {
             const textarea = document.getElementById(textareaId);
@@ -14516,9 +14487,8 @@ const findInNotepad = () => {
 // ====================================================================
 
 // ====================================================================
-// START: CLOCK TAB SCRIPT (STOPWATCH, ALARM, WORLD CLOCK)
+// START: CLOCK TAB SCRIPT (STOPWATCH, ALARM, WORLD CLOCK - Optimized)
 // ====================================================================
-
 
 // আপনার JavaScript ফাইলে IndexedDB helper ফাংশনগুলোর সাথে এই নতুন idbDelete ফাংশনটি যোগ করুন।
 async function idbDelete(key) {
@@ -14531,7 +14501,6 @@ async function idbDelete(key) {
         transaction.onerror = () => reject(transaction.error);
     });
 }
-
 
 // আপনার JavaScript ফাইলে থাকা পুরনো initializeClockTab ফাংশনটি এই নতুন কোড দিয়ে সম্পূর্ণরূপে প্রতিস্থাপন করুন।
 function initializeClockTab() {
@@ -14548,7 +14517,7 @@ function initializeClockTab() {
     const alarmTimeInput = document.getElementById('alarmTimeInput');
     const setAlarmBtn = document.getElementById('setAlarmBtn');
     const clearAlarmBtn = document.getElementById('clearAlarmBtn');
-    const stopAlarmBtn = document.getElementById('stopAlarmBtn'); // নতুন বাটন
+    const stopAlarmBtn = document.getElementById('stopAlarmBtn'); 
     const alarmStatus = document.getElementById('alarmStatus');
     const alarmSoundSelect = document.getElementById('alarmSoundSelect');
     const customAlarmSoundInput = document.getElementById('customAlarmSoundInput');
@@ -14583,7 +14552,7 @@ function initializeClockTab() {
     // ======================== HELPER FUNCTIONS ========================
     function formatTo12Hour(timeString24) { if (!timeString24) return '--:--'; const [hours, minutes] = timeString24.split(':'); const h = parseInt(hours, 10); const m = parseInt(minutes, 10); const ampm = h >= 12 ? 'PM' : 'AM'; const hour12 = h % 12 || 12; return `${String(hour12).padStart(2, '0')}:${String(m).padStart(2, '0')} ${ampm}`; }
     
-    // ======================== STOPWATCH LOGIC (Unchanged) ========================
+    // ======================== STOPWATCH LOGIC ========================
     function formatStopwatchTime(ms) { const date = new Date(ms); const minutes = String(date.getUTCMinutes()).padStart(2, '0'); const seconds = String(date.getUTCSeconds()).padStart(2, '0'); const milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0').substring(0, 2); return `${minutes}:${seconds}.${milliseconds}`; }
     function updateStopwatchDisplay() { if(stopwatchDisplay) stopwatchDisplay.textContent = formatStopwatchTime(elapsedTime); }
     function startStopwatch() { if (!isRunning) { startTime = Date.now() - elapsedTime; stopwatchTimer = setInterval(() => { elapsedTime = Date.now() - startTime; updateStopwatchDisplay(); }, 10); isRunning = true; } }
@@ -14595,25 +14564,18 @@ function initializeClockTab() {
     if(resetBtn) resetBtn.addEventListener('click', resetStopwatch);
     if(lapBtn) lapBtn.addEventListener('click', recordLap);
 
-    // ======================== ALARM LOGIC (Updated with Stop Button) ========================
+    // ======================== ALARM LOGIC ========================
     function stopAlarmSound() {
         if (activeAlarmSound) {
-            if (activeAlarmSound.stop) {
-                activeAlarmSound.stop();
-            } else if (activeAlarmSound.pause) {
-                activeAlarmSound.pause();
-                activeAlarmSound.currentTime = 0;
-            }
+            if (activeAlarmSound.stop) { activeAlarmSound.stop(); } 
+            else if (activeAlarmSound.pause) { activeAlarmSound.pause(); activeAlarmSound.currentTime = 0; }
             activeAlarmSound = null;
         }
-        // অ্যালার্ম থামানোর পর 'থামান' বাটনটি লুকান
         if (stopAlarmBtn) stopAlarmBtn.classList.add('hidden');
     }
 
     function playAlarmSound() {
         stopAlarmSound(); 
-        
-        // অ্যালার্ম বাজার সময় 'থামান' বাটনটি দেখান
         if (stopAlarmBtn) stopAlarmBtn.classList.remove('hidden');
 
         if (customAlarmSoundBlob) {
@@ -14624,10 +14586,7 @@ function initializeClockTab() {
                 customAudio.play();
                 customAudio.onended = () => URL.revokeObjectURL(audioUrl);
                 return;
-            } catch (e) {
-                console.error("কাস্টম অ্যালার্ম সাউন্ড বাজানো সম্ভব হয়নি:", e);
-                showCustomAlert("কাস্টম অডিও ফাইলটি বাজানো যাচ্ছে না।");
-            }
+            } catch (e) { console.error("Custom audio error", e); }
         }
         
         try {
@@ -14639,13 +14598,7 @@ function initializeClockTab() {
             gainNode.connect(audioContext.destination);
             gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
             
-            oscillator.onended = () => {
-                audioContext.close();
-                if (activeAlarmSound === oscillator) {
-                    activeAlarmSound = null;
-                }
-            };
-            
+            oscillator.onended = () => { audioContext.close(); if (activeAlarmSound === oscillator) activeAlarmSound = null; };
             activeAlarmSound = oscillator;
 
             switch (selectedSound) {
@@ -14654,14 +14607,8 @@ function initializeClockTab() {
                 case 'beep': default: oscillator.type = 'sine'; oscillator.frequency.setValueAtTime(440, audioContext.currentTime); break;
             }
             oscillator.start();
-            setTimeout(() => {
-                if (activeAlarmSound === oscillator) {
-                    oscillator.stop();
-                    // ১ সেকেন্ড পর 'থামান' বাটনটি আবার লুকান
-                    if (stopAlarmBtn) stopAlarmBtn.classList.add('hidden');
-                }
-            }, 1000);
-        } catch(e) { console.error("অ্যালার্ম সাউন্ড বাজানো সম্ভব হয়নি:", e); }
+            setTimeout(() => { if (activeAlarmSound === oscillator) { oscillator.stop(); if (stopAlarmBtn) stopAlarmBtn.classList.add('hidden'); } }, 1000);
+        } catch(e) { console.error("Alarm error:", e); }
     }
 
     function checkAlarm() {
@@ -14687,7 +14634,6 @@ function initializeClockTab() {
             await idbSet('activeAlarm', { time: alarmTime });
             
             const time12hr = formatTo12Hour(timeValue);
-
             clearInterval(alarmCountdownInterval);
             clearInterval(alarmCheckInterval);
 
@@ -14695,16 +14641,10 @@ function initializeClockTab() {
                 const [targetHours, targetMinutes] = timeValue.split(':').map(Number);
                 const targetTime = new Date();
                 targetTime.setHours(targetHours, targetMinutes, 0, 0);
-
-                if (targetTime < new Date()) {
-                    targetTime.setDate(targetTime.getDate() + 1);
-                }
+                if (targetTime < new Date()) targetTime.setDate(targetTime.getDate() + 1);
 
                 const diff = targetTime - new Date();
-                if (diff <= 0) {
-                     if(alarmStatus) alarmStatus.innerHTML = `অ্যালার্ম সেট করা হয়েছে: ${time12hr}`;
-                     return;
-                }
+                if (diff <= 0) { if(alarmStatus) alarmStatus.innerHTML = `অ্যালার্ম সেট করা হয়েছে: ${time12hr}`; return; }
                 const hours = Math.floor((diff / 3600000) % 24);
                 const minutes = Math.floor((diff / 60000) % 60);
                 const seconds = Math.floor((diff / 1000) % 60);
@@ -14716,9 +14656,7 @@ function initializeClockTab() {
             if(alarmStatus) alarmStatus.classList.add('active');
             alarmCheckInterval = setInterval(checkAlarm, 1000);
             
-            if (showAlert) {
-                showCustomAlert(`অ্যালার্ম ${time12hr} এর জন্য সেট করা হয়েছে।`);
-            }
+            if (showAlert) showCustomAlert(`অ্যালার্ম ${time12hr} এর জন্য সেট করা হয়েছে।`);
         }
     }
 
@@ -14726,17 +14664,11 @@ function initializeClockTab() {
         stopAlarmSound();
         alarmTime = null;
         hasRungThisMinute = false;
-        
         if(alarmTimeInput) alarmTimeInput.value = '';
         clearInterval(alarmCheckInterval);
         clearInterval(alarmCountdownInterval);
-        
         await idbDelete('activeAlarm');
-
-        if(alarmStatus) {
-            alarmStatus.textContent = 'কোনো অ্যালার্ম সেট করা নেই।';
-            alarmStatus.classList.remove('active');
-        }
+        if(alarmStatus) { alarmStatus.textContent = 'কোনো অ্যালার্ম সেট করা নেই।'; alarmStatus.classList.remove('active'); }
     }
     
     async function loadCustomAlarmSound() {
@@ -14750,36 +14682,14 @@ function initializeClockTab() {
             } else {
                 customAlarmSoundBlob = null;
                 customAlarmFileName.textContent = 'কোনো ফাইল নেই';
-                customAlarmFileName.title = '';
                 removeCustomAlarmSound.classList.add('hidden');
             }
-        } catch (e) { console.error("কাস্টম অ্যালার্ম লোড করতে সমস্যা:", e); }
+        } catch (e) { console.error("Custom alarm load error:", e); }
     }
 
-    if(setAlarmBtn) setAlarmBtn.addEventListener('click', () => {
-        const timeValue = alarmTimeInput.value;
-        if (timeValue) {
-            setupAlarm(timeValue, true);
-        } else {
-            showCustomAlert('অনুগ্রহ করে একটি সঠিক সময় নির্বাচন করুন।');
-        }
-    });
-
-    if(clearAlarmBtn) clearAlarmBtn.addEventListener('click', () => {
-        clearAlarm();
-        showCustomAlert('অ্যালার্ম মুছে ফেলা হয়েছে।');
-    });
-    
-    // নতুন: 'থামান' বাটনের জন্য ইভেন্ট লিসেনার
-    if(stopAlarmBtn) {
-        stopAlarmBtn.addEventListener('click', () => {
-            stopAlarmSound();
-            hasRungThisMinute = true; // এই মিনিটের জন্য আর বাজবে না
-            if (alarmTime && alarmStatus) {
-                 alarmStatus.innerHTML = `অ্যালার্ম (${formatTo12Hour(alarmTime)}) থামানো হয়েছে।`;
-            }
-        });
-    }
+    if(setAlarmBtn) setAlarmBtn.addEventListener('click', () => { const timeValue = alarmTimeInput.value; if (timeValue) setupAlarm(timeValue, true); else showCustomAlert('অনুগ্রহ করে একটি সঠিক সময় নির্বাচন করুন।'); });
+    if(clearAlarmBtn) clearAlarmBtn.addEventListener('click', () => { clearAlarm(); showCustomAlert('অ্যালার্ম মুছে ফেলা হয়েছে।'); });
+    if(stopAlarmBtn) stopAlarmBtn.addEventListener('click', () => { stopAlarmSound(); hasRungThisMinute = true; if (alarmTime && alarmStatus) alarmStatus.innerHTML = `অ্যালার্ম (${formatTo12Hour(alarmTime)}) থামানো হয়েছে।`; });
 
     if (customAlarmSoundInput) {
         customAlarmSoundInput.addEventListener('change', async (event) => {
@@ -14815,23 +14725,123 @@ function initializeClockTab() {
     async function loadInitialAlarm() {
         await loadCustomAlarmSound();
         const savedAlarm = await idbGet('activeAlarm');
-        if (savedAlarm && savedAlarm.time) {
-            alarmTimeInput.value = savedAlarm.time;
-            setupAlarm(savedAlarm.time, false);
-        }
+        if (savedAlarm && savedAlarm.time) { alarmTimeInput.value = savedAlarm.time; setupAlarm(savedAlarm.time, false); }
     }
 
-    // ======================== WORLD CLOCK LOGIC (Unchanged) ========================
-    function populateTimezoneDropdown() { if (!timezoneSelect) return; timezoneSelect.innerHTML = '<option value="">একটি শহর নির্বাচন করুন...</option>'; timezonesWithCountries.forEach(tz => { const option = document.createElement('option'); option.value = tz.zone; option.textContent = `${tz.city}, ${tz.country}`; timezoneSelect.appendChild(option); }); }
-    function updateWorldClocks() { if (!worldClockGrid) return; worldClockGrid.innerHTML = ''; const now = new Date(); const selectedZone = timezoneSelect.value; let finalOrder = []; let selectedTz = null; if (selectedZone) { selectedTz = timezonesWithCountries.find(tz => tz.zone === selectedZone); } let displayList = [...defaultTimezones]; if (selectedTz && !displayList.some(dtz => dtz.zone === selectedTz.zone)) { displayList.unshift(selectedTz); } const uniqueZones = new Map(); if(selectedTz) uniqueZones.set(selectedTz.zone, selectedTz); const dhakaTz = timezonesWithCountries.find(tz => tz.zone === 'Asia/Dhaka'); if(dhakaTz) uniqueZones.set(dhakaTz.zone, dhakaTz); displayList.forEach(tz => uniqueZones.set(tz.zone, tz)); finalOrder = Array.from(uniqueZones.values()); finalOrder.forEach(tz => { const card = document.createElement('div'); card.className = 'world-clock-card'; let timeString, dateString; const countryDiv = `<div class="country">${tz.country || ''}</div>`; if (selectedZone && tz.zone === selectedZone) { card.id = 'selected-timezone-card'; timeString = now.toLocaleTimeString('bn-BD', { timeZone: tz.zone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }); dateString = now.toLocaleDateString('bn-BD', { timeZone: tz.zone, weekday: 'long', day: 'numeric', month: 'long' }); } else { timeString = now.toLocaleTimeString('bn-BD', { timeZone: tz.zone, hour: '2-digit', minute: '2-digit', hour12: true }); dateString = now.toLocaleDateString('bn-BD', { timeZone: tz.zone, weekday: 'short', day: 'numeric' }); } card.innerHTML = `<div class="city">${tz.city}</div>${countryDiv}<div class="time">${timeString}</div><div class="date">${dateString}</div>`; worldClockGrid.appendChild(card); }); }
+    // ======================== WORLD CLOCK LOGIC (Optimized) ========================
+    let worldClockCache = {}; // কার্ডগুলো একবার বানিয়ে রাখব
+
+    function populateTimezoneDropdown() { 
+        if (!timezoneSelect) return; 
+        timezoneSelect.innerHTML = '<option value="">একটি শহর নির্বাচন করুন...</option>'; 
+        timezonesWithCountries.forEach(tz => { 
+            const option = document.createElement('option'); 
+            option.value = tz.zone; 
+            option.textContent = `${tz.city}, ${tz.country}`; 
+            timezoneSelect.appendChild(option); 
+        }); 
+    }
+
+    function createWorldClockCard(tz, selectedZone) {
+        const card = document.createElement('div');
+        card.className = 'world-clock-card';
+        if (selectedZone && tz.zone === selectedZone) card.id = 'selected-timezone-card';
+        
+        // ইউনিক ID দেওয়া হচ্ছে যাতে পরে সহজে খুঁজে আপডেট করা যায়
+        const timeId = `time-${tz.zone.replace(/\//g, '-')}`;
+        const dateId = `date-${tz.zone.replace(/\//g, '-')}`;
+
+        card.innerHTML = `
+            <div class="city">${tz.city}</div>
+            <div class="country">${tz.country || ''}</div>
+            <div class="time" id="${timeId}">--:--:--</div>
+            <div class="date" id="${dateId}">...</div>
+        `;
+        return card;
+    }
+
+    function rebuildWorldClockGrid() {
+        if (!worldClockGrid) return;
+        worldClockGrid.innerHTML = '';
+        
+        const selectedZone = timezoneSelect.value;
+        let displayList = [...defaultTimezones];
+        let selectedTz = null;
+
+        if (selectedZone) {
+            selectedTz = timezonesWithCountries.find(tz => tz.zone === selectedZone);
+            if (selectedTz && !displayList.some(dtz => dtz.zone === selectedTz.zone)) {
+                displayList.unshift(selectedTz);
+            }
+        }
+
+        const uniqueZones = new Map();
+        if(selectedTz) uniqueZones.set(selectedTz.zone, selectedTz);
+        const dhakaTz = timezonesWithCountries.find(tz => tz.zone === 'Asia/Dhaka');
+        if(dhakaTz) uniqueZones.set(dhakaTz.zone, dhakaTz);
+        displayList.forEach(tz => uniqueZones.set(tz.zone, tz));
+        
+        const finalOrder = Array.from(uniqueZones.values());
+        
+        finalOrder.forEach(tz => {
+            const card = createWorldClockCard(tz, selectedZone);
+            worldClockGrid.appendChild(card);
+        });
+        
+        // কার্ড তৈরি শেষ হলে একবার আপডেট কল করুন
+        updateWorldClocksText(finalOrder);
+        return finalOrder; // পরবর্তী আপডেটের জন্য তালিকা রিটার্ন করুন
+    }
+
+    let activeTimezones = [];
+
+    // প্রতি সেকেন্ডে শুধু টেক্সট আপডেট হবে, পুরো DOM রিবিল্ড হবে না
+    function updateWorldClocksText(timezones) {
+        const now = new Date();
+        timezones.forEach(tz => {
+            const timeId = `time-${tz.zone.replace(/\//g, '-')}`;
+            const dateId = `date-${tz.zone.replace(/\//g, '-')}`;
+            
+            const timeEl = document.getElementById(timeId);
+            const dateEl = document.getElementById(dateId);
+
+            if (timeEl) {
+                timeEl.textContent = now.toLocaleTimeString('bn-BD', { timeZone: tz.zone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+            }
+            // তারিখ সবসময় আপডেট করার দরকার নেই, কিন্তু সরলতার জন্য রাখা হলো
+            if (dateEl) {
+                dateEl.textContent = now.toLocaleDateString('bn-BD', { timeZone: tz.zone, weekday: 'short', day: 'numeric', month: 'long' });
+            }
+        });
+    }
     
+    // ইনিশিয়ালাইজেশন
     if (window.worldClockIntervalId) clearInterval(window.worldClockIntervalId);
     populateTimezoneDropdown();
+    
     const savedTimezone = localStorage.getItem('selectedWorldClockTimezone');
     if (savedTimezone && timezoneSelect) timezoneSelect.value = savedTimezone;
-    updateWorldClocks(); 
-    window.worldClockIntervalId = setInterval(updateWorldClocks, 1000);
-    if (timezoneSelect) { timezoneSelect.addEventListener('change', () => { const selectedZone = timezoneSelect.value; if (selectedZone) localStorage.setItem('selectedWorldClockTimezone', selectedZone); else localStorage.removeItem('selectedWorldClockTimezone'); updateWorldClocks(); }); }
+    
+    // প্রথমবার গ্রিড তৈরি
+    activeTimezones = rebuildWorldClockGrid(); 
+    
+    // প্রতি সেকেন্ডে শুধু টেক্সট আপডেট হবে
+    window.worldClockIntervalId = setInterval(() => {
+        if (activeTimezones && activeTimezones.length > 0) {
+            updateWorldClocksText(activeTimezones);
+        }
+    }, 1000);
+
+    if (timezoneSelect) { 
+        timezoneSelect.addEventListener('change', () => { 
+            const selectedZone = timezoneSelect.value; 
+            if (selectedZone) localStorage.setItem('selectedWorldClockTimezone', selectedZone); 
+            else localStorage.removeItem('selectedWorldClockTimezone'); 
+            
+            // সিলেকশন পাল্টালে গ্রিড নতুন করে বানাতে হবে
+            activeTimezones = rebuildWorldClockGrid(); 
+        }); 
+    }
     
     // --- Initialize ALARM on load ---
     loadInitialAlarm();
@@ -15165,7 +15175,7 @@ if (pasteButtonRight) {
 // ====================================================================
 
 // ====================================================================
-// START: COMBINED & UPDATED WEATHER SCRIPT
+// START: COMBINED & UPDATED WEATHER SCRIPT (Optimized - 10 min update)
 // ====================================================================
 
 // --- প্রথম আবহাওয়া সেকশনের জন্য উপাদান (OpenWeatherMap) ---
@@ -15350,14 +15360,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchInputForecast) searchInputForecast.value = savedCity2;
     searchLocation(savedCity2);
 
-    // *** নতুন: প্রতি মিনিটে ডেটা রিফ্রেশ করার জন্য setInterval ***
+    // *** নতুন: প্রতি ১০ মিনিটে ডেটা রিফ্রেশ করার জন্য setInterval ***
     setInterval(() => {
-        console.log("Refreshing weather data...");
+        console.log("Refreshing weather data (Every 10 mins)...");
         // প্রথম সেকশন রিফ্রেশ করুন
         const lastCity1 = localStorage.getItem('lastSearchedWeatherCity');
         if (lastCity1) {
             console.log(`Refreshing weather for ${lastCity1}...`);
-            // ডেটা আনার সময় লোডার দেখানোর জন্য weatherResult খালি করা হচ্ছে
             if(weatherResult) weatherResult.innerHTML = '';
             getWeather(lastCity1);
         }
@@ -15368,7 +15377,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(`Refreshing forecast for ${lastCity2}...`);
             searchLocation(lastCity2);
         }
-    }, 60000); // 60000 মিলিসেকেন্ড = 1 মিনিট
+    }, 600000); // ৬০০০০০ মিলিসেকেন্ড = ১০ মিনিট
 });
 
 // ====================================================================
