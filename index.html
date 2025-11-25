@@ -8603,6 +8603,19 @@ body.sidebar-open #sidebarOverlay {
                 <span class="slider round"></span>
             </label>
         </div>
+		
+        <!-- ব্যাকগ্রাউন্ড এনিমেশন টগল (নতুন) -->
+        <div class="setting-item" style="margin-top: 15px;">
+            <div class="setting-text">
+                <label for="bgAnimationToggle" class="font-semibold text-gray-700 dark:text-gray-300">ব্যাকগ্রাউন্ড এনিমেশন</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">ব্যাকগ্রাউন্ডে বাবল ওড়ার এনিমেশন চালু বা বন্ধ করুন।</p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="bgAnimationToggle" checked>
+                <span class="slider round"></span>
+            </label>
+        </div>
+		
 <!-- অ্যাপ থিম সিলেকশন -->
         <div class="setting-item" style="margin-top: 15px;">
             <div class="setting-text">
@@ -19439,7 +19452,7 @@ function initializeMoreSettings() {
         });
     }
 
-    // ২. সময় এবং তারিখ ব্যানার টগল লজিক (নতুন)
+    // ২. সময় এবং তারিখ ব্যানার টগল লজিক
     const timeBannerToggle = document.getElementById('timeBannerToggle');
     const timeBannerContainer = document.getElementById('currentDateTimeBanner');
 
@@ -19450,13 +19463,31 @@ function initializeMoreSettings() {
         timeBannerToggle.addEventListener('change', () => {
             const isEnabled = timeBannerToggle.checked;
             localStorage.setItem('timeBannerEnabled', isEnabled);
-            // CSS-এ display: flex দেওয়া আছে, তাই চালু করলে flex, বন্ধ করলে none
             timeBannerContainer.style.display = isEnabled ? 'flex' : 'none';
             showCustomAlert(`সময় ব্যানার: ${isEnabled ? 'চালু' : 'বন্ধ'} করা হয়েছে।`);
         });
     }
 
-    // ৩. নিউজ অ্যানিমেশন টগল লজিক
+    // ৩. ব্যাকগ্রাউন্ড এনিমেশন টগল লজিক (নতুন)
+    const bgAnimationToggle = document.getElementById('bgAnimationToggle');
+    const bgAnimationContainer = document.querySelector('.area'); // ব্যাকগ্রাউন্ড এনিমেশনের মূল ডিভ
+
+    if (bgAnimationToggle && bgAnimationContainer) {
+        const isBgAnimationEnabled = localStorage.getItem('bgAnimationEnabled') !== 'false';
+        bgAnimationToggle.checked = isBgAnimationEnabled;
+        
+        // পেজ লোডের সময় ইনিশিয়াল স্টেট সেট করা
+        bgAnimationContainer.style.display = isBgAnimationEnabled ? 'block' : 'none';
+
+        bgAnimationToggle.addEventListener('change', () => {
+            const isEnabled = bgAnimationToggle.checked;
+            localStorage.setItem('bgAnimationEnabled', isEnabled);
+            bgAnimationContainer.style.display = isEnabled ? 'block' : 'none';
+            showCustomAlert(`ব্যাকগ্রাউন্ড এনিমেশন: ${isEnabled ? 'চালু' : 'বন্ধ'} করা হয়েছে।`);
+        });
+    }
+
+    // ৪. নিউজ অ্যানিমেশন টগল লজিক
     const newsAnimationToggle = document.getElementById('newsAnimationToggle');
     if (newsAnimationToggle) {
         const savedNewsSetting = localStorage.getItem('newsAnimationType') || 'sliding';
@@ -19468,13 +19499,13 @@ function initializeMoreSettings() {
             showCustomAlert(`নিউজ অ্যানিমেশন: ${newSetting === 'typing' ? 'টাইপিং' : 'স্লাইডিং'} সেট করা হয়েছে। পেজ রিলোড দিলে পরিবর্তন দেখা যাবে।`);
             
             const isTickerEnabled = localStorage.getItem('newsTickerEnabled') !== 'false';
-            if (isTickerEnabled && newsTickerContainer) {
+            if (isTickerEnabled && typeof newsTickerContainer !== 'undefined') {
                  newsTickerContainer.style.display = newSetting === 'typing' ? 'flex' : 'block';
             }
         });
     }
 
-    // ৪. অ্যাপ থিম সিলেকশন লজিক
+    // ৫. অ্যাপ থিম সিলেকশন লজিক
     const themeSelect = document.getElementById('appThemeSelect');
     if (themeSelect) {
         const savedTheme = localStorage.getItem('selectedAppTheme') || 'modern';
@@ -19489,7 +19520,7 @@ function initializeMoreSettings() {
         });
     }
 
-    // ৫. ক্লিয়ার অ্যাপ ডাটা লজিক
+    // ৬. ক্লিয়ার অ্যাপ ডাটা লজিক
     const clearAppDataBtn = document.getElementById('clearAppDataBtn');
     if (clearAppDataBtn) {
         clearAppDataBtn.addEventListener('click', async () => {
@@ -19526,10 +19557,17 @@ function applyAppTheme(themeName) {
     }
 }
 
-// পেজ লোড হওয়ার সাথে সাথেই থিম অ্যাপ্লাই
+// পেজ লোড হওয়ার সাথে সাথেই সেটিংস অ্যাপ্লাই করার জন্য
 document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('selectedAppTheme') || 'modern';
     applyAppTheme(savedTheme);
+
+    // ব্যাকগ্রাউন্ড এনিমেশন ইনিশিয়ালাইজেশন (পেজ লোডের সময় ফ্লিকার এড়াতে)
+    const bgAnimationContainer = document.querySelector('.area');
+    if (bgAnimationContainer) {
+        const isBgAnimationEnabled = localStorage.getItem('bgAnimationEnabled') !== 'false';
+        bgAnimationContainer.style.display = isBgAnimationEnabled ? 'block' : 'none';
+    }
 });
 // ====================================================================
 // END: আরও সেটিংস (More Settings) TAB SCRIPT
