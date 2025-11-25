@@ -8559,8 +8559,6 @@ body.sidebar-open #sidebarOverlay {
 </div>
 <!-- END: Image Resizer Tab Content -->
 <!-- ======================================================== -->
-<!-- START: আরও সেটিংস ট্যাব (More Settings) Styles
-
 
 
 <!-- ======================================================== -->
@@ -8568,7 +8566,32 @@ body.sidebar-open #sidebarOverlay {
 <!-- ======================================================== -->
 <div id="moreSettingsContent" class="calculator-content">
     <div class="settings-page-container">
-        <h3 class="text-xl font-bold text-gray-700 mb-6 dark:text-gray-200">সেটিংস সমূহ</h3>        
+        <h3 class="text-xl font-bold text-gray-700 mb-6 dark:text-gray-200">সেটিংস সমূহ</h3> 
+
+        <!-- সময় এবং তারিখ ব্যানার টগল (নতুন) -->
+        <div class="setting-item" style="margin-top: 15px;">
+            <div class="setting-text">
+                <label for="timeBannerToggle" class="font-semibold text-gray-700 dark:text-gray-300">সময় এবং তারিখ ব্যানার</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">হোমপেজের উপরের সময় এবং তারিখ ব্যানারটি চালু বা বন্ধ করুন।</p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="timeBannerToggle" checked>
+                <span class="slider round"></span>
+            </label>
+        </div>
+		
+        <!-- নিউজ টিকার অন/অফ টগল (নতুন) -->
+        <div class="setting-item">
+            <div class="setting-text">
+                <label for="newsTickerToggle" class="font-semibold text-gray-700 dark:text-gray-300">নিউজ টিকার</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">নিউজ টিকারটি চালু বা বন্ধ করুন।</p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="newsTickerToggle" checked>
+                <span class="slider round"></span>
+            </label>
+        </div>
+		
         <!-- নিউজ এনিমেশন টগল -->
         <div class="setting-item">
             <div class="setting-text">
@@ -9487,6 +9510,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const bannerElement = document.getElementById('currentDateTimeBanner');
             if (!bannerElement) return;
 
+            // --- সেটিংস চেক (নতুন) ---
+            // লোকাল স্টোরেজ চেক করুন, যদি 'false' হয় তবে ব্যানার লুকান এবং ফাংশন থেকে বের হয়ে যান
+            const isTimeBannerEnabled = localStorage.getItem('timeBannerEnabled') !== 'false';
+            if (!isTimeBannerEnabled) {
+                bannerElement.style.display = 'none';
+                return; 
+            } else {
+                // যদি চালু থাকে, এবং আগে লুকানো ছিল, তবে আবার দেখান (flex ব্যবহার করা হয়েছে CSS অনুযায়ী)
+                bannerElement.style.display = 'flex';
+            }
+
             const now = new Date();
             const currentTime = Date.now();
 
@@ -9539,7 +9573,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cachedDatePartHTML = `<span class="text-green-700 dark:text-green-300">আজ</span> <span class="text-green-700 dark:text-green-300">${dayOfWeekBengali}</span>, <span class="text-blue-700 dark:text-blue-300">${gregorianDateString} ইং</span>, <span class="text-green-700 dark:text-green-300">${bengaliDateString.replace('বঙ্গাব্দ', '')} বঙ্গাব্দ, ${bengaliSeason}</span>, <span class="text-purple-700 dark:text-purple-300">${hijriDateString}</span>, <span class="text-green-700 dark:text-green-300">এখন সময়</span>`;
                 
                 lastDateUpdateTimestamp = currentTime;
-                console.log("Banner Date Updated (Next update in 10 mins)");
+                // console.log("Banner Date Updated (Next update in 10 mins)");
             }
 
             // Time (সময়) - প্রতি সেকেন্ডে শুধু এটিই নতুন করে জেনারেট হবে
@@ -16166,7 +16200,7 @@ if (mainHeading) {
 // ====================================================================
 document.addEventListener('DOMContentLoaded', () => {
     const tickerContainer = document.getElementById('news-ticker-container');
-    const tickerContent = document.getElementById('news-ticker-content'); // <<< এটি গুরুত্বপূর্ণ
+    const tickerContent = document.getElementById('news-ticker-content'); 
     const tickerTextElement = document.getElementById('news-ticker-text');
     const prevBtn = document.getElementById('prev-news');
     const nextBtn = document.getElementById('next-news');
@@ -16176,39 +16210,44 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // --- সেটিংস ---
-    // true = টাইপিং অ্যানিমেশন, false = ভার্টিকাল স্লাইড অ্যানিমেশন
-    // localStorage থেকে সেভ করা মান লোড করুন, ডিফল্ট 'sliding'
+    // --- সেটিংস চেক ---
+    // ১. টিকার চালু আছে কিনা চেক করুন (ডিফল্ট চালু)
+    const isNewsTickerEnabled = localStorage.getItem('newsTickerEnabled') !== 'false';
+    if (!isNewsTickerEnabled) {
+        tickerContainer.style.display = 'none';
+        // টিকার বন্ধ থাকলে বাকি কোড রান করার দরকার নেই, তবে সেটিংস থেকে আবার চালু করলে যাতে কাজ করে তাই আমরা স্টাইল হাইড করে রাখব
+    }
+
+    // ২. অ্যানিমেশন টাইপ চেক (টাইপিং বা স্লাইডিং)
     const useTypingAnimation = localStorage.getItem('newsAnimationType') === 'typing';
 
     // --- অ্যানিমেশন মোড অনুযায়ী কন্টেইনারের স্টাইল সেট করুন ---
-    if (useTypingAnimation) {
-        // টাইপিং-এর জন্য (true):
-        tickerContainer.style.height = 'auto';
-        tickerContainer.style.overflow = 'visible';
-        tickerContainer.style.lineHeight = ''; 
-        tickerContainer.style.minHeight = ''; 
-        tickerContainer.style.display = 'flex'; // ফ্লেক্সবক্স ব্যবহার করুন
-        tickerContainer.style.alignItems = 'center';
-        tickerContainer.style.justifyContent = 'center';
+    // যদি টিকার এনাবল থাকে তবেই ডিসপ্লে ফ্লেক্স বা ব্লক হবে
+    if (isNewsTickerEnabled) {
+        if (useTypingAnimation) {
+            tickerContainer.style.height = 'auto';
+            tickerContainer.style.overflow = 'visible';
+            tickerContainer.style.lineHeight = ''; 
+            tickerContainer.style.minHeight = ''; 
+            tickerContainer.style.display = 'flex'; 
+            tickerContainer.style.alignItems = 'center';
+            tickerContainer.style.justifyContent = 'center';
 
-        tickerContent.style.overflow = 'visible';
-        tickerContent.style.height = 'auto';
-        tickerContent.style.minHeight = '';
-    } else {
-                // স্লাইডিং-এর জন্য (false):
-                tickerContainer.style.height = 'auto'; // auto রাখুন
-                tickerContainer.style.overflow = 'hidden'; 
-                tickerContainer.style.lineHeight = '1.5'; 
-                // tickerContainer.style.minHeight = '2em';  // <<< এই লাইনটি সরানো হয়েছে
-                tickerContainer.style.display = 'block'; // ফ্লেক্সবক্সের পরিবর্তে block ব্যবহার করুন
-                tickerContainer.style.alignItems = '';
-                tickerContainer.style.justifyContent = '';
+            tickerContent.style.overflow = 'visible';
+            tickerContent.style.height = 'auto';
+            tickerContent.style.minHeight = '';
+        } else {
+            tickerContainer.style.height = 'auto';
+            tickerContainer.style.overflow = 'hidden'; 
+            tickerContainer.style.lineHeight = '1.5'; 
+            tickerContainer.style.display = 'block'; 
+            tickerContainer.style.alignItems = '';
+            tickerContainer.style.justifyContent = '';
 
-                tickerContent.style.overflow = 'hidden'; 
-                tickerContent.style.height = 'auto'; // auto রাখুন
-                // tickerContent.style.minHeight = '2em'; // <<< এই লাইনটি সরানো হয়েছে
-            }
+            tickerContent.style.overflow = 'hidden'; 
+            tickerContent.style.height = 'auto'; 
+        }
+    }
 
     const showNewsHeadlines = true; 
     const baseTickerClasses = tickerTextElement.className; 
@@ -16227,14 +16266,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const ANIMATION_DURATION = 500; 
     const AUTO_PLAY_INTERVAL = useTypingAnimation ? 10000 : 5000;
 
-    // Function to fetch news (remains the same)
+    // Function to fetch news
     async function fetchNewsHeadlines() {
-const feeds = {
-    'বাংলাদেশ প্রতিদিন': 'https://www.bd-pratidin.com/rss.xml', // (সঠিক আছে)
-    'কালের কণ্ঠ': 'https://www.kalerkantho.com/rss.xml', // (সঠিক আছে)
-	'প্রথম আলো': 'https://www.prothomalo.com/feed/', // (সঠিক আছে)
-	'সময়ের কণ্ঠস্বর': 'https://somoyerkonthosor.com/feed' // (সঠিক আছে)
-};
+        const feeds = {
+            'বাংলাদেশ প্রতিদিন': 'https://www.bd-pratidin.com/rss.xml',
+            'কালের কণ্ঠ': 'https://www.kalerkantho.com/rss.xml',
+            'প্রথম আলো': 'https://www.prothomalo.com/feed/',
+            'সময়ের কণ্ঠস্বর': 'https://somoyerkonthosor.com/feed'
+        };
         const eightHoursAgo = new Date(Date.now() - 8 * 60 * 60 * 1000);
 
         function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[array[i], array[j]] = [array[j], array[i]]; } return array; }
@@ -16259,8 +16298,11 @@ const feeds = {
         } catch (error) { console.error('Error fetching news:', error); return customMessages; }
     }
 
-    // *** UPDATED function to display headline ***
+    // Function to display headline
     function displayCurrentHeadline(direction = 'up') {
+        // যদি টিকার বন্ধ থাকে, তাহলে অ্যানিমেশন বা ডিসপ্লে আপডেট করার প্রয়োজন নেই
+        // তবে এখানে আমরা সেটা আটকাচ্ছি না কারণ ব্যাকগ্রাউন্ডে আপডেট হতে পারে
+        
         clearTimeout(transitionTimeout); 
         isTransitioning = true; 
 
@@ -16274,10 +16316,9 @@ const feeds = {
                 tickerTextElement.style.top = 'auto';
                 tickerTextElement.style.lineHeight = 'normal';
             } else {
-                // স্লাইডিং মোডের জন্য ডিফল্ট স্টাইল
                 tickerTextElement.style.position = 'absolute';
-                tickerTextElement.style.top = '0'; // CHANGED from 50%
-                tickerTextElement.style.transform = 'none'; // CHANGED from translateY(-50%)
+                tickerTextElement.style.top = '0';
+                tickerTextElement.style.transform = 'none';
                 tickerTextElement.style.lineHeight = '1.5';
             }
             tickerTextElement.style.width = 'auto';
@@ -16294,7 +16335,6 @@ const feeds = {
         const displayText = ` ● ${currentMessage.title} - <span class="news-source">${currentMessage.source}</span>`;
 
         if (useTypingAnimation) {
-            // --- Typing Animation Logic (Unchanged) ---
             tickerTextElement.className = `${baseTickerClasses} news-ticker-text typing-animation`;
             tickerTextElement.href = currentMessage.link;
             tickerTextElement.innerHTML = displayText;
@@ -16323,12 +16363,10 @@ const feeds = {
             tickerTextElement.addEventListener('animationend', handleTypingEnd, { once: true });
 
         } else {
-            // --- Vertical Slide Animation Logic (HEAVILY UPDATED) ---
             tickerTextElement.className = `${baseTickerClasses} news-ticker-text`;
             tickerTextElement.style.cssText = ''; 
             tickerTextElement.style.animation = 'none';
             
-            // 1. Apply base styles for measurement
             tickerTextElement.style.position = 'absolute';
             tickerTextElement.style.width = '100%';
             tickerTextElement.style.lineHeight = '1.5';
@@ -16337,59 +16375,43 @@ const feeds = {
             tickerTextElement.style.textOverflow = 'clip';
             tickerTextElement.style.textAlign = 'center';
             
-            // 2. Set new content
             tickerTextElement.href = currentMessage.link;
             tickerTextElement.innerHTML = displayText;
 
-            // 3. Measure new height
-            // Temporarily make it visible but off-screen to measure
             tickerTextElement.style.transition = 'none';
-            tickerTextElement.style.top = '-9999px'; // Move off-screen
+            tickerTextElement.style.top = '-9999px'; 
             tickerTextElement.style.opacity = '1';
             tickerTextElement.style.transform = 'none';
             
-            // --- THIS IS THE KEY ---
-            // টেক্সটের আসল উচ্চতা পরিমাপ করুন
             const newHeight = tickerTextElement.offsetHeight;
-            // প্যারেন্ট কন্টেইনারের উচ্চতা সেট করুন, এটি CSS transition-কে ট্রিগার করবে
             tickerContent.style.height = `${newHeight}px`; 
-            // --- END KEY ---
 
-            // 4. Position for entry
-            // নতুন উচ্চতার উপর ভিত্তি করে স্লাইড-ইন পজিশন গণনা করুন
             const startTop = (direction === 'up') ? `${newHeight + 20}px` : `-${newHeight + 20}px`;
             tickerTextElement.style.top = startTop;
             tickerTextElement.style.opacity = '0';
 
-            // 5. Force reflow to apply new start position
             tickerTextElement.offsetHeight;
 
-            // 6. Slide in
             tickerTextElement.style.transition = `top ${ANIMATION_DURATION / 1000}s ease-in-out, opacity ${ANIMATION_DURATION / 1000}s ease-in-out`;
-            tickerTextElement.style.top = '0px'; // কন্টেইনারের উপরে স্লাইড করুন
+            tickerTextElement.style.top = '0px'; 
             tickerTextElement.style.opacity = '1';
 
-            // 7. Mark transition end
             transitionTimeout = setTimeout(() => {
                 isTransitioning = false;
             }, ANIMATION_DURATION);
         }
     }
 
-    // *** UPDATED function for smooth transition (Handles Vertical Slide Only) ***
     function triggerTransition(nextIndexFunction, exitDirection) {
         if (useTypingAnimation || isTransitioning) return;
         isTransitioning = true;
         clearTimeout(transitionTimeout);
 
-        // 1. Animate out
-        // বর্তমান টেক্সটের উচ্চতার উপর ভিত্তি করে স্লাইড-আউট পজিশন গণনা করুন
         const currentHeight = tickerTextElement.offsetHeight;
         const exitTop = (exitDirection === 'up') ? `-${currentHeight + 20}px` : `${currentHeight + 20}px`;
         tickerTextElement.style.top = exitTop;
         tickerTextElement.style.opacity = '0';
 
-        // 2. After exit, update and slide in
         transitionTimeout = setTimeout(() => {
             nextIndexFunction();
             const entryDirection = (exitDirection === 'up') ? 'up' : 'down';
@@ -16417,6 +16439,8 @@ const feeds = {
 
     function startAutoPlay() {
         stopAutoPlay();
+        // যদি টিকার বন্ধ থাকে তবে অটো প্লে চালু করার দরকার নেই
+        if (!isNewsTickerEnabled) return;
         autoPlayInterval = setInterval(showNextHeadline, AUTO_PLAY_INTERVAL);
     }
 
@@ -16432,11 +16456,10 @@ const feeds = {
             allMessages = customMessages;
         }
 
-        displayCurrentHeadline(); // Initial display
+        displayCurrentHeadline(); 
         startAutoPlay();
     }
 
-    // Event listeners for next/prev buttons
     nextBtn.addEventListener('click', () => {
         showNextHeadline();
         startAutoPlay();
@@ -16447,10 +16470,8 @@ const feeds = {
         startAutoPlay();
     });
 
-    // Pause/Resume on hover
     tickerContainer.addEventListener('mouseenter', stopAutoPlay);
     tickerContainer.addEventListener('mouseleave', startAutoPlay);
-
 
     initializeTicker();
 
@@ -19396,28 +19417,69 @@ function initializeImageResizer() {
 // START: আরও সেটিংস (More Settings) TAB SCRIPT (Updated)
 // ====================================================================
 function initializeMoreSettings() {
-    // ১. নিউজ অ্যানিমেশন টগল লজিক
-    const newsToggle = document.getElementById('newsAnimationToggle');
-    if (newsToggle) {
-        const savedNewsSetting = localStorage.getItem('newsAnimationType') || 'sliding';
-        newsToggle.checked = (savedNewsSetting === 'typing');
+    // ১. নিউজ টিকার অন/অফ টগল লজিক
+    const newsTickerToggle = document.getElementById('newsTickerToggle');
+    const newsTickerContainer = document.getElementById('news-ticker-container');
 
-        newsToggle.addEventListener('change', () => {
-            let newSetting = newsToggle.checked ? 'typing' : 'sliding';
-            localStorage.setItem('newsAnimationType', newSetting);
-            showCustomAlert(`নিউজ অ্যানিমেশন: ${newSetting === 'typing' ? 'টাইপিং' : 'স্লাইডিং'} সেট করা হয়েছে।`);
-            // পেজ রিলোড করার পরামর্শ (অপশনাল)
-            // location.reload(); 
+    if (newsTickerToggle && newsTickerContainer) {
+        const isNewsTickerEnabled = localStorage.getItem('newsTickerEnabled') !== 'false';
+        newsTickerToggle.checked = isNewsTickerEnabled;
+
+        newsTickerToggle.addEventListener('change', () => {
+            const isEnabled = newsTickerToggle.checked;
+            localStorage.setItem('newsTickerEnabled', isEnabled);
+            
+            if (isEnabled) {
+                const useTypingAnimation = localStorage.getItem('newsAnimationType') === 'typing';
+                newsTickerContainer.style.display = useTypingAnimation ? 'flex' : 'block';
+            } else {
+                newsTickerContainer.style.display = 'none';
+            }
+            showCustomAlert(`নিউজ টিকার: ${isEnabled ? 'চালু' : 'বন্ধ'} করা হয়েছে।`);
         });
     }
 
-    // ২. অ্যাপ থিম সিলেকশন লজিক
+    // ২. সময় এবং তারিখ ব্যানার টগল লজিক (নতুন)
+    const timeBannerToggle = document.getElementById('timeBannerToggle');
+    const timeBannerContainer = document.getElementById('currentDateTimeBanner');
+
+    if (timeBannerToggle && timeBannerContainer) {
+        const isTimeBannerEnabled = localStorage.getItem('timeBannerEnabled') !== 'false';
+        timeBannerToggle.checked = isTimeBannerEnabled;
+
+        timeBannerToggle.addEventListener('change', () => {
+            const isEnabled = timeBannerToggle.checked;
+            localStorage.setItem('timeBannerEnabled', isEnabled);
+            // CSS-এ display: flex দেওয়া আছে, তাই চালু করলে flex, বন্ধ করলে none
+            timeBannerContainer.style.display = isEnabled ? 'flex' : 'none';
+            showCustomAlert(`সময় ব্যানার: ${isEnabled ? 'চালু' : 'বন্ধ'} করা হয়েছে।`);
+        });
+    }
+
+    // ৩. নিউজ অ্যানিমেশন টগল লজিক
+    const newsAnimationToggle = document.getElementById('newsAnimationToggle');
+    if (newsAnimationToggle) {
+        const savedNewsSetting = localStorage.getItem('newsAnimationType') || 'sliding';
+        newsAnimationToggle.checked = (savedNewsSetting === 'typing');
+
+        newsAnimationToggle.addEventListener('change', () => {
+            let newSetting = newsAnimationToggle.checked ? 'typing' : 'sliding';
+            localStorage.setItem('newsAnimationType', newSetting);
+            showCustomAlert(`নিউজ অ্যানিমেশন: ${newSetting === 'typing' ? 'টাইপিং' : 'স্লাইডিং'} সেট করা হয়েছে। পেজ রিলোড দিলে পরিবর্তন দেখা যাবে।`);
+            
+            const isTickerEnabled = localStorage.getItem('newsTickerEnabled') !== 'false';
+            if (isTickerEnabled && newsTickerContainer) {
+                 newsTickerContainer.style.display = newSetting === 'typing' ? 'flex' : 'block';
+            }
+        });
+    }
+
+    // ৪. অ্যাপ থিম সিলেকশন লজিক
     const themeSelect = document.getElementById('appThemeSelect');
     if (themeSelect) {
-        // সেভ করা থিম লোড করুন
         const savedTheme = localStorage.getItem('selectedAppTheme') || 'modern';
         themeSelect.value = savedTheme;
-        applyAppTheme(savedTheme); // পেজ লোড বা ট্যাব খোলার সাথে সাথে থিম অ্যাপ্লাই হবে
+        applyAppTheme(savedTheme);
 
         themeSelect.addEventListener('change', (e) => {
             const selectedTheme = e.target.value;
@@ -19427,21 +19489,15 @@ function initializeMoreSettings() {
         });
     }
 
-    // ৩. ক্লিয়ার অ্যাপ ডাটা লজিক (নতুন)
+    // ৫. ক্লিয়ার অ্যাপ ডাটা লজিক
     const clearAppDataBtn = document.getElementById('clearAppDataBtn');
     if (clearAppDataBtn) {
         clearAppDataBtn.addEventListener('click', async () => {
             const confirmed = confirm("সতর্কতা: আপনি কি নিশ্চিত যে আপনি সমস্ত অ্যাপ ডাটা মুছে ফেলতে চান? নোটপ্যাড, ইনভয়েজ এবং অন্যান্য সেভ করা তথ্য স্থায়ীভাবে মুছে যাবে।");
-            
             if (confirmed) {
                 try {
-                    // ১. LocalStorage পরিষ্কার করা
                     localStorage.clear();
-
-                    // ২. IndexedDB ডাটাবেসগুলো মুছে ফেলা
-                    // আপনার অ্যাপে ব্যবহৃত সব DB এর নাম এখানে দিন
                     const dbsToDelete = ['BanglaToolboxDB', 'invoiceDB']; 
-                    
                     for (const dbName of dbsToDelete) {
                         await new Promise((resolve, reject) => {
                             const req = indexedDB.deleteDatabase(dbName);
@@ -19450,14 +19506,8 @@ function initializeMoreSettings() {
                             req.onblocked = () => console.warn(`${dbName} delete blocked`);
                         });
                     }
-
                     showCustomAlert('সমস্ত অ্যাপ ডাটা সফলভাবে মুছে ফেলা হয়েছে। পেজ রিলোড হচ্ছে...');
-                    
-                    // ৩. পেজ রিলোড করা (যাতে সব স্টেট রিসেট হয়)
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1500);
-
+                    setTimeout(() => { location.reload(); }, 1500);
                 } catch (error) {
                     console.error("Error clearing app data:", error);
                     showCustomAlert('ডাটা মুছতে সমস্যা হয়েছে। কনসোল চেক করুন।');
@@ -19467,26 +19517,16 @@ function initializeMoreSettings() {
     }
 }
 
-// থিম অ্যাপ্লাই করার হেল্পার ফাংশন (আপডেটেড)
+// থিম অ্যাপ্লাই করার হেল্পার ফাংশন
 function applyAppTheme(themeName) {
     const rootElement = document.documentElement;
-    
-    // আগে সেট করা যেকোনো থিম মুছে ফেলুন
     rootElement.removeAttribute('data-theme');
-
-    if (themeName === 'classic') {
-        rootElement.setAttribute('data-theme', 'classic');
-    } else if (themeName === 'nature') {
-        rootElement.setAttribute('data-theme', 'nature');
-    } else if (themeName === 'purple') {
-        rootElement.setAttribute('data-theme', 'purple');
-    } else if (themeName === 'sunset') {
-        rootElement.setAttribute('data-theme', 'sunset'); // নতুন সূর্যাস্ত থিম
+    if (['classic', 'nature', 'purple', 'sunset'].includes(themeName)) {
+        rootElement.setAttribute('data-theme', themeName);
     }
-    // 'modern' হলে কোনো অ্যাট্রিবিউট লাগবে না, ডিফল্ট CSS ভেরিয়েবল কাজ করবে
 }
 
-// পেজ লোড হওয়ার সাথে সাথেই থিম অ্যাপ্লাই করার জন্য (ট্যাব এ ক্লিক না করলেও যাতে কাজ করে)
+// পেজ লোড হওয়ার সাথে সাথেই থিম অ্যাপ্লাই
 document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('selectedAppTheme') || 'modern';
     applyAppTheme(savedTheme);
