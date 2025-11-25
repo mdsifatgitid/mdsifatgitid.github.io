@@ -19488,21 +19488,31 @@ function initializeMoreSettings() {
         });
     }
 
-    // ৩. ব্যাকগ্রাউন্ড এনিমেশন টগল লজিক
+// 3. ব্যাকগ্রাউন্ড এনিমেশন টগল লজিক (আপডেট করা হয়েছে)
     const bgAnimationToggle = document.getElementById('bgAnimationToggle');
-    const bgAnimationContainer = document.querySelector('.area'); // ব্যাকগ্রাউন্ড এনিমেশনের মূল ডিভ
+    const bgArea = document.querySelector('.area'); // ব্যাকগ্রাউন্ড কালার কন্টেইনার
+    const bgCircles = document.querySelector('.circles'); // বাবল এনিমেশন
 
-    if (bgAnimationToggle && bgAnimationContainer) {
+    if (bgAnimationToggle && bgArea && bgCircles) {
         const isBgAnimationEnabled = localStorage.getItem('bgAnimationEnabled') !== 'false';
         bgAnimationToggle.checked = isBgAnimationEnabled;
         
         // পেজ লোডের সময় ইনিশিয়াল স্টেট সেট করা
-        bgAnimationContainer.style.display = isBgAnimationEnabled ? 'block' : 'none';
+        // .area সর্বদা দৃশ্যমান থাকবে যাতে ব্যাকগ্রাউন্ড কালার থাকে (ডার্ক/লাইট মোড সহ)
+        bgArea.style.display = 'block'; 
+        
+        // শুধুমাত্র বাবলগুলো হাইড বা শো হবে
+        bgCircles.style.display = isBgAnimationEnabled ? 'block' : 'none';
 
         bgAnimationToggle.addEventListener('change', () => {
             const isEnabled = bgAnimationToggle.checked;
             localStorage.setItem('bgAnimationEnabled', isEnabled);
-            bgAnimationContainer.style.display = isEnabled ? 'block' : 'none';
+            
+            // শুধুমাত্র বাবলগুলো হাইড বা শো হবে
+            bgCircles.style.display = isEnabled ? 'block' : 'none';
+            // .area সর্বদা দৃশ্যমান থাকবে
+            bgArea.style.display = 'block';
+
             showCustomAlert(`ব্যাকগ্রাউন্ড এনিমেশন: ${isEnabled ? 'চালু' : 'বন্ধ'} করা হয়েছে।`);
         });
     }
@@ -19596,11 +19606,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('selectedAppTheme') || 'modern';
     applyAppTheme(savedTheme);
 
-    // ব্যাকগ্রাউন্ড এনিমেশন ইনিশিয়ালাইজেশন (পেজ লোডের সময় ফ্লিকার এড়াতে)
-    const bgAnimationContainer = document.querySelector('.area');
-    if (bgAnimationContainer) {
+    // ব্যাকগ্রাউন্ড এনিমেশন ইনিশিয়ালাইজেশন (পেজ লোডের সময় ফ্লিকার এড়াতে) - আপডেট করা হয়েছে
+    const bgArea = document.querySelector('.area');
+    const bgCircles = document.querySelector('.circles');
+
+    if (bgArea && bgCircles) {
         const isBgAnimationEnabled = localStorage.getItem('bgAnimationEnabled') !== 'false';
-        bgAnimationContainer.style.display = isBgAnimationEnabled ? 'block' : 'none';
+        
+        // .area সর্বদা দৃশ্যমান থাকবে যাতে ব্যাকগ্রাউন্ড কালার ঠিক থাকে
+        bgArea.style.display = 'block';
+        
+        // শুধুমাত্র বাবলগুলো সেটিংস অনুযায়ী শো/হাইড হবে
+        bgCircles.style.display = isBgAnimationEnabled ? 'block' : 'none';
     }
 });
 // ====================================================================
