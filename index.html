@@ -11570,25 +11570,33 @@ window.addEventListener('click', (e) => {
 // ====================================================================
 
 // ====================================================================
-// END: TAB AND CONTENT SECTION FOR TAB
+// START: TAB AND CONTENT SECTION FOR TAB
 // ====================================================================
 // সমস্ত ট্যাব এর নাম এবং ট্যাব এর কন্টেন্ট নাম একানে বসাতে হয়, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয় বা বসাতে হয় ।
+
+// নতুন ফাংশন: কনভার্টার ট্যাব অ্যাকটিভ হলে অন্য সকল ভারী কার্যক্রম বন্ধ করার জন্য
+function stopOtherTabActivities() {
+    // ১. বিশ্ব ঘড়ি আপডেট থামান (ঘড়ি ট্যাবের লাইভ টাইম আপডেট বন্ধ করা)
+    if (window.worldClockIntervalId) {
+        clearInterval(window.worldClockIntervalId);
+    }
+}
 
 function showTab(tabId) {
     const tabs = [
         basicCalcTab,colorPickerTab, dashboardTab,imageResizerTab,moreSettingsTab,historyTab,
-		ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,
-		translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
-		qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab,
+        ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,
+        translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
+        qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab,
         textAssistantTab,holidayListTab,quizTab,
-		allFeaturesTab
+        allFeaturesTab
     ];
     const contents = [
         basicCalculatorContent,colorPickerContent,dashboardContent,imageResizerContent,moreSettingsContent,historyContent,
-		ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent,  converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent,
+        ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent,  converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent,
-		weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
-		textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,
+        weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
+        textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,
         allFeaturesContent
     ];
 
@@ -11601,6 +11609,11 @@ function showTab(tabId) {
     contents.forEach(content => {
         if (content) content.classList.remove('active');
     });
+
+    // *** নতুন লজিক: কনভার্টার ট্যাব সিলেক্ট করা হলে অন্য কার্যক্রম বন্ধ করুন ***
+    if (tabId === 'converter') {
+        stopOtherTabActivities();
+    }
 
     // নির্বাচিত ট্যাব সক্রিয় করুন এবং এর কন্টেন্ট দেখান
     let activeTab, activeContent;
@@ -11622,11 +11635,11 @@ function showTab(tabId) {
             activeTab = ageCalcTab;
             activeContent = ageCalculatorContent;
             break;
-			case 'imageResizer':
-				activeTab = imageResizerTab;
-				activeContent = imageResizerContent;
-				initializeImageResizer();
-			break;
+            case 'imageResizer':
+                activeTab = imageResizerTab;
+                activeContent = imageResizerContent;
+                initializeImageResizer();
+            break;
         case 'date':
             activeTab = dateCalcTab;
             activeContent = dateCalculatorContent;
@@ -11655,46 +11668,46 @@ function showTab(tabId) {
             activeTab = mapTab;
             activeContent = mapContent;
             break;
-		case 'prayerTime':
+        case 'prayerTime':
             activeTab = prayerTimeTab;
             activeContent = prayerTimeContent;
             initializePrayerTimeTab();
             break;
-		case 'daysObservances':
-			activeTab = daysObservancesTab;
-			activeContent = daysObservancesContent;
-			initializeDaysObservancesTab();
-		break;
-		case 'zakat':
-			activeTab = zakatCalcTab;
-			activeContent = zakatCalculatorContent;
-		break;
+        case 'daysObservances':
+            activeTab = daysObservancesTab;
+            activeContent = daysObservancesContent;
+            initializeDaysObservancesTab();
+        break;
+        case 'zakat':
+            activeTab = zakatCalcTab;
+            activeContent = zakatCalculatorContent;
+            break;
         case 'imageToText':
             activeTab = imageToTextTab;
             activeContent = imageToTextContent;
             break;
-		case 'wordCounter':
-			activeTab = wordCounterTab;
-			activeContent = wordCounterContent;
-		break;
-		case 'healthLifestyle':
-			activeTab = healthLifestyleTab;
-			activeContent = healthLifestyleContent;
-		break;
-		case 'weather': // নতুন এই case টি যোগ করুন
+        case 'wordCounter':
+            activeTab = wordCounterTab;
+            activeContent = wordCounterContent;
+            break;
+        case 'healthLifestyle':
+            activeTab = healthLifestyleTab;
+            activeContent = healthLifestyleContent;
+            break;
+        case 'weather': // নতুন এই case টি যোগ করুন
             activeTab = weatherTab;
             activeContent = weatherContent;
             break;
-		case 'notepad':
-			activeTab = notepadTab;
-			activeContent = notepadContent;
-		break;
-		case 'clock':
-			activeTab = clockTab;
-			activeContent = clockContent;
-			initializeClockTab(); // নতুন ফাংশন কল করুন
-		break;
-		        case 'qrCode':
+        case 'notepad':
+            activeTab = notepadTab;
+            activeContent = notepadContent;
+            break;
+        case 'clock':
+            activeTab = clockTab;
+            activeContent = clockContent;
+            initializeClockTab(); // নতুন ফাংশন কল করুন
+            break;
+        case 'qrCode':
             activeTab = qrCodeTab;
             activeContent = qrCodeContent;
             break;
@@ -11702,20 +11715,20 @@ function showTab(tabId) {
             activeTab = historyTab;
             activeContent = historyContent;
             initializeHistoryTab(); 
-        break;
-		case 'importantLinks':
-			activeTab = importantLinksTab;
-			activeContent = importantLinksContent;
-		break;
-		case 'holiday':
-			activeTab = holidayListTab;
-			activeContent = holidayListContent;
-			initializeHolidayListTab();
-		break;
-		case 'player':
-			activeTab = playerTab;
-			activeContent = playerContent;
-		break;
+            break;
+        case 'importantLinks':
+            activeTab = importantLinksTab;
+            activeContent = importantLinksContent;
+            break;
+        case 'holiday':
+            activeTab = holidayListTab;
+            activeContent = holidayListContent;
+            initializeHolidayListTab();
+            break;
+        case 'player':
+            activeTab = playerTab;
+            activeContent = playerContent;
+            break;
         case 'spellCheck':
             activeTab = spellCheckTab;
             activeContent = spellCheckerContent;
@@ -11740,49 +11753,49 @@ function showTab(tabId) {
             activeTab = textAssistantTab;
             activeContent = textAssistantContent;
             break;
-		case 'emergency':
+        case 'emergency':
             activeTab = emergencyNumbersTab;
             activeContent = emergencyNumbersContent;
             initializeEmergencyNumbers(); // Tab-টি চালু করার সময় ফাংশন কল করুন
             break;
-		case 'quiz':
-			activeTab = quizTab;
-			activeContent = quizContent;
-			initializeQuiz(); // এই ফাংশন কুইজ শুরু করবে
-		break;
-case 'moreSettings': 
+        case 'quiz':
+            activeTab = quizTab;
+            activeContent = quizContent;
+            initializeQuiz(); // এই ফাংশন কুইজ শুরু করবে
+            break;
+        case 'moreSettings': 
             activeTab = moreSettingsTab;
             activeContent = moreSettingsContent;
             initializeMoreSettings(); // শুধুমাত্র এই নতুন ফাংশনটি থাকবে
-        break;
-		    case 'colorPicker':
-				activeTab = colorPickerTab;
-				activeContent = colorPickerContent;
-				initializeColorPicker(); // ট্যাব দেখানোর সময় ফাংশনটি কল করুন
-        break;
-		case 'donate':
-			activeTab = donateTab;
-			activeContent = donateContent;
-		break;
-		case 'invoice':
+            break;
+        case 'colorPicker':
+            activeTab = colorPickerTab;
+            activeContent = colorPickerContent;
+            initializeColorPicker(); // ট্যাব দেখানোর সময় ফাংশনটি কল করুন
+            break;
+        case 'donate':
+            activeTab = donateTab;
+            activeContent = donateContent;
+            break;
+        case 'invoice':
             activeTab = invoiceTab;
             activeContent = invoiceContent;
-        break;
+            break;
         case 'allFeatures':
             activeTab = allFeaturesTab;
             activeContent = allFeaturesContent;
             break;
-		case 'dashboard':
-			activeTab = dashboardTab;
-			activeContent = dashboardContent;
-		break;
+        case 'dashboard':
+            activeTab = dashboardTab;
+            activeContent = dashboardContent;
+            break;
     }
 
-			if (activeTab) activeTab.classList.add('active');
-			if (activeContent) activeContent.classList.add('active');
+    if (activeTab) activeTab.classList.add('active');
+    if (activeContent) activeContent.classList.add('active');
 
-			console.log(`ট্যাব পরিবর্তন করা হয়েছে: ${tabId}`);
-	}
+    console.log(`ট্যাব পরিবর্তন করা হয়েছে: ${tabId}`);
+}
 // ====================================================================
 // END: CASE AND BREAK SECTION FOR TAB
 // ====================================================================
@@ -11792,46 +11805,47 @@ case 'moreSettings':
 // ====================================================================
 //নিচের এই সেকশনে নতুন ট্যাবের ইফ লাইনটি যুক্ত করতে হয় বা বসাতে হয় ।
 
-                if (basicCalcTab) basicCalcTab.addEventListener('click', () => showTab('basic'));
-                if (ageCalcTab) ageCalcTab.addEventListener('click', () => showTab('age'));
-                if (dateCalcTab) dateCalcTab.addEventListener('click', () => showTab('date'));
-                if (scientificCalcTab) scientificCalcTab.addEventListener('click', () => showTab('scientific'));
-                if (converterTab) converterTab.addEventListener('click', () => showTab('converter'));
-                if (measurementTab) measurementTab.addEventListener('click', () => showTab('measurement')); // Add this line
-                if (spellCheckTab) spellCheckTab.addEventListener('click', () => showTab('spellCheck'));
-                if (textBeautifierTab) textBeautifierTab.addEventListener('click', () => showTab('beautify'));
-                if (wordMeaningTab) wordMeaningTab.addEventListener('click', () => showTab('meaning'));
-                if (ttsTab) ttsTab.addEventListener('click', () => showTab('tts')); // TTS ট্যাব ইভেন্ট
-                if (sttTab) sttTab.addEventListener('click', () => showTab('stt')); // STT ট্যাব ইভেন্ট
-				if (typingTestTab) typingTestTab.addEventListener('click', () => showTab('typingTest')); // এই লাইনটি যোগ করুন
-				if (mapTab) mapTab.addEventListener('click', () => showTab('map'));
-                if (prayerTimeTab) prayerTimeTab.addEventListener('click', () => showTab('prayerTime')); // এই লাইনটি যোগ করুন
-				if (imageToTextTab) imageToTextTab.addEventListener('click', () => showTab('imageToText'));
-				if (wordCounterTab) wordCounterTab.addEventListener('click', () => showTab('wordCounter'));
-				if (weatherTab) weatherTab.addEventListener('click', () => showTab('weather'));
-				if (quizTab) quizTab.addEventListener('click', () => showTab('quiz'));
-				if (donateTab) donateTab.addEventListener('click', () => showTab('donate'));
-				if (notepadTab) notepadTab.addEventListener('click', async () => {
-					showTab('notepad');
-					await initializeNotepad(); // Notepad চালু করার জন্য এই ফাংশন কল করুন
-					});
-				if (healthLifestyleTab) healthLifestyleTab.addEventListener('click', () => {showTab('healthLifestyle');	initializeHealthLifestyleTab();});
-				if (clockTab) clockTab.addEventListener('click', () => showTab('clock'));
-				if (playerTab) playerTab.addEventListener('click', () => showTab('player'));
-				if (zakatCalcTab) zakatCalcTab.addEventListener('click', () => showTab('zakat'));
-				if (imageResizerTab) imageResizerTab.addEventListener('click', () => showTab('imageResizer'));
-				if (qrCodeTab) qrCodeTab.addEventListener('click', () => showTab('qrCode'));
-				if (importantLinksTab) importantLinksTab.addEventListener('click', () => showTab('importantLinks'));
-                if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
-                if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
-				if (emergencyNumbersTab) emergencyNumbersTab.addEventListener('click', () => showTab('emergency'));
-				if (daysObservancesTab) daysObservancesTab.addEventListener('click', () => showTab('daysObservances'));
-				if (holidayListTab) holidayListTab.addEventListener('click', () => showTab('holiday'));
-				if (invoiceTab) invoiceTab.addEventListener('click', () => showTab('invoice'));
-				if (colorPickerTab) colorPickerTab.addEventListener('click', () => showTab('colorPicker'));
-				if (dashboardTab) dashboardTab.addEventListener('click', () => showTab('dashboard'));
-				if (moreSettingsTab) moreSettingsTab.addEventListener('click', () => showTab('moreSettings'));
-				if (historyTab) historyTab.addEventListener('click', () => showTab('history'));
+    if (basicCalcTab) basicCalcTab.addEventListener('click', () => showTab('basic'));
+    if (ageCalcTab) ageCalcTab.addEventListener('click', () => showTab('age'));
+    if (dateCalcTab) dateCalcTab.addEventListener('click', () => showTab('date'));
+    if (scientificCalcTab) scientificCalcTab.addEventListener('click', () => showTab('scientific'));
+    if (converterTab) converterTab.addEventListener('click', () => showTab('converter'));
+    if (measurementTab) measurementTab.addEventListener('click', () => showTab('measurement')); 
+    if (spellCheckTab) spellCheckTab.addEventListener('click', () => showTab('spellCheck'));
+    if (textBeautifierTab) textBeautifierTab.addEventListener('click', () => showTab('beautify'));
+    if (wordMeaningTab) wordMeaningTab.addEventListener('click', () => showTab('meaning'));
+    if (ttsTab) ttsTab.addEventListener('click', () => showTab('tts')); 
+    if (sttTab) sttTab.addEventListener('click', () => showTab('stt')); 
+    if (typingTestTab) typingTestTab.addEventListener('click', () => showTab('typingTest')); 
+    if (mapTab) mapTab.addEventListener('click', () => showTab('map'));
+    if (prayerTimeTab) prayerTimeTab.addEventListener('click', () => showTab('prayerTime')); 
+    if (imageToTextTab) imageToTextTab.addEventListener('click', () => showTab('imageToText'));
+    if (wordCounterTab) wordCounterTab.addEventListener('click', () => showTab('wordCounter'));
+    if (weatherTab) weatherTab.addEventListener('click', () => showTab('weather'));
+    if (quizTab) quizTab.addEventListener('click', () => showTab('quiz'));
+    if (donateTab) donateTab.addEventListener('click', () => showTab('donate'));
+    if (notepadTab) notepadTab.addEventListener('click', async () => {
+        showTab('notepad');
+        await initializeNotepad(); // Notepad চালু করার জন্য এই ফাংশন কল করুন
+    });
+    if (healthLifestyleTab) healthLifestyleTab.addEventListener('click', () => {showTab('healthLifestyle');	initializeHealthLifestyleTab();});
+    if (clockTab) clockTab.addEventListener('click', () => showTab('clock'));
+    if (playerTab) playerTab.addEventListener('click', () => showTab('player'));
+    if (zakatCalcTab) zakatCalcTab.addEventListener('click', () => showTab('zakat'));
+    if (imageResizerTab) imageResizerTab.addEventListener('click', () => showTab('imageResizer'));
+    if (qrCodeTab) qrCodeTab.addEventListener('click', () => showTab('qrCode'));
+    if (importantLinksTab) importantLinksTab.addEventListener('click', () => showTab('importantLinks'));
+    if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
+    if (allFeaturesTab) allFeaturesTab.addEventListener('click', () => showTab('allFeatures'));
+    if (emergencyNumbersTab) emergencyNumbersTab.addEventListener('click', () => showTab('emergency'));
+    if (daysObservancesTab) daysObservancesTab.addEventListener('click', () => showTab('daysObservances'));
+    if (holidayListTab) holidayListTab.addEventListener('click', () => showTab('holiday'));
+    if (invoiceTab) invoiceTab.addEventListener('click', () => showTab('invoice'));
+    if (colorPickerTab) colorPickerTab.addEventListener('click', () => showTab('colorPicker'));
+    if (dashboardTab) dashboardTab.addEventListener('click', () => showTab('dashboard'));
+    if (moreSettingsTab) moreSettingsTab.addEventListener('click', () => showTab('moreSettings'));
+    if (historyTab) historyTab.addEventListener('click', () => showTab('history'));
+	
 // ====================================================================
 // END: IF SECTION FOR TAB
 // ====================================================================
