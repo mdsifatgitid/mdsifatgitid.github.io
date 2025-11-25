@@ -11580,6 +11580,11 @@ function stopOtherTabActivities() {
     if (window.worldClockIntervalId) {
         clearInterval(window.worldClockIntervalId);
     }
+    // ২. আবহাওয়া আপডেট থামান (নতুন যোগ করা হয়েছে)
+    if (window.weatherRefreshIntervalId) {
+        clearInterval(window.weatherRefreshIntervalId);
+        console.log("Weather refresh stopped to save resources.");
+    }
 }
 
 function showTab(tabId) {
@@ -14840,6 +14845,7 @@ function initializeClockTab() {
     }
     
     // ইনিশিয়ালাইজেশন
+    // *** এই অংশটি আপডেট করা হয়েছে: গ্লোবাল ভেরিয়েবল ব্যবহার করা হয়েছে ***
     if (window.worldClockIntervalId) clearInterval(window.worldClockIntervalId);
     populateTimezoneDropdown();
     
@@ -14850,6 +14856,7 @@ function initializeClockTab() {
     activeTimezones = rebuildWorldClockGrid(); 
     
     // প্রতি সেকেন্ডে শুধু টেক্সট আপডেট হবে
+    // *** এই অংশটি আপডেট করা হয়েছে: window.worldClockIntervalId তে অ্যাসাইন করা হয়েছে ***
     window.worldClockIntervalId = setInterval(() => {
         if (activeTimezones && activeTimezones.length > 0) {
             updateWorldClocksText(activeTimezones);
@@ -15384,8 +15391,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchInputForecast) searchInputForecast.value = savedCity2;
     searchLocation(savedCity2);
 
-    // *** নতুন: প্রতি ১০ মিনিটে ডেটা রিফ্রেশ করার জন্য setInterval ***
-    setInterval(() => {
+    // *** নতুন: প্রতি ১০ মিনিটে ডেটা রিফ্রেশ করার জন্য setInterval (গ্লোবাল ভেরিয়েবলে অ্যাসাইন করা হয়েছে) ***
+    if (window.weatherRefreshIntervalId) clearInterval(window.weatherRefreshIntervalId);
+    
+    window.weatherRefreshIntervalId = setInterval(() => {
         console.log("Refreshing weather data (Every 10 mins)...");
         // প্রথম সেকশন রিফ্রেশ করুন
         const lastCity1 = localStorage.getItem('lastSearchedWeatherCity');
