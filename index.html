@@ -8616,18 +8616,17 @@ body.sidebar-open #sidebarOverlay {
             </label>
         </div>	
 		
-<!-- ব্যাকগ্রাউন্ড এনিমেশন টগল (নতুন) -->
-<div class="setting-item" style="margin-top: 15px;">
-    <div class="setting-text">
-        <label for="bgAnimationToggle" class="font-semibold text-gray-700 dark:text-gray-300">ব্যাকগ্রাউন্ড এনিমেশন</label>
-        <p class="text-sm text-gray-500 dark:text-gray-400">ব্যাকগ্রাউন্ডে বাবল ওড়ার এনিমেশন চালু বা বন্ধ করুন। এটি বন্ধ রাখলে CPU ব্যবহার অনেক কমে যাবে। <b style="color:red">(Recommended: Off)</b> </p>
-    </div>
-    <label class="switch">
-        <!-- নিচের লাইনে 'checked' অ্যাট্রিবিউটটি সরিয়ে দেওয়া হয়েছে -->
-        <input type="checkbox" id="bgAnimationToggle">
-        <span class="slider round"></span>
-    </label>
-</div>
+        <!-- ব্যাকগ্রাউন্ড এনিমেশন টগল (নতুন) -->
+        <div class="setting-item" style="margin-top: 15px;">
+            <div class="setting-text">
+                <label for="bgAnimationToggle" class="font-semibold text-gray-700 dark:text-gray-300">ব্যাকগ্রাউন্ড এনিমেশন</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">ব্যাকগ্রাউন্ডে বাবল ওড়ার এনিমেশন চালু বা বন্ধ করুন। এটি বন্ধ রাখলে CPU ব্যবহার অনেক কমে যাবে। <b style="color:red">(Recommended: Off</b>) </p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="bgAnimationToggle" checked>
+                <span class="slider round"></span>
+            </label>
+        </div>
 		
 <!-- অ্যাপ থিম সিলেকশন -->
         <div class="setting-item" style="margin-top: 15px;">
@@ -8947,6 +8946,15 @@ document.addEventListener('DOMContentLoaded', () => {
         '০': '0', '১': '1', '২': '2', '৩': '3', '৪': '4', '৫': '5', '৬': '6', '৭': '7', '৮': '8', '৯': '9'
     };
 
+    // বাংলা অক্ষর নরমালাইজেশন ফাংশন (আপনার অনুরোধ অনুযায়ী রিপ্লেসমেন্ট)
+    const normalizeBengaliChars = (text) => {
+        if (!text) return "";
+        return text
+            .replace(/ড\u09BC/g, 'ড়') // ড+় = ড়
+            .replace(/ঢ\u09BC/g, 'ঢ়') // ঢ+় = ঢ়
+            .replace(/য\u09BC/g, 'য়'); // য+় = য়
+    };
+
     // Helper function to compare words considering digit equivalence
     const compareWords = (originalWord, typedWord) => {
         if (!originalWord || !typedWord || originalWord.length !== typedWord.length) {
@@ -8978,8 +8986,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         const selection = textSelection ? textSelection.value : 'bn_1'; // Default if not found
-        const customText = customTextInputContainer ? customTextInputContainer.value.replace(/\r\n?/g, '\n') : '';
-        originalParagraphForTest = (selection === 'custom' ? customText : paragraphs[selection]) || paragraphs['bn_1'];
+        
+        // কাস্টম টেক্সট এবং প্যারাগ্রাফ টেক্সট উভয়কেই নরমালাইজ করা হচ্ছে
+        const customText = customTextInputContainer ? normalizeBengaliChars(customTextInputContainer.value.replace(/\r\n?/g, '\n')) : '';
+        const rawParagraph = (selection === 'custom' ? customText : paragraphs[selection]) || paragraphs['bn_1'];
+        originalParagraphForTest = normalizeBengaliChars(rawParagraph);
 
         if (typingTextDisplay) {
             typingTextDisplay.innerHTML = originalParagraphForTest.split('').map(char => `<span>${char}</span>`).join('');
@@ -9009,6 +9020,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleTypingInput = () => {
         if (isPaused || !typingInput || !originalParagraphForTest) return; // Add null checks
+        
+        // টাইপ করার সাথে সাথে অক্ষর নরমালাইজ করা হচ্ছে
+        const currentVal = typingInput.value;
+        const normalizedVal = normalizeBengaliChars(currentVal);
+        if (currentVal !== normalizedVal) {
+            typingInput.value = normalizedVal;
+        }
+
         if (!isTestActive && typingInput.value) {
             isTestActive = true;
             lastKeyPressTime = Date.now();
@@ -9420,7 +9439,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (timeSelection) timeSelection.addEventListener('change', initializeTest);
-    if (customTextInputContainer) customTextInputContainer.addEventListener('input', () => { if(textSelection && textSelection.value === 'custom') initializeTest(); });
+    if (customTextInputContainer) {
+        customTextInputContainer.addEventListener('input', () => { 
+            if (textSelection && textSelection.value === 'custom') {
+                // কাস্টম ইনপুট লেখার সাথে সাথেও নরমালাইজ করা হবে
+                customTextInputContainer.value = normalizeBengaliChars(customTextInputContainer.value);
+                initializeTest(); 
+            }
+        });
+    }
 
     // Initialize if the tab is already active on load
     const typingTestContent = document.getElementById('typingTestContent');
@@ -15057,7 +15084,7 @@ if (importantLinksTabForCounter) {
 
 // --- ফন্ট কনভার্টার লিসেনার ---
 // ====================================================================
-// START: PASTE FROM CLIPBOARD FUNCTIONALITY (বাগ ফিক্সড)
+// START: PASTE FROM CLIPBOARD FUNCTIONALITY (স্ক্রল এবং কার্সর ফিক্সড - উভয় পাশে)
 // ====================================================================
 async function pasteFromClipboard(textareaId) {
     const textarea = document.getElementById(textareaId);
@@ -15073,6 +15100,7 @@ async function pasteFromClipboard(textareaId) {
         let textToInsert = '';
         let preset, customValue, serialCounter, updateSerialCounter, resetSerialCounter;
 
+        // কোন দিকের টেক্সটবক্স এবং তার সেটিংস নির্ধারণ
         if (textareaId === 'textAreaLeft') {
             preset = pastePresetLeft;
             customValue = customPasteValueLeft;
@@ -15091,7 +15119,7 @@ async function pasteFromClipboard(textareaId) {
             resetSerialCounter();
         }
 
-        // বিভিন্ন প্রিসেটের জন্য টেক্সট প্রস্তুত করার লজিক এখানে আপডেট করা হয়েছে।
+        // প্রিসেট অনুযায়ী টেক্সট প্রসেসিং
         switch (preset) {
             case 'double-enter-v2': {
                 let processedText = clipboardText.trim().replace(/(\r?\n\s*){2,}/g, '\n');
@@ -15102,10 +15130,8 @@ async function pasteFromClipboard(textareaId) {
                 }
                 break;
             }
-            case 'double-enter-v3': { // নতুন V3 প্রিসেট যুক্ত করা হয়েছে
-                // V2 এর মতো, অতিরিক্ত খালি লাইন রিমুভ করা হয়
+            case 'double-enter-v3': {
                 let processedText = clipboardText.trim().replace(/(\r?\n\s*){2,}/g, '\n');
-                // নতুন বৈশিষ্ট্য: প্রতিটা লাইনের শুরু থেকে স্পেস রিমুভ করা হয়
                 processedText = processedText.replace(/^\s+/gm, ''); 
                 if (textarea.value.trim() !== '') {
                     textToInsert = '\n\n' + processedText;
@@ -15117,18 +15143,15 @@ async function pasteFromClipboard(textareaId) {
             case 'custom-serial': {
                 const prefix = customValue ? customValue.replace(/\{serial\}/g, serialCounter) : '';
                 updateSerialCounter(serialCounter + 1);
-                // ফিক্স: টেক্সটবক্স খালি থাকলেও প্রিফিক্সটি ক্লিপবোর্ডের টেক্সটের সাথে যোগ করা হচ্ছে।
                 textToInsert = prefix + clipboardText;
                 break;
             }
             default: {
                 let prefix = '';
                 if (preset === 'custom') {
-                    // ফিক্স: 'কাস্টম' প্রিসেটের জন্য, প্রিফিক্সটি সর্বদা যোগ করা হচ্ছে।
                     prefix = customValue || '';
                     textToInsert = prefix + clipboardText;
                 } else {
-                    // অন্যান্য ডিফল্ট প্রিসেট (যেমন স্পেস, এন্টার) শুধুমাত্র তখনই যোগ হবে যখন টেক্সটবক্স খালি থাকবে না।
                     if (textarea.value.trim() !== '') {
                         if (preset === 'single-space') prefix = ' ';
                         else if (preset === 'double-space') prefix = '  ';
@@ -15142,23 +15165,51 @@ async function pasteFromClipboard(textareaId) {
             }
         }
         
+        // কার্সরের বর্তমান পজিশন (যদি দরকার হয়)
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
         const currentValue = textarea.value;
+        
+        // টেক্সট ইনসার্ট করা
         textarea.value = currentValue.substring(0, start) + textToInsert + currentValue.substring(end);
         
-        const newCursorPosition = start + textToInsert.length;
+        // --- নতুন: কার্সরকে একদম শেষে নিয়ে যাওয়া (বর্তমান বক্স) ---
+        const newCursorPosition = textarea.value.length;
         textarea.selectionStart = newCursorPosition;
         textarea.selectionEnd = newCursorPosition;
         textarea.focus();
 
+        // --- নতুন: স্ক্রোলবার নিচে নামানোর লজিক (বর্তমান বক্স) ---
+        setTimeout(() => {
+            textarea.scrollTop = textarea.scrollHeight;
+        }, 10);
+
+        // হিস্টোরিতে যোগ করা
         addState(textareaId);
         showCustomAlert('টেক্সট পেস্ট করা হয়েছে!');
 
+        // লাইভ কনভার্ট ট্রিগার এবং বিপরীত বক্সের স্ক্রোল ফিক্স
         const liveConvertToggle = document.getElementById('live-convert-toggle');
         if (liveConvertToggle && liveConvertToggle.checked) {
-            if (textareaId === 'textAreaLeft') setTimeout(convertLeftToRight, 0);
-            else if (textareaId === 'textAreaRight') setTimeout(convertRightToLeft, 0);
+            if (textareaId === 'textAreaLeft') {
+                setTimeout(() => {
+                    convertLeftToRight();
+                    // ডানদিকের বক্সের স্ক্রোল নিচে নামানো
+                    const rightArea = document.getElementById('textAreaRight');
+                    if (rightArea) {
+                        rightArea.scrollTop = rightArea.scrollHeight;
+                    }
+                }, 0);
+            } else if (textareaId === 'textAreaRight') {
+                setTimeout(() => {
+                    convertRightToLeft();
+                    // বামদিকের বক্সের স্ক্রোল নিচে নামানো
+                    const leftArea = document.getElementById('textAreaLeft');
+                    if (leftArea) {
+                        leftArea.scrollTop = leftArea.scrollHeight;
+                    }
+                }, 0);
+            }
         }
 
     } catch (err) {
@@ -15166,11 +15217,10 @@ async function pasteFromClipboard(textareaId) {
         showCustomAlert('পেস্ট করতে ব্যর্থ হয়েছে। ব্রাউজার পারমিশন চেক করুন।');
     }
 }
-
-
 // ====================================================================
 // END: PASTE FROM CLIPBOARD FUNCTIONALITY
 // ====================================================================
+
 // ====================================================================
 // START: ANSI FIX AND PEST FOR LIVE CONVERT
 // ====================================================================
@@ -19495,11 +19545,11 @@ function initializeMoreSettings() {
     const bgCircles = document.querySelector('.circles'); // বাবল এনিমেশন
 
     if (bgAnimationToggle && bgArea && bgCircles) {
-        // পরিবর্তন: ডিফল্টভাবে বন্ধ রাখার জন্য লজিক আপডেট করা হয়েছে (=== 'true')
-        const isBgAnimationEnabled = localStorage.getItem('bgAnimationEnabled') === 'true';
+        const isBgAnimationEnabled = localStorage.getItem('bgAnimationEnabled') !== 'true';
         bgAnimationToggle.checked = isBgAnimationEnabled;
         
         // পেজ লোডের সময় ইনিশিয়াল স্টেট সেট করা
+        // .area সর্বদা দৃশ্যমান থাকবে যাতে ব্যাকগ্রাউন্ড কালার থাকে (ডার্ক/লাইট মোড সহ)
         bgArea.style.display = 'block'; 
         
         // শুধুমাত্র বাবলগুলো হাইড বা শো হবে
@@ -19612,8 +19662,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bgCircles = document.querySelector('.circles');
 
     if (bgArea && bgCircles) {
-        // পরিবর্তন: ডিফল্টভাবে বন্ধ রাখার জন্য লজিক আপডেট করা হয়েছে (=== 'true')
-        const isBgAnimationEnabled = localStorage.getItem('bgAnimationEnabled') === 'true';
+        const isBgAnimationEnabled = localStorage.getItem('bgAnimationEnabled') !== 'true';
         
         // .area সর্বদা দৃশ্যমান থাকবে যাতে ব্যাকগ্রাউন্ড কালার ঠিক থাকে
         bgArea.style.display = 'block';
