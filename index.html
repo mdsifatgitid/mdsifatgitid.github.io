@@ -8604,6 +8604,18 @@ body.sidebar-open #sidebarOverlay {
             </label>
         </div>
 		
+        <!-- টাইটেল এনিমেশন টগল (নতুন) -->
+        <div class="setting-item" style="margin-top: 15px;">
+            <div class="setting-text">
+                <label for="titleAnimationToggle" class="font-semibold text-gray-700 dark:text-gray-300">টাইটেল এনিমেশন</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">বাংলা টুলবক্স টাইটেল গ্লিচ এনিমেশন চালু বা বন্ধ করুন।</p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="titleAnimationToggle" checked>
+                <span class="slider round"></span>
+            </label>
+        </div>	
+		
         <!-- ব্যাকগ্রাউন্ড এনিমেশন টগল (নতুন) -->
         <div class="setting-item" style="margin-top: 15px;">
             <div class="setting-text">
@@ -16177,7 +16189,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 
 // ====================================================================
-// START: Animated Bangla Toolbox Heading
+// START: Animated Bangla Toolbox Heading (Updated with Settings Toggle)
 // ====================================================================
 document.addEventListener('DOMContentLoaded', () => {
 const mainHeading = document.getElementById('main-heading');
@@ -16186,16 +16198,18 @@ if (mainHeading) {
     // প্রতি সেকেন্ডে সময় পরীক্ষা করার জন্য
     setInterval(() => {
         const seconds = new Date().getSeconds();
+        
+        // সেটিংস থেকে চেক করুন এনিমেশন চালু আছে কিনা (ডিফল্ট true)
+        const isTitleAnimationEnabled = localStorage.getItem('titleAnimationEnabled') !== 'false';
 
-        // ব্যানারের মিনিটের শুরু থেকে 30 সেকেন্ড হলে, তখন অ্যানিমেশন ট্রিগার করুন
-        if ((seconds === 30) && !mainHeading.classList.contains('glitch-effect')) {
+        // ব্যানারের মিনিটের শুরু থেকে 30 সেকেন্ড হলে এবং সেটিং চালু থাকলে, তখন অ্যানিমেশন ট্রিগার করুন
+        if (isTitleAnimationEnabled && (seconds === 30) && !mainHeading.classList.contains('glitch-effect')) {
             mainHeading.classList.add('glitch-effect');
         }
     }, 1000);
 
     // অ্যানিমেশন শেষ হলে ক্লাসটি সরিয়ে দিন যাতে এটি আবার ট্রিগার হতে পারে
     mainHeading.addEventListener('animationend', (event) => {
-        // পরিবর্তন: অ্যানিমেশনের নাম 'glitch-duration' হলে ক্লাসটি সরান
         if (event.animationName === 'glitch-duration') {
              mainHeading.classList.remove('glitch-effect');
         }
@@ -16203,7 +16217,6 @@ if (mainHeading) {
 }
 
 });
-
 // ====================================================================
 // END: Animated Bangla Toolbox Heading
 // ====================================================================
@@ -19468,7 +19481,7 @@ function initializeMoreSettings() {
         });
     }
 
-    // ৩. ব্যাকগ্রাউন্ড এনিমেশন টগল লজিক (নতুন)
+    // ৩. ব্যাকগ্রাউন্ড এনিমেশন টগল লজিক
     const bgAnimationToggle = document.getElementById('bgAnimationToggle');
     const bgAnimationContainer = document.querySelector('.area'); // ব্যাকগ্রাউন্ড এনিমেশনের মূল ডিভ
 
@@ -19487,7 +19500,21 @@ function initializeMoreSettings() {
         });
     }
 
-    // ৪. নিউজ অ্যানিমেশন টগল লজিক
+    // ৪. টাইটেল এনিমেশন টগল লজিক (নতুন)
+    const titleAnimationToggle = document.getElementById('titleAnimationToggle');
+    
+    if (titleAnimationToggle) {
+        const isTitleAnimationEnabled = localStorage.getItem('titleAnimationEnabled') !== 'false';
+        titleAnimationToggle.checked = isTitleAnimationEnabled;
+
+        titleAnimationToggle.addEventListener('change', () => {
+            const isEnabled = titleAnimationToggle.checked;
+            localStorage.setItem('titleAnimationEnabled', isEnabled);
+            showCustomAlert(`টাইটেল এনিমেশন: ${isEnabled ? 'চালু' : 'বন্ধ'} করা হয়েছে।`);
+        });
+    }
+
+    // ৫. নিউজ অ্যানিমেশন স্টাইল টগল লজিক
     const newsAnimationToggle = document.getElementById('newsAnimationToggle');
     if (newsAnimationToggle) {
         const savedNewsSetting = localStorage.getItem('newsAnimationType') || 'sliding';
@@ -19505,7 +19532,7 @@ function initializeMoreSettings() {
         });
     }
 
-    // ৫. অ্যাপ থিম সিলেকশন লজিক
+    // ৬. অ্যাপ থিম সিলেকশন লজিক
     const themeSelect = document.getElementById('appThemeSelect');
     if (themeSelect) {
         const savedTheme = localStorage.getItem('selectedAppTheme') || 'modern';
@@ -19520,7 +19547,7 @@ function initializeMoreSettings() {
         });
     }
 
-    // ৬. ক্লিয়ার অ্যাপ ডাটা লজিক
+    // ৭. ক্লিয়ার অ্যাপ ডাটা লজিক
     const clearAppDataBtn = document.getElementById('clearAppDataBtn');
     if (clearAppDataBtn) {
         clearAppDataBtn.addEventListener('click', async () => {
