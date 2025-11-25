@@ -11631,15 +11631,24 @@ window.addEventListener('click', (e) => {
 // ====================================================================
 // START: TAB AND CONTENT SECTION FOR TAB
 // ====================================================================
+
+// কনফিগারেশন: কনভার্টার ট্যাব ব্যবহারের সময় অন্য ভারী ট্যাবগুলো (ঘড়ি, আবহাওয়া) বন্ধ রাখা হবে কি না।
+// true = বন্ধ রাখা হবে (রিসোর্স সাশ্রয় হবে)
+// false = বন্ধ রাখা হবে না (সবসময় চলবে)
+const ENABLE_TAB_OPTIMIZATION = false; 
+
 // সমস্ত ট্যাব এর নাম এবং ট্যাব এর কন্টেন্ট নাম একানে বসাতে হয়, এই দুটি সেকশনে নতুন ট্যাবের নাম এবং কনটেন্ট নাম যুক্ত করতে হয় বা বসাতে হয় ।
 
 // নতুন ফাংশন: কনভার্টার ট্যাব অ্যাকটিভ হলে অন্য সকল ভারী কার্যক্রম বন্ধ করার জন্য
 function stopOtherTabActivities() {
+    // যদি অপ্টিমাইজেশন ফিচারটি অফ (false) করা থাকে, তবে ফাংশনটি কাজ করবে না
+    if (!ENABLE_TAB_OPTIMIZATION) return;
+
     // ১. বিশ্ব ঘড়ি আপডেট থামান (ঘড়ি ট্যাবের লাইভ টাইম আপডেট বন্ধ করা)
     if (window.worldClockIntervalId) {
         clearInterval(window.worldClockIntervalId);
     }
-    // ২. আবহাওয়া আপডেট থামান (নতুন যোগ করা হয়েছে)
+    // ২. আবহাওয়া আপডেট থামান
     if (window.weatherRefreshIntervalId) {
         clearInterval(window.weatherRefreshIntervalId);
         console.log("Weather refresh stopped to save resources.");
@@ -11674,7 +11683,7 @@ function showTab(tabId) {
         if (content) content.classList.remove('active');
     });
 
-    // *** নতুন লজিক: কনভার্টার ট্যাব সিলেক্ট করা হলে অন্য কার্যক্রম বন্ধ করুন ***
+    // *** নতুন লজিক: কনভার্টার ট্যাব সিলেক্ট করা হলে অন্য কার্যক্রম বন্ধ করুন (যদি সেটিংস অন থাকে) ***
     if (tabId === 'converter') {
         stopOtherTabActivities();
     }
