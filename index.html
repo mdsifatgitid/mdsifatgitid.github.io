@@ -14651,9 +14651,17 @@ async function initBackgroundAlarmSystem() {
             forceUpdateBanner();
         }
 
-        // ৩. অডিও পলিসি আনলক
-        ['click', 'touchstart', 'keydown'].forEach(evt => 
-            document.body.addEventListener(evt, unlockAudioContext, { once: true })
+        // ৩. অডিও পলিসি আনলক (আপডেটেড)
+        // ব্যবহারকারী পেজের যেকোনো জায়গায় ক্লিক করলেই অডিও সিস্টেম আনলক হবে
+        const unlockEvents = ['click', 'touchstart', 'keydown', 'mousedown', 'pointerdown'];
+        const unlockHandler = () => {
+            unlockAudioContext();
+            // একবার আনলক হয়ে গেলে ইভেন্ট লিসেনারগুলো সরিয়ে ফেলা ভালো
+            unlockEvents.forEach(evt => document.body.removeEventListener(evt, unlockHandler));
+        };
+        
+        unlockEvents.forEach(evt => 
+            document.body.addEventListener(evt, unlockHandler, { once: true })
         );
 
         // ৪. মনিটরিং চালু করুন
@@ -14721,7 +14729,6 @@ function forceUpdateBanner() {
     const banner = document.getElementById('currentDateTimeBanner');
     if (banner) {
         // আমরা ব্যানারকে "টাচ" করছি যাতে প্রক্সি ট্রিগার হয়
-        // অথবা যদি মেইন ঘড়ি দেরি করে, আমরা ম্যানুয়ালি বসিয়ে দিই
         const currentHTML = banner.innerHTML;
         if (!currentHTML.includes('bannerAlarmStatus')) {
              banner.innerHTML = currentHTML; // এটি প্রক্সি সেটারকে কল করবে
@@ -14786,11 +14793,33 @@ function checkAlarmTrigger() {
     }
 }
 
-// --- অডিও লজিক ---
+// --- অডিও লজিক (Silect Buffer সহ আপডেটেড) ---
 function unlockAudioContext() {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!globalAudioContext && AudioContext) globalAudioContext = new AudioContext();
-    if (globalAudioContext && globalAudioContext.state === 'suspended') globalAudioContext.resume();
+    if (!globalAudioContext && AudioContext) {
+        globalAudioContext = new AudioContext();
+    }
+    
+    if (globalAudioContext) {
+        // ১. যদি সাসপেন্ডেড থাকে তবে রিজিউম করুন
+        if (globalAudioContext.state === 'suspended') {
+            globalAudioContext.resume().then(() => {
+                console.log("AudioContext resumed on interaction.");
+            });
+        }
+        
+        // ২. একটি সাইলেন্ট বাফার বাজিয়ে অডিও ইঞ্জিনকে 'Warm up' করুন (ক্রোমের পলিসির জন্য গুরুত্বপূর্ণ)
+        try {
+            const buffer = globalAudioContext.createBuffer(1, 1, 22050);
+            const source = globalAudioContext.createBufferSource();
+            source.buffer = buffer;
+            source.connect(globalAudioContext.destination);
+            source.start(0);
+            console.log("Silent buffer played to unlock audio.");
+        } catch (e) {
+            console.error("Failed to play silent buffer:", e);
+        }
+    }
 }
 
 async function playGlobalAlarmSound() {
@@ -14804,13 +14833,17 @@ async function playGlobalAlarmSound() {
             const audioUrl = URL.createObjectURL(blob);
             const customAudio = new Audio(audioUrl);
             
-            // ফিক্স: কাস্টম সাউন্ড লুপ হবে না, একবার বাজবে
-            customAudio.loop = false; 
+            customAudio.loop = false; // কাস্টম সাউন্ড লুপ হবে না
             globalActiveAlarmSound = customAudio;
             
-            customAudio.play().catch(e => console.error("Play failed:", e));
+            const playPromise = customAudio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.error("Custom audio play failed (likely autoplay policy):", error);
+                    // কাস্টম ফেইল করলে ডিফল্টে ফলব্যাক করার চেষ্টা করা যেতে পারে
+                });
+            }
             
-            // অডিও শেষ হলে স্ট্যাটাস আপডেট করুন
             customAudio.onended = () => {
                 URL.revokeObjectURL(audioUrl);
                 stopGlobalAlarmSound(); 
@@ -14863,7 +14896,7 @@ async function playGlobalAlarmSound() {
         }
 
         oscillator.start(now);
-        // ব্যাকআপ হিসেবে ১০ সেকেন্ড পর বন্ধ নিশ্চিত করা
+        // ১০ সেকেন্ড পর বন্ধ নিশ্চিত করা
         oscillator.stop(now + 10); 
         
         globalActiveAlarmSound = oscillator;
