@@ -2941,123 +2941,134 @@ input:checked + .slider:before {
 }
 
 /* নতুন: আবহাওয়া বিভাগের স্টাইল */
-.weather-content {
-    padding: 20px;
-    border-radius: 16px;
-    margin: 0 auto;
-    max-width: 500px;
-    background-color: #f8f9fa;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-}
-.dark .weather-content {
-    background-color: #2d3748;
-}
-.weather-search-box {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-.city-input {
-    flex-grow: 1;
-    padding: 12px;
-    border: 1px solid #cce7ff;
-    border-radius: 10px;
-    font-size: 1rem;
-    background-color: #eaf6ff;
-    color: #333;
-}
-.dark .city-input {
-    background-color: #4a5568;
-    border-color: #718096;
-    color: #f7fafc;
-}
-.search-weather-button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-.search-weather-button:hover {
-    background-color: #0056b3;
-}
-.weather-result-area {
-    background-color: #e6f7ff;
-    border-radius: 16px;
-    padding: 20px;
-    text-align: center;
-    border: 1px solid #b3e0ff;
-    min-height: auto; /* উচ্চতা পরিবর্তন করা হয়েছে */
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; /* কন্টেন্ট ওপর থেকে শুরু হবে */
-}
-.dark .weather-result-area {
-    background-color: #1a202c;
-    border-color: #4a5568;
-}
-.weather-result-area h4 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #0056b3;
-}
-.dark .weather-result-area h4 {
-    color: #90cdf4;
-}
-.weather-result-area .weather-icon {
-    width: 100px;
-    height: 100px;
-    margin: 10px auto;
-}
-.weather-result-area .temp {
-    font-size: 2.5rem;
-    font-weight: 700;
-}
-.weather-result-area .description {
-    font-size: 1.2rem;
-    text-transform: capitalize;
-    margin-bottom: 15px;
-}
+        .weather-content {
+            padding: 20px;
+            border-radius: 16px;
+            margin: 0 auto;
+            max-width: 500px;
+            background-color: #f8f9fa;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .dark .weather-content {
+            background-color: #2d3748;
+        }
+        .weather-search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .city-input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid #cce7ff;
+            border-radius: 10px;
+            font-size: 1rem;
+            background-color: #eaf6ff;
+            color: #333;
+        }
+        .dark .city-input {
+            background-color: #4a5568;
+            border-color: #718096;
+            color: #f7fafc;
+        }
+        .search-weather-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .search-weather-button:hover {
+            background-color: #0056b3;
+        }
+        .weather-result-area {
+            background-color: #e6f7ff;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #b3e0ff;
+            min-height: auto; /* উচ্চতা পরিবর্তন করা হয়েছে */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* কন্টেন্ট ওপর থেকে শুরু হবে */
+        }
+        .dark .weather-result-area {
+            background-color: #1a202c;
+            border-color: #4a5568;
+            color: #e2e8f0; /* সাধারণ টেক্সটের জন্য সাদা রঙ যোগ করা হয়েছে */
+        }
+        .weather-result-area h4 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0056b3;
+        }
+        .dark .weather-result-area h4 {
+            color: #90cdf4;
+        }
+        .weather-result-area .weather-icon {
+            width: 100px;
+            height: 100px;
+            margin: 10px auto;
+        }
+        .weather-result-area .temp {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        .weather-result-area .description {
+            font-size: 1.2rem;
+            text-transform: capitalize;
+            margin-bottom: 15px;
+        }
+        
+        /* ডার্ক মোডে তাপমাত্রা এবং বিবরণ সাদা করার জন্য */
+        .dark .weather-result-area .temp,
+        .dark .weather-result-area .description {
+            color: #f7fafc;
+        }
 
-/* নতুন যুক্ত করা এবং আপডেট করা স্টাইল */
-.weather-feels-like {
-    font-size: 1rem;
-    margin-top: -10px;
-    margin-bottom: 15px;
-    color: #555;
-}
-.dark .weather-feels-like {
-    color: #a0aec0;
-}
-.weather-extra-details {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    width: 100%;
-    margin-top: 20px;
-    text-align: left;
-}
-.detail-item {
-    background-color: rgba(255, 255, 255, 0.5);
-    padding: 10px;
-    border-radius: 10px;
-}
-.dark .detail-item {
-    background-color: rgba(0, 0, 0, 0.2);
-}
-.detail-item strong {
-    display: block;
-    font-size: 0.9rem;
-    color: #3f51b5;
-    margin-bottom: 5px;
-}
-.dark .detail-item strong {
-    color: #90cdf4;
-}
+        /* নতুন যুক্ত করা এবং আপডেট করা স্টাইল */
+        .weather-feels-like {
+            font-size: 1rem;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        .dark .weather-feels-like {
+            color: #a0aec0;
+        }
+        .weather-extra-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .detail-item {
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .dark .detail-item {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        .detail-item strong {
+            display: block;
+            font-size: 0.9rem;
+            color: #3f51b5;
+            margin-bottom: 5px;
+        }
+        .dark .detail-item strong {
+            color: #90cdf4;
+        }
+        /* ডিটেইল আইটেমের ভ্যালুগুলো ডার্ক মোডে সাদা করার জন্য */
+        .dark .detail-item span {
+            color: #e2e8f0;
+        }
 
  /* প্রিসেট ড্রপডাউন বাটনের জন্য নতুন CSS */
     #presetButtonLeft.open svg, #presetButtonRight.open svg {
