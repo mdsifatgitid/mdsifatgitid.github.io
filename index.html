@@ -14614,195 +14614,203 @@ const findInNotepad = () => {
 // ====================================================================
 
 // ====================================================================
-// START: CLOCK TAB SCRIPT (STOPWATCH, ALARM, WORLD CLOCK - Optimized & Background Support)
+// START: CLOCK TAB SCRIPT (STOPWATCH, ALARM, WORLD CLOCK)
 // ====================================================================
 
-// গ্লোবাল ভেরিয়েবল
-let globalAlarmTimer = null;      // টাইমার চেক করার জন্য
-let globalAlarmTimeValue = null;  // সেট করা অ্যালার্মের সময়
-let globalActiveAlarmSound = null; // বর্তমানে যে সাউন্ড বাজছে
-let hasGlobalAlarmRung = false;   // এই মিনিটে অ্যালার্ম বেজেছে কিনা
-let globalAudioContext = null;    // স্থায়ী অডিও কনটেক্সট (ফিক্স)
-let bannerObserver = null;        // ব্যানার পর্যবেক্ষক
+// --- গ্লোবাল ভেরিয়েবল ---
+let globalAlarmTimeValue = null;
+let globalActiveAlarmSound = null;
+let hasGlobalAlarmRung = false;
+let globalAudioContext = null;
+let globalAlarmCheckInterval = null;
+let defaultSoundTimeout = null; // ডিফল্ট সাউন্ড বন্ধ করার টাইমার
 
-// IndexedDB থেকে ডিলিট করার হেল্পার ফাংশন
+// IndexedDB হেল্পার
 async function idbDelete(key) {
-    const db = await getDb();
-    const transaction = db.transaction(STORE_NAME, 'readwrite');
-    const store = transaction.objectStore(STORE_NAME);
-    store.delete(key);
-    return transaction.complete;
+    try {
+        const db = await getDb();
+        const transaction = db.transaction(STORE_NAME, 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+        store.delete(key);
+        return transaction.complete;
+    } catch(e) { console.error("IDB Delete error", e); }
 }
 
-// ১. ব্যাকগ্রাউন্ড অ্যালার্ম লজিক (পেজ লোড হওয়ার সাথে সাথেই রান হবে)
+// --- সিস্টেম ইনিশিয়ালাইজেশন ---
 async function initBackgroundAlarmSystem() {
     try {
-        // ডাটাবেস থেকে সেভ করা অ্যালার্ম চেক করা
+        // ১. ইন্টারসেপ্টর সবার আগে সেটআপ করুন যাতে কোনো আপডেট মিস না হয়
+        setupDOMInterceptor();
+
+        // ২. ডাটাবেস থেকে অ্যালার্ম লোড করুন
         const savedAlarm = await idbGet('activeAlarm');
-        
         if (savedAlarm && savedAlarm.time) {
-            console.log("Background Alarm Found:", savedAlarm.time);
             globalAlarmTimeValue = savedAlarm.time;
-            startGlobalAlarmChecker(); // চেকার চালু করুন
-            setupBannerObserver(); // ব্যানার আপডেট শুরু করুন
-        } else {
-            // অ্যালার্ম না থাকলে ব্যানার পরিষ্কার করুন
-            const alarmSpan = document.getElementById('bannerAlarmStatus');
-            if (alarmSpan) alarmSpan.remove();
+            console.log("Alarm restored from DB:", globalAlarmTimeValue);
+            // ডাটা পাওয়ার সাথে সাথেই একবার ম্যানুয়ালি ব্যানার আপডেট করার চেষ্টা করুন
+            forceUpdateBanner();
         }
-        
-        // ব্রাউজারের অটো-প্লে পলিসি বাইপাস করার জন্য লিসেনার
-        const interactionEvents = ['click', 'touchstart', 'keydown', 'input', 'mousedown'];
-        interactionEvents.forEach(event => {
-            document.body.addEventListener(event, unlockAudioContext, { once: true });
-        });
+
+        // ৩. অডিও পলিসি আনলক
+        ['click', 'touchstart', 'keydown'].forEach(evt => 
+            document.body.addEventListener(evt, unlockAudioContext, { once: true })
+        );
+
+        // ৪. মনিটরিং চালু করুন
+        startAlarmMonitoring();
 
     } catch (e) {
-        console.error("Error initializing background alarm:", e);
+        console.error("Alarm init error:", e);
     }
 }
 
-// অডিও আনলক ফাংশন
-function unlockAudioContext() {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!globalAudioContext && AudioContext) {
-        globalAudioContext = new AudioContext();
-    }
-    if (globalAudioContext && globalAudioContext.state === 'suspended') {
-        globalAudioContext.resume().then(() => {
-            // console.log("AudioContext Resumed & Ready");
-        }).catch(e => console.error(e));
-    }
-}
+// --- DOM ইন্টারসেপ্টর (ব্লিংক ফিক্সের মূল সমাধান) ---
+function setupDOMInterceptor() {
+    if (document.getElementById.isProxy) return;
 
-// টাইম ব্যানারে অ্যালার্ম স্ট্যাটাস দেখানোর জন্য অবজারভার
-function setupBannerObserver() {
-    const banner = document.getElementById('currentDateTimeBanner');
-    if (!banner) return;
+    const originalGetElementById = document.getElementById.bind(document);
 
-    if (bannerObserver) bannerObserver.disconnect();
-
-    bannerObserver = new MutationObserver((mutations) => {
-        if (globalAlarmTimeValue) {
-            injectAlarmToBanner();
+    document.getElementById = function(id) {
+        const element = originalGetElementById(id);
+        
+        if (id === 'currentDateTimeBanner' && element) {
+            return new Proxy(element, {
+                set(target, prop, value) {
+                    if (prop === 'innerHTML') {
+                        // মূল ঘড়ি যখনই সময় আপডেট করবে, আমরা আমাদের অ্যালার্ম টেক্সট জুড়ে দেব
+                        const alarmHtml = getAlarmBannerHTML();
+                        if (alarmHtml) {
+                            value = value + alarmHtml;
+                        }
+                    }
+                    target[prop] = value;
+                    return true;
+                },
+                get(target, prop) {
+                    const value = target[prop];
+                    if (typeof value === 'function') {
+                        return value.bind(target);
+                    }
+                    return value;
+                }
+            });
         }
-    });
-
-    bannerObserver.observe(banner, { childList: true, subtree: true });
-    injectAlarmToBanner();
-}
-
-// ব্যানারে টেক্সট ইনজেক্ট করার ফাংশন
-function injectAlarmToBanner() {
-    const banner = document.getElementById('currentDateTimeBanner');
-    if (!banner || !globalAlarmTimeValue) return;
-
-    const alarmTextHtml = getAlarmBannerHTML();
-    if (!alarmTextHtml) return;
-
-    let alarmSpan = document.getElementById('bannerAlarmStatus');
-    if (!alarmSpan) {
-        alarmSpan = document.createElement('span');
-        alarmSpan.id = 'bannerAlarmStatus';
-        banner.appendChild(alarmSpan);
-    }
+        return element;
+    };
     
-    if (alarmSpan.innerHTML !== alarmTextHtml) {
-        alarmSpan.innerHTML = alarmTextHtml;
+    document.getElementById.isProxy = true;
+}
+
+// --- মনিটরিং লুপ (শুধুমাত্র ট্রিগার চেক এবং ট্যাব UI আপডেটের জন্য) ---
+function startAlarmMonitoring() {
+    if (globalAlarmCheckInterval) clearInterval(globalAlarmCheckInterval);
+    
+    globalAlarmCheckInterval = setInterval(() => {
+        if (!globalAlarmTimeValue) return;
+
+        // ১. অ্যালার্ম বাজার সময় হয়েছে কিনা চেক
+        checkAlarmTrigger();
+
+        // ২. অ্যালার্ম ট্যাব খোলা থাকলে সেখানকার UI আপডেট (ব্যানার নয়)
+        updateAlarmStatusUI();
+    }, 500);
+}
+
+// --- ফোর্স ব্যানার আপডেট (প্রথম লোডের জন্য) ---
+function forceUpdateBanner() {
+    const banner = document.getElementById('currentDateTimeBanner');
+    if (banner) {
+        // আমরা ব্যানারকে "টাচ" করছি যাতে প্রক্সি ট্রিগার হয়
+        // অথবা যদি মেইন ঘড়ি দেরি করে, আমরা ম্যানুয়ালি বসিয়ে দিই
+        const currentHTML = banner.innerHTML;
+        if (!currentHTML.includes('bannerAlarmStatus')) {
+             banner.innerHTML = currentHTML; // এটি প্রক্সি সেটারকে কল করবে
+        }
     }
 }
 
-// অ্যালার্মের টেক্সট এবং স্টাইল জেনারেটর
+// --- অ্যালার্ম ব্যানার HTML জেনারেটর ---
 function getAlarmBannerHTML() {
     if (!globalAlarmTimeValue) return '';
-    
+
     const [tHours, tMinutes] = globalAlarmTimeValue.split(':').map(Number);
     const now = new Date();
     const target = new Date();
     target.setHours(tHours, tMinutes, 0, 0);
-    
-    // সময় পার হয়ে গেলে পরের দিনের হিসাব (যদি অ্যালার্ম না বাজে বা বন্ধ করা হয়ে থাকে)
+
     if (target <= now && !hasGlobalAlarmRung) {
         target.setDate(target.getDate() + 1);
     }
 
-    // যদি অ্যালার্ম বাজার সময় হয়ে থাকে এবং বাজছে
     if (hasGlobalAlarmRung) {
-       return ` <span style="color:#dc2626; font-weight:bold;" class="dark:text-red-400">| 🔔 অ্যালার্ম বাজছে!</span>`;
+        return `<span id="bannerAlarmStatus" style="margin-left:15px; color:#dc2626; font-weight:bold; animation: pulse 1s infinite; vertical-align: middle;"> | 🔔 অ্যালার্ম বাজছে!</span>`;
     }
 
     const diff = target - now;
-    if (diff < 0) return ''; 
+    if (diff < 0) return '';
 
     const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
     const m = Math.floor((diff / (1000 * 60)) % 60);
     const s = Math.floor((diff / 1000) % 60);
-    
+
     const timeStr = formatTo12Hour(globalAlarmTimeValue);
     const remainingStr = h > 0 
         ? `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
         : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-    
-    return ` <span style="color:#dc2626; font-weight:bold;" class="dark:text-red-400">| 🔔: ${timeStr} (${remainingStr})</span>`;
+
+    return `<span id="bannerAlarmStatus" class="text-red-600 dark:text-red-300" style="margin-left:15px; font-size: 0.9rem; vertical-align: middle;"> | 🔔 ${timeStr} (${remainingStr})</span>`;
 }
 
-// অ্যালার্ম চেকার ফাংশন
-function startGlobalAlarmChecker() {
-    if (globalAlarmTimer) clearInterval(globalAlarmTimer);
+// --- ট্রিগার লজিক ---
+function checkAlarmTrigger() {
+    const now = new Date();
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-    globalAlarmTimer = setInterval(() => {
-        if (!globalAlarmTimeValue) return;
-
-        injectAlarmToBanner();
-
-        const now = new Date();
-        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-
-        if (currentTime === globalAlarmTimeValue && now.getSeconds() === 0) {
-            if (!hasGlobalAlarmRung) {
-                playGlobalAlarmSound();
-                showCustomAlert(`⏰ অ্যালার্ম! এখন সময় ${formatTo12Hour(globalAlarmTimeValue)}`);
-                
-                const stopBtn = document.getElementById('stopAlarmBtn');
-                if (stopBtn) stopBtn.classList.remove('hidden');
-                
-                hasGlobalAlarmRung = true;
-            }
-        } else if (currentTime !== globalAlarmTimeValue) {
-            // মিনিট পার হয়ে গেলে অটোমেটিক রিসেট, যাতে পরের দিন আবার বাজে
-            if (hasGlobalAlarmRung) {
-                hasGlobalAlarmRung = false; 
-            }
+    if (currentTime === globalAlarmTimeValue && now.getSeconds() === 0) {
+        if (!hasGlobalAlarmRung) {
+            playGlobalAlarmSound();
+            showCustomAlert(`⏰ অ্যালার্ম! এখন সময় ${formatTo12Hour(globalAlarmTimeValue)}`);
+            
+            const stopBtn = document.getElementById('stopAlarmBtn');
+            if (stopBtn) stopBtn.classList.remove('hidden');
+            
+            hasGlobalAlarmRung = true;
+            
+            // ব্যানারকে ফোর্স আপডেট করুন যাতে "অ্যালার্ম বাজছে" লেখাটি আসে
+            forceUpdateBanner();
         }
-        
-        updateAlarmStatusUI();
-
-    }, 1000);
+    } else if (currentTime !== globalAlarmTimeValue) {
+        if (hasGlobalAlarmRung) {
+            hasGlobalAlarmRung = false; // অটো রিসেট
+        }
+    }
 }
 
-// অ্যালার্ম সাউন্ড বাজানোর ফাংশন (10s ডিউরেশন ও প্যাটার্ন ফিক্স)
-async function playGlobalAlarmSound() {
-    stopGlobalAlarmSound();
+// --- অডিও লজিক ---
+function unlockAudioContext() {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!globalAudioContext && AudioContext) globalAudioContext = new AudioContext();
+    if (globalAudioContext && globalAudioContext.state === 'suspended') globalAudioContext.resume();
+}
 
-    // ১. কাস্টম সাউন্ড (Full Duration)
+async function playGlobalAlarmSound() {
+    stopGlobalAlarmSound(); // আগের সাউন্ড বন্ধ করুন
+
+    // ১. কাস্টম সাউন্ড চেষ্টা করুন
     try {
         const soundData = await idbGet('customAlarmSound');
         if (soundData && soundData.data) {
             const blob = new Blob([soundData.data], { type: soundData.type });
             const audioUrl = URL.createObjectURL(blob);
             const customAudio = new Audio(audioUrl);
-            customAudio.loop = false; // লুপ হবে না, সম্পূর্ণ ডিউরেশন বাজবে
+            
+            // ফিক্স: কাস্টম সাউন্ড লুপ হবে না, একবার বাজবে
+            customAudio.loop = false; 
             globalActiveAlarmSound = customAudio;
             
-            const playPromise = customAudio.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.error("Custom Audio play failed:", error);
-                    showCustomAlert("অ্যালার্ম বাজার সময় হয়েছে! (সাউন্ড শুনতে ক্লিক করুন)");
-                });
-            }
+            customAudio.play().catch(e => console.error("Play failed:", e));
             
-            // অডিও শেষ হলে মেমোরি ক্লিনআপ এবং স্ট্যাটাস রিসেট
+            // অডিও শেষ হলে স্ট্যাটাস আপডেট করুন
             customAudio.onended = () => {
                 URL.revokeObjectURL(audioUrl);
                 stopGlobalAlarmSound(); 
@@ -14811,58 +14819,42 @@ async function playGlobalAlarmSound() {
         }
     } catch (e) { console.error("Custom audio error", e); }
 
-    // ২. ডিফল্ট সাউন্ড (Web Audio API - 10 সেকেন্ড ডিউরেশন)
+    // ২. ডিফল্ট সাউন্ড (Web Audio API)
     try {
-        if (!globalAudioContext) {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (AudioContext) globalAudioContext = new AudioContext();
-        }
-        
-        if (globalAudioContext && globalAudioContext.state === 'suspended') {
-            globalAudioContext.resume();
-        }
-
+        if (!globalAudioContext) unlockAudioContext();
         const ctx = globalAudioContext;
         if (!ctx) return;
 
         const oscillator = ctx.createOscillator();
         const gainNode = ctx.createGain();
-        
         oscillator.connect(gainNode);
         gainNode.connect(ctx.destination);
         
         const selectedSound = localStorage.getItem('alarmSound') || 'beep';
         const now = ctx.currentTime;
-        const duration = 10; // ১০ সেকেন্ড
 
-        // ১০ সেকেন্ডের জন্য প্যাটার্ন তৈরি
         if (selectedSound === 'chime') {
-            oscillator.type = 'sine'; 
-            // প্রতি ২ সেকেন্ডে একবার চাইম বাজবে (মোট ৫ বার)
-            for(let i = 0; i < 5; i++) {
+            oscillator.type = 'sine';
+            for(let i = 0; i < 5; i++) { // 5 * 2s = 10s
                 let startTime = now + (i * 2);
                 oscillator.frequency.setValueAtTime(880, startTime); 
                 oscillator.frequency.setValueAtTime(1046.50, startTime + 0.6);
-                
-                // গেইন এনভেলপ
                 gainNode.gain.setValueAtTime(0.5, startTime);
                 gainNode.gain.linearRampToValueAtTime(0.1, startTime + 1.5);
                 gainNode.gain.setValueAtTime(0, startTime + 1.9);
             }
         } else if (selectedSound === 'radar') {
-            oscillator.type = 'sawtooth'; 
+            oscillator.type = 'sawtooth';
             oscillator.frequency.setValueAtTime(600, now);
-            // প্রতি ১ সেকেন্ডে একবার রাডার বীপ (মোট ১০ বার)
-            for(let i = 0; i < 10; i++) {
+            for(let i = 0; i < 10; i++) { // 10 * 1s = 10s
                 let startTime = now + i;
                 gainNode.gain.setValueAtTime(0.5, startTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 0.5);
             }
         } else { // beep
-            oscillator.type = 'square'; 
-            oscillator.frequency.setValueAtTime(440, now); 
-            // প্রতি ১ সেকেন্ডে একবার বীপ (০.৫ সেকেন্ড অন, ০.৫ সেকেন্ড অফ)
-            for(let i = 0; i < 10; i++) {
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(440, now);
+            for(let i = 0; i < 10; i++) { // 10 * 1s = 10s
                 let startTime = now + i;
                 gainNode.gain.setValueAtTime(0.5, startTime);
                 gainNode.gain.setValueAtTime(0.5, startTime + 0.5);
@@ -14871,45 +14863,43 @@ async function playGlobalAlarmSound() {
         }
 
         oscillator.start(now);
-        oscillator.stop(now + duration); // ১০ সেকেন্ড পর পুরোপুরি বন্ধ
+        // ব্যাকআপ হিসেবে ১০ সেকেন্ড পর বন্ধ নিশ্চিত করা
+        oscillator.stop(now + 10); 
+        
         globalActiveAlarmSound = oscillator;
-        
-        // ১০ সেকেন্ড পর অটোমেটিক স্টপ ফাংশন কল করে স্ট্যাটাস আপডেট (ব্যানার ঠিক করার জন্য)
-        oscillator.onended = () => {
-             stopGlobalAlarmSound();
-        };
-        
-        oscillator.stopSound = function() {
-            try { this.stop(); } catch(e){}
-        };
+        oscillator.stopSound = function() { try { this.stop(); } catch(e){} };
 
-    } catch(e) { console.error("Oscillator Alarm error:", e); }
+        // ফিক্স: ঠিক ১০ সেকেন্ড পর UI রিসেট করার জন্য টাইমার
+        if (defaultSoundTimeout) clearTimeout(defaultSoundTimeout);
+        defaultSoundTimeout = setTimeout(() => {
+            stopGlobalAlarmSound();
+        }, 10000); // ১০ সেকেন্ড
+
+    } catch(e) { console.error("Oscillator error:", e); }
 }
 
-// অ্যালার্ম থামানোর ফাংশন (ব্যানার ফিক্স সহ)
 function stopGlobalAlarmSound() {
     // সাউন্ড বন্ধ করা
     if (globalActiveAlarmSound) {
-        if (globalActiveAlarmSound.stopSound) {
-            globalActiveAlarmSound.stopSound(); 
-        } else if (globalActiveAlarmSound.pause) {
-            globalActiveAlarmSound.pause(); 
+        if (globalActiveAlarmSound.stopSound) globalActiveAlarmSound.stopSound();
+        else if (globalActiveAlarmSound.pause) {
+            globalActiveAlarmSound.pause();
             globalActiveAlarmSound.currentTime = 0;
         }
         globalActiveAlarmSound = null;
     }
     
-    // UI আপডেট
+    if (defaultSoundTimeout) clearTimeout(defaultSoundTimeout);
+
     const stopBtn = document.getElementById('stopAlarmBtn');
     if (stopBtn) stopBtn.classList.add('hidden');
-
-    // ব্যানার ফিক্স: ফ্ল্যাগ রিসেট করুন যাতে "অ্যালার্ম বাজছে" লেখাটি চলে যায়
-    // এবং পরবর্তী দিনের কাউন্টডাউন শুরু হয়
+    
     hasGlobalAlarmRung = false; 
-    injectAlarmToBanner(); // তাৎক্ষণিক ব্যানার আপডেট
+    // ব্যানার আপডেট
+    forceUpdateBanner();
 }
 
-// হেল্পার: সময় ফরম্যাট
+// --- UI হেল্পার ---
 function formatTo12Hour(timeString24) { 
     if (!timeString24) return '--:--'; 
     const [hours, minutes] = timeString24.split(':'); 
@@ -14920,36 +14910,42 @@ function formatTo12Hour(timeString24) {
     return `${String(hour12).padStart(2, '0')}:${String(m).padStart(2, '0')} ${ampm}`; 
 }
 
-// UI আপডেট (কাউন্টডাউন - ঘড়ি ট্যাবের জন্য)
 function updateAlarmStatusUI() {
     const alarmStatus = document.getElementById('alarmStatus');
     if (!alarmStatus || !globalAlarmTimeValue) return;
 
     const time12hr = formatTo12Hour(globalAlarmTimeValue);
-    const [targetHours, targetMinutes] = globalAlarmTimeValue.split(':').map(Number);
-    const targetTime = new Date();
-    targetTime.setHours(targetHours, targetMinutes, 0, 0);
-    if (targetTime < new Date()) targetTime.setDate(targetTime.getDate() + 1);
-
-    const diff = targetTime - new Date();
+    const [tHours, tMinutes] = globalAlarmTimeValue.split(':').map(Number);
+    const now = new Date();
+    const target = new Date();
+    target.setHours(tHours, tMinutes, 0, 0);
+    if (target <= now && !hasGlobalAlarmRung) target.setDate(target.getDate() + 1);
     
-    if (diff <= 0 && !hasGlobalAlarmRung) { 
-        alarmStatus.innerHTML = `অ্যালার্ম সেট করা হয়েছে: ${time12hr}`; 
-    } else {
-        const hours = Math.floor((diff / 3600000) % 24);
-        const minutes = Math.floor((diff / 60000) % 60);
-        const seconds = Math.floor((diff / 1000) % 60);
-        alarmStatus.innerHTML = `অ্যালার্ম সেট করা হয়েছে: ${time12hr} <br><span class="countdown text-sm text-gray-500">বাকি আছে: ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}</span>`;
-        alarmStatus.classList.add('active');
+    const diff = target - now;
+    let remainingText = "";
+    
+    if (diff > 0) {
+        const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const m = Math.floor((diff / (1000 * 60)) % 60);
+        const s = Math.floor((diff / 1000) % 60);
+        remainingText = `<br><span class="countdown text-sm text-gray-500">বাকি আছে: ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}</span>`;
     }
+
+    alarmStatus.innerHTML = `অ্যালার্ম সেট করা হয়েছে: ${time12hr} ${remainingText}`;
+    alarmStatus.classList.add('active');
 }
 
-// পেজ লোড হওয়ার সাথে সাথে ব্যাকগ্রাউন্ড চেকার চালু করুন
-document.addEventListener('DOMContentLoaded', initBackgroundAlarmSystem);
+// --- ইনিশিয়ালাইজেশন কল ---
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initBackgroundAlarmSystem();
+} else {
+    document.addEventListener('DOMContentLoaded', initBackgroundAlarmSystem);
+}
 
 
-// ২. মেইন ট্যাব UI এবং ইভেন্ট লিসেনার
+// --- ২. মেইন ট্যাব UI (ক্লক ট্যাব ফাংশনালিটি) ---
 function initializeClockTab() {
+    // স্টপওয়াচ ভেরিয়েবল
     const stopwatchDisplay = document.querySelector('.stopwatch-display');
     const startBtn = document.getElementById('startStopwatch');
     const stopBtn = document.getElementById('stopStopwatch');
@@ -14958,6 +14954,7 @@ function initializeClockTab() {
     const lapsList = document.getElementById('lapsList');
     let stopwatchTimer = null, startTime = 0, elapsedTime = 0, isRunning = false, lapCounter = 0;
 
+    // অ্যালার্ম ভেরিয়েবল
     const alarmTimeInput = document.getElementById('alarmTimeInput');
     const setAlarmBtn = document.getElementById('setAlarmBtn');
     const clearAlarmBtn = document.getElementById('clearAlarmBtn');
@@ -14968,6 +14965,105 @@ function initializeClockTab() {
     const customAlarmFileName = document.getElementById('customAlarmFileName');
     const removeCustomAlarmSound = document.getElementById('removeCustomAlarmSound');
 
+    // স্টপওয়াচ ফাংশন
+    function formatStopwatchTime(ms) { 
+        const date = new Date(ms); 
+        const min = String(date.getUTCMinutes()).padStart(2, '0'); 
+        const sec = String(date.getUTCSeconds()).padStart(2, '0'); 
+        const mil = String(date.getUTCMilliseconds()).padStart(3, '0').substring(0, 2); 
+        return `${min}:${sec}.${mil}`; 
+    }
+    function updateStopwatchDisplay() { if(stopwatchDisplay) stopwatchDisplay.textContent = formatStopwatchTime(elapsedTime); }
+    
+    if(startBtn && !startBtn.onclick) startBtn.onclick = () => { if (!isRunning) { startTime = Date.now() - elapsedTime; stopwatchTimer = setInterval(() => { elapsedTime = Date.now() - startTime; updateStopwatchDisplay(); }, 10); isRunning = true; } };
+    if(stopBtn && !stopBtn.onclick) stopBtn.onclick = () => { if (isRunning) { clearInterval(stopwatchTimer); isRunning = false; } };
+    if(resetBtn && !resetBtn.onclick) resetBtn.onclick = () => { clearInterval(stopwatchTimer); isRunning = false; elapsedTime = 0; lapCounter = 0; updateStopwatchDisplay(); if(lapsList) lapsList.innerHTML = ''; };
+    if(lapBtn && !lapBtn.onclick) lapBtn.onclick = () => { if (isRunning && lapsList) { lapCounter++; const li = document.createElement('li'); li.innerHTML = `<span>ল্যাপ ${lapCounter}</span><span>${formatStopwatchTime(elapsedTime)}</span>`; lapsList.prepend(li); } };
+
+    // অ্যালার্ম ফাংশন
+    async function setupAlarmUI(timeValue) {
+        if (timeValue) {
+            globalAlarmTimeValue = timeValue;
+            hasGlobalAlarmRung = false;
+            await idbSet('activeAlarm', { time: timeValue });
+            
+            // নতুন অ্যালার্ম সেট করলে ব্যানার আপডেট করুন
+            forceUpdateBanner();
+            updateAlarmStatusUI();
+            showCustomAlert(`অ্যালার্ম ${formatTo12Hour(timeValue)} এর জন্য সেট করা হয়েছে।`);
+        }
+    }
+
+    async function clearAlarmUI() {
+        stopGlobalAlarmSound();
+        globalAlarmTimeValue = null;
+        hasGlobalAlarmRung = false;
+        if(alarmTimeInput) alarmTimeInput.value = '';
+        if(alarmStatus) { 
+            alarmStatus.textContent = 'কোনো অ্যালার্ম সেট করা নেই।'; 
+            alarmStatus.classList.remove('active'); 
+        }
+        
+        await idbDelete('activeAlarm');
+        forceUpdateBanner(); // ব্যানার থেকে লেখা সরাতে
+    }
+
+    // ইভেন্ট লিসেনার
+    if(setAlarmBtn) setAlarmBtn.onclick = () => { const val = alarmTimeInput.value; if(val) setupAlarmUI(val); else showCustomAlert('সময় দিন।'); };
+    if(clearAlarmBtn) clearAlarmBtn.onclick = () => { clearAlarmUI(); showCustomAlert('মুছে ফেলা হয়েছে।'); };
+    if(stopAlarmBtn) stopAlarmBtn.onclick = () => { stopGlobalAlarmSound(); };
+
+    // কাস্টম সাউন্ড হ্যান্ডলিং
+    async function loadCustomAlarmSoundUI() {
+        try {
+            const soundData = await idbGet('customAlarmSound');
+            if (soundData && soundData.data && customAlarmFileName) {
+                customAlarmFileName.textContent = soundData.name;
+                if(removeCustomAlarmSound) removeCustomAlarmSound.classList.remove('hidden');
+            } else if(customAlarmFileName) {
+                customAlarmFileName.textContent = 'কোনো ফাইল নেই';
+                if(removeCustomAlarmSound) removeCustomAlarmSound.classList.add('hidden');
+            }
+        } catch (e) {}
+    }
+
+    if(customAlarmSoundInput) {
+        customAlarmSoundInput.onchange = async (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                await idbSet('customAlarmSound', { name: file.name, type: file.type, data: ev.target.result });
+                loadCustomAlarmSoundUI();
+                showCustomAlert('সাউন্ড সেট করা হয়েছে।');
+            };
+            reader.readAsArrayBuffer(file);
+        };
+    }
+    
+    if(removeCustomAlarmSound) {
+        removeCustomAlarmSound.onclick = async () => { await idbDelete('customAlarmSound'); loadCustomAlarmSoundUI(); showCustomAlert('সাউন্ড মুছে ফেলা হয়েছে।'); };
+    }
+
+    if(alarmSoundSelect) {
+        alarmSoundSelect.value = localStorage.getItem('alarmSound') || 'beep';
+        alarmSoundSelect.onchange = () => localStorage.setItem('alarmSound', alarmSoundSelect.value);
+    }
+
+    // ট্যাব খুললে বর্তমান অবস্থা চেক
+    if (globalAlarmTimeValue) {
+        if(alarmTimeInput) alarmTimeInput.value = globalAlarmTimeValue;
+        updateAlarmStatusUI();
+        if (globalActiveAlarmSound && stopAlarmBtn) stopAlarmBtn.classList.remove('hidden');
+    }
+    loadCustomAlarmSoundUI();
+
+    // ওয়ার্ল্ড ক্লক ইনিশিয়ালাইজেশন
+    initializeWorldClock();
+}
+
+// ওয়ার্ল্ড ক্লক ফাংশন
+function initializeWorldClock() {
     const worldClockGrid = document.querySelector('.world-clock-grid');
     const timezoneSelect = document.getElementById('timezone-select');
     const timezonesWithCountries = [
@@ -14985,130 +15081,6 @@ function initializeClockTab() {
     ];
     const defaultTimezones = timezonesWithCountries.filter(tz => ['Asia/Dhaka', 'Asia/Kolkata', 'Europe/London', 'America/New_York', 'Asia/Tokyo', 'Australia/Sydney', 'Asia/Dubai', 'Europe/Moscow'].includes(tz.zone));
 
-    function formatStopwatchTime(ms) { const date = new Date(ms); const minutes = String(date.getUTCMinutes()).padStart(2, '0'); const seconds = String(date.getUTCSeconds()).padStart(2, '0'); const milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0').substring(0, 2); return `${minutes}:${seconds}.${milliseconds}`; }
-    function updateStopwatchDisplay() { if(stopwatchDisplay) stopwatchDisplay.textContent = formatStopwatchTime(elapsedTime); }
-    function startStopwatch() { if (!isRunning) { startTime = Date.now() - elapsedTime; stopwatchTimer = setInterval(() => { elapsedTime = Date.now() - startTime; updateStopwatchDisplay(); }, 10); isRunning = true; } }
-    function stopStopwatch() { if (isRunning) { clearInterval(stopwatchTimer); isRunning = false; } }
-    function resetStopwatch() { stopStopwatch(); elapsedTime = 0; lapCounter = 0; updateStopwatchDisplay(); if(lapsList) lapsList.innerHTML = ''; }
-    function recordLap() { if (isRunning && lapsList) { lapCounter++; const li = document.createElement('li'); li.innerHTML = `<span>ল্যাপ ${lapCounter}</span><span>${formatStopwatchTime(elapsedTime)}</span>`; lapsList.prepend(li); } }
-    
-    if(startBtn && !startBtn.onclick) startBtn.onclick = startStopwatch;
-    if(stopBtn && !stopBtn.onclick) stopBtn.onclick = stopStopwatch;
-    if(resetBtn && !resetBtn.onclick) resetBtn.onclick = resetStopwatch;
-    if(lapBtn && !lapBtn.onclick) lapBtn.onclick = recordLap;
-
-    async function setupAlarmUI(timeValue) {
-        if (timeValue) {
-            globalAlarmTimeValue = timeValue;
-            hasGlobalAlarmRung = false;
-            await idbSet('activeAlarm', { time: timeValue });
-            startGlobalAlarmChecker();
-            setupBannerObserver(); // ব্যানার আপডেট চালু করুন
-            updateAlarmStatusUI();
-            showCustomAlert(`অ্যালার্ম ${formatTo12Hour(timeValue)} এর জন্য সেট করা হয়েছে।`);
-        }
-    }
-
-    async function clearAlarmUI() {
-        stopGlobalAlarmSound();
-        globalAlarmTimeValue = null;
-        hasGlobalAlarmRung = false;
-        if(alarmTimeInput) alarmTimeInput.value = '';
-        if(alarmStatus) { 
-            alarmStatus.textContent = 'কোনো অ্যালার্ম সেট করা নেই।'; 
-            alarmStatus.classList.remove('active'); 
-        }
-        if(stopAlarmBtn) stopAlarmBtn.classList.add('hidden');
-        if (globalAlarmTimer) clearInterval(globalAlarmTimer);
-        
-        // ব্যানার থেকে অ্যালার্ম স্ট্যাটাস সরান
-        const alarmSpan = document.getElementById('bannerAlarmStatus');
-        if (alarmSpan) alarmSpan.remove();
-        if (bannerObserver) bannerObserver.disconnect();
-
-        await idbDelete('activeAlarm');
-    }
-    
-    async function loadCustomAlarmSoundUI() {
-        try {
-            const soundData = await idbGet('customAlarmSound');
-            if (soundData && soundData.data) {
-                if(customAlarmFileName) {
-                    customAlarmFileName.textContent = soundData.name;
-                    customAlarmFileName.title = soundData.name;
-                }
-                if(removeCustomAlarmSound) removeCustomAlarmSound.classList.remove('hidden');
-            } else {
-                if(customAlarmFileName) customAlarmFileName.textContent = 'কোনো ফাইল নেই';
-                if(removeCustomAlarmSound) removeCustomAlarmSound.classList.add('hidden');
-            }
-        } catch (e) { console.error("Custom alarm load error:", e); }
-    }
-
-    if(setAlarmBtn) setAlarmBtn.onclick = () => { const timeValue = alarmTimeInput.value; if (timeValue) setupAlarmUI(timeValue); else showCustomAlert('অনুগ্রহ করে একটি সঠিক সময় নির্বাচন করুন।'); };
-    if(clearAlarmBtn) clearAlarmBtn.onclick = () => { clearAlarmUI(); showCustomAlert('অ্যালার্ম মুছে ফেলা হয়েছে।'); };
-    if(stopAlarmBtn) stopAlarmBtn.onclick = () => { 
-        stopGlobalAlarmSound(); 
-        if (globalAlarmTimeValue && alarmStatus) alarmStatus.innerHTML = `অ্যালার্ম (${formatTo12Hour(globalAlarmTimeValue)}) থামানো হয়েছে।`; 
-    };
-
-    if (customAlarmSoundInput) {
-        customAlarmSoundInput.onchange = async (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
-            if (!file.type.startsWith('audio/')) { showCustomAlert('অনুগ্রহ করে একটি অডিও ফাইল নির্বাচন করুন।'); return; }
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const arrayBuffer = e.target.result;
-                const soundData = { name: file.name, type: file.type, data: arrayBuffer };
-                await idbSet('customAlarmSound', soundData);
-                await loadCustomAlarmSoundUI();
-                showCustomAlert(`'${file.name}' অ্যালার্ম সাউন্ড হিসেবে সেট করা হয়েছে।`);
-            };
-            reader.readAsArrayBuffer(file);
-        };
-    }
-
-    if (removeCustomAlarmSound) {
-        removeCustomAlarmSound.onclick = async () => {
-            await idbDelete('customAlarmSound');
-            await loadCustomAlarmSoundUI();
-            showCustomAlert('কাস্টম অ্যালার্ম সাউন্ড সরানো হয়েছে।');
-        };
-    }
-
-    if (alarmSoundSelect) {
-        const savedSound = localStorage.getItem('alarmSound');
-        if (savedSound) alarmSoundSelect.value = savedSound;
-        alarmSoundSelect.onchange = () => localStorage.setItem('alarmSound', alarmSoundSelect.value);
-    }
-    
-    async function checkCurrentStatus() {
-        await loadCustomAlarmSoundUI();
-        const savedAlarm = await idbGet('activeAlarm');
-        if (savedAlarm && savedAlarm.time) {
-            if(alarmTimeInput) alarmTimeInput.value = savedAlarm.time;
-            globalAlarmTimeValue = savedAlarm.time;
-            updateAlarmStatusUI();
-            if (globalActiveAlarmSound) {
-                if(stopAlarmBtn) stopAlarmBtn.classList.remove('hidden');
-            }
-        }
-    }
-    checkCurrentStatus();
-
-    // World Clock
-    function populateTimezoneDropdown() { 
-        if (!timezoneSelect) return; 
-        timezoneSelect.innerHTML = '<option value="">একটি শহর নির্বাচন করুন...</option>'; 
-        timezonesWithCountries.forEach(tz => { 
-            const option = document.createElement('option'); 
-            option.value = tz.zone; 
-            option.textContent = `${tz.city}, ${tz.country}`; 
-            timezoneSelect.appendChild(option); 
-        }); 
-    }
-
     function createWorldClockCard(tz, selectedZone) {
         const card = document.createElement('div');
         card.className = 'world-clock-card';
@@ -15120,46 +15092,65 @@ function initializeClockTab() {
     }
 
     function rebuildWorldClockGrid() {
-        if (!worldClockGrid) return [];
+        if (!worldClockGrid) return;
         worldClockGrid.innerHTML = '';
-        const selectedZone = timezoneSelect.value;
+        const selectedZone = timezoneSelect ? timezoneSelect.value : null;
         let displayList = [...defaultTimezones];
-        let selectedTz = null;
-        if (selectedZone) {
-            selectedTz = timezonesWithCountries.find(tz => tz.zone === selectedZone);
-            if (selectedTz && !displayList.some(dtz => dtz.zone === selectedTz.zone)) displayList.unshift(selectedTz);
-        }
-        const uniqueZones = new Map();
-        if(selectedTz) uniqueZones.set(selectedTz.zone, selectedTz);
-        const dhakaTz = timezonesWithCountries.find(tz => tz.zone === 'Asia/Dhaka');
-        if(dhakaTz) uniqueZones.set(dhakaTz.zone, dhakaTz);
-        displayList.forEach(tz => uniqueZones.set(tz.zone, tz));
         
-        const finalOrder = Array.from(uniqueZones.values());
-        finalOrder.forEach(tz => worldClockGrid.appendChild(createWorldClockCard(tz, selectedZone)));
-        updateWorldClocksText(finalOrder);
-        return finalOrder;
+        if (selectedZone) {
+            const selectedTz = timezonesWithCountries.find(tz => tz.zone === selectedZone);
+            if (selectedTz) {
+                displayList = [selectedTz, ...displayList.filter(tz => tz.zone !== selectedZone)];
+            }
+        }
+        
+        const uniqueMap = new Map();
+        displayList.forEach(item => uniqueMap.set(item.zone, item));
+        const uniqueList = Array.from(uniqueMap.values());
+
+        uniqueList.forEach(tz => worldClockGrid.appendChild(createWorldClockCard(tz, selectedZone)));
+        updateWorldClocksText();
     }
 
-    function updateWorldClocksText(timezones) {
+    function updateWorldClocksText() {
+        if (!worldClockGrid) return;
         const now = new Date();
-        timezones.forEach(tz => {
-            const timeId = `time-${tz.zone.replace(/\//g, '-')}`;
-            const dateId = `date-${tz.zone.replace(/\//g, '-')}`;
-            const timeEl = document.getElementById(timeId);
-            const dateEl = document.getElementById(dateId);
-            if (timeEl) timeEl.textContent = now.toLocaleTimeString('bn-BD', { timeZone: tz.zone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
-            if (dateEl) dateEl.textContent = now.toLocaleDateString('bn-BD', { timeZone: tz.zone, weekday: 'short', day: 'numeric', month: 'long' });
+        const cards = worldClockGrid.querySelectorAll('.world-clock-card');
+        cards.forEach(card => {
+            const timeEl = card.querySelector('.time');
+            const dateEl = card.querySelector('.date');
+            const zoneId = timeEl.id.replace('time-', '').replace(/-/g, '/');
+            const foundTz = timezonesWithCountries.find(tz => timeEl.id === `time-${tz.zone.replace(/\//g, '-')}`);
+            
+            if (foundTz) {
+                timeEl.textContent = now.toLocaleTimeString('bn-BD', { timeZone: foundTz.zone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+                dateEl.textContent = now.toLocaleDateString('bn-BD', { timeZone: foundTz.zone, weekday: 'short', day: 'numeric', month: 'long' });
+            }
         });
     }
-    
+
+    // ড্রপডাউন পপুলেট করা
+    if (timezoneSelect && timezoneSelect.children.length <= 1) {
+        timezonesWithCountries.forEach(tz => { 
+            const option = document.createElement('option'); 
+            option.value = tz.zone; 
+            option.textContent = `${tz.city}, ${tz.country}`; 
+            timezoneSelect.appendChild(option); 
+        }); 
+        const savedZone = localStorage.getItem('selectedWorldClockTimezone');
+        if (savedZone) timezoneSelect.value = savedZone;
+        
+        timezoneSelect.onchange = () => {
+            const val = timezoneSelect.value;
+            if (val) localStorage.setItem('selectedWorldClockTimezone', val);
+            else localStorage.removeItem('selectedWorldClockTimezone');
+            rebuildWorldClockGrid();
+        };
+    }
+
     if (window.worldClockIntervalId) clearInterval(window.worldClockIntervalId);
-    populateTimezoneDropdown();
-    const savedTimezone = localStorage.getItem('selectedWorldClockTimezone');
-    if (savedTimezone && timezoneSelect) timezoneSelect.value = savedTimezone;
-    let activeTimezones = rebuildWorldClockGrid(); 
-    window.worldClockIntervalId = setInterval(() => { if (activeTimezones.length) updateWorldClocksText(activeTimezones); }, 1000);
-    if (timezoneSelect) { timezoneSelect.onchange = () => { const selectedZone = timezoneSelect.value; if (selectedZone) localStorage.setItem('selectedWorldClockTimezone', selectedZone); else localStorage.removeItem('selectedWorldClockTimezone'); activeTimezones = rebuildWorldClockGrid(); }; }
+    rebuildWorldClockGrid();
+    window.worldClockIntervalId = setInterval(updateWorldClocksText, 1000);
 }
 
 // ====================================================================
