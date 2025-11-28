@@ -9487,6 +9487,30 @@ document.addEventListener('DOMContentLoaded', () => {
 // START: DATE AND TIME BANNER SCRIPT (ঋতুসহ আপডেট করা হয়েছে - CPU Optimized)
 // ====================================================================
 
+        // নতুন ফাংশন: ঘড়ি ট্যাবের অ্যালার্ম সেকশনে যাওয়ার জন্য
+        function switchToClockTab() {
+            // ১. ঘড়ি ট্যাব ওপেন করুন
+            if (typeof showTab === 'function') {
+                showTab('clock');
+            } else {
+                const clockTabBtn = document.getElementById('clockTab');
+                if (clockTabBtn) clockTabBtn.click();
+            }
+
+            // ২. অ্যালার্ম সেকশনে স্ক্রল করুন (সামান্য ডিলে দিয়ে যাতে ট্যাব রেন্ডার হতে পারে)
+            setTimeout(() => {
+                const alarmSection = document.querySelector('.clock-section.alarm');
+                if (alarmSection) {
+                    alarmSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // ব্যবহারকারীর দৃষ্টি আকর্ষণের জন্য বর্ডার বা শ্যাডো ইফেক্ট
+                    alarmSection.classList.add('ring-4', 'ring-blue-500', 'ring-opacity-50');
+                    setTimeout(() => {
+                        alarmSection.classList.remove('ring-4', 'ring-blue-500', 'ring-opacity-50');
+                    }, 2000);
+                }
+            }, 100);
+        }
+
         // গ্রেগরিয়ান তারিখকে বাংলা তারিখে রূপান্তর করার ফাংশন (বাংলাদেশ স্ট্যান্ডার্ড)
         function getBengaliDate(gregorianDate) {
             const year = gregorianDate.getFullYear();
@@ -9656,8 +9680,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true, timeZone: 'Asia/Dhaka'
             });
 
-            // ফাইনাল আউটপুট
-            bannerElement.innerHTML = `${cachedDatePartHTML}<span class="text-green-700 dark:text-green-300"> ${timeString}</span>`;
+            // ফাইনাল আউটপুট (সময় অংশে onclick যোগ করা হয়েছে এবং কার্সর পয়েন্টার করা হয়েছে)
+            bannerElement.innerHTML = `${cachedDatePartHTML}<span class="text-green-700 dark:text-green-300 cursor-pointer hover:underline" onclick="switchToClockTab()" title="অ্যালার্ম সেট করতে ক্লিক করুন"> ${timeString}</span>`;
         }
 
         // প্রতি সেকেন্ডে আপডেট হবে, কিন্তু ভারী ক্যালকুলেশন ১০ মিনিটে একবার হবে
@@ -14757,7 +14781,7 @@ function forceUpdateBanner() {
     }
 }
 
-// --- অ্যালার্ম ব্যানার HTML জেনারেটর ---
+// --- অ্যালার্ম ব্যানার HTML জেনারেটর (আপডেটেড: ক্লিক ইভেন্ট যোগ করা হয়েছে) ---
 function getAlarmBannerHTML() {
     if (!globalAlarmTimeValue) return '';
 
@@ -14771,7 +14795,8 @@ function getAlarmBannerHTML() {
     }
 
     if (hasGlobalAlarmRung) {
-        return `<span id="bannerAlarmStatus" style="margin-left:15px; color:#dc2626; font-weight:bold; animation: pulse 1s infinite; vertical-align: middle;"> | 🔔 অ্যালার্ম বাজছে!</span>`;
+        // অ্যালার্ম বাজার সময় ক্লিকযোগ্য করা হয়েছে
+        return `<span id="bannerAlarmStatus" onclick="switchToClockTab()" style="margin-left:15px; color:#dc2626; font-weight:bold; animation: pulse 1s infinite; vertical-align: middle; cursor: pointer;" title="অ্যালার্ম বন্ধ করতে ক্লিক করুন"> | 🔔 অ্যালার্ম বাজছে!</span>`;
     }
 
     const diff = target - now;
@@ -14786,7 +14811,8 @@ function getAlarmBannerHTML() {
         ? `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
         : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 
-    return `<span id="bannerAlarmStatus" class="text-red-600 dark:text-red-300" style="margin-left:15px; font-size: 0.9rem; vertical-align: middle;">|🔔${timeStr} (${remainingStr})</span>`;
+    // অ্যালার্ম কাউন্টডাউন ক্লিকযোগ্য করা হয়েছে
+    return `<span id="bannerAlarmStatus" onclick="switchToClockTab()" class="text-red-600 dark:text-red-300" style="margin-left:15px; font-size: 0.9rem; vertical-align: middle; cursor: pointer;" title="অ্যালার্ম সেকশনে যেতে ক্লিক করুন">|🔔${timeStr} (${remainingStr})</span>`;
 }
 
 // --- ট্রিগার লজিক ---
@@ -15063,7 +15089,7 @@ function initializeClockTab() {
     }
 
     // ইভেন্ট লিসেনার
-    if(setAlarmBtn) setAlarmBtn.onclick = () => { const val = alarmTimeInput.value; if(val) setupAlarmUI(val); else showCustomAlert('সময় দিন।'); };
+    if(setAlarmBtn) setAlarmBtn.onclick = () => { const val = alarmTimeInput.value; if(val) setupAlarmUI(val); else showCustomAlert('সময় সেট করুন।'); };
     if(clearAlarmBtn) clearAlarmBtn.onclick = () => { clearAlarmUI(); showCustomAlert('মুছে ফেলা হয়েছে।'); };
     if(stopAlarmBtn) stopAlarmBtn.onclick = () => { stopGlobalAlarmSound(); };
 
