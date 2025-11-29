@@ -6474,9 +6474,14 @@ body.sidebar-open #sidebarOverlay {
 <!-- বৈজ্ঞানিক ক্যালকুলেটর বিভাগ -->
         <div id="scientificCalculatorContent" class="calculator-content">
             <div class="scientific-calculator-content">
-                <div class="input-area">
-                    <input type="text" id="scientificExpressionInput" class="expression-input rounded-lg" placeholder="0">
+                <!-- ডিসপ্লে সেকশন (আপডেট করা হয়েছে) -->
+                <div class="input-area" style="background-color: #1c262b; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #455a64; display: flex; flex-direction: column; justify-content: flex-end; height: 110px;">
+                    <!-- উপরের ছোট এক্সপ্রেশন ডিসপ্লে -->
+                    <div id="scientificHistoryDisplay" style="text-align: right; color: rgba(255, 255, 255, 0.6); font-size: 1.3rem; min-height: 25px; font-family: monospace; overflow: hidden; white-space: nowrap;"></div>
+                    <!-- নিচের বড় ইনপুট/ফলাফল ডিসপ্লে -->
+                    <input type="text" id="scientificExpressionInput" class="expression-input" placeholder="0" style="width: 100%; border: none !important; background: transparent !important; color: white !important; font-size: 2.8rem !important; text-align: right !important; padding: 0 !important; margin: 0 !important; height: auto !important; box-shadow: none !important;">
                 </div>
+
                 <div class="scientific-buttons-grid">
                     <!-- সারি ১: ফাংশনস -->
                     <button class="scientific-button rounded-lg" data-sci-input="sin">sin</button>
@@ -12826,6 +12831,7 @@ function showTab(tabId) {
 // ====================================================================
                 
                 const scientificExpressionInput = document.getElementById('scientificExpressionInput');
+                const scientificHistoryDisplay = document.getElementById('scientificHistoryDisplay'); // নতুন ডিসপ্লে এলিমেন্ট
                 const scientificButtons = document.querySelectorAll('.scientific-buttons-grid button');
                 const scientificErrorMessage = document.getElementById('scientificErrorMessage');
                 const explainScientificBtn = document.getElementById('explainScientificBtn');
@@ -12856,9 +12862,10 @@ function showTab(tabId) {
 
                         if (!inputElement) return;
 
-                        // C বাটন চাপলে পুরো ইনপুট ক্ষেত্র পরিষ্কার হবে
+                        // C বাটন চাপলে পুরো ইনপুট ক্ষেত্র এবং হিস্টোরি পরিষ্কার হবে
                         if (value === 'C') {
                             inputElement.value = '';
+                            if (scientificHistoryDisplay) scientificHistoryDisplay.innerText = ''; // হিস্টোরি ক্লিয়ার
                             if (scientificErrorMessage) scientificErrorMessage.innerText = '';
                             if (scientificExplanation) scientificExplanation.innerText = '';
                             inputElement.focus();
@@ -12915,6 +12922,7 @@ function showTab(tabId) {
                             evaluateScientificExpression();
                         } else if (e.key === 'Escape') {
                             scientificExpressionInput.value = '';
+                            if (scientificHistoryDisplay) scientificHistoryDisplay.innerText = ''; // হিস্টোরি ক্লিয়ার
                             if (scientificErrorMessage) scientificErrorMessage.innerText = '';
                             if (scientificExplanation) scientificExplanation.innerText = '';
                         }
@@ -12960,9 +12968,10 @@ function showTab(tabId) {
                         if (isNaN(result) || !isFinite(result)) {
                             if (scientificErrorMessage) scientificErrorMessage.innerText = 'অবৈধ এক্সপ্রেশন বা ফলাফল।';
                         } else {
-                            // ফলাফল ইনপুট বক্সে দেখান
+                            // ফলাফল ইনপুট বক্সে দেখান এবং এক্সপ্রেশন উপরে সরান
+                            if (scientificHistoryDisplay) scientificHistoryDisplay.innerText = expression + ' ='; // এক্সপ্রেশন উপরে
                             const formattedResult = parseFloat(result.toFixed(10)); // দশমিকের পর ১০ ঘর পর্যন্ত নিয়ে অপ্রয়োজনীয় শূন্য বাদ দেওয়া
-                            inputElement.value = formattedResult;
+                            inputElement.value = formattedResult; // ফলাফল নিচে
                         }
                     } catch (error) {
                         if (scientificErrorMessage) scientificErrorMessage.innerText = 'ত্রুটি!';
@@ -12973,7 +12982,14 @@ function showTab(tabId) {
                 // বৈজ্ঞানিক এক্সপ্রেশন ব্যাখ্যার জন্য জেমিনি API কল (আগের কোডই থাকবে)
                 if (explainScientificBtn) {
                     explainScientificBtn.addEventListener('click', async () => {
-                        const expressionToExplain = scientificExpressionInput ? scientificExpressionInput.value.trim() : '';
+                        // ব্যাখ্যার জন্য ইনপুট বক্স অথবা হিস্টোরি ডিসপ্লে থেকে এক্সপ্রেশন নেওয়া হবে
+                        let expressionToExplain = scientificExpressionInput ? scientificExpressionInput.value.trim() : '';
+                        
+                        // যদি হিস্টোরিতে কোনো ক্যালকুলেশন থাকে এবং ইনপুটে শুধু রেজাল্ট থাকে, তবে হিস্টোরি থেকে এক্সপ্রেশন নিন
+                        if (scientificHistoryDisplay && scientificHistoryDisplay.innerText.includes('=') && !isNaN(expressionToExplain)) {
+                             expressionToExplain = scientificHistoryDisplay.innerText.replace('=', '').trim();
+                        }
+
                         if (!expressionToExplain) {
                             if (scientificExplanation) scientificExplanation.innerText = 'ব্যাখ্যার জন্য একটি এক্সপ্রেশন লিখুন।';
                             return;
