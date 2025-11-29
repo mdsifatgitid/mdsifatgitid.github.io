@@ -12348,7 +12348,7 @@ function showTab(tabId) {
                 }
 
 
-                // মৌলিক ক্যালকুলেটর ব্যাখ্যা বৈশিষ্ট্য
+                // মৌলিক ক্যালকুলেটর ব্যাখ্যা বৈশিষ্ট্য (আপডেট করা হয়েছে: হিস্টোরি থেকে ডেটা নেওয়া হবে)
                 const explainBasicBtn = document.getElementById('explainBasicBtn');
                 const basicExplanation = document.getElementById('basicExplanation');
                 const basicExplanationLoading = document.getElementById('basicExplanationLoading');
@@ -12356,11 +12356,15 @@ function showTab(tabId) {
                 if (explainBasicBtn && basicExplanation && basicExplanationLoading) {
                     explainBasicBtn.addEventListener('click', async () => {
                         console.log('মৌলিক ব্যাখ্যা বোতামে ক্লিক করা হয়েছে।');
-                        const currentExpression = previousOperandTextElement.innerText + currentOperandTextElement.innerText;
-                        let fullExpression = currentExpression.trim();
+                        
+                        // পরিবর্তন: হিস্টোরির প্রথম আইটেম থেকে এক্সপ্রেশন নেওয়া হচ্ছে
+                        let fullExpression = '';
+                        if (historyList && historyList.firstElementChild) {
+                            fullExpression = historyList.firstElementChild.innerText.trim();
+                        }
 
                         if (!fullExpression) {
-                            basicExplanation.innerText = 'ব্যাখ্যার জন্য একটি এক্সপ্রেশন লিখুন।';
+                            basicExplanation.innerText = 'ব্যাখ্যার জন্য অনুগ্রহ করে প্রথমে একটি ক্যালকুলেশন করুন।';
                             return;
                         }
 
