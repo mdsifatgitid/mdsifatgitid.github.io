@@ -8790,7 +8790,7 @@ body.sidebar-open #sidebarOverlay {
 				class="text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition duration-150 ease-in-out underline underline-offset-4 decoration-dashed decoration-indigo-400 p-2 rounded-lg bg-indigo-50 	hover:bg-indigo-100">
 				এখান থেকে নিজস্ব এপিআই কী নিন
 		</a>
-		<p style="margin-top:20px"><b>অথবা টেস্ট কোড হিসেবে এটি পেস্ট করুন:</b></br>AIzaSyA0W3BXCLhLecDfyhziQBYPkVNW2tJdU4c</p>
+		<p style="margin-top:20px"><b>অথবা টেস্ট কোড হিসেবে নিচের কোডটি পেস্ট করুন।</br>একই এপিআই কী একাধিক ব্যবহারকারী ব্যবহার করলে গুগল সেটি ব্লক করে দিতে পারে।</br>এজন্য নিজস্ব এপিআই কী ব্যবহার করা উত্তম</br></b></br>AIzaSyDQdnFsSDybxXodYrO6w9F3dkm1j6r8uDI</p>
 			</div>
         </div>
 		
@@ -12007,9 +12007,16 @@ function showTab(tabId) {
 // START: API KEY SCRIPT
 // ====================================================================
                 // API কী সেটিং বোতাম এবং মডেল লজিক
+                
+                // নিশ্চিত করুন যে পেজ লোড হওয়ার সময় মডেলটি লুকানো আছে (অটোমেটিক আসা বন্ধ করতে)
+                if (apiKeyModal) {
+                    apiKeyModal.classList.add('hidden');
+                }
+
                 if (setApiKeyBtn) {
                     setApiKeyBtn.addEventListener('click', () => {
                         console.log('API কী সেট করুন বোতামে ক্লিক করা হয়েছে।');
+                        // শুধুমাত্র এই বাটনে ক্লিক করলেই মডেলটি ওপেন হবে
                         if (apiKeyModal) {
                             apiKeyModal.classList.remove('hidden');
                             if (apiKeyInput) apiKeyInput.value = localStorage.getItem('geminiApiKey') || ''; // বর্তমান কী থাকলে দেখান
