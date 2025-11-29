@@ -6337,7 +6337,7 @@ body.sidebar-open #sidebarOverlay {
     </div>
 </div>
 
-        <!-- মৌলিক ক্যালকুলেটর বিভাগ -->
+<!-- মৌলিক ক্যালকুলেটর বিভাগ -->
         <div id="basicCalculatorContent" class="calculator-content active">
             <div class="basic-calculator-wrapper">
                 <div class="calculator-grid">
@@ -6360,8 +6360,13 @@ body.sidebar-open #sidebarOverlay {
                     <button data-number class="calculator-button rounded-xl">2</button>
                     <button data-number class="calculator-button rounded-xl">3</button>
                     <button data-operator class="operator calculator-button rounded-xl">+</button> <!-- যোগ -->
-                    <button data-number class="zero calculator-button rounded-xl" style="grid-column: span 2;">0</button>
+                    
+                    <!-- পরিবর্তন শুরু: ০ বাটন ১ কলাম, ডট এবং পার্সেন্ট যোগ করা হয়েছে -->
+                    <button data-number class="calculator-button rounded-xl">0</button>
                     <button data-number class="calculator-button rounded-xl">.</button>
+                    <button data-operator class="operator calculator-button rounded-xl">%</button>
+                    <!-- পরিবর্তন শেষ -->
+
                     <button data-equals class="equals calculator-button rounded-xl">=</button> <!-- সমান -->
                 </div>
                 <!-- নতুন: হিস্টোরি প্যানেল -->
@@ -12087,6 +12092,69 @@ function showTab(tabId) {
 
                     chooseOperation(operation) {
                         if (this.currentOperand === '') return;
+                        
+                        // % এর জন্য বিশেষ লজিক (আপডেট করা হয়েছে)
+                        if (operation === '%') {
+                            const current = parseFloat(this.currentOperand);
+                            const prev = parseFloat(this.previousOperand);
+
+                            if (isNaN(current)) return;
+
+                            // Case 1: Unary Percentage (e.g., 10%) - শুধুমাত্র সংখ্যাকে 100 দিয়ে ভাগ করবে
+                            if (this.previousOperand === '' || this.operation === undefined) {
+                                this.currentOperand = current / 100;
+                                this.updateDisplay();
+                                return;
+                            }
+                            // Case 2: Binary Percentage (e.g., 400 * 10% or 100 - 10%) - সম্পূর্ণ গণনাটি % চাপার সাথে সাথেই শেষ হবে
+                            else {
+                                if (isNaN(prev)) return;
+
+                                let percentageOperand;
+                                
+                                // যোগ/বিয়োগ: বর্তমান সংখ্যাটি হলো পূর্বের সংখ্যার শতকরা হার। (যেমন: 100 - 10% = 100 - (10% of 100))
+                                if (this.operation === '+' || this.operation === '-') {
+                                    percentageOperand = (prev * current) / 100;
+                                } 
+                                // গুণ/ভাগ: বর্তমান সংখ্যাটিকে দশমিকে রূপান্তর করা হবে। (যেমন: 400 * 10% = 400 * 0.1)
+                                else { 
+                                    percentageOperand = current / 100;
+                                }
+                                
+                                // পার্সেন্টেজ ভ্যালু ব্যবহার করে সম্পূর্ণ গণনা
+                                let computation;
+                                switch (this.operation) {
+                                    case '+':
+                                        computation = prev + percentageOperand;
+                                        break;
+                                    case '-':
+                                        computation = prev - percentageOperand;
+                                        break;
+                                    case '×':
+                                        computation = prev * percentageOperand;
+                                        break;
+                                    case '÷':
+                                        if (percentageOperand === 0) {
+                                            computation = 'Error';
+                                        } else {
+                                            computation = prev / percentageOperand;
+                                        }
+                                        break;
+                                }
+
+                                // Update history, display, and reset state
+                                if (computation !== 'Error' && computation !== undefined) {
+                                    this.addHistoryEntry(`${this.getDisplayNumber(prev)} ${this.operation} ${this.getDisplayNumber(current)}% = ${this.getDisplayNumber(computation)}`);
+                                }
+                                
+                                this.currentOperand = computation;
+                                this.operation = undefined;
+                                this.previousOperand = '';
+                                this.updateDisplay();
+                                return;
+                            }
+                        }
+
                         if (this.previousOperand !== '') {
                             this.compute();
                         }
@@ -12101,6 +12169,8 @@ function showTab(tabId) {
                         const prev = parseFloat(this.previousOperand);
                         const current = parseFloat(this.currentOperand);
                         if (isNaN(prev) || isNaN(current)) return;
+
+                        // নিয়মিত অপারেশনের গণনা
                         switch (this.operation) {
                             case '+':
                                 computation = prev + current;
@@ -12248,7 +12318,7 @@ function showTab(tabId) {
 
                         if (e.key >= '0' && e.key <= '9' || e.key === '.') {
                             basicCalculator.appendNumber(e.key);
-                        } else if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
+                        } else if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/' || e.key === '%') {
                             let operatorKey = e.key;
                             if (operatorKey === '*') operatorKey = '×';
                             if (operatorKey === '/') operatorKey = '÷';
@@ -12258,7 +12328,7 @@ function showTab(tabId) {
                             basicCalculator.compute();
                         } else if (e.key === 'Backspace') {
                             basicCalculator.delete();
-                        } else if (e.key === 'Escape' || e.key === 'Delete') { // <-- এই লাইনটি পরিবর্তন করুন
+                        } else if (e.key === 'Escape' || e.key === 'Delete') {
                             basicCalculator.clear();
                         }
                     });
