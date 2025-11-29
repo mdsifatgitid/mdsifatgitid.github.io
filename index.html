@@ -810,7 +810,7 @@
             color: #cbd5e0;
         }
 
-        /* বৈজ্ঞানিক ক্যালকুলেটর স্টাইল */
+/* বৈজ্ঞানিক ক্যালকুলেটর স্টাইল */
         .scientific-calculator-content {
             padding: 20px; /* বর্ধিত প্যাডিং */
             border-radius: 20px; /* গোলাকার কোণ */
@@ -825,7 +825,7 @@
         .scientific-calculator-content .expression-input {
             width: 100%;
             padding: 12px; /* প্যাডিং কমানো হয়েছে */
-            font-size: 1.2rem; /* ফন্ট সাইজ কমানো হয়েছে */
+            font-size: 1.5rem; /* ফন্ট সাইজ বাড়ানো হয়েছে */
             border: 1px solid #ccc;
             border-radius: 12px;
             box-sizing: border-box;
@@ -833,13 +833,13 @@
             text-align: right;
             background-color: #1c262b;
             color: white;
-            height: 55px; /* উচ্চতা কমানো হয়েছে */
+            height: 70px; /* উচ্চতা বাড়ানো হয়েছে */
             word-wrap: break-word; /* দীর্ঘ সংখ্যা ভাঙুন */
             word-break: break-all; /* দীর্ঘ সংখ্যা ভাঙুন */
         }
         .scientific-calculator-content .scientific-buttons-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr); /* 5 কলামে পরিবর্তিত */
+            grid-template-columns: repeat(4, 1fr); /* 5 কলাম থেকে 4 কলামে পরিবর্তন */
             gap: 10px; /* বর্ধিত ফাঁক */
             margin-bottom: 15px; /* বর্ধিত মার্জিন */
         }
@@ -873,50 +873,14 @@
             background-color: #d32f2f;
         }
         .scientific-calculator-content .scientific-button.equals-btn {
-            background-color: #007bff; /* ইকুয়ালস বোতামের রঙ (নীল) */
+            background-color: #28a745; /* ইকুয়ালস বোতামের রঙ (সবুজ) */
         }
         .scientific-calculator-content .scientific-button.equals-btn:hover {
-            background-color: #0056b3;
+            background-color: #218838;
         }
-        .scientific-result { /* স্টাইলিংয়ের জন্য scientific-calculator-content এর বাইরে সরানো হয়েছে */
-            margin-top: 20px; /* বর্ধিত মার্জিন */
-            padding: 20px; /* বর্ধিত প্যাডিং */
-            background-color: #e6f7ff;
-            border-radius: 16px;
-            border: 1px solid #b3e0ff;
-            font-size: 1.6rem; /* বর্ধিত ফন্ট সাইজ */
-            font-weight: 600;
-            color: #0056b3;
-            min-height: 65px; /* বর্ধিত উচ্চতা */
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            word-wrap: break-word;
-            word-break: break-all;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
-            margin-left: auto;
-            margin-right: auto;
-            max-width: 500px; /* scientific-calculator-content এর সর্বোচ্চ প্রস্থের সাথে সারিবদ্ধ করুন */
-        }
-        .dark .scientific-result {
-            background-color: #1a202c;
-            border-color: #4a5568;
-            color: #90cdf4;
-        }
-        .error-message { /* স্টাইলিংয়ের জন্য scientific-calculator-content এর বাইরে সরানো হয়েছে */
-            color: #d9534f;
-            font-size: 1rem;
-            font-weight: 500;
-            margin-top: 10px;
-            margin-left: auto;
-            margin-right: auto;
-            max-width: 500px; /* scientific-calculator-content এর সর্বোচ্চ প্রস্থের সাথে সারিবদ্ধ করুন */
-        }
-        .dark .error-message {
-            color: #fc8181;
-        }
-        .dark .text-gray-800 {
-            color: #f7fafc;
+        /* scientific-result ক্লাসটি মুছে ফেলা হয়েছে বা হাইড করা যেতে পারে কারণ রেজাল্ট এখন ইনপুটে দেখাবে */
+        .scientific-result {
+            display: none; 
         }
 
         /* ফন্ট কনভার্টার বিভাগের স্টাইল */
@@ -6507,57 +6471,60 @@ body.sidebar-open #sidebarOverlay {
             </div>
         </div>
 
-        <!-- বৈজ্ঞানিক ক্যালকুলেটর বিভাগ -->
+<!-- বৈজ্ঞানিক ক্যালকুলেটর বিভাগ -->
         <div id="scientificCalculatorContent" class="calculator-content">
             <div class="scientific-calculator-content">
                 <div class="input-area">
-                    <input type="text" id="scientificExpressionInput" class="expression-input rounded-lg" placeholder="এক্সপ্রেশন লিখুন (যেমন: sin(90) + 2*3)">
+                    <input type="text" id="scientificExpressionInput" class="expression-input rounded-lg" placeholder="0">
                 </div>
                 <div class="scientific-buttons-grid">
-                    <!-- সারি 1 -->
-                    <button class="scientific-button clear-btn rounded-lg" data-sci-input="C" style="grid-column: span 2;">C</button>
-                    <button class="scientific-button rounded-lg" data-sci-input="DEL">DEL</button>
+                    <!-- সারি ১: ফাংশনস -->
+                    <button class="scientific-button rounded-lg" data-sci-input="sin">sin</button>
+                    <button class="scientific-button rounded-lg" data-sci-input="cos">cos</button>
+                    <button class="scientific-button rounded-lg" data-sci-input="tan">tan</button>
+                    <button class="scientific-button rounded-lg" data-sci-input="log">log</button>
+
+                    <!-- সারি ২: ফাংশনস -->
+                    <button class="scientific-button rounded-lg" data-sci-input="ln">ln</button>
                     <button class="scientific-button rounded-lg" data-sci-input="(">(</button>
                     <button class="scientific-button rounded-lg" data-sci-input=")">)</button>
+                    <button class="scientific-button rounded-lg" data-sci-input="^">^</button>
 
-                    <!-- সারি 2 (সংখ্যা 1-2-3) -->
-                    <button class="scientific-button rounded-lg" data-sci-input="1">1</button>
-                    <button class="scientific-button rounded-lg" data-sci-input="2">2</button>
-                    <button class="scientific-button rounded-lg" data-sci-input="3">3</button>
-                    <button class="scientific-button rounded-lg" data-sci-input="sin">sin</button>
-                    <button class="scientific-button operator-btn rounded-lg" data-sci-input="÷">÷</button> <!-- ভাগ -->
+                    <!-- সারি ৩: ফাংশনস ও ক্লিয়ার -->
+                    <button class="scientific-button rounded-lg" data-sci-input="sqrt">√</button>
+                    <button class="scientific-button rounded-lg" data-sci-input="π">π</button>
+                    <button class="scientific-button clear-btn rounded-lg" data-sci-input="C">C</button>
+                    <button class="scientific-button rounded-lg" style="background-color: #ef5350;" data-sci-input="DEL">DEL</button>
 
-                    <!-- সারি 3 (সংখ্যা 4-5-6) -->
-                    <button class="scientific-button rounded-lg" data-sci-input="4">4</button>
-                    <button class="scientific-button rounded-lg" data-sci-input="5">5</button>
-                    <button class="scientific-button rounded-lg" data-sci-input="6">6</button>
-                    <button class="scientific-button rounded-lg" data-sci-input="cos">cos</button>
-                    <button class="scientific-button operator-btn rounded-lg" data-sci-input="×">×</button> <!-- গুণ -->
-
-                    <!-- সারি 4 (সংখ্যা 7-8-9, tan, -) - পরিবর্তিত -->
+                    <!-- সারি ৪: ৭-৮-৯ এবং ভাগ -->
                     <button class="scientific-button rounded-lg" data-sci-input="7">7</button>
                     <button class="scientific-button rounded-lg" data-sci-input="8">8</button>
                     <button class="scientific-button rounded-lg" data-sci-input="9">9</button>
-                    <button class="scientific-button rounded-lg" data-sci-input="tan">tan</button> <!-- '7' এর পরিবর্তে 'tan' -->
-                    <button class="scientific-button operator-btn rounded-lg" data-sci-input="-">-</button> <!-- '-' এখানে সরানো হয়েছে -->
+                    <button class="scientific-button operator-btn rounded-lg" data-sci-input="÷">÷</button>
 
-                    <!-- সারি 5 (সংখ্যা 0 এবং অন্যান্য) -->
-                    <button class="scientific-button rounded-lg" data-sci-input="0" style="grid-column: span 2;">0</button>
+                    <!-- সারি ৫: ৪-৫-৬ এবং গুণ -->
+                    <button class="scientific-button rounded-lg" data-sci-input="4">4</button>
+                    <button class="scientific-button rounded-lg" data-sci-input="5">5</button>
+                    <button class="scientific-button rounded-lg" data-sci-input="6">6</button>
+                    <button class="scientific-button operator-btn rounded-lg" data-sci-input="×">×</button>
+
+                    <!-- সারি ৬: ১-২-৩ এবং বিয়োগ -->
+                    <button class="scientific-button rounded-lg" data-sci-input="1">1</button>
+                    <button class="scientific-button rounded-lg" data-sci-input="2">2</button>
+                    <button class="scientific-button rounded-lg" data-sci-input="3">3</button>
+                    <button class="scientific-button operator-btn rounded-lg" data-sci-input="-">-</button>
+
+                    <!-- সারি ৭: ০, দশমিক, পার্সেন্ট, যোগ -->
+                    <button class="scientific-button rounded-lg" data-sci-input="0">0</button>
                     <button class="scientific-button rounded-lg" data-sci-input=".">.</button>
-                    <button class="scientific-button rounded-lg" data-sci-input="π">π</button>
-                    <button class="scientific-button operator-btn rounded-lg" data-sci-input="+">+</button> <!-- যোগ -->
+                    <button class="scientific-button rounded-lg" data-sci-input="%">%</button>
+                    <button class="scientific-button operator-btn rounded-lg" data-sci-input="+">+</button>
 
-                    <!-- সারি 6 (log, ln, sqrt, ^, =) -->
-                    <button class="scientific-button rounded-lg" data-sci-input="log">log</button>
-                    <button class="scientific-button rounded-lg" data-sci-input="ln">ln</button>
-                    <button class="scientific-button rounded-lg" data-sci-input="sqrt">√</button>
-                    <button class="scientific-button rounded-lg" data-sci-input="^">^</button>
-                    <button class="scientific-button equals-btn rounded-lg" data-sci-equals style="grid-column: span 1;">=</button> <!-- সমান -->
-
+                    <!-- সারি ৮: সমান (পুরো জায়গা জুড়ে) -->
+                    <button class="scientific-button equals-btn rounded-lg" data-sci-equals style="grid-column: span 4;">=</button>
                 </div>
             </div>
-            <!-- scientific-calculator-content এর বাইরে সরানো হয়েছে -->
-            <div id="scientificResult" class="scientific-result rounded-lg"></div>
+            
             <div id="scientificErrorMessage" class="error-message"></div>
             <!-- LLM-চালিত ব্যাখ্যা বৈশিষ্ট্য -->
             <button id="explainScientificBtn" class="explain-button rounded-xl">ব্যাখ্যা করুন ✨</button>
@@ -12860,51 +12827,82 @@ function showTab(tabId) {
                 
                 const scientificExpressionInput = document.getElementById('scientificExpressionInput');
                 const scientificButtons = document.querySelectorAll('.scientific-buttons-grid button');
-                const scientificResultDisplay = document.getElementById('scientificResult');
                 const scientificErrorMessage = document.getElementById('scientificErrorMessage');
-                // বৈজ্ঞানিক ব্যাখ্যা উপাদানগুলির জন্য সঠিক আইডি
                 const explainScientificBtn = document.getElementById('explainScientificBtn');
                 const scientificExplanation = document.getElementById('scientificExplanation');
                 const scientificExplanationLoading = document.getElementById('scientificExplanationLoading');
 
                 const functionsWithParentheses = ['sin', 'cos', 'tan', 'log', 'ln', 'sqrt'];
 
+                // হেল্পার ফাংশন: কার্সরের স্থানে টেক্সট ইনসার্ট করা
+                function insertAtCursor(input, textToInsert) {
+                    const start = input.selectionStart;
+                    const end = input.selectionEnd;
+                    const text = input.value;
+                    const newValue = text.substring(0, start) + textToInsert + text.substring(end);
+                    input.value = newValue;
+                    // কার্সর আপডেট করুন
+                    const newCursorPos = start + textToInsert.length;
+                    input.selectionStart = newCursorPos;
+                    input.selectionEnd = newCursorPos;
+                    input.focus();
+                }
+
                 // এক্সপ্রেশন ইনপুটে বোতামের মান যোগ করুন
                 scientificButtons.forEach(button => {
                     button.addEventListener('click', () => {
-                        console.log('বৈজ্ঞানিক বোতামে ক্লিক করা হয়েছে:', button.dataset.sciInput);
                         const value = button.dataset.sciInput;
                         const inputElement = scientificExpressionInput;
+
+                        if (!inputElement) return;
+
                         // C বাটন চাপলে পুরো ইনপুট ক্ষেত্র পরিষ্কার হবে
                         if (value === 'C') {
-                            if (inputElement) inputElement.value = '';
-                            if (scientificResultDisplay) scientificResultDisplay.innerText = '';
+                            inputElement.value = '';
                             if (scientificErrorMessage) scientificErrorMessage.innerText = '';
                             if (scientificExplanation) scientificExplanation.innerText = '';
-                            // DEL বাটন চাপলে একটি অক্ষর মুছে যাবে
-                        } else if (value === 'DEL') {
-                            if (inputElement) {
-                                inputElement.value = inputElement.value.slice(0, -1);
+                            inputElement.focus();
+                        } 
+                        // DEL বাটন চাপলে কার্সরের আগের অক্ষরটি মুছে যাবে
+                        else if (value === 'DEL') {
+                            const start = inputElement.selectionStart;
+                            const end = inputElement.selectionEnd;
+                            const text = inputElement.value;
+                            
+                            if (start === end) { // কোনো সিলেকশন নেই
+                                if (start > 0) {
+                                    inputElement.value = text.substring(0, start - 1) + text.substring(end);
+                                    inputElement.selectionStart = inputElement.selectionEnd = start - 1;
+                                }
+                            } else { // টেক্সট সিলেক্ট করা থাকলে
+                                inputElement.value = text.substring(0, start) + text.substring(end);
+                                inputElement.selectionStart = inputElement.selectionEnd = start;
                             }
-                        } else if (button.dataset.sciEquals !== undefined) {
+                            inputElement.focus();
+                        } 
+                        else if (button.dataset.sciEquals !== undefined) {
                             // সমান হ্যান্ডেল করুন
                             evaluateScientificExpression();
-                        } else if (functionsWithParentheses.includes(value)) {
+                        } 
+                        else if (functionsWithParentheses.includes(value)) {
                             // () প্রয়োজন এমন ফাংশন হ্যান্ডেল করুন
-                            if (inputElement) {
-                                const start = inputElement.selectionStart;
-                                const end = inputElement.selectionEnd;
-                                const text = inputElement.value;
-                                const newValue = text.substring(0, start) + value + '()' + text.substring(end);
-                                inputElement.value = newValue;
-                                // বন্ধনীর ভিতরে কার্সার অবস্থান করুন
-                                inputElement.selectionStart = start + value.length + 1;
-                                inputElement.selectionEnd = start + value.length + 1;
-                                inputElement.focus();
-                            }
-                        } else if (value) {
-                            // অন্যান্য মান যোগ করুন
-                            if (inputElement) inputElement.value += value;
+                            const textToInsert = value + '()';
+                            const start = inputElement.selectionStart;
+                            const end = inputElement.selectionEnd;
+                            const text = inputElement.value;
+                            
+                            // ইনসার্ট করুন
+                            inputElement.value = text.substring(0, start) + textToInsert + text.substring(end);
+                            
+                            // কার্সরকে ব্র্যাকেটের ভেতরে রাখুন
+                            const cursorPosition = start + value.length + 1;
+                            inputElement.selectionStart = cursorPosition;
+                            inputElement.selectionEnd = cursorPosition;
+                            inputElement.focus();
+                        } 
+                        else if (value) {
+                            // অন্যান্য মান (সংখ্যা, অপারেটর) কার্সরের অবস্থানে যোগ করুন
+                            insertAtCursor(inputElement, value);
                         }
                     });
                 });
@@ -12916,40 +12914,34 @@ function showTab(tabId) {
                             e.preventDefault();
                             evaluateScientificExpression();
                         } else if (e.key === 'Escape') {
-                            if (scientificExpressionInput) scientificExpressionInput.value = '';
-                            if (scientificResultDisplay) scientificResultDisplay.innerText = '';
+                            scientificExpressionInput.value = '';
                             if (scientificErrorMessage) scientificErrorMessage.innerText = '';
                             if (scientificExplanation) scientificExplanation.innerText = '';
-                        } else if (e.key === 'Backspace' || e.key === 'Delete') {
-                            // ব্যাকস্পেস বা ডিলিট বাটন চাপলে শেষ অক্ষরটি মুছে যাবে
-                            if (scientificExpressionInput) {
-                                scientificExpressionInput.value = scientificExpressionInput.value.slice(0, -1);
-                            }
                         }
+                        // অন্যান্য কীবোর্ড ইনপুট ডিফল্টভাবেই কাজ করবে
                     });
                 }
 
                 function evaluateScientificExpression() {
-                    const expression = scientificExpressionInput ? scientificExpressionInput.value : '';
-                    if (scientificResultDisplay) scientificResultDisplay.innerText = '';
+                    const inputElement = scientificExpressionInput;
+                    const expression = inputElement ? inputElement.value : '';
+                    
                     if (scientificErrorMessage) scientificErrorMessage.innerText = '';
                     if (scientificExplanation) scientificExplanation.innerText = '';
 
                     if (expression.trim() === '') {
-                        if (scientificErrorMessage) scientificErrorMessage.innerText = 'অনুগ্রহ করে একটি এক্সপ্রেশন লিখুন।';
-                        return;
-                    }
-
-                    // মৌলিক বন্ধনী ভারসাম্য পরীক্ষা
-                    let openParentheses = (expression.match(/\(/g) || []).length;
-                    let closeParentheses = (expression.match(/\)/g) || []).length;
-                    if (openParentheses !== closeParentheses) {
-                        if (scientificErrorMessage) scientificErrorMessage.innerText = 'বন্ধনী সঠিকভাবে বন্ধ করা হয়নি।';
                         return;
                     }
 
                     try {
-                        let processedExpression = expression
+                        // এক্সপ্রেশন প্রসেস করা
+                        // পার্সেন্টেজ ফিক্স: যোগ বা বিয়োগের ক্ষেত্রে (যেমন 100-10%) এটি আগের সংখ্যার পার্সেন্ট হিসেবে কাজ করবে
+                        // রেজেক্স: (সংখ্যা) (যোগ/বিয়োগ) (সংখ্যা)% -> সংখ্যা যোগ/বিয়োগ (সংখ্যা * দ্বিতীয় সংখ্যা / ১০০)
+                        let processedExpression = expression.replace(/(\d+(?:\.\d+)?)\s*([\+\-])\s*(\d+(?:\.\d+)?)%/g, (match, p1, operator, p3) => {
+                            return `${p1}${operator}(${p1}*${p3}/100)`;
+                        });
+
+                        processedExpression = processedExpression
                             .replace(/sin\(/g, 'Math.sin(Math.PI / 180 * ')
                             .replace(/cos\(/g, 'Math.cos(Math.PI / 180 * ')
                             .replace(/tan\(/g, 'Math.tan(Math.PI / 180 * ')
@@ -12959,28 +12951,28 @@ function showTab(tabId) {
                             .replace(/\^/g, '**')
                             .replace(/π/g, 'Math.PI')
                             .replace(/e/g, 'Math.E')
-                            .replace(/×/g, '*') // '×' কে '*' এ রূপান্তর করুন
-                            .replace(/÷/g, '/'); // '÷' কে '/' এ রূপান্তর করুন
+                            .replace(/×/g, '*') 
+                            .replace(/÷/g, '/')
+                            .replace(/%/g, '/100'); // বাকি পার্সেন্টেজ (যেমন 50*10% বা শুধু 10%) সাধারণ ভাগে রূপান্তর হবে
 
                         let result = eval(processedExpression);
 
                         if (isNaN(result) || !isFinite(result)) {
                             if (scientificErrorMessage) scientificErrorMessage.innerText = 'অবৈধ এক্সপ্রেশন বা ফলাফল।';
                         } else {
-                            if (scientificResultDisplay) scientificResultDisplay.innerText = result.toLocaleString('en', {
-                                maximumFractionDigits: 10
-                            });
+                            // ফলাফল ইনপুট বক্সে দেখান
+                            const formattedResult = parseFloat(result.toFixed(10)); // দশমিকের পর ১০ ঘর পর্যন্ত নিয়ে অপ্রয়োজনীয় শূন্য বাদ দেওয়া
+                            inputElement.value = formattedResult;
                         }
                     } catch (error) {
-                        if (scientificErrorMessage) scientificErrorMessage.innerText = 'এক্সপ্রেশন ত্রুটি: ' + error.message + '। অনুগ্রহ করে সঠিক সিনট্যাক্স ব্যবহার করুন।';
+                        if (scientificErrorMessage) scientificErrorMessage.innerText = 'ত্রুটি!';
                         console.error('বৈজ্ঞানিক ক্যালকুলেটর ত্রুটি:', error);
                     }
                 }
 
-                // বৈজ্ঞানিক এক্সপ্রেশন ব্যাখ্যার জন্য জেমিনি API কল
+                // বৈজ্ঞানিক এক্সপ্রেশন ব্যাখ্যার জন্য জেমিনি API কল (আগের কোডই থাকবে)
                 if (explainScientificBtn) {
                     explainScientificBtn.addEventListener('click', async () => {
-                        console.log('বৈজ্ঞানিক ব্যাখ্যা বোতামে ক্লিক করা হয়েছে।');
                         const expressionToExplain = scientificExpressionInput ? scientificExpressionInput.value.trim() : '';
                         if (!expressionToExplain) {
                             if (scientificExplanation) scientificExplanation.innerText = 'ব্যাখ্যার জন্য একটি এক্সপ্রেশন লিখুন।';
@@ -12989,14 +12981,14 @@ function showTab(tabId) {
 
                         if (scientificExplanation) scientificExplanation.innerText = '';
                         if (scientificExplanationLoading) scientificExplanationLoading.style.display = 'block';
-                        if (explainScientificBtn) explainScientificBtn.disabled = true;
+                        explainScientificBtn.disabled = true;
 
                         try {
                             const apiKey = localStorage.getItem('geminiApiKey');
                             if (!apiKey) {
-                                if (scientificExplanation) scientificExplanation.innerText = 'জেমিনি API কী সেট করা হয়নি। অনুগ্রহ করে "API কী সেট করুন" বাটনে ক্লিক করে কী সেট করুন।';
+                                if (scientificExplanation) scientificExplanation.innerText = 'জেমিনি API কী সেট করা হয়নি।';
                                 if (scientificExplanationLoading) scientificExplanationLoading.style.display = 'none';
-                                if (explainScientificBtn) explainScientificBtn.disabled = false;
+                                explainScientificBtn.disabled = false;
                                 return;
                             }
 
@@ -13004,43 +12996,34 @@ function showTab(tabId) {
                             chatHistory.push({
                                 role: "user",
                                 parts: [{
-                                    text: `এই গাণিতিক এক্সপ্রেশন বা ফাংশনটি সহজ ভাষায় ব্যাখ্যা করুন: "${expressionToExplain}"। এটি কী করে এবং এর মূল ধারণা কী?`
+                                    text: `এই গাণিতিক এক্সপ্রেশনটি সহজ ভাষায় ব্যাখ্যা করুন: "${expressionToExplain}"।`
                                 }]
                             });
-                            const payload = {
-                                contents: chatHistory
-                            };
-                            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                            const payload = { contents: chatHistory };
+                            const model = "gemini-2.5-flash-preview-09-2025";
+            				const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
                             const response = await fetch(apiUrl, {
                                 method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
+                                headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify(payload)
                             });
 
                             const result = await response.json();
 
-                            if (result.candidates && result.candidates.length > 0 &&
-                                result.candidates[0].content && result.candidates[0].content.parts &&
-                                result.candidates[0].content.parts.length > 0) {
+                            if (result.candidates && result.candidates.length > 0) {
                                 const text = result.candidates[0].content.parts[0].text;
                                 if (scientificExplanation) scientificExplanation.innerText = text;
                             } else {
-                                if (scientificExplanation) scientificExplanation.innerText = 'জেমিনি থেকে কোনো প্রতিক্রিয়া পাওয়া যায়নি।';
-                                console.error('জেমিনি API প্রতিক্রিয়া অপ্রত্যাশিত:', result);
+                                if (scientificExplanation) scientificExplanation.innerText = 'কোনো ব্যাখ্যা পাওয়া যায়নি।';
                             }
                         } catch (error) {
-                            if (scientificExplanation) scientificExplanation.innerText = 'জেমিনি API কল করার সময় একটি ত্রুটি হয়েছে: ' + error.message;
-                            console.error('জেমিনি API ত্রুটি:', error);
+                            if (scientificExplanation) scientificExplanation.innerText = 'ত্রুটি: ' + error.message;
                         } finally {
                             if (scientificExplanationLoading) scientificExplanationLoading.style.display = 'none';
-                            if (explainScientificBtn) explainScientificBtn.disabled = false;
+                            explainScientificBtn.disabled = false;
                         }
                     });
-                } else {
-                    console.error('বৈজ্ঞানিক ব্যাখ্যা উপাদান পাওয়া যায়নি।');
                 }
 // ====================================================================
 // END:  বৈজ্ঞানিক ক্যালকুলেটর লজিক
