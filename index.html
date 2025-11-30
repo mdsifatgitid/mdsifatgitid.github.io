@@ -11770,9 +11770,18 @@ function showTab(tabId) {
 //নিচের অংশে নতুন ট্যাবের কেস যুক্ত করতে হয় বা বসাতে হয় ।
 
     switch (tabId) {
-        case 'basic':
+case 'basic':
             activeTab = basicCalcTab;
             activeContent = basicCalculatorContent;
+            // ডেস্কটপে (নন-টাচ ডিভাইস) ফোকাস ক্লিয়ার করা যাতে সরাসরি টাইপ করা যায়
+            setTimeout(() => {
+                if (!window.matchMedia("(pointer: coarse)").matches) {
+                    // বর্তমানে ফোকাস থাকা এলিমেন্ট (যেমন ট্যাব বাটন) থেকে ফোকাস সরিয়ে নিন
+                    if (document.activeElement instanceof HTMLElement) {
+                        document.activeElement.blur();
+                    }
+                }
+            }, 100);
             break;
         case 'age':
             activeTab = ageCalcTab;
