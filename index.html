@@ -8570,6 +8570,20 @@ body.sidebar-open #sidebarOverlay {
     <div class="settings-page-container">
         <h3 class="text-xl font-bold text-gray-700 mb-6 dark:text-gray-200">সেটিংস সমূহ</h3> 
 
+        <!-- জেমিনি API কী সেটিং (নতুন যোগ করা হয়েছে) -->
+        <div class="setting-item">
+            <div class="setting-text" style="flex-grow: 1; margin-right: 15px;">
+                <label for="settingsApiKeyInput" class="font-semibold text-gray-700 dark:text-gray-300">জেমিনি API কী</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">এআই ফিচার (চ্যাট, অনুবাদ, ওসিআর ইত্যাদি) ব্যবহারের জন্য এখানে আপনার API কী সেভ করুন।</p>
+                <div class="flex gap-2 mt-2">
+                    <input type="text" id="settingsApiKeyInput" placeholder="AIzaSy..." class="flex-grow p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-indigo-500 text-sm">
+                    <button id="saveSettingsApiKeyBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded text-sm">
+                        সেভ
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- সময় এবং তারিখ ব্যানার টগল (নতুন) -->
         <div class="setting-item" style="margin-top: 15px;">
             <div class="setting-text">
@@ -19844,10 +19858,40 @@ function initializeImageResizer() {
 // END: Image Resizer Script
 // ========================================================
 
+
 // ====================================================================
 // START: আরও সেটিংস (More Settings) TAB SCRIPT (Updated)
 // ====================================================================
 function initializeMoreSettings() {
+
+        // ০. জেমিনি API কী ইনপুট লজিক (নতুন যুক্ত করা হয়েছে)
+        const settingsApiKeyInput = document.getElementById('settingsApiKeyInput');
+        const saveSettingsApiKeyBtn = document.getElementById('saveSettingsApiKeyBtn');
+
+        if (settingsApiKeyInput && saveSettingsApiKeyBtn) {
+            // লোড হওয়ার সময় লোকাল স্টোরেজ থেকে কী নিয়ে ইনপুটে দেখান
+            const savedApiKey = localStorage.getItem('geminiApiKey');
+            if (savedApiKey) {
+                settingsApiKeyInput.value = savedApiKey;
+            }
+
+            // সেভ বাটনে ক্লিক লিসেনার (আগের লিসেনার ওভাররাইড করতে onclick ব্যবহার করা হলো)
+            saveSettingsApiKeyBtn.onclick = () => {
+                const newApiKey = settingsApiKeyInput.value.trim();
+                if (newApiKey) {
+                    localStorage.setItem('geminiApiKey', newApiKey);
+                    showCustomAlert('API কী সফলভাবে সেভ করা হয়েছে!');
+                    // বাটন কালার আপডেট ফাংশন যদি থাকে
+                    if (typeof updateApiKeyButton === 'function') updateApiKeyButton();
+                } else {
+                    // খালি রেখে সেভ করলে ডিলিট হবে
+                    localStorage.removeItem('geminiApiKey');
+                    showCustomAlert('API কী মুছে ফেলা হয়েছে।');
+                    if (typeof updateApiKeyButton === 'function') updateApiKeyButton();
+                }
+            };
+        }
+		
     // ১. নিউজ টিকার অন/অফ টগল লজিক
     const newsTickerToggle = document.getElementById('newsTickerToggle');
     const newsTickerContainer = document.getElementById('news-ticker-container');
