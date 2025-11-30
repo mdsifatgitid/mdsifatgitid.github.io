@@ -11787,9 +11787,16 @@ function showTab(tabId) {
             activeTab = dateCalcTab;
             activeContent = dateCalculatorContent;
             break;
-        case 'scientific':
+case 'scientific':
             activeTab = scientificCalcTab;
             activeContent = scientificCalculatorContent;
+            // নতুন: ডেস্কটপে (নন-টাচ ডিভাইস) অটো-ফোকাস লজিক
+            setTimeout(() => {
+                // টাচ ডিভাইস না হলে এবং ইনপুট এলিমেন্ট থাকলে ফোকাস করুন
+                if (scientificExpressionInput && !window.matchMedia("(pointer: coarse)").matches) {
+                    scientificExpressionInput.focus();
+                }
+            }, 100); 
             break;
         case 'converter':
             activeTab = converterTab;
@@ -12845,11 +12852,11 @@ function showTab(tabId) {
 // ====================================================================
 
 // ====================================================================
-// START:  বৈজ্ঞানিক ক্যালকুলেটর লজিক (আপডেটেড: মোবাইলে কিবোর্ড ফিক্স)
+// START:  বৈজ্ঞানিক ক্যালকুলেটর লজিক (আপডেটেড: কার্সর পজিশন ফিক্স v2)
 // ====================================================================
                 
                 const scientificExpressionInput = document.getElementById('scientificExpressionInput');
-                const scientificHistoryDisplay = document.getElementById('scientificHistoryDisplay'); // নতুন ডিসপ্লে এলিমেন্ট
+                const scientificHistoryDisplay = document.getElementById('scientificHistoryDisplay');
                 const scientificButtons = document.querySelectorAll('.scientific-buttons-grid button');
                 const scientificErrorMessage = document.getElementById('scientificErrorMessage');
                 const explainScientificBtn = document.getElementById('explainScientificBtn');
@@ -12858,10 +12865,22 @@ function showTab(tabId) {
 
                 const functionsWithParentheses = ['sin', 'cos', 'tan', 'log', 'ln', 'sqrt'];
 
-                // স্মার্ট ফোকাস ফাংশন: মোবাইল ডিভাইসে বোতাম চাপলে কিবোর্ড আসা আটকাতে
-                // কিন্তু ডেস্কটপে টাইপিং চালু রাখতে ফোকাস বজায় রাখা হয়।
+                // কার্সরের সর্বশেষ অবস্থান মনে রাখার ভেরিয়েবল
+                let lastSciCursorPos = 0;
+
+                // ইনপুট ফিল্ডে অ্যাক্টিভিটি ট্র্যাক করা (blur বাদ দেওয়া হয়েছে)
+                if (scientificExpressionInput) {
+                    ['click', 'keyup', 'input', 'focus', 'mouseup'].forEach(evt => {
+                        scientificExpressionInput.addEventListener(evt, () => {
+                            if (scientificExpressionInput.selectionStart !== null) {
+                                lastSciCursorPos = scientificExpressionInput.selectionStart;
+                            }
+                        });
+                    });
+                }
+
+                // স্মার্ট ফোকাস ফাংশন
                 function smartFocus(input) {
-                    // যদি ডিভাইসটি টাচ স্ক্রিন হয় (মোবাইল/ট্যাবলেট), তবে ফোকাস করবেন না
                     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches; 
                     if (!isTouchDevice) {
                         input.focus();
@@ -12870,24 +12889,33 @@ function showTab(tabId) {
 
                 // হেল্পার ফাংশন: কার্সরের স্থানে টেক্সট ইনসার্ট করা
                 function insertAtCursor(input, textToInsert) {
-                    const start = input.selectionStart;
-                    const end = input.selectionEnd;
                     const text = input.value;
+                    
+                    // ফোকাস থাকলে লাইভ পজিশন নিন, নাহলে সেভ করা পজিশন ব্যবহার করুন
+                    let start = (document.activeElement === input) ? input.selectionStart : lastSciCursorPos;
+                    
+                    // বাউন্ডারি চেক
+                    if (start === null || start > text.length) {
+                        start = text.length;
+                    }
+
+                    const end = (document.activeElement === input) ? input.selectionEnd : start;
+
                     const newValue = text.substring(0, start) + textToInsert + text.substring(end);
                     input.value = newValue;
-                    // কার্সর আপডেট করুন
+                    
+                    // নতুন কার্সর পজিশন আপডেট করুন
                     const newCursorPos = start + textToInsert.length;
+                    lastSciCursorPos = newCursorPos;
                     input.selectionStart = newCursorPos;
                     input.selectionEnd = newCursorPos;
                     
-                    // এখানে সাধারণ focus() এর বদলে smartFocus() ব্যবহার করা হলো
                     smartFocus(input);
                 }
 
                 // এক্সপ্রেশন ইনপুটে বোতামের মান যোগ করুন
                 scientificButtons.forEach(button => {
                     button.addEventListener('click', (e) => {
-                        // ডিফল্ট আচরণ বন্ধ করুন যাতে টাচ ইভেন্টে ফোকাস না সরে যায়
                         e.preventDefault(); 
 
                         const value = button.dataset.sciInput;
@@ -12895,53 +12923,64 @@ function showTab(tabId) {
 
                         if (!inputElement) return;
 
-                        // C বাটন চাপলে পুরো ইনপুট ক্ষেত্র এবং হিস্টোরি পরিষ্কার হবে
+                        // C বাটন (All Clear)
                         if (value === 'C') {
                             inputElement.value = '';
-                            if (scientificHistoryDisplay) scientificHistoryDisplay.innerText = ''; // হিস্টোরি ক্লিয়ার
+                            lastSciCursorPos = 0; // পজিশন রিসেট
+                            if (scientificHistoryDisplay) scientificHistoryDisplay.innerText = '';
                             if (scientificErrorMessage) scientificErrorMessage.innerText = '';
                             if (scientificExplanation) scientificExplanation.innerText = '';
                             smartFocus(inputElement);
                         } 
-                        // DEL বাটন চাপলে কার্সরের আগের অক্ষরটি মুছে যাবে
+                        // DEL বাটন
                         else if (value === 'DEL') {
-                            const start = inputElement.selectionStart;
-                            const end = inputElement.selectionEnd;
                             const text = inputElement.value;
-                            
-                            if (start === end) { // কোনো সিলেকশন নেই
+                            let start = (document.activeElement === inputElement) ? inputElement.selectionStart : lastSciCursorPos;
+                            let end = (document.activeElement === inputElement) ? inputElement.selectionEnd : start;
+
+                            if (start > text.length) start = text.length;
+
+                            // যদি কোনো টেক্সট সিলেক্ট করা না থাকে, তবে কার্সরের পেছনের একটা অক্ষর মুছবে
+                            if (start === end) {
                                 if (start > 0) {
                                     inputElement.value = text.substring(0, start - 1) + text.substring(end);
-                                    inputElement.selectionStart = inputElement.selectionEnd = start - 1;
+                                    const newCursorPos = start - 1;
+                                    lastSciCursorPos = newCursorPos;
+                                    inputElement.selectionStart = newCursorPos;
+                                    inputElement.selectionEnd = newCursorPos;
                                 }
-                            } else { // টেক্সট সিলেক্ট করা থাকলে
+                            } else {
+                                // সিলেক্ট করা অংশ মুছবে
                                 inputElement.value = text.substring(0, start) + text.substring(end);
-                                inputElement.selectionStart = inputElement.selectionEnd = start;
+                                lastSciCursorPos = start;
+                                inputElement.selectionStart = start;
+                                inputElement.selectionEnd = start;
                             }
                             smartFocus(inputElement);
                         } 
                         else if (button.dataset.sciEquals !== undefined) {
-                            // সমান হ্যান্ডেল করুন
                             evaluateScientificExpression();
                         } 
                         else if (functionsWithParentheses.includes(value)) {
-                            // () প্রয়োজন এমন ফাংশন হ্যান্ডেল করুন
+                            // () ফাংশন
                             const textToInsert = value + '()';
-                            const start = inputElement.selectionStart;
-                            const end = inputElement.selectionEnd;
                             const text = inputElement.value;
+                            let start = (document.activeElement === inputElement) ? inputElement.selectionStart : lastSciCursorPos;
                             
-                            // ইনসার্ট করুন
+                            // যদি সিলেকশন থাকে, সেটা রিপ্লেস না করে ইনসার্ট করছি (সাধারণ ক্যালকুলেটরের মতো আচরণ)
+                            // অথবা আপনি চাইলে রিপ্লেস লজিকও রাখতে পারেন
+                            const end = (document.activeElement === inputElement) ? inputElement.selectionEnd : start;
+
                             inputElement.value = text.substring(0, start) + textToInsert + text.substring(end);
                             
-                            // কার্সরকে ব্র্যাকেটের ভেতরে রাখুন
+                            // কার্সর ব্র্যাকেটের ভেতরে নেওয়া
                             const cursorPosition = start + value.length + 1;
+                            lastSciCursorPos = cursorPosition;
                             inputElement.selectionStart = cursorPosition;
                             inputElement.selectionEnd = cursorPosition;
                             smartFocus(inputElement);
                         } 
                         else if (value) {
-                            // অন্যান্য মান (সংখ্যা, অপারেটর) কার্সরের অবস্থানে যোগ করুন
                             insertAtCursor(inputElement, value);
                         }
                     });
@@ -12955,11 +12994,11 @@ function showTab(tabId) {
                             evaluateScientificExpression();
                         } else if (e.key === 'Escape') {
                             scientificExpressionInput.value = '';
-                            if (scientificHistoryDisplay) scientificHistoryDisplay.innerText = ''; // হিস্টোরি ক্লিয়ার
+                            lastSciCursorPos = 0;
+                            if (scientificHistoryDisplay) scientificHistoryDisplay.innerText = '';
                             if (scientificErrorMessage) scientificErrorMessage.innerText = '';
                             if (scientificExplanation) scientificExplanation.innerText = '';
                         }
-                        // অন্যান্য কীবোর্ড ইনপুট ডিফল্টভাবেই কাজ করবে
                     });
                 }
 
@@ -12975,9 +13014,6 @@ function showTab(tabId) {
                     }
 
                     try {
-                        // এক্সপ্রেশন প্রসেস করা
-                        // পার্সেন্টেজ ফিক্স: যোগ বা বিয়োগের ক্ষেত্রে (যেমন 100-10%) এটি আগের সংখ্যার পার্সেন্ট হিসেবে কাজ করবে
-                        // রেজেক্স: (সংখ্যা) (যোগ/বিয়োগ) (সংখ্যা)% -> সংখ্যা যোগ/বিয়োগ (সংখ্যা * দ্বিতীয় সংখ্যা / ১০০)
                         let processedExpression = expression.replace(/(\d+(?:\.\d+)?)\s*([\+\-])\s*(\d+(?:\.\d+)?)%/g, (match, p1, operator, p3) => {
                             return `${p1}${operator}(${p1}*${p3}/100)`;
                         });
@@ -12994,17 +13030,18 @@ function showTab(tabId) {
                             .replace(/e/g, 'Math.E')
                             .replace(/×/g, '*') 
                             .replace(/÷/g, '/')
-                            .replace(/%/g, '/100'); // বাকি পার্সেন্টেজ (যেমন 50*10% বা শুধু 10%) সাধারণ ভাগে রূপান্তর হবে
+                            .replace(/%/g, '/100');
 
                         let result = eval(processedExpression);
 
                         if (isNaN(result) || !isFinite(result)) {
                             if (scientificErrorMessage) scientificErrorMessage.innerText = 'অবৈধ এক্সপ্রেশন বা ফলাফল।';
                         } else {
-                            // ফলাফল ইনপুট বক্সে দেখান এবং এক্সপ্রেশন উপরে সরান
-                            if (scientificHistoryDisplay) scientificHistoryDisplay.innerText = expression + ' ='; // এক্সপ্রেশন উপরে
-                            const formattedResult = parseFloat(result.toFixed(10)); // দশমিকের পর ১০ ঘর পর্যন্ত নিয়ে অপ্রয়োজনীয় শূন্য বাদ দেওয়া
-                            inputElement.value = formattedResult; // ফলাফল নিচে
+                            if (scientificHistoryDisplay) scientificHistoryDisplay.innerText = expression + ' =';
+                            const formattedResult = parseFloat(result.toFixed(10));
+                            inputElement.value = formattedResult;
+                            // রেজাল্ট দেখানোর পর কার্সর শেষে নিয়ে যাওয়া
+                            lastSciCursorPos = inputElement.value.length;
                         }
                     } catch (error) {
                         if (scientificErrorMessage) scientificErrorMessage.innerText = 'ত্রুটি!';
@@ -13012,13 +13049,11 @@ function showTab(tabId) {
                     }
                 }
 
-                // বৈজ্ঞানিক এক্সপ্রেশন ব্যাখ্যার জন্য জেমিনি API কল (আগের কোডই থাকবে)
+                // বৈজ্ঞানিক এক্সপ্রেশন ব্যাখ্যা (জেমিনি API)
                 if (explainScientificBtn) {
                     explainScientificBtn.addEventListener('click', async () => {
-                        // ব্যাখ্যার জন্য ইনপুট বক্স অথবা হিস্টোরি ডিসপ্লে থেকে এক্সপ্রেশন নেওয়া হবে
                         let expressionToExplain = scientificExpressionInput ? scientificExpressionInput.value.trim() : '';
                         
-                        // যদি হিস্টোরিতে কোনো ক্যালকুলেশন থাকে এবং ইনপুটে শুধু রেজাল্ট থাকে, তবে হিস্টোরি থেকে এক্সপ্রেশন নিন
                         if (scientificHistoryDisplay && scientificHistoryDisplay.innerText.includes('=') && !isNaN(expressionToExplain)) {
                              expressionToExplain = scientificHistoryDisplay.innerText.replace('=', '').trim();
                         }
