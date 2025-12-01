@@ -13544,19 +13544,28 @@ async function handleGeminiTTS() {
     speakBtn.innerText = 'লোড হচ্ছে...';
 
     try {
-        // --- গ্লোবাল মডেল ব্যবহার (আপডেট করা হয়েছে - ফলব্যাক সহ) ---
-        // সেটিংস থেকে মডেল নেওয়া হচ্ছে, না থাকলে ডিফল্ট মডেল ব্যবহার করা হবে
-        let model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-tts";
-        
-        // হার্ডকোডেড প্রয়োজনীয় মডেল (যদি গ্লোবাল মডেল কাজ না করে)
+        // --- মডেল নির্বাচন এবং যাচাইকরণ লজিক (আপডেটেড) ---
+        let selectedModel = localStorage.getItem('geminiModel');
         const HARDCODED_TTS_MODEL = "gemini-2.5-flash-preview-tts";
+        
+        // ১. সিলেক্টেড মডেলে 'tts' লেখা আছে কিনা চেক করা (case-insensitive)
+        // ২. যদি না থাকে অথবা মডেল সিলেক্ট করা না থাকে, তবে হার্ডকোডেড মডেল ব্যবহার করা
+        let modelToUse;
+        
+        if (selectedModel && selectedModel.toLowerCase().includes('tts')) {
+            modelToUse = selectedModel;
+            console.log(`TTS Supported model selected: ${modelToUse}`);
+        } else {
+            modelToUse = HARDCODED_TTS_MODEL;
+            console.log(`Selected model (${selectedModel}) does not support TTS. Fallback to: ${modelToUse}`);
+        }
 
         const payload = {
             contents: [{ parts: [{ text: textToSpeak }] }],
             generationConfig: { responseModalities: ["AUDIO"] }
         };
 
-        let apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        let apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelToUse}:generateContent?key=${apiKey}`;
         
         let response = await fetch(apiUrl, {
             method: 'POST',
@@ -13568,21 +13577,16 @@ async function handleGeminiTTS() {
 
         let result = await response.json();
 
-        // যদি এরর আসে এবং বর্তমান মডেলটি হার্ডকোডেড মডেল না হয়, তবে হার্ডকোডেড মডেল দিয়ে পুনরায় চেষ্টা করুন
-        if (result.error && model !== HARDCODED_TTS_MODEL) {
-            console.warn(`Model ${model} failed for TTS, retrying with fallback model ${HARDCODED_TTS_MODEL}...`);
+        // এরর হ্যান্ডলিং (কোটা লিমিট বা অন্য সমস্যা)
+        if (result.error) {
+            console.error('Gemini TTS API Error:', result.error);
             
-            apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${HARDCODED_TTS_MODEL}:generateContent?key=${apiKey}`;
-            
-            response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            });
-            
-            result = await response.json();
+            // বিশেষ করে কোটা বা লিমিট শেষ হলে কাস্টম বার্তা
+            if (result.error.code === 429 || result.error.message.includes('Resource has been exhausted')) {
+                throw new Error('আজকের জন্য TTS জেনারেশনের লিমিট শেষ হয়ে গেছে। অনুগ্রহ করে আগামীকাল চেষ্টা করুন অথবা অন্য API Key ব্যবহার করুন।');
+            } else {
+                throw new Error(result.error.message || 'অডিও জেনারেট করতে সমস্যা হয়েছে।');
+            }
         }
         
         // রেসপন্স থেকে অডিও ডেটা এক্সট্রাক্ট করা
@@ -13616,15 +13620,13 @@ async function handleGeminiTTS() {
             };
 
         } else {
-            // যদি মডেলটি অডিও সাপোর্ট না করে বা অন্য কোনো এরর হয়
-            if (result.error) {
-                throw new Error(result.error.message);
-            }
-            throw new Error('API থেকে কোনো অডিও ডেটা পাওয়া যায়নি। সম্ভবত নির্বাচিত মডেলটি অডিও জেনারেশন সমর্থন করে না।');
+            throw new Error('API থেকে কোনো অডিও ডেটা পাওয়া যায়নি। সম্ভবত মডেলটি ব্যস্ত আছে।');
         }
     } catch (error) {
         console.error('Gemini TTS Error:', error);
-        showCustomAlert(`একটি ত্রুটি ঘটেছে: ${error.message}`);
+        // কাস্টম অ্যালার্ট বাংলায় (এরর মেসেজ পাস করা হচ্ছে)
+        showCustomAlert(`${error.message}`);
+        
         speakBtn.innerText = 'লোড করুন';
         speakBtn.disabled = false;
         if (downloadTtsBtn) downloadTtsBtn.disabled = true;
@@ -13687,6 +13689,8 @@ if (downloadTtsBtn) {
 // ====================================================================
 // END: GEMINI API TEXT-TO-SPEECH (TTS) SCRIPT
 // ====================================================================
+
+
 
 // ====================================================================
 // START: GEMINI API BASED SPEECH-TO-TEXT (STT) SCRIPT
