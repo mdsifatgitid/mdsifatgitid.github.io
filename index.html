@@ -20375,8 +20375,9 @@ async function fetchTomorrowHistory() {
         `;
 
         const payload = { contents: [{ parts: [{ text: prompt }] }] };
-        const model = "gemini-2.5-flash-preview-09-2025";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+		// --- গ্লোবাল মডেল ব্যবহার ---
+        const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
             method: 'POST',
