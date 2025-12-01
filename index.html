@@ -7135,14 +7135,6 @@ body.sidebar-open #sidebarOverlay {
             <input type="file" id="fileUploadInput" class="hidden" accept="image/png, image/jpeg, image/webp, text/*, audio/*, video/*">
             <textarea id="assistantInput" placeholder="এখানে আপনার প্রশ্ন লিখুন..."></textarea>
             <button id="askGeminiBtn" class="ask-button">পাঠান</button>
-            <div class="flex items-center justify-center my-3">
-                <label for="googleSearchToggle" class="flex items-center cursor-pointer" title="প্রশ্ন করার সময় গুগল থেকে লাইভ তথ্য নিতে এটি চেক করুন">
-                <input type="checkbox" id="googleSearchToggle" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
-                    <span class="ml-2 text-gray-700 dark:text-gray-300 font-semibold">
-                    Google থেকে তথ্য নিন
-                    </span>
-                </label>
-            </div>
         </div>
     </div>
 </div>
@@ -8578,7 +8570,7 @@ body.sidebar-open #sidebarOverlay {
             </div>
         </div>
 
-        <!-- জেমিনি মডেল সিলেকশন (নতুন যুক্ত করা হয়েছে) -->
+        <!-- জেমিনি মডেল সিলেকশন -->
         <div class="setting-item" style="margin-top: 15px;">
             <div class="setting-text" style="flex-grow: 1; margin-right: 15px;">
                 <label for="settingsGeminiModel" class="font-semibold text-gray-700 dark:text-gray-300">জেমিনি মডেল</label>
@@ -8591,6 +8583,18 @@ body.sidebar-open #sidebarOverlay {
                     <option value="gemini-1.0-pro">Pro 1.0</option>
                 </select>
             </div>
+        </div>
+
+        <!-- Google সার্চ টগল (নতুন) -->
+        <div class="setting-item" style="margin-top: 15px;">
+            <div class="setting-text">
+                <label for="settingsGoogleSearchToggle" class="font-semibold text-gray-700 dark:text-gray-300">Google সার্চ</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">জেমিনিকে প্রশ্ন করার সময় Google থেকে লেটেস্ট তথ্য নিবে।</p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="settingsGoogleSearchToggle" checked>
+                <span class="slider round"></span>
+            </label>
         </div>
 
         <!-- সময় এবং তারিখ ব্যানার টগল -->
@@ -10747,10 +10751,6 @@ function initializePrayerTimeTab() {
         const chatWindow = document.getElementById('chatWindow');
         const modelSelection = document.getElementById('modelSelection');
         
-        // --- নতুন: গুগল সার্চ টগল বাটনটি নিন ---
-        const googleSearchToggle = document.getElementById('googleSearchToggle');
-        // --- শেষ: নতুন ---
-
         let chatHistory = window.chatHistory || [];
 
         const promptText = assistantInput.value.trim();
@@ -10794,16 +10794,18 @@ function initializePrayerTimeTab() {
                 return;
             }
 
-            // --- নতুন: Payload-এ Google Search Tool যুক্ত করুন ---
             const payload = {
                 contents: chatHistory
             };
 
-            // যদি টগল বাটনটি চেক করা থাকে, তাহলে payload-এ 'tools' যুক্ত করুন
-            if (googleSearchToggle && googleSearchToggle.checked) {
+            // --- আপডেট: সেটিংস থেকে Google সার্চ স্ট্যাটাস চেক করুন (ডিফল্ট: চালু) ---
+            const isGoogleSearchEnabled = localStorage.getItem('googleSearchEnabled') !== 'false';
+
+            // যদি সেটিংস চালু থাকে, তাহলে payload-এ 'tools' যুক্ত করুন
+            if (isGoogleSearchEnabled) {
                 payload.tools = [{ "google_search": {} }];
             }
-            // --- শেষ: নতুন ---
+            // --- শেষ: আপডেট ---
 
 
 			// --- সেটিংস থেকে গ্লোবাল মডেল ব্যবহার ---
@@ -19996,6 +19998,20 @@ function initializeMoreSettings() {
             const selectedModel = settingsGeminiModel.value;
             localStorage.setItem('geminiModel', selectedModel);
             showCustomAlert(`মডেল পরিবর্তন করা হয়েছে: ${selectedModel}`);
+        });
+    }
+
+    // ০.২. Google সার্চ টগল লজিক (নতুন)
+    const settingsGoogleSearchToggle = document.getElementById('settingsGoogleSearchToggle');
+    if (settingsGoogleSearchToggle) {
+        // ডিফল্ট true, যদি localStorage এ 'false' সেট করা না থাকে
+        const isGoogleSearchEnabled = localStorage.getItem('googleSearchEnabled') !== 'false';
+        settingsGoogleSearchToggle.checked = isGoogleSearchEnabled;
+
+        settingsGoogleSearchToggle.addEventListener('change', () => {
+            const isEnabled = settingsGoogleSearchToggle.checked;
+            localStorage.setItem('googleSearchEnabled', isEnabled);
+            showCustomAlert(`Google সার্চ: ${isEnabled ? 'চালু' : 'বন্ধ'} করা হয়েছে।`);
         });
     }
 	
