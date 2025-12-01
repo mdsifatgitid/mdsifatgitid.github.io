@@ -13544,7 +13544,7 @@ async function handleGeminiTTS() {
     speakBtn.innerText = 'লোড হচ্ছে...';
 
     try {
-        // --- মডেল নির্বাচন এবং যাচাইকরণ লজিক (আপডেটেড) ---
+        // --- মডেল নির্বাচন এবং যাচাইকরণ লজিক ---
         let selectedModel = localStorage.getItem('geminiModel');
         const HARDCODED_TTS_MODEL = "gemini-2.5-flash-preview-tts";
         
@@ -13577,14 +13577,18 @@ async function handleGeminiTTS() {
 
         let result = await response.json();
 
-        // এরর হ্যান্ডলিং (কোটা লিমিট বা অন্য সমস্যা)
+        // এরর হ্যান্ডলিং (কোটা লিমিট, ওভারলোড বা অন্য সমস্যা) - বাংলায় রূপান্তর
         if (result.error) {
             console.error('Gemini TTS API Error:', result.error);
+            const errorMsgLower = (result.error.message || '').toLowerCase();
             
-            // বিশেষ করে কোটা বা লিমিট শেষ হলে কাস্টম বার্তা
-            if (result.error.code === 429 || result.error.message.includes('Resource has been exhausted')) {
+            // বিশেষ এরর কোড বা মেসেজ চেক করে বাংলায় বার্তা
+            if (result.error.code === 429 || errorMsgLower.includes('resource has been exhausted')) {
                 throw new Error('আজকের জন্য TTS জেনারেশনের লিমিট শেষ হয়ে গেছে। অনুগ্রহ করে আগামীকাল চেষ্টা করুন অথবা অন্য API Key ব্যবহার করুন।');
+            } else if (result.error.code === 503 || errorMsgLower.includes('overloaded') || errorMsgLower.includes('busy')) {
+                throw new Error('মডেলটি বর্তমানে অতিরিক্ত ব্যস্ত (Overloaded) রয়েছে। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।');
             } else {
+                // অন্যান্য এরর
                 throw new Error(result.error.message || 'অডিও জেনারেট করতে সমস্যা হয়েছে।');
             }
         }
@@ -13689,6 +13693,9 @@ if (downloadTtsBtn) {
 // ====================================================================
 // END: GEMINI API TEXT-TO-SPEECH (TTS) SCRIPT
 // ====================================================================
+
+
+
 
 
 
