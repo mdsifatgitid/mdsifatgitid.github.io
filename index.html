@@ -7111,48 +7111,42 @@ body.sidebar-open #sidebarOverlay {
 </div>
 
 
-        <!-- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগ -->
-        <div id="textAssistantContent" class="calculator-content">
-            <div class="text-assistant-content">
-                <div class="chat-header">
-                    <h3>জেমিনির সাথে চ্যাট করুন</h3>
-                    <!-- নতুন: মডেল সিলেকশন ড্রপডাউন -->
-                    <select id="modelSelection" class="p-1 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-blue-500 text-sm" title="জেমিনি মডেল পরিবর্তন করুন">
-                        <option value="gemini-2.5-flash-preview-09-2025">Flash 2.5 Preview</option>
-                        <option value="gemini-2.0-flash">Flash 2.0</option>
-                        <option value="gemini-1.5-pro-latest">Pro 1.5</option>
-                        <option value="gemini-1.0-pro">Pro 1.0</option>
-                    </select>
-                    <button id="clearChatBtn" class="clear-chat-button">চ্যাট মুছুন</button>
-                </div>
-                <div id="chatWindow" class="chat-window">
-                    <!-- চ্যাট বার্তা এখানে যুক্ত করা হবে -->
-                </div>
-                <div id="assistantLoading" class="loading-indicator">জেমিনি চিন্তা করছে...</div>
-                <!-- ফাইল প্রিভিউ কন্টেইনার -->
-                <div id="filePreviewContainer" class="hidden mb-2 p-2 border rounded-lg relative">
-                    <!-- প্রিভিউ এখানে JS দ্বারা যুক্ত করা হবে -->
-                </div>
-                <div class="input-container">
-                    <!-- নতুন ফাইল আপলোড বাটন -->
-                    <label for="fileUploadInput" class="flex items-center justify-center p-2.5 rounded-lg bg-gray-200 hover:bg-gray-300 cursor-pointer dark:bg-gray-600 dark:hover:bg-gray-500 transition-colors" title="ফাইল আপলোড করুন">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 dark:text-gray-300"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-                    </label>
-                    <input type="file" id="fileUploadInput" class="hidden" accept="image/png, image/jpeg, image/webp, text/*, audio/*, video/*">
-                    <textarea id="assistantInput" placeholder="এখানে আপনার প্রশ্ন লিখুন..."></textarea>
-                    <button id="askGeminiBtn" class="ask-button">পাঠান</button>
-			<div class="flex items-center justify-center my-3">
-				<label for="googleSearchToggle" class="flex items-center cursor-pointer" title="প্রশ্ন করার সময় গুগল থেকে লাইভ তথ্য নিতে এটি চেক করুন">
-				<input type="checkbox" id="googleSearchToggle" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
-					<span class="ml-2 text-gray-700 dark:text-gray-300 font-semibold">
-					Google থেকে তথ্য নিন
-					</span>
-				</label>
-				</div>
-                </div>
+<!-- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগ -->
+<div id="textAssistantContent" class="calculator-content">
+    <div class="text-assistant-content">
+        <div class="chat-header">
+            <h3>জেমিনির সাথে চ্যাট করুন</h3>
+            <!-- এখান থেকে ড্রপডাউনটি সরানো হয়েছে -->
+            <button id="clearChatBtn" class="clear-chat-button">চ্যাট মুছুন</button>
+        </div>
+        <div id="chatWindow" class="chat-window">
+            <!-- চ্যাট বার্তা এখানে যুক্ত করা হবে -->
+        </div>
+        <div id="assistantLoading" class="loading-indicator">জেমিনি চিন্তা করছে...</div>
+        <!-- ফাইল প্রিভিউ কন্টেইনার -->
+        <div id="filePreviewContainer" class="hidden mb-2 p-2 border rounded-lg relative">
+            <!-- প্রিভিউ এখানে JS দ্বারা যুক্ত করা হবে -->
+        </div>
+        <div class="input-container">
+            <!-- ফাইল আপলোড বাটন -->
+            <label for="fileUploadInput" class="flex items-center justify-center p-2.5 rounded-lg bg-gray-200 hover:bg-gray-300 cursor-pointer dark:bg-gray-600 dark:hover:bg-gray-500 transition-colors" title="ফাইল আপলোড করুন">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 dark:text-gray-300"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+            </label>
+            <input type="file" id="fileUploadInput" class="hidden" accept="image/png, image/jpeg, image/webp, text/*, audio/*, video/*">
+            <textarea id="assistantInput" placeholder="এখানে আপনার প্রশ্ন লিখুন..."></textarea>
+            <button id="askGeminiBtn" class="ask-button">পাঠান</button>
+            <div class="flex items-center justify-center my-3">
+                <label for="googleSearchToggle" class="flex items-center cursor-pointer" title="প্রশ্ন করার সময় গুগল থেকে লাইভ তথ্য নিতে এটি চেক করুন">
+                <input type="checkbox" id="googleSearchToggle" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
+                    <span class="ml-2 text-gray-700 dark:text-gray-300 font-semibold">
+                    Google থেকে তথ্য নিন
+                    </span>
+                </label>
             </div>
         </div>
-        <!-- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগ শেষ -->
+    </div>
+</div>
+<!-- টেক্সট অ্যাসিস্ট্যান্ট (চ্যাট) বিভাগ শেষ -->
 
 <!-- সকল ফিচার বিভাগ -->
 <div id="allFeaturesContent" class="calculator-content">
@@ -8570,11 +8564,11 @@ body.sidebar-open #sidebarOverlay {
     <div class="settings-page-container">
         <h3 class="text-xl font-bold text-gray-700 mb-6 dark:text-gray-200">সেটিংস সমূহ</h3> 
 
-        <!-- জেমিনি API কী সেটিং (নতুন যোগ করা হয়েছে) -->
+        <!-- জেমিনি API কী সেটিং -->
         <div class="setting-item">
             <div class="setting-text" style="flex-grow: 1; margin-right: 15px;">
                 <label for="settingsApiKeyInput" class="font-semibold text-gray-700 dark:text-gray-300">জেমিনি API কী</label>
-                <p class="text-sm text-gray-500 dark:text-gray-400">এআই ফিচার (চ্যাট, অনুবাদ, ওসিআর ইত্যাদি) ব্যবহারের জন্য এখানে আপনার API কী সেভ করুন।</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">এআই ফিচার ব্যবহারের জন্য এখানে আপনার API কী সেভ করুন।</p>
                 <div class="flex gap-2 mt-2">
                     <input type="text" id="settingsApiKeyInput" placeholder="AIzaSy..." class="flex-grow p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-indigo-500 text-sm">
                     <button id="saveSettingsApiKeyBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded text-sm">
@@ -8584,7 +8578,22 @@ body.sidebar-open #sidebarOverlay {
             </div>
         </div>
 
-        <!-- সময় এবং তারিখ ব্যানার টগল (নতুন) -->
+        <!-- জেমিনি মডেল সিলেকশন (নতুন যুক্ত করা হয়েছে) -->
+        <div class="setting-item" style="margin-top: 15px;">
+            <div class="setting-text" style="flex-grow: 1; margin-right: 15px;">
+                <label for="settingsGeminiModel" class="font-semibold text-gray-700 dark:text-gray-300">জেমিনি মডেল</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">অ্যাপের সকল ফিচারের জন্য ডিফল্ট এআই মডেল নির্বাচন করুন।</p>
+                <select id="settingsGeminiModel" class="w-full mt-2 p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-indigo-500">
+                    <option value="gemini-2.5-flash-preview-09-2025">Flash 2.5 Preview (Recommended)</option>
+                    <option value="gemini-2.0-flash">Flash 2.0</option>
+                    <option value="gemini-1.5-pro">Pro 1.5</option>
+                    <option value="gemini-1.5-flash">Flash 1.5</option>
+                    <option value="gemini-1.0-pro">Pro 1.0</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- সময় এবং তারিখ ব্যানার টগল -->
         <div class="setting-item" style="margin-top: 15px;">
             <div class="setting-text">
                 <label for="timeBannerToggle" class="font-semibold text-gray-700 dark:text-gray-300">সময় এবং তারিখ ব্যানার</label>
@@ -8596,7 +8605,7 @@ body.sidebar-open #sidebarOverlay {
             </label>
         </div>
 		
-        <!-- নিউজ টিকার অন/অফ টগল (নতুন) -->
+        <!-- নিউজ টিকার অন/অফ টগল -->
         <div class="setting-item">
             <div class="setting-text">
                 <label for="newsTickerToggle" class="font-semibold text-gray-700 dark:text-gray-300">নিউজ টিকার</label>
@@ -8620,7 +8629,7 @@ body.sidebar-open #sidebarOverlay {
             </label>
         </div>
 		
-        <!-- টাইটেল এনিমেশন টগল (নতুন) -->
+        <!-- টাইটেল এনিমেশন টগল -->
         <div class="setting-item" style="margin-top: 15px;">
             <div class="setting-text">
                 <label for="titleAnimationToggle" class="font-semibold text-gray-700 dark:text-gray-300">টাইটেল এনিমেশন</label>
@@ -8632,26 +8641,25 @@ body.sidebar-open #sidebarOverlay {
             </label>
         </div>	
 		
-<!-- ব্যাকগ্রাউন্ড এনিমেশন টগল (নতুন) -->
-<div class="setting-item" style="margin-top: 15px;">
-    <div class="setting-text">
-        <label for="bgAnimationToggle" class="font-semibold text-gray-700 dark:text-gray-300">ব্যাকগ্রাউন্ড এনিমেশন</label>
-        <p class="text-sm text-gray-500 dark:text-gray-400">ব্যাকগ্রাউন্ডে বাবল ওড়ার এনিমেশন চালু বা বন্ধ করুন। এটি বন্ধ রাখলে CPU ব্যবহার অনেক কমে যাবে।<b style="color:red">(Recommended: Off)</b></p>
-    </div>
-    <label class="switch">
-        <!-- নিচের লাইনে 'checked' অ্যাট্রিবিউটটি সরিয়ে দেওয়া হয়েছে -->
-        <input type="checkbox" id="bgAnimationToggle">
-        <span class="slider round"></span>
-    </label>
-</div>
+        <!-- ব্যাকগ্রাউন্ড এনিমেশন টগল -->
+        <div class="setting-item" style="margin-top: 15px;">
+            <div class="setting-text">
+                <label for="bgAnimationToggle" class="font-semibold text-gray-700 dark:text-gray-300">ব্যাকগ্রাউন্ড এনিমেশন</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">ব্যাকগ্রাউন্ডে বাবল ওড়ার এনিমেশন চালু বা বন্ধ করুন। এটি বন্ধ রাখলে CPU ব্যবহার অনেক কমে যাবে।<b style="color:red">(Recommended: Off)</b></p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="bgAnimationToggle">
+                <span class="slider round"></span>
+            </label>
+        </div>
 		
-<!-- অ্যাপ থিম সিলেকশন -->
+        <!-- অ্যাপ থিম সিলেকশন -->
         <div class="setting-item" style="margin-top: 15px;">
             <div class="setting-text">
                 <label for="appThemeSelect" class="font-semibold text-gray-700 dark:text-gray-300">অ্যাপ থিম</label>
                 <p class="text-sm text-gray-500 dark:text-gray-400">আপনার পছন্দমতো ডিজাইন বেছে নিন।</p>
             </div>
-<select id="appThemeSelect" class="p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-indigo-500">
+            <select id="appThemeSelect" class="p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-indigo-500">
                 <option value="modern">Soft Blue</option>
                 <option value="classic">Classic</option>
                 <option value="nature">Nature</option>
@@ -8660,20 +8668,16 @@ body.sidebar-open #sidebarOverlay {
             </select>
         </div>
 		
-<!-- ক্লিয়ার অ্যাপ ডাটা বাটন -->
+        <!-- ক্লিয়ার অ্যাপ ডাটা বাটন -->
         <div class="setting-item" style="margin-top: 15px;">
             <div class="setting-text">
                 <label class="font-semibold text-gray-700 dark:text-gray-300">অ্যাপ ডাটা মুছুন</label>
-                <p class="text-sm text-gray-500 dark:text-gray-400">সমস্ত সেভ করা ডাটা (নোট, ইনভয়েজ, সেটিংস ইত্যাদি) মুছে ফেলুন। এটি পূর্বাবস্থায় ফেরানো যাবে না।</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">সমস্ত সেভ করা ডাটা (নোট, ইনভয়েজ, সেটিংস ইত্যাদি) মুছে ফেলুন।</p>
             </div>
             <button id="clearAppDataBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
                 মুছুন
             </button>
         </div>
-<!-- ভবিষ্যতে আরও সেটিংস এখানে যোগ করা যাবে -->
-
-
-<!-- ভবিষ্যতে আরও সেটিংস এখানে যোগ করা যাবে -->
 
     </div>
 </div>
@@ -10801,9 +10805,9 @@ function initializePrayerTimeTab() {
             }
             // --- শেষ: নতুন ---
 
-            // --- পরিবর্তিত ---
-            // ড্রপডাউন থেকে সিলেক্ট করা মডেল ব্যবহার করুন
-            const model = modelSelection ? modelSelection.value : "gemini-2.5-flash-preview-09-2025"; // আপডেটেড ফলব্যাক
+
+			// --- সেটিংস থেকে গ্লোবাল মডেল ব্যবহার ---
+            const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
             // --- পরিবর্তন শেষ ---
 
@@ -10828,7 +10832,7 @@ function initializePrayerTimeTab() {
                 });
                 window.chatHistory = chatHistory;
             } else {
-                geminiText = 'দুঃখিত, আমি কোনো উত্তর খুঁজে পাইনি। অনুগ্রহ করে আবার চেষ্টা করুন।';
+                geminiText = 'দুঃখিত, আমি কোনো উত্তর খুঁজে পাইনি। অনুগ্রহ করে আবার চেষ্টা করুন। অথবা এপিআইটি বৈধ বা সঠিক নয়, চেক করুন।';
                 console.error('API Response Error:', result);
             }
             addMessageToChat(geminiText, 'gemini');
@@ -13207,7 +13211,9 @@ case 'scientific':
                             const payload = {
                                 contents: chatHistory
                             };
-                            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+             // --- গ্লোবাল মডেল ব্যবহার ---
+            const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
                             const response = await fetch(apiUrl, {
                                 method: 'POST',
@@ -13288,7 +13294,9 @@ case 'scientific':
                             const payload = {
                                 contents: chatHistory
                             };
-                            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+           // --- গ্লোবাল মডেল ব্যবহার ---
+            const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
                             const response = await fetch(apiUrl, {
                                 method: 'POST',
@@ -13399,7 +13407,9 @@ case 'scientific':
                         const payload = {
                             contents: chatHistory
                         };
-                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+       // --- গ্লোবাল মডেল ব্যবহার ---
+        const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
                         const response = await fetch(apiUrl, {
                             method: 'POST',
@@ -13442,22 +13452,24 @@ case 'scientific':
 // ====================================================================
 // START: GEMINI API TEXT-TO-SPEECH (TTS) SCRIPT
 // ====================================================================
+
+// TTS এর জন্য প্রয়োজনীয় উপাদান নির্বাচন
 const ttsInput = document.getElementById('ttsInput');
 const speakBtn = document.getElementById('speakBtn');
 const pauseBtn = document.getElementById('pauseBtn');
 const resumeBtn = document.getElementById('resumeBtn');
 const stopBtn = document.getElementById('stopBtn');
 const clearTtsBtn = document.getElementById('clearTtsBtn');
-const downloadTtsBtn = document.getElementById('downloadTtsBtn'); // ডাউনলোড বাটন
+const downloadTtsBtn = document.getElementById('downloadTtsBtn');
 
 // ভয়েস এবং পিচ/রেট কন্ট্রোলগুলি এখন জেমিনি দ্বারা নিয়ন্ত্রিত হবে, তাই UI থেকে সরানো হয়েছে
 const ttsControls = document.querySelector('.tts-controls');
 if (ttsControls) ttsControls.style.display = 'none';
 
-let ttsAudio; // অডিও অবজেক্ট সংরক্ষণ করার জন্য
-let downloadableAudioBlob = null; // ডাউনলোডযোগ্য অডিও ব্লব সংরক্ষণ করার জন্য
+let ttsAudio; // অডিও প্লেয়ার অবজেক্ট
+let downloadableAudioBlob = null; // ডাউনলোডের জন্য অডিও ডেটা
 
-// Base64 থেকে ArrayBuffer এ রূপান্তর করার জন্য হেল্পার ফাংশন
+// Base64 স্ট্রিং থেকে ArrayBuffer এ রূপান্তর করার হেল্পার ফাংশন
 function base64ToArrayBuffer(base64) {
     const binaryString = window.atob(base64);
     const len = binaryString.length;
@@ -13468,7 +13480,7 @@ function base64ToArrayBuffer(base64) {
     return bytes.buffer;
 }
 
-// PCM ডেটা থেকে WAV ফাইল তৈরি করার জন্য হেল্পার ফাংশন
+// PCM অডিও ডেটা থেকে WAV ফাইল তৈরি করার হেল্পার ফাংশন
 function pcmToWav(pcmData, sampleRate) {
     const header = new ArrayBuffer(44);
     const view = new DataView(header);
@@ -13477,34 +13489,31 @@ function pcmToWav(pcmData, sampleRate) {
     const blockAlign = numChannels * bitsPerSample / 8;
     const byteRate = sampleRate * blockAlign;
 
-    // RIFF chunk descriptor
-    writeString(view, 0, 'RIFF');
-    view.setUint32(4, 36 + pcmData.byteLength, true);
-    writeString(view, 8, 'WAVE');
-    // "fmt " sub-chunk
-    writeString(view, 12, 'fmt ');
-    view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true); // Audio format 1 for PCM
-    view.setUint16(22, numChannels, true);
-    view.setUint32(24, sampleRate, true);
-    view.setUint32(28, byteRate, true);
-    view.setUint16(32, blockAlign, true);
-    view.setUint16(34, bitsPerSample, true);
-    // "data" sub-chunk
-    writeString(view, 36, 'data');
-    view.setUint32(40, pcmData.byteLength, true);
-
     function writeString(view, offset, string) {
         for (let i = 0; i < string.length; i++) {
             view.setUint8(offset + i, string.charCodeAt(i));
         }
     }
 
-    return new Blob([header, pcmData], {
-        type: 'audio/wav'
-    });
+    // WAV হেডার তৈরি
+    writeString(view, 0, 'RIFF');
+    view.setUint32(4, 36 + pcmData.byteLength, true);
+    writeString(view, 8, 'WAVE');
+    writeString(view, 12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true); // PCM ফরম্যাট
+    view.setUint16(22, numChannels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, byteRate, true);
+    view.setUint16(32, blockAlign, true);
+    view.setUint16(34, bitsPerSample, true);
+    writeString(view, 36, 'data');
+    view.setUint32(40, pcmData.byteLength, true);
+
+    return new Blob([header, pcmData], { type: 'audio/wav' });
 }
 
+// জেমিনি API ব্যবহার করে টেক্সট থেকে অডিও তৈরি করার মূল ফাংশন
 async function handleGeminiTTS() {
     const textToSpeak = ttsInput.value.trim();
     if (!textToSpeak) {
@@ -13512,13 +13521,14 @@ async function handleGeminiTTS() {
         return;
     }
 
+    // গ্লোবাল সেটিংস থেকে API কী নেওয়া হচ্ছে
     const apiKey = localStorage.getItem('geminiApiKey');
     if (!apiKey) {
-        showCustomAlert('জেমিনি API কী সেট করা হয়নি।');
+        showCustomAlert('জেমিনি API কী সেট করা হয়নি। অনুগ্রহ করে সেটিংস থেকে API কী সেট করুন।');
         return;
     }
 
-    // আগের অডিও বন্ধ করুন এবং ডাউনলোড বাটন নিষ্ক্রিয় করুন
+    // আগের অডিও বন্ধ এবং রিসেট করা
     if (ttsAudio) {
         ttsAudio.pause();
         ttsAudio.currentTime = 0;
@@ -13530,19 +13540,17 @@ async function handleGeminiTTS() {
     speakBtn.innerText = 'লোড হচ্ছে...';
 
     try {
+        // --- গ্লোবাল মডেল ব্যবহার (আপডেট করা হয়েছে) ---
+        // সেটিংস থেকে মডেল নেওয়া হচ্ছে, না থাকলে ডিফল্ট TTS মডেল ব্যবহার করা হবে
+        const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-tts";
+
         const payload = {
-            contents: [{
-                parts: [{
-                    text: textToSpeak
-                }]
-            }],
-            generationConfig: {
-                responseModalities: ["AUDIO"]
-            },
-            model: "gemini-2.5-flash-preview-tts"
+            contents: [{ parts: [{ text: textToSpeak }] }],
+            generationConfig: { responseModalities: ["AUDIO"] }
         };
 
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        
         const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
@@ -13552,27 +13560,31 @@ async function handleGeminiTTS() {
         });
 
         const result = await response.json();
+        
+        // রেসপন্স থেকে অডিও ডেটা এক্সট্রাক্ট করা
         const part = result?.candidates?.[0]?.content?.parts?.[0];
         const audioData = part?.inlineData?.data;
         const mimeType = part?.inlineData?.mimeType;
 
         if (audioData && mimeType && mimeType.startsWith("audio/")) {
+            // স্যাম্পল রেট বের করা (ডিফল্ট ২৪০০০)
             const sampleRateMatch = mimeType.match(/rate=(\d+)/);
-            if (!sampleRateMatch) throw new Error("স্যাম্পেল রেট পাওয়া যায়নি।");
-
-            const sampleRate = parseInt(sampleRateMatch[1], 10);
+            const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 24000;
+            
+            // অডিও প্রসেসিং
             const pcmData = base64ToArrayBuffer(audioData);
             const pcm16 = new Int16Array(pcmData);
             const wavBlob = pcmToWav(pcm16, sampleRate);
             
-            downloadableAudioBlob = wavBlob; // ডাউনলোড করার জন্য ব্লব সংরক্ষণ করুন
+            downloadableAudioBlob = wavBlob; // ডাউনলোডের জন্য সংরক্ষণ
             
             const audioUrl = URL.createObjectURL(wavBlob);
-
             ttsAudio = new Audio(audioUrl);
+            
+            // অডিও প্লে করা
             ttsAudio.play();
             
-            if (downloadTtsBtn) downloadTtsBtn.disabled = false; // ডাউনলোড বাটন সক্রিয় করুন
+            if (downloadTtsBtn) downloadTtsBtn.disabled = false;
 
             ttsAudio.onended = () => {
                 speakBtn.innerText = 'লোড করুন';
@@ -13580,7 +13592,11 @@ async function handleGeminiTTS() {
             };
 
         } else {
-            throw new Error('API থেকে কোনো অডিও ডেটা পাওয়া যায়নি।');
+            // যদি মডেলটি অডিও সাপোর্ট না করে বা অন্য কোনো এরর হয়
+            if (result.error) {
+                throw new Error(result.error.message);
+            }
+            throw new Error('API থেকে কোনো অডিও ডেটা পাওয়া যায়নি। সম্ভবত নির্বাচিত মডেলটি অডিও জেনারেশন সমর্থন করে না।');
         }
     } catch (error) {
         console.error('Gemini TTS Error:', error);
@@ -13591,19 +13607,28 @@ async function handleGeminiTTS() {
     }
 }
 
+// ইভেন্ট লিসেনার যোগ করা
 if (speakBtn) speakBtn.addEventListener('click', handleGeminiTTS);
-if (pauseBtn) pauseBtn.addEventListener('click', () => ttsAudio?.pause());
-if (resumeBtn) resumeBtn.addEventListener('click', () => ttsAudio?.play());
+
+if (pauseBtn) pauseBtn.addEventListener('click', () => {
+    if (ttsAudio) ttsAudio.pause();
+});
+
+if (resumeBtn) resumeBtn.addEventListener('click', () => {
+    if (ttsAudio) ttsAudio.play();
+});
+
 if (stopBtn) stopBtn.addEventListener('click', () => {
     if (ttsAudio) {
         ttsAudio.pause();
         ttsAudio.currentTime = 0;
         speakBtn.innerText = 'লোড করুন';
         speakBtn.disabled = false;
-        if (downloadTtsBtn) downloadTtsBtn.disabled = true; // Stop করলে ডাউনলোড বাটন নিষ্ক্রিয় করুন
+        if (downloadTtsBtn) downloadTtsBtn.disabled = true;
         downloadableAudioBlob = null;
     }
 });
+
 if (clearTtsBtn) clearTtsBtn.addEventListener('click', () => {
     ttsInput.value = '';
     if (ttsAudio) {
@@ -13612,11 +13637,11 @@ if (clearTtsBtn) clearTtsBtn.addEventListener('click', () => {
     }
     speakBtn.innerText = 'লোড করুন';
     speakBtn.disabled = false;
-    if (downloadTtsBtn) downloadTtsBtn.disabled = true; // Clear করলে ডাউনলোড বাটন নিষ্ক্রিয় করুন
+    if (downloadTtsBtn) downloadTtsBtn.disabled = true;
     downloadableAudioBlob = null;
 });
 
-// ডাউনলোড বাটনের জন্য নতুন ইভেন্ট লিসেনার
+// ডাউনলোড বাটনের কার্যকারিতা
 if (downloadTtsBtn) {
     downloadTtsBtn.addEventListener('click', () => {
         if (downloadableAudioBlob) {
@@ -13634,6 +13659,7 @@ if (downloadTtsBtn) {
         }
     });
 }
+
 // ====================================================================
 // END: GEMINI API TEXT-TO-SPEECH (TTS) SCRIPT
 // ====================================================================
@@ -13705,8 +13731,9 @@ async function transcribeAudioWithGemini(audioFile) {
                 }]
             };
 
-            const model = "gemini-2.5-flash-preview-09-2025"; // This model supports multimodal input
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+            // --- গ্লোবাল মডেল ব্যবহার ---
+            const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -13925,8 +13952,9 @@ async function handleTranslate() {
                 parts: [{ text: prompt }]
             }]
         };
-        const model = "gemini-2.5-flash-preview-09-2025";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        // --- গ্লোবাল মডেল ব্যবহার ---
+        const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -14129,8 +14157,9 @@ if (extractTextBtn) {
                 }]
             };
 
-            const model = "gemini-2.5-flash-preview-09-2025";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+           // --- গ্লোবাল মডেল ব্যবহার ---
+            const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -17721,7 +17750,8 @@ function initializeHolidayListTab() {
             const payload = {
                 contents: [{ parts: [{ text: prompt }] }]
             };
-            const model = "gemini-2.5-flash-preview-09-2025";
+            // --- গ্লোবাল মডেল ব্যবহার ---
+            const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
@@ -17951,8 +17981,9 @@ async function fetchQuizDataFromGemini(category, difficulty, count) {
         `;
         
         const payload = { contents: [{ parts: [{ text: prompt }] }] };
-        const model = "gemini-2.5-flash-preview-09-2025";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        // --- গ্লোবাল মডেল ব্যবহার ---
+        const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -19919,7 +19950,7 @@ function initializeImageResizer() {
 // END: Image Resizer Script
 // ========================================================
 
-
+    
 // ====================================================================
 // START: আরও সেটিংস (More Settings) TAB SCRIPT (Updated)
 // ====================================================================
@@ -19952,7 +19983,22 @@ function initializeMoreSettings() {
                 }
             };
         }
-		
+
+    // ০.১. জেমিনি মডেল সিলেকশন লজিক (নতুন)
+    const settingsGeminiModel = document.getElementById('settingsGeminiModel');
+    if (settingsGeminiModel) {
+        // লোড করার সময় সেভ করা মডেল বা ডিফল্ট মডেল সেট করুন
+        const savedModel = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+        settingsGeminiModel.value = savedModel;
+
+        // পরিবর্তন হলে সেভ করুন
+        settingsGeminiModel.addEventListener('change', () => {
+            const selectedModel = settingsGeminiModel.value;
+            localStorage.setItem('geminiModel', selectedModel);
+            showCustomAlert(`মডেল পরিবর্তন করা হয়েছে: ${selectedModel}`);
+        });
+    }
+	
     // ১. নিউজ টিকার অন/অফ টগল লজিক
     const newsTickerToggle = document.getElementById('newsTickerToggle');
     const newsTickerContainer = document.getElementById('news-ticker-container');
@@ -20241,8 +20287,9 @@ async function fetchDailyHistory() {
         `;
 
         const payload = { contents: [{ parts: [{ text: prompt }] }] };
-        const model = "gemini-2.5-flash-preview-09-2025";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        // --- গ্লোবাল মডেল ব্যবহার ---
+        const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
             method: 'POST',
