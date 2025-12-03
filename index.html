@@ -335,6 +335,55 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
+        /* --- নতুন: ফুলস্ক্রিন মোড ক্লাস --- */
+        .main-container.full-width {
+            max-width: 98% !important; /* দুই পাশের ফাঁকা স্থান কমিয়ে পুরো স্ক্রিন জুড়ে থাকবে */
+        }
+/* ফুলস্ক্রিন মোডে ভেতরের কন্টেন্টগুলোর প্রশস্ততা বাড়ানো */
+        .main-container.full-width .font-converter-content,
+        .main-container.full-width .text-assistant-content,
+        .main-container.full-width .translator-content,
+        .main-container.full-width .notepad-container,
+        .main-container.full-width .image-to-text-content,
+        .main-container.full-width .word-counter-content,
+        .main-container.full-width .spell-checker-content,
+        .main-container.full-width .text-beautifier-content,
+        .main-container.full-width .word-meaning-content,
+        .main-container.full-width .tts-content,
+        .main-container.full-width .stt-content,
+        .main-container.full-width .typing-test-content,
+        .main-container.full-width .measurement-content,
+        .main-container.full-width .qr-code-content,
+        .main-container.full-width .prayer-time-content,
+        .main-container.full-width .clock-container,
+        .main-container.full-width .player-container,
+        .main-container.full-width .emergency-numbers-content,
+        .main-container.full-width .zakat-calculator-content,
+        .main-container.full-width .days-observances-container,
+        .main-container.full-width .history-page-container,
+        .main-container.full-width .settings-page-container,
+        .main-container.full-width .news-content,
+        .main-container.full-width .health-lifestyle-content,
+        .main-container.full-width .quiz-setup-container, 
+        .main-container.full-width .quiz-container, 
+        .main-container.full-width .quiz-result-container,
+        .main-container.full-width .donate-section,
+        .main-container.full-width .important-links-container,
+        .main-container.full-width .color-picker-container,
+        .main-container.full-width .age-calculator-content,
+        .main-container.full-width .date-time-content,
+        .main-container.full-width .weather-content,
+        .main-container.full-width .scientific-calculator-content,
+        .main-container.full-width .image-resizer-controls,
+        .main-container.full-width #invoice-container {
+            max-width: 100% !important;
+        }
+        
+        /* ফুলস্ক্রিন মোডে সাধারণ ক্যালকুলেটর খুব বেশি বড় হলে দেখতে খারাপ লাগবে, তাই একটু লিমিট রাখা হলো */
+        .main-container.full-width .calculator-grid {
+             max-width: 500px; 
+             width: 100%;
+        }		
 
         /* ৩. ট্যাব বাটন (ভেরিয়েবল ব্যবহার করে আপডেট করা) */
         .tab-button {
@@ -8668,6 +8717,18 @@ body.sidebar-open #sidebarOverlay {
 				<option value="purple">Royal Purple</option>
 				<option value="sunset">Sunset</option>
             </select>
+        </div>
+
+        <!-- নতুন: ফুলস্ক্রিন মোড টগল -->
+        <div class="setting-item" style="margin-top: 15px;">
+            <div class="setting-text">
+                <label for="fullscreenToggle" class="font-semibold text-gray-700 dark:text-gray-300">ফুলস্ক্রিন মোড</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">দুই পাশের ফাঁকা জায়গা কমিয়ে পুরো পেজ জুড়ে দেখুন।</p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="fullscreenToggle">
+                <span class="slider round"></span>
+            </label>
         </div>
 		
         <!-- ক্লিয়ার অ্যাপ ডাটা বাটন -->
@@ -20184,6 +20245,30 @@ function initializeMoreSettings() {
             }
         });
     }
+
+    // ৮. নতুন: ফুলস্ক্রিন মোড টগল লজিক
+    const fullscreenToggle = document.getElementById('fullscreenToggle');
+    const mainContainer = document.querySelector('.main-container');
+
+    if (fullscreenToggle && mainContainer) {
+        // সেটিংস লোড করা
+        const isFullscreenEnabled = localStorage.getItem('fullscreenMode') === 'true';
+        fullscreenToggle.checked = isFullscreenEnabled;
+        
+        // টগল ইভেন্ট লিসেনার
+        fullscreenToggle.addEventListener('change', () => {
+            const isEnabled = fullscreenToggle.checked;
+            localStorage.setItem('fullscreenMode', isEnabled);
+            
+            if (isEnabled) {
+                mainContainer.classList.add('full-width');
+            } else {
+                mainContainer.classList.remove('full-width');
+            }
+            showCustomAlert(`ফুলস্ক্রিন মোড: ${isEnabled ? 'চালু' : 'বন্ধ'} করা হয়েছে।`);
+        });
+    }
+	
 }
 
 // থিম অ্যাপ্লাই করার হেল্পার ফাংশন
@@ -20200,6 +20285,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('selectedAppTheme') || 'modern';
     applyAppTheme(savedTheme);
 
+    // --- নতুন: ফুলস্ক্রিন মোড অ্যাপ্লাই করা ---
+    const isFullscreenEnabled = localStorage.getItem('fullscreenMode') === 'true';
+    const mainContainer = document.querySelector('.main-container');
+    if (isFullscreenEnabled && mainContainer) {
+        mainContainer.classList.add('full-width');
+    }
+	
     // ব্যাকগ্রাউন্ড এনিমেশন ইনিশিয়ালাইজেশন (পেজ লোডের সময় ফ্লিকার এড়াতে) - আপডেট করা হয়েছে
     const bgArea = document.querySelector('.area');
     const bgCircles = document.querySelector('.circles');
