@@ -13604,29 +13604,44 @@ async function handleGeminiTTS() {
     speakBtn.innerText = 'লোড হচ্ছে...';
 
     try {
-        // --- স্মার্ট মডেল সিলেকশন লজিক ---
+        // --- স্মার্ট মডেল সিলেকশন লজিক (সংশোধিত) ---
+        // Google Doc অনুযায়ী: 'native-audio' মডেলগুলো Live API (WebSocket) এর জন্য।
+        // সাধারণ HTTP রিকোয়েস্ট (generateContent) এর জন্য 'gemini-2.5-flash-preview-tts' ব্যবহার করতে হবে।
+        
         let selectedModel = localStorage.getItem('geminiModel');
-        const HARDCODED_TTS_MODEL = "gemini-2.5-flash-preview-tts";
+        const REST_SUPPORTED_TTS_MODEL = "gemini-2.5-flash-preview-tts"; // এটি নিশ্চিতভাবে কাজ করে
         let modelToUse;
         
-        // ধাপ ১: ব্রাউজারের ভেতরেই চেক করা হচ্ছে (কোনো সার্ভার রিকোয়েস্ট ছাড়া)
-        if (selectedModel && selectedModel.toLowerCase().includes('tts')) {
-            // যদি নামের শেষে 'tts' থাকে, তাহলে সেই মডেলই ব্যবহার হবে
+        // যদি ইউজার সেটিংসে এমন কোনো মডেল সিলেক্ট করে যা 'native-audio' ধারণ করে, 
+        // তবে আমরা জোর করে সঠিক REST সাপোর্টেড মডেলে সুইচ করব।
+        if (selectedModel && selectedModel.includes('native-audio')) {
+            console.log(`Model fallback: '${selectedModel}' is a Live API model. Switching to '${REST_SUPPORTED_TTS_MODEL}' for REST compatibility.`);
+            modelToUse = REST_SUPPORTED_TTS_MODEL;
+        } 
+        // যদি ইউজার অন্য কোনো ভ্যালিড TTS মডেল সিলেক্ট করে থাকে
+        else if (selectedModel && selectedModel.includes('tts')) {
             modelToUse = selectedModel;
-            console.log(`Local Check: Selected model supports TTS (${modelToUse}).`);
-        } else {
-            // ধাপ ২: যদি 'tts' না থাকে, তবে সরাসরি হার্ডকোডেড মডেল সেট করা হচ্ছে।
-            // এর ফলে ভুল মডেলে রিকোয়েস্ট গিয়ে সময় নষ্ট হবে না।
-            modelToUse = HARDCODED_TTS_MODEL;
-            console.log(`Local Check: Selected model (${selectedModel}) doesn't support TTS. Switching directly to ${modelToUse}.`);
+        } 
+        // ডিফল্ট ফলব্যাক
+        else {
+            modelToUse = REST_SUPPORTED_TTS_MODEL;
         }
 
         const payload = {
             contents: [{ parts: [{ text: textToSpeak }] }],
-            generationConfig: { responseModalities: ["AUDIO"] }
+            generationConfig: { 
+                responseModalities: ["AUDIO"],
+                speechConfig: {
+                    voiceConfig: {
+                        prebuiltVoiceConfig: {
+                            voiceName: "Kore" // ডিফল্ট ভয়েস
+                        }
+                    }
+                }
+            }
         };
 
-        // ধাপ ৩: শুধুমাত্র সঠিক মডেলটিতেই রিকোয়েস্ট পাঠানো হচ্ছে
+        // সঠিক এন্ডপয়েন্ট এবং মডেল ব্যবহার করা হচ্ছে
         let apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelToUse}:generateContent?key=${apiKey}`;
         
         let response = await fetch(apiUrl, {
@@ -13650,10 +13665,10 @@ async function handleGeminiTTS() {
                 throw new Error('আজকের জন্য আপনার কোটা শেষ হয়ে গেছে। দয়া করে আগামীকাল চেষ্টা করুন অথবা নতুন API Key ব্যবহার করুন।');
             } else if (errorCode === 503 || errorMsgLower.includes('overloaded') || errorMsgLower.includes('busy')) {
                 throw new Error('সার্ভার বর্তমানে অতিরিক্ত ব্যস্ত (Model Overloaded)। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।');
-            } else if (errorCode === 400 || errorMsgLower.includes('invalid argument')) {
-                throw new Error('অনুরোধটি সঠিক নয়। ইনপুট টেক্সট চেক করুন।');
+            } else if (errorCode === 400 || errorMsgLower.includes('invalid argument') || errorMsgLower.includes('not supported')) {
+                throw new Error(`মডেলটি এই রিকোয়েস্ট সাপোর্ট করছে না। আমরা অটোমেটিক ফিক্স করার চেষ্টা করেছি, কিন্তু সমস্যাটি রয়ে গেছে। (${result.error.message})`);
             } else {
-                throw new Error('অডিও জেনারেট করতে সমস্যা হয়েছে। দয়া করে ইন্টারনেট সংযোগ চেক করুন।');
+                throw new Error(`অডিও জেনারেট করতে সমস্যা হয়েছে। (${result.error.message})`);
             }
         }
         
@@ -20770,16 +20785,13 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- End: SCRIPT PART 2 FOR GLOBAL VISITOR COUNTER (FIREBASE-->
 <!-- ====================================================================-->
 	
-</body>
-
-
 <!-- ====================================================================-->
 <!-- START: SIDEBAR SCRIPT-->
 <!-- ====================================================================-->
 
 <!-- Sidebar Toggle Button -->
 <button id="sidebarToggle" class="fixed top-4 left-4 z-40 w-12 h-12 bg-indigo-600 text-white rounded-full shadow-lg flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-transform duration-300 ease-in-out hover:bg-indigo-700">
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
 </button>
 
 <!-- Sidebar Menu -->
@@ -20830,4 +20842,5 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- END: SIDEBAR SCRIPT-->
 <!-- ====================================================================-->
 
+</body>
 </html>
