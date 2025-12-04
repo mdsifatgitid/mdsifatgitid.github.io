@@ -15800,6 +15800,7 @@ const pasteButtonRight = document.getElementById('pasteButtonRight');
 // ====================================================================
 // END: ANSI FIX AND PASTE FOR LIVE CONVERT
 // ====================================================================
+
 // ====================================================================
 // START: LIVE CONVERT TOGGLE FUNCTIONALITY (রিফ্রেশ-সহ আপডেট করা হয়েছে)
 // ====================================================================
@@ -15812,10 +15813,14 @@ if (liveConvertToggle && textAreaLeftForLive && textAreaRightForLive) {
 
     // --- নতুন: পেইজ লোড হওয়ার সময় সেভ করা মোড লোড করুন ---
     const savedLiveConvertMode = localStorage.getItem('liveConvertMode');
-    if (savedLiveConvertMode === 'true') {
-        liveConvertToggle.checked = true;
+    
+    // পরিবর্তন: ডিফল্টভাবে অন (true) রাখার জন্য লজিক আপডেট করা হয়েছে
+    // যদি ব্যবহারকারী আগে ম্যানুয়ালি বন্ধ করে থাকেন ('false'), তবেই এটি বন্ধ থাকবে।
+    // অন্যথায় (প্রথমবার লোড বা 'true') এটি চালু থাকবে।
+    if (savedLiveConvertMode === 'false') {
+        liveConvertToggle.checked = false;
     } else {
-        liveConvertToggle.checked = false; // ডিফল্ট 'false'
+        liveConvertToggle.checked = true; // ডিফল্ট 'true' (অন)
     }
 
     // --- নতুন: টগল করার সময় মোড সেভ করুন ---
