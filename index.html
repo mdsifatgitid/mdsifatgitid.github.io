@@ -445,12 +445,12 @@
 /* ========================================= */
 
 
-        /* মৌলিক ক্যালকুলেটর স্টাইল */
+/* মৌলিক ক্যালকুলেটর স্টাইল */
         .basic-calculator-wrapper {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            align-items: stretcht; 
+            align-items: stretch; /* পরিবর্তন: flex-start থেকে stretch করা হয়েছে যাতে উচ্চতা সমান থাকে */
             gap: 20px;
         }
 
@@ -463,8 +463,9 @@
             border-radius: 20px; /* গোলাকার কোণ */
             background-color: #263238; /* গাঢ় ধূসর/নীল ক্যালকুলেটর ব্যাকগ্রাউন্ড */
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* ছায়া */
-            /* margin: 0 auto; Removed as parent flex handles centering */
-            max-width: 380px; /* মৌলিক ক্যালকুলেটরের জন্য বর্ধিত প্রস্থ */
+            width: 100%; /* রেস্পন্সিভ হওয়ার জন্য */
+            max-width: 400px !important; /* প্রস্থ ফিক্স করা হয়েছে */
+            min-height: 450px; /* নতুন: দৈর্ঘ্য বা উচ্চতা বাড়ানো হয়েছে */
         }
         .output {
             grid-column: 1 / -1; /* ডিসপ্লে পূর্ণ প্রস্থ জুড়ে বিস্তৃত */
@@ -491,7 +492,7 @@
         }
         .output .current-operand {
             color: white; /* বর্তমান অপারেশনের রঙ */
-            font-size: 2.8rem; /* ফন্ট সাইজ কমানো হয়েছে */
+            font-size: 2.5rem; /* ফন্ট সাইজ সামান্য সামঞ্জস্য করা হয়েছে */
             word-wrap: break-word; /* দীর্ঘ সংখ্যা ভাঙুন */
             word-break: break-all; /* দীর্ঘ সংখ্যা ভাঙুন */
             align-self: flex-end; /* ডানদিকে সারিবদ্ধ করুন */
@@ -546,8 +547,12 @@
             padding: 20px;
             border-radius: 20px;
             width: 100%;
-            max-width: 300px;
+            max-width: 400px !important;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            /* নতুন: ফ্লেক্সবক্স ব্যবহার করে পুরো উচ্চতা নেওয়া হয়েছে */
+            display: flex;
+            flex-direction: column;
+            min-height: 450px; /* ক্যালকুলেটরের সমান মিনিমাম হাইট */
         }
         .history-header {
             display: flex;
@@ -575,7 +580,8 @@
             background-color: #d32f2f;
         }
         #history-list {
-            height: 350px;
+            
+            flex-grow: 1; 
             overflow-y: auto;
             list-style: none;
             padding: 0;
