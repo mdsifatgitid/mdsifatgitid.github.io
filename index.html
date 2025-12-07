@@ -465,7 +465,7 @@
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* ছায়া */
             width: 100%; /* রেস্পন্সিভ হওয়ার জন্য */
             max-width: 400px !important; /* প্রস্থ ফিক্স করা হয়েছে */
-            min-height: 450px; /* নতুন: দৈর্ঘ্য বা উচ্চতা বাড়ানো হয়েছে */
+            min-height: 445px; /* নতুন: দৈর্ঘ্য বা উচ্চতা বাড়ানো হয়েছে */
         }
         .output {
             grid-column: 1 / -1; /* ডিসপ্লে পূর্ণ প্রস্থ জুড়ে বিস্তৃত */
@@ -552,7 +552,7 @@
             /* নতুন: ফ্লেক্সবক্স ব্যবহার করে পুরো উচ্চতা নেওয়া হয়েছে */
             display: flex;
             flex-direction: column;
-            height: 450px; /* ক্যালকুলেটরের সমান হাইট ফিক্স করা হয়েছে যাতে স্ক্রোলবার আসে */
+            height: 445px; /* ক্যালকুলেটরের সমান হাইট ফিক্স করা হয়েছে যাতে স্ক্রোলবার আসে */
         }
         .history-header {
             display: flex;
@@ -11238,7 +11238,7 @@ initializeTimeConverter();
 // START: UNDO REDO FOR FONT CONVERTER (History Limit Added)
 // ====================================================================
         // টেক্সটএরিয়াগুলির জন্য আনডু/রিডু ইতিহাস
-        const MAX_HISTORY_SIZE = 50; // সর্বোচ্চ ৫০টি ধাপ মনে রাখবে (মেমোরি বাঁচাতে)
+        const MAX_HISTORY_SIZE = 300; // সর্বোচ্চ ৩০০টি ধাপ মনে রাখবে (মেমোরি বাঁচাতে)
         let historyLeft = [];
         let historyIndexLeft = -1;
         let historyRight = [];
