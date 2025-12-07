@@ -13104,13 +13104,13 @@ case 'scientific':
                     });
                 });
 
-                // কীবোর্ড ইনপুট সমর্থন
+                // কীবোর্ড ইনপুট সমর্থন (আপডেটেড: Delete বাটন সাপোর্ট যোগ করা হয়েছে)
                 if (scientificExpressionInput) {
                     scientificExpressionInput.addEventListener('keydown', (e) => {
                         if (e.key === 'Enter') {
                             e.preventDefault();
                             evaluateScientificExpression();
-                        } else if (e.key === 'Escape') {
+                        } else if (e.key === 'Escape' || e.key === 'Delete') { // Escape অথবা Delete চাপলে ক্লিয়ার হবে
                             scientificExpressionInput.value = '';
                             lastSciCursorPos = 0;
                             if (scientificHistoryDisplay) scientificHistoryDisplay.innerText = '';
@@ -13230,8 +13230,6 @@ case 'scientific':
 // ====================================================================
 // END:  বৈজ্ঞানিক ক্যালকুলেটর লজিক
 // ====================================================================
-
-
 
 // ====================================================================
 // START: AUTO REPLACE FOR FONT CONVERTER য় ড় ঢ়
