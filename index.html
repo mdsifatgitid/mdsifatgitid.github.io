@@ -12179,6 +12179,7 @@ case 'scientific':
                         this.previousOperandTextElement = previousOperandTextElement;
                         this.currentOperandTextElement = currentOperandTextElement;
                         this.clear();
+                        this.loadHistory(); // ক্যালকুলেটর লোড হওয়ার সময় হিস্টোরি লোড হবে
                     }
 
                     clear() {
@@ -12346,17 +12347,37 @@ case 'scientific':
                         }
                     }
 
-                    // Basic Calculator History function (Updated: No Limit)
+                    // Basic Calculator History function (Updated: Persistent & No Limit)
                     addHistoryEntry(entry) {
                         const historyList = document.getElementById('history-list');
                         if (historyList) {
                             const listItem = document.createElement('li');
                             listItem.innerText = entry;
                             historyList.prepend(listItem); // Add to top of list
-                            
-                            // আগে ২০টি আইটেমের লিমিট ছিল, এখন সেটি সরিয়ে দেওয়া হয়েছে
-                            // যাতে যতক্ষণ ক্যালকুলেটর ব্যবহার করবেন ততক্ষণ সব হিস্টোরি থাকে।
+                            this.saveHistoryToStorage(entry); // লোকাল স্টোরেজে সেভ করুন
                         }
+                    }
+
+                    // নতুন: হিস্টোরি সেভ করার ফাংশন
+                    saveHistoryToStorage(entry) {
+                        let history = JSON.parse(localStorage.getItem('basicCalcHistory') || '[]');
+                        history.unshift(entry);
+                        localStorage.setItem('basicCalcHistory', JSON.stringify(history));
+                    }
+
+                    // নতুন: হিস্টোরি লোড করার ফাংশন
+                    loadHistory() {
+                        const historyList = document.getElementById('history-list');
+                        if (!historyList) return;
+                        
+                        const history = JSON.parse(localStorage.getItem('basicCalcHistory') || '[]');
+                        historyList.innerHTML = '';
+                        
+                        history.forEach(entry => {
+                            const listItem = document.createElement('li');
+                            listItem.innerText = entry;
+                            historyList.appendChild(listItem);
+                        });
                     }
                 }
 
@@ -12411,11 +12432,12 @@ case 'scientific':
                         });
                     }
 
-                    // Basic Calculator History Clear Button
+                    // Basic Calculator History Clear Button (Updated for persistence)
                     if (clearHistoryBtn) {
                         clearHistoryBtn.addEventListener('click', () => {
                             if (historyList) {
                                 historyList.innerHTML = '';
+                                localStorage.removeItem('basicCalcHistory'); // লোকাল স্টোরেজ থেকে মুছুন
                                 showCustomAlert('হিস্টোরি পরিষ্কার করা হয়েছে!');
                             }
                         });
@@ -12439,17 +12461,6 @@ case 'scientific':
                             basicCalculator.delete();
                         } else if (e.key === 'Escape' || e.key === 'Delete') {
                             basicCalculator.clear();
-                        }
-                    });
-
-                    // বৈজ্ঞানিক ক্যালকুলেটরের জন্য কীবোর্ড ডিলিট বাটনের ইভেন্ট লিসেনার
-                    document.addEventListener('keydown', (e) => {
-                        // "C" (ক্লিয়ার) বাটনের কাজ অনুকরণ করুন
-                        if (e.key === 'Delete') {
-                            if (scientificExpressionInput) scientificExpressionInput.value = '';
-                            if (scientificHistoryDisplay) scientificHistoryDisplay.innerText = '';
-                            if (scientificErrorMessage) scientificErrorMessage.innerText = '';
-                            if (scientificExplanation) scientificExplanation.innerText = '';
                         }
                     });
                 } else {
