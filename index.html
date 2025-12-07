@@ -12346,17 +12346,16 @@ case 'scientific':
                         }
                     }
 
-                    // Basic Calculator History function
+                    // Basic Calculator History function (Updated: No Limit)
                     addHistoryEntry(entry) {
                         const historyList = document.getElementById('history-list');
                         if (historyList) {
                             const listItem = document.createElement('li');
                             listItem.innerText = entry;
                             historyList.prepend(listItem); // Add to top of list
-                            // Keep history clean, maybe limit items
-                            while (historyList.children.length > 20) { // Keep last 20 entries
-                                historyList.removeChild(historyList.lastChild);
-                            }
+                            
+                            // আগে ২০টি আইটেমের লিমিট ছিল, এখন সেটি সরিয়ে দেওয়া হয়েছে
+                            // যাতে যতক্ষণ ক্যালকুলেটর ব্যবহার করবেন ততক্ষণ সব হিস্টোরি থাকে।
                         }
                     }
                 }
@@ -12448,7 +12447,7 @@ case 'scientific':
                         // "C" (ক্লিয়ার) বাটনের কাজ অনুকরণ করুন
                         if (e.key === 'Delete') {
                             if (scientificExpressionInput) scientificExpressionInput.value = '';
-                            if (scientificResultDisplay) scientificResultDisplay.innerText = '';
+                            if (scientificHistoryDisplay) scientificHistoryDisplay.innerText = '';
                             if (scientificErrorMessage) scientificErrorMessage.innerText = '';
                             if (scientificExplanation) scientificExplanation.innerText = '';
                         }
