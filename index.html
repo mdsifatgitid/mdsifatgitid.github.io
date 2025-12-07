@@ -540,7 +540,7 @@
             grid-column: span 2; /* জিরো বোতাম দুটি কলাম জুড়ে বিস্তৃত */
         }
         
-        /* নতুন: হিস্টোরি প্যানেল স্টাইল */
+/* নতুন: হিস্টোরি প্যানেল স্টাইল */
         .history-panel {
             background-color: #263238;
             color: white;
@@ -552,7 +552,7 @@
             /* নতুন: ফ্লেক্সবক্স ব্যবহার করে পুরো উচ্চতা নেওয়া হয়েছে */
             display: flex;
             flex-direction: column;
-            min-height: 450px; /* ক্যালকুলেটরের সমান মিনিমাম হাইট */
+            height: 450px; /* ক্যালকুলেটরের সমান হাইট ফিক্স করা হয়েছে যাতে স্ক্রোলবার আসে */
         }
         .history-header {
             display: flex;
@@ -580,14 +580,38 @@
             background-color: #d32f2f;
         }
         #history-list {
-            
             flex-grow: 1; 
-            overflow-y: auto;
+            overflow-y: auto; /* স্ক্রোল এনাবল করা হয়েছে */
             list-style: none;
             padding: 0;
             margin: 0;
             text-align: right;
+            /* ফায়ারফক্সের জন্য স্ক্রোলবার স্টাইল */
+            scrollbar-width: thin;
+            scrollbar-color: #546e7a #263238;
+            padding-right: 5px; 
         }
+        
+        /* কাস্টম স্ক্রোলবার ডিজাইন (Chrome, Edge, Safari) */
+        #history-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #history-list::-webkit-scrollbar-track {
+            background: #263238;
+            border-radius: 4px;
+        }
+
+        #history-list::-webkit-scrollbar-thumb {
+            background-color: #546e7a;
+            border-radius: 4px;
+            border: 2px solid #263238;
+        }
+
+        #history-list::-webkit-scrollbar-thumb:hover {
+            background-color: #78909c;
+        }
+
         #history-list li {
             padding: 8px 5px;
             border-bottom: 1px solid #37474f;
