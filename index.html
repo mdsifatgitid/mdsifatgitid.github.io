@@ -6499,17 +6499,18 @@ body.sidebar-open #sidebarOverlay {
                     </div>
                 </div>
 
-                <!-- ইংরেজি থেকে বাংলা তারিখ রূপান্তর বৈশিষ্ট্য -->
-				<h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200 p-5">ইংরেজি থেকে বাংলা তারিখ বের করুন</h3>
+<!-- ইংরেজি থেকে বাংলা ও হিজরি তারিখ রূপান্তর বৈশিষ্ট্য -->
+				<h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200 p-5">ইংরেজি থেকে বাংলা ও হিজরি তারিখ</h3>
                 <div class="input-group mt-0">
                     <label for="englishDateInput" class="text-gray-700 font-semibold text-left block mb-2">ইংরেজি তারিখ লিখুন:</label>
                     <input type="date" id="englishDateInput" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full p-1 border border-gray-300">
                 </div>
-                <button id="convertEnglishToBengaliBtn" class="show-date-button rounded-xl mt-4">বাংলা তারিখে রূপান্তর করুন</button>
+                <button id="convertEnglishToBengaliBtn" class="show-date-button rounded-xl mt-4">তারিখ রূপান্তর করুন</button>
                 <div id="bengaliConvertedDateDisplay" class="result-area mt-4">
-                    <p class="result-section-title">রূপান্তরিত বাংলা তারিখ</p>
+                    <p class="result-section-title">রূপান্তরিত তারিখ</p>
                     <p id="convertedBengaliDate"></p>
-                    <p id="convertedDayDisplay"></p> <!-- রূপান্তরিত দিনের জন্য নতুন সারি -->
+                    <p id="convertedHijriDate"></p> <!-- হিজরি তারিখের জন্য নতুন লাইন -->
+                    <p id="convertedDayDisplay"></p>
                 </div>
 <!-- বাংলা থেকে ইংরেজি তারিখ রূপান্তর বৈশিষ্ট্য (নতুন) -->
 <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200 p-5">বাংলা থেকে ইংরেজি তারিখ তারিখ বের করুন</h3>
@@ -12852,31 +12853,56 @@ case 'scientific':
                     }
                 }
 
-                // ইংরেজি থেকে বাংলা তারিখ রূপান্তর লজিক
+// ইংরেজি থেকে বাংলা ও হিজরি তারিখ রূপান্তর লজিক
                 if (convertEnglishToBengaliBtn) {
                     convertEnglishToBengaliBtn.addEventListener('click', () => {
-                        console.log('ইংরেজি থেকে বাংলা রূপান্তর বোতামে ক্লিক করা হয়েছে।');
+                        console.log('ইংরেজি থেকে বাংলা ও হিজরি রূপান্তর বোতামে ক্লিক করা হয়েছে।');
                         const englishDateValue = englishDateInput ? englishDateInput.value : '';
+                        const convertedHijriDate = document.getElementById('convertedHijriDate'); // হিজরি ডিসপ্লে এলিমেন্ট
+
                         if (!englishDateValue) {
                             if (convertedBengaliDate) convertedBengaliDate.innerText = 'অনুগ্রহ করে একটি ইংরেজি তারিখ নির্বাচন করুন।';
-                            if (convertedDayDisplay) convertedDayDisplay.innerText = ''; // দিনের ডিসপ্লে পরিষ্কার করুন
+                            if (convertedHijriDate) convertedHijriDate.innerText = '';
+                            if (convertedDayDisplay) convertedDayDisplay.innerText = '';
                             return;
                         }
 
                         const gregorianDate = new Date(englishDateValue);
-                        if (isNaN(gregorianDate.getTime())) { // অবৈধ তারিখ পরীক্ষা
+                        if (isNaN(gregorianDate.getTime())) {
                             if (convertedBengaliDate) convertedBengaliDate.innerText = 'অবৈধ তারিখ ফরম্যাট।';
-                            if (convertedDayDisplay) convertedDayDisplay.innerText = ''; // দিনের ডিসপ্লে পরিষ্কার করুন
                             return;
                         }
 
+                        // ১. বাংলা তারিখ বের করা
                         const bengaliDateInfo = getBengaliDate(gregorianDate);
-                        const bengaliSeason = getBengaliSeason(bengaliDateInfo.monthIndex); // *** নতুন: ঋতু আনা হয়েছে ***
-                        const dayOfWeek = gregorianDate.toLocaleDateString('bn-BD', {
-                            weekday: 'long'
-                        }); // সপ্তাহের দিন পান
+                        const bengaliSeason = getBengaliSeason(bengaliDateInfo.monthIndex);
+                        const dayOfWeek = gregorianDate.toLocaleDateString('bn-BD', { weekday: 'long' });
 
-                        if (convertedBengaliDate) convertedBengaliDate.innerHTML = `<strong>বাংলা তারিখ:</strong> ${bengaliDateInfo.formatted.replace('বঙ্গাব্দ', '')}, ${bengaliSeason}`; // *** পরিবর্তিত: ঋতু যোগ করা হয়েছে ***
+                        // ২. হিজরি তারিখ বের করা (বাংলাদেশ স্ট্যান্ডার্ড অনুযায়ী -২ দিন অ্যাডজাস্টমেন্ট)
+                        let hijriCalculationDate = new Date(gregorianDate);
+                        hijriCalculationDate.setDate(hijriCalculationDate.getDate() - 2); // চাঁদ দেখা সাপেক্ষে পরিবর্তন হতে পারে
+
+                        const hijriDateFormatter = new Intl.DateTimeFormat('ar-SA', {
+                            calendar: 'islamic',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            timeZone: 'Asia/Dhaka'
+                        });
+                        const hijriParts = hijriDateFormatter.formatToParts(hijriCalculationDate);
+
+                        let hijriDay = '', hijriMonthArabic = '', hijriYear = '';
+                        for (const part of hijriParts) {
+                            if (part.type === 'day') hijriDay = arabicToBengaliNumbers(part.value);
+                            else if (part.type === 'month') hijriMonthArabic = part.value;
+                            else if (part.type === 'year') hijriYear = arabicToBengaliNumbers(part.value);
+                        }
+                        const hijriMonthBengali = hijriMonthArabicToBengali[hijriMonthArabic] || hijriMonthArabic;
+                        const hijriDateFormatted = `${hijriDay} ${hijriMonthBengali} ${hijriYear} হিজরি`;
+
+                        // ৩. ফলাফল প্রদর্শন
+                        if (convertedBengaliDate) convertedBengaliDate.innerHTML = `<strong>বাংলা:</strong> ${bengaliDateInfo.formatted.replace('বঙ্গাব্দ', '')}, ${bengaliSeason}`;
+                        if (convertedHijriDate) convertedHijriDate.innerHTML = `<strong>হিজরি:</strong> ${hijriDateFormatted}`;
                         if (convertedDayDisplay) convertedDayDisplay.innerHTML = `<strong>বার:</strong> ${dayOfWeek}`;
                     });
                 }
@@ -17272,80 +17298,93 @@ function initializeDaysObservancesTab() {
 
 
 
-    // Data for Bangladeshi observances (Updated and Verified)
-const bangladeshiObservances = [
-    // JANUARY (month: 0)
-    { name: "জাতীয় সমাজসেবা দিবস", month: 0, day: 2 },
-    { name: "বঙ্গবন্ধুর স্বদেশ প্রত্যাবর্তন দিবস", month: 0, day: 10 },
-    
-    // FEBRUARY (month: 1)
-    { name: "জাতীয় গ্রন্থাগার দিবস", month: 1, day: 5 },
-    { name: "শহীদ দিবস ও আন্তর্জাতিক মাতৃভাষা দিবস", month: 1, day: 21 },
-    { name: "জাতীয় স্থানীয় সরকার দিবস", month: 1, day: 25 },
+// Data for Bangladeshi observances (Updated and Verified)
+    const bangladeshiObservances = [
+        // JANUARY (month: 0)
+        { name: "জাতীয় সমাজসেবা দিবস", month: 0, day: 2 },
+        { name: "বঙ্গবন্ধুর স্বদেশ প্রত্যাবর্তন দিবস", month: 0, day: 10 },
+        { name: "শহীদ আসাদ দিবস", month: 0, day: 20 }, // নতুন যুক্ত করা হয়েছে
+        { name: "গণঅভ্যুত্থান দিবস", month: 0, day: 24 }, // নতুন যুক্ত করা হয়েছে
+        
+        // FEBRUARY (month: 1)
+        { name: "জাতীয় গ্রন্থাগার দিবস", month: 1, day: 5 },
+        { name: "সুন্দরবন দিবস", month: 1, day: 14 }, // নতুন যুক্ত করা হয়েছে
+        { name: "শহীদ দিবস ও আন্তর্জাতিক মাতৃভাষা দিবস", month: 1, day: 21 },
+        { name: "জাতীয় স্থানীয় সরকার দিবস", month: 1, day: 25 }, // নতুন যুক্ত করা হয়েছে (সাম্প্রতিক)
 
-    // MARCH (month: 2)
-    { name: "জাতীয় বিমা দিবস", month: 2, day: 1 },
-    { name: "জাতীয় ভোটার দিবস", month: 2, day: 2 },
-    { name: "জাতীয় পতাকা উত্তোলন দিবস", month: 2, day: 2 },
-    { name: "জাতীয় পাট দিবস", month: 2, day: 6 },
-    { name: "জাতীয় শিশু দিবস (বঙ্গবন্ধুর জন্মদিন)", month: 2, day: 17 },
-    { name: "গণহত্যা দিবস", month: 2, day: 25 },
-    { name: "স্বাধীনতা দিবস", month: 2, day: 26 },
+        // MARCH (month: 2)
+        { name: "জাতীয় বিমা দিবস", month: 2, day: 1 },
+        { name: "জাতীয় ভোটার দিবস", month: 2, day: 2 },
+        { name: "জাতীয় পতাকা উত্তোলন দিবস", month: 2, day: 2 },
+        { name: "জাতীয় পাট দিবস", month: 2, day: 6 },
+        { name: "জাতীয় দুর্যোগ প্রস্তুতি দিবস", month: 2, day: 10 }, // আন্তর্জাতিক তালিকা থেকে এখানে আনা হয়েছে
+        { name: "জাতীয় শিশু দিবস (বঙ্গবন্ধুর জন্মদিন)", month: 2, day: 17 },
+        { name: "গণহত্যা দিবস", month: 2, day: 25 },
+        { name: "স্বাধীনতা দিবস", month: 2, day: 26 },
 
-    // APRIL (month: 3)
-    { name: "জাতীয় চলচ্চিত্র দিবস", month: 3, day: 3 },
-    { name: "পহেলা বৈশাখ (বাংলা নববর্ষ)", month: 3, day: 14 },
-    { name: "মুজিবনগর দিবস", month: 3, day: 17 },
-    { name: "জাতীয় স্বাস্থ্য ও পুষ্টি দিবস", month: 3, day: 23 },
-    { name: "জাতীয় আইনগত সহায়তা দিবস", month: 3, day: 28 },
+        // APRIL (month: 3)
+        { name: "জাতীয় চলচ্চিত্র দিবস", month: 3, day: 3 },
+        { name: "পহেলা বৈশাখ (বাংলা নববর্ষ)", month: 3, day: 14 },
+        { name: "মুজিবনগর দিবস", month: 3, day: 17 },
+        { name: "জাতীয় স্বাস্থ্য ও পুষ্টি দিবস", month: 3, day: 23 },
+        { name: "জাতীয় আইনগত সহায়তা দিবস", month: 3, day: 28 },
 
-    // MAY (month: 4)
-    { name: "শ্রমিক দিবস (মে দিবস)", month: 4, day: 1 },
-    { name: "রবীন্দ্রজয়ন্তী (২৫ বৈশাখ)", month: 4, day: 8 },
-    { name: "বুদ্ধ পূর্ণিমা", month: 4, day: 11 }, // Date approximate/varies
-    { name: "নজরুলজয়ন্তী (১১ জ্যৈষ্ঠ)", month: 4, day: 25 },
-    { name: "নিরাপদ মাতৃত্ব দিবস", month: 4, day: 28 },
+        // MAY (month: 4)
+        { name: "শ্রমিক দিবস (মে দিবস)", month: 4, day: 1 },
+        { name: "রবীন্দ্রজয়ন্তী (২৫ বৈশাখ)", month: 4, day: 8 },
+        { name: "বুদ্ধ পূর্ণিমা", month: 4, day: 11 }, // Date approximate/varies
+        { name: "নজরুলজয়ন্তী (১১ জ্যৈষ্ঠ)", month: 4, day: 25 },
+        { name: "নিরাপদ মাতৃত্ব দিবস", month: 4, day: 28 },
 
-    // JUNE (month: 5)
-    { name: "জাতীয় চা দিবস", month: 5, day: 4 },
-    { name: "ঐতিহাসিক ৬-দফা দিবস", month: 5, day: 7 },
-    { name: "পলাশী দিবস", month: 5, day: 23 },
+        // JUNE (month: 5)
+        { name: "জাতীয় চা দিবস", month: 5, day: 4 },
+        { name: "ঐতিহাসিক ৬-দফা দিবস", month: 5, day: 7 },
+        { name: "পলাশী দিবস", month: 5, day: 23 },
 
-    // JULY (month: 6)
-    { name: "ঢাকা বিশ্ববিদ্যালয় দিবস", month: 6, day: 1 },
-    { name: "জুলাই শহীদ দিবস", month: 6, day: 16 },
-    { name: "জাতীয় পাবলিক সার্ভিস দিবস", month: 6, day: 23 },
+        // JULY (month: 6)
+        { name: "ঢাকা বিশ্ববিদ্যালয় দিবস", month: 6, day: 1 },
+        { name: "জুলাই শহীদ দিবস", month: 6, day: 16 },
+        { name: "জাতীয় পাবলিক সার্ভিস দিবস", month: 6, day: 23 },
 
-    // AUGUST (month: 7)
-    { name: "ছাত্র-গণ অভ্যুত্থান দিবস", month: 7, day: 5 }, // National Holiday
-    { name: "জাতীয় জ্বালানি নিরাপত্তা দিবস", month: 7, day: 9 },
-    { name: "জাতীয় শোক দিবস", month: 7, day: 15 },
-    { name: "শুভ জন্মাষ্টমী", month: 7, day: 16 }, // Date approximate/varies
+        // AUGUST (month: 7)
+        { name: "ছাত্র-গণ অভ্যুত্থান দিবস", month: 7, day: 5 }, 
+        { name: "জাতীয় জ্বালানি নিরাপত্তা দিবস", month: 7, day: 9 },
+        { name: "জাতীয় শোক দিবস", month: 7, day: 15 },
+        { name: "শুভ জন্মাষ্টমী", month: 7, day: 16 }, // Date approximate/varies
 
-    // SEPTEMBER (month: 8)
-    { name: "শিক্ষা দিবস", month: 8, day: 17 },
+        // SEPTEMBER (month: 8)
+        { name: "শিক্ষা দিবস", month: 8, day: 17 },
+        { name: "জাতীয় কন্যা শিশু দিবস", month: 8, day: 30 }, // নতুন যুক্ত করা হয়েছে
 
-    // OCTOBER (month: 9)
-    { name: "দুর্গাপূজা (মহানবমী)", month: 9, day: 1 }, // Date approximate/varies
-    { name: "দুর্গাপূজা (বিজয়া দশমী)", month: 9, day: 2 }, // Date approximate/varies
-    { name: "জাতীয় উত্পাদনশীলতা দিবস", month: 9, day: 2 },
-    { name: "জাতীয় নিরাপদ সড়ক দিবস", month: 9, day: 22 },
+        // OCTOBER (month: 9)
+        { name: "দুর্গাপূজা (মহানবমী)", month: 9, day: 1 }, // Date approximate/varies
+        { name: "দুর্গাপূজা (বিজয়া দশমী)", month: 9, day: 2 }, // Date approximate/varies
+        { name: "জাতীয় উত্পাদনশীলতা দিবস", month: 9, day: 2 },
+        { name: "জাতীয় জন্ম ও মৃত্যু নিবন্ধন দিবস", month: 9, day: 6 }, // আন্তর্জাতিক তালিকা থেকে এখানে আনা হয়েছে
+        { name: "জাতীয় নিরাপদ সড়ক দিবস", month: 9, day: 22 },
 
-    // NOVEMBER (month: 10)
-    { name: "জাতীয় সমবায় দিবস", dateFn: (year) => getNthWeekdayOfMonth(year, 10, 6, 1) }, // Nov 1st Sat
-    { name: "জেল হত্যা দিবস", month: 10, day: 3 },
-    { name: "সংবিধান দিবস", month: 10, day: 4 },
-    { name: "জাতীয় সংহতি ও বিপ্লব দিবস", month: 10, day: 7 },
-    { name: "সশস্ত্র বাহিনী দিবস", month: 10, day: 21 },
+        // NOVEMBER (month: 10)
+        { name: "জাতীয় যুব দিবস", month: 10, day: 1 }, // নতুন যুক্ত করা হয়েছে
+        { name: "জাতীয় সমবায় দিবস", dateFn: (year) => getNthWeekdayOfMonth(year, 10, 6, 1) }, // Nov 1st Sat
+        { name: "জেল হত্যা দিবস", month: 10, day: 3 },
+        { name: "সংবিধান দিবস", month: 10, day: 4 },
+        { name: "জাতীয় সংহতি ও বিপ্লব দিবস", month: 10, day: 7 },
+        { name: "সশস্ত্র বাহিনী দিবস", month: 10, day: 21 },
+        { name: "আয়কর দিবস", month: 10, day: 30 }, // নতুন যুক্ত করা হয়েছে
 
-    // DECEMBER (month: 11)
-    { name: "জাতীয় বস্ত্র দিবস", month: 11, day: 4 },
-    { name: "বেগম রোকেয়া দিবস", month: 11, day: 9 },
-    { name: "ডিজিটাল বাংলাদেশ দিবস", month: 11, day: 12 },
-    { name: "শহীদ বুদ্ধিজীবী দিবস", month: 11, day: 14 },
-    { name: "বিজয় দিবস", month: 11, day: 16 },
-    { name: "বড়দিন", month: 11, day: 25 },
-];
+        // DECEMBER (month: 11)
+        { name: "মুক্তিযোদ্ধা দিবস", month: 11, day: 1 }, // নতুন যুক্ত করা হয়েছে
+        { name: "জাতীয় বস্ত্র দিবস", month: 11, day: 4 },
+        { name: "স্বৈরাচার পতন দিবস", month: 11, day: 6 }, // নতুন যুক্ত করা হয়েছে
+        { name: "বেগম রোকেয়া দিবস", month: 11, day: 9 },
+        { name: "জাতীয় ভ্যাট দিবস", month: 11, day: 10 }, // নতুন যুক্ত করা হয়েছে
+        { name: "ডিজিটাল বাংলাদেশ দিবস", month: 11, day: 12 },
+        { name: "শহীদ বুদ্ধিজীবী দিবস", month: 11, day: 14 },
+        { name: "বিজয় দিবস", month: 11, day: 16 },
+        { name: "বাংলাদেশ সুপ্রিম কোর্ট দিবস", month: 11, day: 18 }, // নতুন যুক্ত করা হয়েছে
+        { name: "বর্ডার গার্ড বাংলাদেশ (বিজিবি) দিবস", month: 11, day: 20 }, // নতুন যুক্ত করা হয়েছে
+        { name: "বড়দিন", month: 11, day: 25 },
+    ];
 
     // Data for International observances (Updated with the comprehensive list)
     const internationalObservances = [
