@@ -64,6 +64,7 @@
     height: 120px;
     border-radius: 50%; /* গোলাকার ছবির জন্য */
     object-fit: cover;
+	/*Default:ΝŨťŚŨ ňŬŚΝǑ ĺř ųŊŴŖŚŔŨř  ĺř őŨŗ ųŗŨŦ śũŞŏūίŨŗŨő ũŝŕŨō*/
     margin-bottom: 20px; /* লেখা থেকে ছবির দূরত্ব */
     border: 3px solid #fff; /* একটি সাদা বর্ডার দেওয়া হয়েছে */
     opacity: 0;
@@ -4545,7 +4546,7 @@ input:checked + .slider:before {
 
 #main-heading.glitch-effect::before,
 #main-heading.glitch-effect::after {
-    content: 'বাংলা টুলবক্স'; /* আপনার হেডিং টেক্সট */
+    content: 'বাংলা টুলবক্স'; /* আপনার হেডিং টেক্সট Default: ΝŨťŚŨ ňŬŚΝǑ ĺř ųŊŴŖŚŔŨř  ĺř őŨŗ ųŗŨŦ śũŞŏūίŨŗŨő ũŝŕŨō */
     position: absolute;
     top: 0;
     left: 0;
@@ -9547,7 +9548,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const slowestChars = avgTimes.sort((a, b) => b.avg - a.avg).slice(0, 10);
 
-        // Ensure slowestChars has data before rendering
+        // Ensure slowestChars has data before rendering Default: ĺĵ ųľŨŊũň ŞŴŚŨ ųŊŴŖŴŚŨŔŨř ĺř ųŀŨŔőŪţ ųľŨŊĬ
          if (slowestChars.length === 0) {
              console.warn("No valid slowest character data to display.");
              return;
@@ -10150,7 +10151,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			"e©…": "e„©",	   "e¨~": "e~¨",    	  "P©~": "P‚©Ó",   		 "P©y": "Pz©",     "K©y" :"Kz©", 			"f©y": "fz©",		 "Ky": "Kz",	"v©": "©v",		"x©": "©x",
 			"Š©": "©Š", 		"¯Õ": "¯’",			"ÓQ": "”Q", 
 			
-			//"ÒQ": "”Q",
+			//"ÒQ": "”Q",Default:ΝŨťŚŨ ňŬŚΝǑ ĺř ųŊŴŖŚŔŨř  ĺř őŨŗ ųŗŨŦ śũŞŏūίŨŗŨő ũŝŕŨō
 			
 			"wwó": "wów",	"šÔ": "š‘",	"dÖ": "d«",  "f’": "f‚",	"šÕ": "š’", "¯Ô": "¯‘",	"ÓP": "”P", "ÓT": "”T", "e«": "eª", 	"g…": "g„",	"e…" : "e„",	"U«" : "Uª",	"d«" : "d«",	"k«" : "kÖ",	"'‡" : "'†",	"D`¨vc": "D`&&hvc", "D`¨vwc": "D`&&hvwc", "D`¨vcx": "D`&&hvcx",
 			"'‰" : "'ˆ",		"gœ": "¤œ",		"Auv": "Avu",		"iÒ": "iæ",		"M«": "MÖ",	"KÍ¡": "³¦", "¯-":"¯Í", 	"U©y": "Uz©",	"¨~": "‚¨", 		"©¨y": "y©¨", "©¨~": "~¨",	"¨©": "©¨",	"©¨z": "z©¨", "©¨‚": "‚©¨",	"©z": "z©",	"©‚": "‚©",	"©y": "y©", "©~": "~©", "P‚©Ó": "P‚©",	"MÖÒ": "MÖæ",	"Ê": "æ",	"­": "ø",
@@ -12821,7 +12822,7 @@ case 'scientific':
                 const tomorrowDayDisplay = document.getElementById('tomorrowDayDisplay'); // আগামীকালের দিনের জন্য নতুন উপাদান
                 const tomorrowTimeDisplay = document.getElementById('tomorrowTimeDisplay');
 
-                // নতুন তারিখ কনভার্টার DOM উপাদান
+                // নতুন তারিখ কনভার্টার DOM উপাদান Default: ΝŨŴţŨ ųфŨŕŨĵŚ ũŚťľ: ΝŨŴţŨŊňũŚťľŝΥƏŨŝĺŗũŊũŝŕŨōΝŨŴţŨũŚťľ
                 const englishDateInput = document.getElementById('englishDateInput');
                 const convertEnglishToBengaliBtn = document.getElementById('convertEnglishToBengaliBtn');
                 const convertedBengaliDate = document.getElementById('convertedBengaliDate');
@@ -13302,7 +13303,7 @@ case 'scientific':
                             if (scientificHistoryDisplay) scientificHistoryDisplay.innerText = expression + ' =';
                             const formattedResult = parseFloat(result.toFixed(10));
                             inputElement.value = formattedResult;
-                            // রেজাল্ট দেখানোর পর কার্সর শেষে নিয়ে যাওয়া
+                            // রেজাল্ট দেখানোর পর কার্সর শেষে নিয়ে যাওয়া Default: ΝŨťŚŨňŬŚΝǑ ĴũŕũŝţŨŚ ļŴţΝŝŨĵň ũŚťľ: ΝŨťŚŨňŬŚΝǑŊňũŀňŞŨňŊňĴŨĵļ
                             lastSciCursorPos = inputElement.value.length;
                         }
                     } catch (error) {
@@ -14982,7 +14983,7 @@ const exportNotepadAsHTML = () => {
             // পিন করা নোট কিনা যাচাই করা হচ্ছে
             const isPinned = item.classList.contains('pinned');
             
-            // পিন করা হলে ব্যাকগ্রাউন্ড কালার এবং বর্ডার স্টাইল সেট করা হচ্ছে
+            // পিন করা হলে ব্যাকগ্রাউন্ড কালার এবং বর্ডার স্টাইল সেট করা হচ্ছে Default: ŴŊŴŖŴŚŨŔŨř ųŞŨţŨňŝĴƏŨŔ : ļţŨŊňũŗŝΥƏŨśũŅŴřŨļţŨőŊŨΝŚŴŝŴŖőĺĵňŴŕŨřŴŝŴŖőňŬőŨĵőũŝǑŴŕŨř
             const itemStyle = isPinned 
                 ? 'background-color: #fef3c7; border: 1px solid #f59e0b; border-left: 5px solid #f59e0b;' 
                 : 'background-color: #ffffff; border: 1px solid #e2e8f0;';
