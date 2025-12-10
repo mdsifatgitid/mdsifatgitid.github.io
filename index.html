@@ -8686,7 +8686,53 @@ body.sidebar-open #sidebarOverlay {
                 <span class="slider round"></span>
             </label>
         </div>
-		
+
+        <!-- নতুন: অনলাইন তারিখ আপডেট সেটিংস -->
+        <div class="setting-item" style="margin-top: 15px;">
+            <div class="setting-text" style="flex-grow: 1; margin-right: 15px;">
+                <label class="font-semibold text-gray-700 dark:text-gray-300">অনলাইন তারিখ আপডেট</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">অনলাইন থেকে তারিখ আপডেট করুন। (মাসের শেষ ও শুরুতে অটোমেটিক চেক করবে)</p>
+                <div class="flex gap-2 mt-2 items-center">
+                    <button id="refreshDateBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded text-sm flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/></svg>
+                        এখনই রিফ্রেশ করুন
+                    </button>
+                </div>
+            </div>
+            <div class="flex flex-col items-center">
+                <label for="autoUpdateDateToggle" class="text-xs font-semibold text-gray-500 mb-1">অটো আপডেট</label>
+                <label class="switch">
+                    <!-- পরিবর্তন: ডিফল্টভাবে ইনপুট চেকড করা হয়েছে -->
+                    <input type="checkbox" id="autoUpdateDateToggle" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- NEW: হিজরি তারিখ অ্যাডজাস্টার -->
+        <div class="setting-item" style="margin-top: 15px;">
+            <div class="setting-text" style="flex-grow: 1; margin-right: 15px;">
+                <label for="hijriDateAdjustInput" class="font-semibold text-gray-700 dark:text-gray-300">হিজরি তারিখ অ্যাডজাস্টার</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">হিজরি তারিখ ১-২ দিন কম/বেশি করতে এখানে সংখ্যা লিখুন (যেমন: -1 বা 1)। ডিফল্ট: -2</p>
+                <div class="flex gap-2 mt-2">
+                    <input type="number" id="hijriDateAdjustInput" placeholder="-2" class="flex-grow p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-indigo-500 text-sm">
+                    <button id="saveHijriAdjustBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded text-sm">সেভ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW: বাংলা তারিখ অ্যাডজাস্টার -->
+        <div class="setting-item" style="margin-top: 15px;">
+            <div class="setting-text" style="flex-grow: 1; margin-right: 15px;">
+                <label for="bengaliDateAdjustInput" class="font-semibold text-gray-700 dark:text-gray-300">বাংলা তারিখ অ্যাডজাস্টার</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">বাংলা তারিখ ১ দিন কম/বেশি করতে এখানে সংখ্যা লিখুন (যেমন: -1 বা 1)। ডিফল্ট: 0</p>
+                <div class="flex gap-2 mt-2">
+                    <input type="number" id="bengaliDateAdjustInput" placeholder="0" class="flex-grow p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-indigo-500 text-sm">
+                    <button id="saveBengaliAdjustBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded text-sm">সেভ</button>
+                </div>
+            </div>
+        </div>		
+
         <!-- নিউজ টিকার অন/অফ টগল -->
         <div class="setting-item">
             <div class="setting-text">
@@ -9605,7 +9651,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // গ্রেগরিয়ান তারিখকে বাংলা তারিখে রূপান্তর করার ফাংশন (বাংলাদেশ স্ট্যান্ডার্ড)
-        function getBengaliDate(gregorianDate) {
+        function getBengaliDate(originalGregorianDate) {
+            // সেটিংস থেকে বাংলা তারিখ অ্যাডজাস্টমেন্ট লোড করুন (ডিফল্ট ০)
+            const adjustment = parseInt(localStorage.getItem('bengaliDateAdjustment') || '0', 10);
+            
+            // তারিখ কপি করে অ্যাডজাস্টমেন্ট যোগ করুন
+            const gregorianDate = new Date(originalGregorianDate);
+            gregorianDate.setDate(gregorianDate.getDate() + adjustment);
+
             const year = gregorianDate.getFullYear();
             const month = gregorianDate.getMonth(); // 0-11
             const day = gregorianDate.getDate();
@@ -9698,35 +9751,75 @@ document.addEventListener('DOMContentLoaded', () => {
         let lastDateUpdateTimestamp = 0;
         const UPDATE_INTERVAL_MS = 10 * 60 * 1000; // ১০ মিনিট
 
-       function updateDateTimeBanner() {
+        // অনলাইন থেকে সঠিক সময় এবং তারিখ আনার ফাংশন
+        async function fetchOnlineDate() {
+            try {
+                // WorldTimeAPI ব্যবহার করে ঢাকার সময় আনা হচ্ছে
+                const response = await fetch('https://worldtimeapi.org/api/timezone/Asia/Dhaka');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                
+                // ডেট অবজেক্ট তৈরি
+                const onlineDate = new Date(data.datetime);
+                
+                // লোকাল স্টোরেজে সেভ করা (ব্যানারের জন্য)
+                // আমরা পুরো ডেট স্ট্রিং সেভ করছি না, বরং অফসেট বা বেস ডেট সেভ করছি
+                localStorage.setItem('lastOnlineDateCheck', new Date().toISOString());
+                
+                return onlineDate;
+            } catch (error) {
+                console.error("Online date fetch failed:", error);
+                return new Date(); // ফেইল করলে সিস্টেম টাইম ব্যবহার করবে
+            }
+        }
+
+        // মডিফাইড updateDateTimeBanner ফাংশন (Async করা হয়েছে)
+        async function updateDateTimeBanner(forceUpdate = false) {
             const bannerElement = document.getElementById('currentDateTimeBanner');
             if (!bannerElement) return;
 
-            // --- সেটিংস চেক (নতুন) ---
-            // লোকাল স্টোরেজ চেক করুন, যদি 'false' হয় তবে ব্যানার লুকান এবং ফাংশন থেকে বের হয়ে যান
+            // সেটিংস চেক
             const isTimeBannerEnabled = localStorage.getItem('timeBannerEnabled') !== 'false';
             if (!isTimeBannerEnabled) {
                 bannerElement.style.display = 'none';
                 return; 
             } else {
-                // যদি চালু থাকে, এবং আগে লুকানো ছিল, তবে আবার দেখান (flex ব্যবহার করা হয়েছে CSS অনুযায়ী)
                 bannerElement.style.display = 'flex';
             }
 
-            const now = new Date();
+            // বর্তমান সময় (সিস্টেম)
+            let now = new Date();
             const currentTime = Date.now();
+            const currentDay = now.getDate();
 
-            // সেকেন্ডের ফেড এফেক্ট (প্রতি মিনিটে)
-            if (now.getSeconds() === 0) {
-                bannerElement.style.opacity = '1';
-            } else if (now.getSeconds() === 59) {
-                bannerElement.style.opacity = '0';
-            } else if (now.getSeconds() === 1 && bannerElement.style.opacity !== '1') {
-                bannerElement.style.opacity = '1'; 
-            }
+            // অটো আপডেট লজিক চেক (পরিবর্তিত: ডিফল্ট true করা হয়েছে)
+            // আগে ছিল: === 'true', এখন: !== 'false'
+            const isAutoUpdate = localStorage.getItem('autoUpdateDate') !== 'false';
+            
+            // বিশেষ শর্ত: মাসের ২৭ তারিখের পর থেকে পরবর্তী মাসের ৩ তারিখ পর্যন্ত
+            const isTransitionPeriod = (currentDay >= 27 || currentDay <= 3);
+            
+            // লাস্ট আপডেটের সময় চেক (প্রতি ঘণ্টায় একবার অটো চেক করতে চাইলে)
+            const lastCheck = localStorage.getItem('lastOnlineDateCheck');
+            const shouldCheckOnline = forceUpdate || 
+                                     (isAutoUpdate && (!lastCheck || (currentTime - new Date(lastCheck).getTime() > 3600000))) || 
+                                     (isTransitionPeriod && (!lastCheck || (currentTime - new Date(lastCheck).getTime() > 3600000)));
 
-            // ১০ মিনিট পর পর অথবা প্রথমে তারিখ আপডেট হবে (ভারী কাজ)
-            if (currentTime - lastDateUpdateTimestamp > UPDATE_INTERVAL_MS || !cachedDatePartHTML) {
+            // ১০ মিনিট পর পর অথবা ফোর্স আপডেট হলে তারিখ ক্যালকুলেশন হবে
+            if (forceUpdate || currentTime - lastDateUpdateTimestamp > UPDATE_INTERVAL_MS || !cachedDatePartHTML) {
+                
+                // যদি শর্ত মিলে, তবে অনলাইন থেকে তারিখ আনবে
+                if (shouldCheckOnline) {
+                    try {
+                        const onlineDate = await fetchOnlineDate();
+                        // সিস্টেম টাইমের সাথে অনলাইন টাইমের পার্থক্য থাকলে, আমরা অনলাইন ডেটকে বেস হিসেবে ধরবো
+                        // তবে সাধারণ প্রদর্শনের জন্য আমরা 'now' ভেরিয়েবল আপডেট করছি ক্যালকুলেশনের জন্য
+                        now = onlineDate; 
+                    } catch (e) {
+                        // ফেইল করলে সাইলেন্টলি সিস্টেম টাইমই থাকবে
+                    }
+                }
+
                 const toBengaliNumber = (num) => {
                     const numbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
                     return String(num).split('').map(digit => !isNaN(parseInt(digit)) ? numbers[parseInt(digit)] : digit).join('');
@@ -9746,7 +9839,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Hijri Date
                 let hijriCalculationDate = new Date(now);
-                hijriCalculationDate.setDate(hijriCalculationDate.getDate() - 2); 
+                
+                // সেটিংস থেকে হিজরি অ্যাডজাস্টমেন্ট লোড করুন (ডিফল্ট -২)
+                // ব্যবহারকারীর ইনপুট অনুযায়ী দিন যোগ বা বিয়োগ হবে
+                const hijriAdjustment = parseInt(localStorage.getItem('hijriDateAdjustment') || '-2', 10);
+                hijriCalculationDate.setDate(hijriCalculationDate.getDate() + hijriAdjustment);
+
                 const hijriDateFormatter = new Intl.DateTimeFormat('ar-SA', {
                     calendar: 'islamic', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Dhaka'
                 });
@@ -9761,25 +9859,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 const hijriMonthBengali = hijriMonthArabicToBengali[hijriMonthArabic] || hijriMonthArabic;
                 const hijriDateString = `${hijriDay} ${hijriMonthBengali} ${hijriYear} হিজরি`;
 
-                // ক্যাশ করা HTML (সময় বাদে বাকি অংশ)
+                // ক্যাশ করা HTML আপডেট
                 cachedDatePartHTML = `<span class="text-green-700 dark:text-green-300">আজ</span> <span class="text-green-700 dark:text-green-300">${dayOfWeekBengali}</span>, <span class="text-blue-700 dark:text-blue-300">${gregorianDateString} ইং</span>, <span class="text-green-700 dark:text-green-300">${bengaliDateString.replace('বঙ্গাব্দ', '')} বঙ্গাব্দ, ${bengaliSeason}</span>, <span class="text-purple-700 dark:text-purple-300">${hijriDateString}</span>, <span class="text-green-700 dark:text-green-300">এখন সময়</span>`;
                 
                 lastDateUpdateTimestamp = currentTime;
-                // console.log("Banner Date Updated (Next update in 10 mins)");
+                
+                // লোকাল স্টোরেজে ক্যালকুলেটেড ডাটা সেভ রাখা (যদি পরে অফলাইনে দরকার হয়)
+                localStorage.setItem('cachedBannerData', JSON.stringify({
+                    html: cachedDatePartHTML,
+                    timestamp: currentTime
+                }));
+            } else {
+                // পেজ লোডের সময় যদি ভেরিয়েবল খালি থাকে তবে স্টোরেজ থেকে নেয়ার চেষ্টা
+                if (!cachedDatePartHTML) {
+                    const savedData = JSON.parse(localStorage.getItem('cachedBannerData') || '{}');
+                    if (savedData.html) {
+                        cachedDatePartHTML = savedData.html;
+                    }
+                }
             }
 
-            // Time (সময়) - প্রতি সেকেন্ডে শুধু এটিই নতুন করে জেনারেট হবে
-            const timeString = now.toLocaleTimeString('bn-BD', {
+            // Time (সময়) - এটি সিস্টেম ক্লক থেকেই চলবে যাতে সেকেন্ডের কাঁটা স্মুথ থাকে
+            const timeNow = new Date();
+            const timeString = timeNow.toLocaleTimeString('bn-BD', {
                 hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true, timeZone: 'Asia/Dhaka'
             });
 
-            // ফাইনাল আউটপুট (সময় অংশে onclick যোগ করা হয়েছে এবং কার্সর পয়েন্টার করা হয়েছে)
+            // সেকেন্ডের ফেড এফেক্ট
+            if (timeNow.getSeconds() === 0) bannerElement.style.opacity = '1';
+            else if (timeNow.getSeconds() === 59) bannerElement.style.opacity = '0';
+            else if (timeNow.getSeconds() === 1 && bannerElement.style.opacity !== '1') bannerElement.style.opacity = '1';
+
+            // ফাইনাল আউটপুট
             bannerElement.innerHTML = `${cachedDatePartHTML}<span class="text-green-700 dark:text-green-300 cursor-pointer hover:underline" onclick="switchToClockTab()" title="অ্যালার্ম সেট করতে ক্লিক করুন"> ${timeString}</span>`;
         }
 
-        // প্রতি সেকেন্ডে আপডেট হবে, কিন্তু ভারী ক্যালকুলেশন ১০ মিনিটে একবার হবে
-        setInterval(updateDateTimeBanner, 1000);
-        updateDateTimeBanner(); // শুরুতে একবার কল করা
+        // প্রতি সেকেন্ডে আপডেট হবে
+        setInterval(() => updateDateTimeBanner(false), 1000);
+        updateDateTimeBanner(false); // শুরুতে একবার কল করা
 
 // ====================================================================
 // END: DATE AND TIME BANNER SCRIPT
@@ -12776,13 +12893,12 @@ case 'scientific':
                     const bengaliDateFormatted = bengaliDateInfo.formatted;
                     const bengaliSeason = getBengaliSeason(bengaliDateInfo.monthIndex); // *** নতুন: ঋতু আনা হয়েছে ***
 
-                    // হিজরি তারিখ (প্রয়োজনে স্থানীয় কনভেনশনের জন্য সামঞ্জস্য করা হয়েছে)
+                    // হিজরি তারিখ (সেটিংস থেকে অ্যাডজাস্টমেন্ট সহ)
                     let hijriCalculationDate = new Date(dateToDisplay);
-                    // ব্যবহারকারীর পর্যবেক্ষণের সাথে মিলানোর জন্য হিজরির জন্য -2 দিনের সামঞ্জস্য পুনরায় চালু করা হচ্ছে
-                    // এই সামঞ্জস্য স্থানীয় চাঁদ দেখা ভিত্তিক ক্যালেন্ডারের সাথে সারিবদ্ধ করার জন্য সাধারণ,
-					//১ দিন বা ২ দিন আগে পরে করতে নিচের লজিকের মান বসাতে হবে, এখানে 1 দিন বা দুই দিন
-					//কমবেশি করে সেট করতে হবে প্রতিমাসে আরবি তারিখের ক্ষেত্রে।
-                    hijriCalculationDate.setDate(hijriCalculationDate.getDate() - 2);
+                    
+                    // সেটিংস থেকে হিজরি অ্যাডজাস্টমেন্ট লোড করুন (ডিফল্ট -২)
+                    const hijriAdjustment = parseInt(localStorage.getItem('hijriDateAdjustment') || '-2', 10);
+                    hijriCalculationDate.setDate(hijriCalculationDate.getDate() + hijriAdjustment);
 
                     const hijriDateFormatter = new Intl.DateTimeFormat('ar-SA', {
                         calendar: 'islamic',
@@ -12878,9 +12994,10 @@ case 'scientific':
                         const bengaliSeason = getBengaliSeason(bengaliDateInfo.monthIndex);
                         const dayOfWeek = gregorianDate.toLocaleDateString('bn-BD', { weekday: 'long' });
 
-                        // ২. হিজরি তারিখ বের করা (বাংলাদেশ স্ট্যান্ডার্ড অনুযায়ী -২ দিন অ্যাডজাস্টমেন্ট)
+                        // ২. হিজরি তারিখ বের করা (সেটিংস থেকে অ্যাডজাস্টমেন্ট সহ)
                         let hijriCalculationDate = new Date(gregorianDate);
-                        hijriCalculationDate.setDate(hijriCalculationDate.getDate() - 2); // চাঁদ দেখা সাপেক্ষে পরিবর্তন হতে পারে
+                        const hijriAdjustment = parseInt(localStorage.getItem('hijriDateAdjustment') || '-2', 10);
+                        hijriCalculationDate.setDate(hijriCalculationDate.getDate() + hijriAdjustment);
 
                         const hijriDateFormatter = new Intl.DateTimeFormat('ar-SA', {
                             calendar: 'islamic',
@@ -20239,6 +20356,166 @@ function initializeMoreSettings() {
             showCustomAlert(`সময় ব্যানার: ${isEnabled ? 'চালু' : 'বন্ধ'} করা হয়েছে।`);
         });
     }
+
+   // ৩. অনলাইন তারিখ আপডেট এবং অটো আপডেট লজিক (জেমিনি ইন্টিগ্রেটেড)
+    const refreshDateBtn = document.getElementById('refreshDateBtn');
+    const autoUpdateDateToggle = document.getElementById('autoUpdateDateToggle');
+
+    // জেমিনি ব্যবহার করে তারিখ সিঙ্ক করার ফাংশন
+    async function syncDatesWithGemini() {
+        const apiKey = localStorage.getItem('geminiApiKey');
+        if (!apiKey) throw new Error("API Key not set");
+
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0];
+
+        // প্রম্পট: বর্তমান তারিখের জন্য সঠিক বাংলা ও হিজরি দিন চাওয়া হচ্ছে
+        const prompt = `Current system date is ${dateStr}. 
+        Determine the accurate current date in Bangladesh (Timezone Asia/Dhaka) right now.
+        I need the Bengali Date (Day only) and Hijri Date (Day only) according to the official calendars used in Bangladesh today.
+        
+        Response JSON format ONLY:
+        {
+          "bengali_day": integer,
+          "hijri_day": integer
+        }`;
+
+        const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+        const payload = {
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { response_mime_type: "application/json" }
+        };
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        const data = JSON.parse(result.candidates[0].content.parts[0].text);
+
+        if (data.bengali_day && data.hijri_day) {
+            // বাংলা তারিখ অ্যাডজাস্টমেন্ট ক্যালকুলেশন
+            const oldBenAdj = localStorage.getItem('bengaliDateAdjustment');
+            let foundBen = false;
+            // -৩ থেকে +৩ এর মধ্যে চেক করা হচ্ছে কোন অ্যাডজাস্টমেন্টে জেমিনির দেওয়া তারিখ মেলে
+            for (let i = -3; i <= 3; i++) {
+                localStorage.setItem('bengaliDateAdjustment', i.toString());
+                if (getBengaliDate(now).day === data.bengali_day) {
+                    foundBen = true;
+                    // ইনপুট ফিল্ড আপডেট
+                    const benInput = document.getElementById('bengaliDateAdjustInput');
+                    if (benInput) benInput.value = i;
+                    break;
+                }
+            }
+            if (!foundBen) localStorage.setItem('bengaliDateAdjustment', oldBenAdj); // না মিললে আগের অবস্থায় ফেরত
+
+            // হিজরি তারিখ অ্যাডজাস্টমেন্ট ক্যালকুলেশন
+            const oldHijriAdj = localStorage.getItem('hijriDateAdjustment');
+            let foundHijri = false;
+            
+            // হিজরি চেক করার জন্য একটি টেম্পোরারি ফাংশন বা লজিক
+            const checkHijri = (adj) => {
+                let d = new Date(now);
+                d.setDate(d.getDate() + adj);
+                const f = new Intl.DateTimeFormat('ar-SA', { calendar: 'islamic', day: 'numeric', timeZone: 'Asia/Dhaka' });
+                // আরবী সংখ্যা থেকে ইংরেজি সংখ্যায় কনভার্ট করে তুলনা
+                const part = f.formatToParts(d).find(p => p.type === 'day');
+                const dayVal = parseInt(part.value.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)));
+                return dayVal === data.hijri_day;
+            };
+
+            for (let i = -3; i <= 3; i++) {
+                if (checkHijri(i)) {
+                    localStorage.setItem('hijriDateAdjustment', i.toString());
+                    foundHijri = true;
+                    // ইনপুট ফিল্ড আপডেট
+                    const hijriInput = document.getElementById('hijriDateAdjustInput');
+                    if (hijriInput) hijriInput.value = i;
+                    break;
+                }
+            }
+            if (!foundHijri) localStorage.setItem('hijriDateAdjustment', oldHijriAdj);
+
+            return true;
+        }
+        throw new Error("Invalid Data from Gemini");
+    }
+
+    if (refreshDateBtn && autoUpdateDateToggle) {
+        const isAutoUpdateEnabled = localStorage.getItem('autoUpdateDate') !== 'false';
+        autoUpdateDateToggle.checked = isAutoUpdateEnabled;
+
+        // রিফ্রেশ বাটনের লজিক
+        refreshDateBtn.onclick = async () => {
+            showCustomAlert('অনলাইন (Gemini) থেকে তারিখ যাচাই করা হচ্ছে...');
+            try {
+                await syncDatesWithGemini();
+                updateDateTimeBanner(true); // ব্যানার আপডেট
+                showCustomAlert('Gemini-এর মাধ্যমে তারিখ ও অ্যাডজাস্টার আপডেট করা হয়েছে!');
+            } catch (e) {
+                console.error(e);
+                showCustomAlert('Gemini ব্যর্থ। সাধারণ সার্ভার থেকে আপডেট করা হচ্ছে...');
+                updateDateTimeBanner(true).then(() => {
+                    showCustomAlert('তারিখ সফলভাবে আপডেট হয়েছে (সাধারণ)!');
+                });
+            }
+        };
+
+        // টগল লজিক
+        autoUpdateDateToggle.addEventListener('change', async () => {
+            const isEnabled = autoUpdateDateToggle.checked;
+            localStorage.setItem('autoUpdateDate', isEnabled);
+            showCustomAlert(`অটো ডেট আপডেট: ${isEnabled ? 'চালু' : 'বন্ধ'} করা হয়েছে।`);
+            
+            if (isEnabled) {
+                // টগল অন করলে একবার জেমিনি চেক করার চেষ্টা করবে
+                try {
+                    await syncDatesWithGemini();
+                    updateDateTimeBanner(true);
+                } catch(e) {
+                    updateDateTimeBanner(true); // ফেইল করলে সাধারণ আপডেট
+                }
+            }
+        });
+    }
+
+    // ৪. হিজরি তারিখ অ্যাডজাস্টার লজিক
+    const hijriDateAdjustInput = document.getElementById('hijriDateAdjustInput');
+    const saveHijriAdjustBtn = document.getElementById('saveHijriAdjustBtn');
+
+    if (hijriDateAdjustInput && saveHijriAdjustBtn) {
+        const savedHijriAdj = localStorage.getItem('hijriDateAdjustment') || '-2';
+        hijriDateAdjustInput.value = savedHijriAdj;
+
+        saveHijriAdjustBtn.onclick = () => {
+            const val = hijriDateAdjustInput.value;
+            localStorage.setItem('hijriDateAdjustment', val);
+            showCustomAlert(`হিজরি অ্যাডজাস্টমেন্ট (${val}) সেভ করা হয়েছে।`);
+            updateDateTimeBanner(true);
+        };
+    }
+
+    // ৫. বাংলা তারিখ অ্যাডজাস্টার লজিক
+    const bengaliDateAdjustInput = document.getElementById('bengaliDateAdjustInput');
+    const saveBengaliAdjustBtn = document.getElementById('saveBengaliAdjustBtn');
+
+    if (bengaliDateAdjustInput && saveBengaliAdjustBtn) {
+        const savedBengaliAdj = localStorage.getItem('bengaliDateAdjustment') || '0';
+        bengaliDateAdjustInput.value = savedBengaliAdj;
+
+        saveBengaliAdjustBtn.onclick = () => {
+            const val = bengaliDateAdjustInput.value;
+            localStorage.setItem('bengaliDateAdjustment', val);
+            showCustomAlert(`বাংলা অ্যাডজাস্টমেন্ট (${val}) সেভ করা হয়েছে।`);
+            updateDateTimeBanner(true);
+        };
+    }
+
 
 // 3. ব্যাকগ্রাউন্ড এনিমেশন টগল লজিক (আপডেট করা হয়েছে)
     const bgAnimationToggle = document.getElementById('bgAnimationToggle');
