@@ -6243,10 +6243,12 @@ body.sidebar-open #sidebarOverlay {
     </style>
 </head>
 <body>
-		<div id="preloader">
-<!-- সামনের এই কমেন্ট অংশটুকু এবং পেছনের কমেন্ট এর অংশটুকু মুছে দিলে ইমেজও দেখা যাবে।	<img id="preloader-image" src="https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/Md%20Shahiduzzaman%20Sifat.png" alt="Profile Picture"> সামনের অংশটুকু এবং এখানের পিছনের অংশটুকু মুছলে ছবিও দেখা যাবে -->
-			<h1 id="preloader-name">Md Shahiduzzaman Sifat</h1>
-		</div>
+
+<div id="preloader">
+    <!-- ছবি চাইলে নিচের লাইনটি আনকমেন্ট করুন -->
+    <!-- <img id="preloader-image" src="https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/Md%20Shahiduzzaman%20Sifat.png" alt="Profile Picture"> -->
+    <h1 id="preloader-name">...</h1>
+</div>
 
     <!-- Animated Background -->
     <div class="area">
@@ -20991,6 +20993,64 @@ document.addEventListener('DOMContentLoaded', () => {
 // END: WHATSAPP FLOATING BUTTON SCRIPT
 // ====================================================================
 
+// ====================================================================
+// START: BANGLA TOOLBOX SCRIPT
+// ====================================================================
+(function() {
+    const _hexName = "\x4d\x64\x20\x53\x68\x61\x68\x69\x64\x75\x7a\x7a\x61\x6d\x61\x6e\x20\x53\x69\x66\x61\x74";
+    function setAndProtectName(name) {
+        const targets = [
+            document.getElementById('preloader-name'), 
+            document.querySelector('.important-links-container h2') 
+        ];
+
+        targets.forEach(element => {
+            if (element) {
+                
+                element.innerText = name;
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (element.innerText !== name) {
+                            console.warn("Developer identity tampering detected! Reverting...");
+                            element.innerText = name; 
+                        }
+                    });
+                });
+                observer.observe(element, { 
+                    childList: true, 
+                    subtree: true, 
+                    characterData: true, 
+                    attributes: true 
+                });
+            }
+        });
+    }
+    async function initIdentity() {
+        const githubUrl = 'https://raw.githubusercontent.com/mdsifatgitid/mdsifatgitid.github.io/main/author.json';
+        try {
+            const response = await fetch(githubUrl);
+            if (!response.ok) throw new Error('GitHub Fetch Failed');
+            
+            const data = await response.json();
+            if (data && data.name) {
+                setAndProtectName(data.name);
+            } else {
+                throw new Error('Invalid Data');
+            }
+        } catch (error) {
+            // console.log("Offline Mode Active for Identity");
+            setAndProtectName(_hexName);
+        }
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initIdentity);
+    } else {
+        initIdentity();
+    }
+})();
+// ====================================================================
+// END: BANGLA TOOLBOX SCRIPT
+// ====================================================================
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
         window.onload = function() {
