@@ -6245,7 +6245,7 @@ body.sidebar-open #sidebarOverlay {
 <body>
 
 <div id="preloader">
-    <!-- ছবি চাইলে নিচের লাইনটি আনকমেন্ট করুন -->
+    <!-- ছবি চাইলে নিচের লাইন আনকমেন্ট -->
     <!-- <img id="preloader-image" src="https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/Md%20Shahiduzzaman%20Sifat.png" alt="Profile Picture"> -->
     <h1 id="preloader-name">...</h1>
 </div>
@@ -21058,22 +21058,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const mainContainer = document.querySelector('.main-container');
 
             if (preloader) {
-                // প্রি-লোডার লুকানোর জন্য ক্লাস যোগ করুন
                 preloader.classList.add('preloader-hidden');
-
-                // প্রি-লোডারের ট্রানজিশন (fade-out) শেষ হওয়ার জন্য অপেক্ষা করুন
                 preloader.addEventListener('transitionend', () => {
                     if (mainContainer) {
                         // মূল কন্টেন্ট দৃশ্যমান করুন
                         mainContainer.style.visibility = 'visible';
-                        // একটি সুন্দর ফেড-ইন অ্যানিমেশন প্রয়োগ করুন (ডিউরেশন এখানে পরিবর্তন করুন)
                         mainContainer.style.animation = 'fadeInContent 2s ease-out forwards'; // 0.75s থেকে 2s করা হয়েছে
                     }
                 }, {
                     once: true
-                }); // ইভেন্টটি কেবল একবার চালানোর জন্য
+                }); 
             } else {
-                // যদি কোনো কারণে প্রি-লোডার না থাকে, তাহলে সরাসরি কন্টেন্ট দেখান
                 if (mainContainer) {
                     mainContainer.style.visibility = 'visible';
                     mainContainer.style.opacity = '1';
