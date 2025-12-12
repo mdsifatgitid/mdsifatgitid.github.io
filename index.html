@@ -6516,7 +6516,7 @@ body.sidebar-open #sidebarOverlay {
                     <p id="convertedDayDisplay"></p>
                 </div>
 <!-- বাংলা থেকে ইংরেজি তারিখ রূপান্তর বৈশিষ্ট্য (নতুন) -->
-<h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200 p-5">বাংলা থেকে ইংরেজি তারিখ তারিখ বের করুন</h3>
+<h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200 p-5">বাংলা থেকে ইংরেজি তারিখ বের করুন</h3>
     <div class="input-group mt-4">
         <label for="bengaliDayInput" class="text-gray-700 font-semibold text-left block mb-2">বাংলা তারিখ (দিন) লিখুন:</label>
         <input type="number" id="bengaliDayInput" placeholder="যেমন: ১" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full p-1 border border-gray-300">
@@ -6547,6 +6547,40 @@ body.sidebar-open #sidebarOverlay {
         <p class="result-section-title">রূপান্তরিত ইংরেজি তারিখ</p>
         <p id="convertedEnglishDate"></p>
         <p id="convertedEnglishDayDisplay"></p>
+    </div>
+
+<!-- হিজরি থেকে ইংরেজি তারিখ রূপান্তর বৈশিষ্ট্য (নতুন যুক্ত করা হয়েছে) -->
+<h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200 p-5">হিজরি থেকে ইংরেজি তারিখ বের করুন</h3>
+    <div class="input-group mt-4">
+        <label for="hijriDayInput" class="text-gray-700 font-semibold text-left block mb-2">হিজরি তারিখ (দিন) লিখুন:</label>
+        <input type="number" id="hijriDayInput" placeholder="যেমন: ১০" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full p-1 border border-gray-300">
+    </div>
+    <div class="input-group mt-4">
+        <label for="hijriMonthInput" class="text-gray-700 font-semibold text-left block mb-2">হিজরি মাস নির্বাচন করুন:</label>
+        <select id="hijriMonthInput" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full p-2 border border-gray-300 bg-white dark:bg-gray-700">
+            <option value="1">মুহাররম</option>
+            <option value="2">সফর</option>
+            <option value="3">রবিউল আউয়াল</option>
+            <option value="4">রবিউস সানি</option>
+            <option value="5">জমাদিউল আউয়াল</option>
+            <option value="6">জমাদিউস সানি</option>
+            <option value="7">রজব</option>
+            <option value="8">শাবান</option>
+            <option value="9">রমজান</option>
+            <option value="10">শাওয়াল</option>
+            <option value="11">জিলকদ</option>
+            <option value="12">জিলহজ</option>
+        </select>
+    </div>
+    <div class="input-group mt-6">
+        <label for="hijriYearInput" class="text-gray-700 font-semibold text-left block mb-2">হিজরি সন লিখুন:</label>
+        <input type="number" id="hijriYearInput" placeholder="যেমন: ১৪৪৫" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full p-2 border border-gray-300">
+    </div>
+    <button id="convertHijriToEnglishBtn" class="show-date-button rounded-xl mt-4">ইংরেজি তারিখে রূপান্তর করুন</button>
+    <div id="englishFromHijriDateDisplay" class="result-area mt-4">
+        <p class="result-section-title">রূপান্তরিত ইংরেজি তারিখ</p>
+        <p id="convertedEnglishFromHijriDate"></p>
+        <p id="convertedEnglishFromHijriDayDisplay"></p>
     </div>
                 <!-- নতুন বোতাম এবং লিংক -->
                 <a href="https://ajkertarikh.com" target="_blank" class="show-date-button rounded-xl mt-4 block mx-auto text-center">প্রয়োজনে এখানে তারিখ দেখুন</a>
@@ -12824,7 +12858,7 @@ case 'scientific':
                 const tomorrowDayDisplay = document.getElementById('tomorrowDayDisplay'); // আগামীকালের দিনের জন্য নতুন উপাদান
                 const tomorrowTimeDisplay = document.getElementById('tomorrowTimeDisplay');
 
-                // নতুন তারিখ কনভার্টার DOM উপাদান Default: ΝŨŴţŨ ųфŨŕŨĵŚ ũŚťľ: ΝŨŴţŨŊňũŚťľŝΥƏŨŝĺŗũŊũŝŕŨōΝŨŴţŨũŚťľ
+                // নতুন তারিখ কনভার্টার DOM উপাদান
                 const englishDateInput = document.getElementById('englishDateInput');
                 const convertEnglishToBengaliBtn = document.getElementById('convertEnglishToBengaliBtn');
                 const convertedBengaliDate = document.getElementById('convertedBengaliDate');
@@ -12843,19 +12877,6 @@ case 'scientific':
                         displayDates('tomorrow');
                     });
                 }
-
-                // গ্রেগরিয়ান তারিখকে বাংলা তারিখে রূপান্তর করার ফাংশন (বাংলাদেশ স্ট্যান্ডার্ড)
-                // এই ফাংশনটি এখন টাইম ব্যানার স্ক্রিপ্টের সাথে গ্লোবালি ডিফাইন করা আছে, 
-                // তাই এখানে পুনরায় ডিফাইন করার প্রয়োজন নেই। 
-                // getBengaliDate() এবং getBengaliSeason() এখন সরাসরি ব্যবহার করা যাবে।
-
-
-                // আরবি সংখ্যাকে বাংলা সংখ্যায় রূপান্তর করার ফাংশন
-                // এই ফাংশনটি এখন টাইম ব্যানার স্ক্রিপ্টের সাথে গ্লোবালি ডিফাইন করা আছে।
-
-
-                // আরবি হিজরি মাসের নামগুলিকে বাংলা নামে ম্যাপ করুন
-                // এই অবজেক্টটি এখন টাইম ব্যানার স্ক্রিপ্টের সাথে গ্লোবালি ডিফাইন করা আছে।
 
                 function displayDates(period) {
                     console.log(`তারিখগুলি প্রদর্শন করা হচ্ছে: ${period}`);
@@ -13038,8 +13059,7 @@ case 'scientific':
 
     if (convertBengaliToEnglishBtn) {
         
-        // হেল্পার ফাংশন (আপনার ফাইলে এই ফাংশনটি অন্যান্য জায়গায় থাকতে পারে,
-        // কিন্তু এখানে এটি আলাদাভাবে যুক্ত করা হলো যাতে কোডটি সঠিকভাবে কাজ করে)
+        // হেল্পার ফাংশন
         const toBengaliNumber = (num) => {
             const numbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
             return num.toString().split('').map(digit => {
@@ -13084,19 +13104,25 @@ case 'scientific':
 
             // গণনা শুরু
             // বাংলা বছরের শুরু (পহেলা বৈশাখ) গ্রেগরিয়ান তারিখে
-            const startOfBengaliYearGregorian = new Date(gregorianYearForLeapCheck, 3, 14); // এপ্রিল 14
+            // ফিক্স: ব্যবহারকারীর রিপোর্টেড ১ দিন কম আসার সমস্যা সমাধানের জন্য ১৪ এর পরিবর্তে ১৫ ব্যবহার করা হলো (getBengaliDate ফাংশনের সাথে সামঞ্জস্য রেখে)
+            const startOfBengaliYearGregorian = new Date(gregorianYearForLeapCheck, 3, 15); // এপ্রিল 15 (পূর্বের ১৪ থেকে পরিবর্তন করা হয়েছে)
 
             let daysPassed = 0;
             // নির্বাচিত মাসের আগ পর্যন্ত দিন যোগ করুন
             for (let i = 0; i < bengaliMonthIndex; i++) {
                 daysPassed += bengaliMonthLengths[i];
             }
-            // বর্তমান মাসের দিন যোগ করুন ( 0 অথবা 1 বিয়োগ করে অ্যাডযাস্ট করতে হবে, তাহলে সঠিক তারিখ দেখাবে)
-            daysPassed += (bengaliDay - 0);
+            // বর্তমান মাসের দিন যোগ করুন
+            daysPassed += (bengaliDay - 1);
 
             // চূড়ান্ত গ্রেগরিয়ান তারিখ গণনা করুন
             const targetGregorianDate = new Date(startOfBengaliYearGregorian.getTime());
             targetGregorianDate.setDate(targetGregorianDate.getDate() + daysPassed);
+
+            // *** সেটিংসের অ্যাডজাস্টমেন্টের সাথে সমন্বয় (নতুন সংযোজন) ***
+            // ইংরেজি -> বাংলা কনভার্টারে অ্যাডজাস্টমেন্ট যোগ করা হয়, তাই রিভার্সে বিয়োগ করতে হবে।
+            const bengaliAdjustment = parseInt(localStorage.getItem('bengaliDateAdjustment') || '0', 10);
+            targetGregorianDate.setDate(targetGregorianDate.getDate() - bengaliAdjustment);
 
             // ফলাফল প্রদর্শন করুন
             const gregorianDateFormatted = targetGregorianDate.toLocaleDateString('bn-BD', {
@@ -13110,6 +13136,69 @@ case 'scientific':
 
             convertedEnglishDate.innerHTML = `<strong>ইংরেজি তারিখ:</strong> ${gregorianDateFormatted}`;
             convertedEnglishDayDisplay.innerHTML = `<strong>বার:</strong> ${dayOfWeek}`;
+        });
+    }
+
+// --- নতুন: হিজরি থেকে ইংরেজি তারিখ রূপান্তর লজিক ---
+    const hijriYearInput = document.getElementById('hijriYearInput');
+    const hijriMonthInput = document.getElementById('hijriMonthInput');
+    const hijriDayInput = document.getElementById('hijriDayInput');
+    const convertHijriToEnglishBtn = document.getElementById('convertHijriToEnglishBtn');
+    const convertedEnglishFromHijriDate = document.getElementById('convertedEnglishFromHijriDate');
+    const convertedEnglishFromHijriDayDisplay = document.getElementById('convertedEnglishFromHijriDayDisplay');
+
+    // হিজরি থেকে গ্রেগরিয়ান কনভার্সন ফাংশন (কুয়েতি অ্যালগরিদম ভিত্তিক বা সাধারণ গাণিতিক)
+    function hijriToGregorian(hYear, hMonth, hDay) {
+        var jd = Math.floor((11 * hYear + 3) / 30) + 354 * hYear + 30 * hMonth - Math.floor((hMonth - 1) / 2) + hDay + 1948440 - 385;
+        var l = jd + 68569;
+        var n = Math.floor((4 * l) / 146097);
+        l = l - Math.floor((146097 * n + 3) / 4);
+        var i = Math.floor((4000 * (l + 1)) / 1461001);
+        l = l - Math.floor((1461 * i) / 4) + 31;
+        var j = Math.floor((80 * l) / 2447);
+        var d = l - Math.floor((2447 * j) / 80);
+        l = Math.floor(j / 11);
+        var m = j + 2 - 12 * l;
+        var y = 100 * (n - 49) + i + l;
+        return new Date(y, m - 1, d);
+    }
+
+    if (convertHijriToEnglishBtn) {
+        convertHijriToEnglishBtn.addEventListener('click', () => {
+            console.log('হিজরি থেকে ইংরেজি রূপান্তর বোতামে ক্লিক করা হয়েছে।');
+            
+            const hYear = parseInt(hijriYearInput.value, 10);
+            const hMonth = parseInt(hijriMonthInput.value, 10);
+            const hDay = parseInt(hijriDayInput.value, 10);
+
+            if (isNaN(hYear) || isNaN(hMonth) || isNaN(hDay) || hDay < 1 || hDay > 30) {
+                convertedEnglishFromHijriDate.innerText = 'অনুগ্রহ করে সঠিক হিজরি সন, মাস ও দিন লিখুন।';
+                convertedEnglishFromHijriDayDisplay.innerText = '';
+                return;
+            }
+
+            const gregDate = hijriToGregorian(hYear, hMonth, hDay);
+            
+            // ফিক্স: ১ দিন বেশি আসছিল, তাই এখানে ১ দিন বিয়োগ করে অ্যাডজাস্ট করা হলো
+            gregDate.setDate(gregDate.getDate() - 1);
+
+            // *** সেটিংসের অ্যাডজাস্টমেন্টের সাথে সমন্বয় (নতুন সংযোজন) ***
+            // ইংরেজি -> হিজরি কনভার্টারে অ্যাডজাস্টমেন্ট যোগ করা হয়, তাই রিভার্সে বিয়োগ করতে হবে।
+            // এখানে hijriDateAdjustment হলো একটি স্ট্রিং, তাই parseInt দিয়ে ইন্টিজারে রূপান্তর করা জরুরি।
+            const hijriAdjustment = parseInt(localStorage.getItem('hijriDateAdjustment') || '-2', 10);
+            gregDate.setDate(gregDate.getDate() - hijriAdjustment);
+
+            const gregorianDateFormatted = gregDate.toLocaleDateString('bn-BD', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            const dayOfWeek = gregDate.toLocaleDateString('bn-BD', {
+                weekday: 'long'
+            });
+
+            convertedEnglishFromHijriDate.innerHTML = `<strong>ইংরেজি তারিখ:</strong> ${gregorianDateFormatted}`;
+            convertedEnglishFromHijriDayDisplay.innerHTML = `<strong>বার:</strong> ${dayOfWeek}`;
         });
     }
 // ====================================================================
