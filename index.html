@@ -9688,7 +9688,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 100);
         }
 
-        // গ্রেগরিয়ান তারিখকে বাংলা তারিখে রূপান্তর করার ফাংশন (বাংলাদেশ স্ট্যান্ডার্ড)
+// গ্রেগরিয়ান তারিখকে বাংলা তারিখে রূপান্তর করার ফাংশন (বাংলাদেশ স্ট্যান্ডার্ড)
         function getBengaliDate(originalGregorianDate) {
             // সেটিংস থেকে বাংলা তারিখ অ্যাডজাস্টমেন্ট লোড করুন (ডিফল্ট ০)
             const adjustment = parseInt(localStorage.getItem('bengaliDateAdjustment') || '0', 10);
@@ -9696,6 +9696,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // তারিখ কপি করে অ্যাডজাস্টমেন্ট যোগ করুন
             const gregorianDate = new Date(originalGregorianDate);
             gregorianDate.setDate(gregorianDate.getDate() + adjustment);
+            // সময়ের ব্যবধান সমস্যা এড়াতে সময় রিসেট করা হলো
+            gregorianDate.setHours(0, 0, 0, 0);
 
             const year = gregorianDate.getFullYear();
             const month = gregorianDate.getMonth(); // 0-11
@@ -9707,27 +9709,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 "কার্তিক", "অগ্রহায়ণ", "পৌষ", "মাঘ", "ফাল্গুন", "চৈত্র"
             ];
 
+            // পহেলা বৈশাখ ১৪ এপ্রিল
             if (month < 3 || (month === 3 && day < 14)) { 
                 bengaliYear = year - 594;
             } else { 
                 bengaliYear = year - 593;
             }
 
-            const bengaliMonthLengths = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29, 30];
-            const gregorianYearForBengaliLeapCheck = bengaliYear + 593;
+            // সংশোধিত ক্যালেন্ডার অনুযায়ী মাসের দিন সংখ্যা (প্রথম ৬ মাস ৩১ দিন)
+            const bengaliMonthLengths = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 29, 30];
+            
+            // লিপ ইয়ার চেক: ফাল্গুন মাস যে গ্রেগরিয়ান বছরে পড়ে (অর্থাৎ পরের বছর), সেই বছর চেক করতে হবে
+            const gregorianYearForBengaliLeapCheck = bengaliYear + 594;
             const isGregorianLeapYear = (gregorianYearForBengaliLeapCheck % 4 === 0 && gregorianYearForBengaliLeapCheck % 100 !== 0) || gregorianYearForBengaliLeapCheck % 400 === 0;
 
             if (isGregorianLeapYear) {
-                bengaliMonthLengths[10] = 30; 
+                bengaliMonthLengths[10] = 30; // অধিবর্ষে ফাল্গুন ৩০ দিন
             }
 
-            const startOfCurrentBengaliYearGregorian = new Date(year, 3, 15); 
+            // বাংলা বছরের শুরু (১৪ এপ্রিল)
+            const startOfCurrentBengaliYearGregorian = new Date(year, 3, 14);
+            startOfCurrentBengaliYearGregorian.setHours(0, 0, 0, 0);
+
             if (gregorianDate < startOfCurrentBengaliYearGregorian) {
                 startOfCurrentBengaliYearGregorian.setFullYear(year - 1);
             }
 
+            // দিনের পার্থক্য বের করা
             const diffTime = gregorianDate.getTime() - startOfCurrentBengaliYearGregorian.getTime();
-            let daysPassedSinceBengaliYearStart = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            let daysPassedSinceBengaliYearStart = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
             let currentBengaliMonthIndex = 0;
             let currentBengaliDay = 0;
