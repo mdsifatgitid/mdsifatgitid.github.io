@@ -13083,15 +13083,18 @@ case 'scientific':
                 return;
             }
 
-            // বাংলা মাসের দিন সংখ্যা (বাংলাদেশ স্ট্যান্ডার্ড)
-            const bengaliMonthLengths = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30, 30];
+// বাংলা মাসের দিন সংখ্যা (বাংলাদেশ সরকার কর্তৃক ২০১৯ সালের সংশোধিত ক্যালেন্ডার অনুযায়ী)
+            // বৈশাখ থেকে আশ্বিন (প্রথম ৬ মাস) ৩১ দিন, ফাল্গুন ২৯ দিন (লিপ ইয়ারে ৩০), বাকি সব ৩০ দিন
+            const bengaliMonthLengths = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 29, 30];
 
             // অধিবর্ষ পরীক্ষা
-            const gregorianYearForLeapCheck = bengaliYear + 593;
+            // ফাল্গুন মাস যেহেতু ইংরেজি ক্যালেন্ডারের পরের বছরে পড়ে (যেমন: ১৪৩০ সালের ফাল্গুন ২০২৪ সালে),
+            // তাই লিপ ইয়ার চেক করার জন্য বাংলা সালের সাথে ৫৯৪ যোগ করতে হবে (৫৯৩ এর পরিবর্তে)
+            const gregorianYearForLeapCheck = bengaliYear + 594; 
             const isGregorianLeapYear = (gregorianYearForLeapCheck % 4 === 0 && gregorianYearForLeapCheck % 100 !== 0) || gregorianYearForLeapCheck % 400 === 0;
 
             if (isGregorianLeapYear) {
-                bengaliMonthLengths[10] = 31; // অধিবর্ষে ফাল্গুন 31 দিন
+                bengaliMonthLengths[10] = 30; // অধিবর্ষে ফাল্গুন ৩০ দিন (স্বাভাবিকভাবে ২৯)
             }
 
             // তারিখটি বৈধ কিনা তা পরীক্ষা করুন
@@ -13103,9 +13106,8 @@ case 'scientific':
             }
 
             // গণনা শুরু
-            // বাংলা বছরের শুরু (পহেলা বৈশাখ) গ্রেগরিয়ান তারিখে
-            // ফিক্স: ব্যবহারকারীর রিপোর্টেড ১ দিন কম আসার সমস্যা সমাধানের জন্য ১৪ এর পরিবর্তে ১৫ ব্যবহার করা হলো (getBengaliDate ফাংশনের সাথে সামঞ্জস্য রেখে)
-            const startOfBengaliYearGregorian = new Date(gregorianYearForLeapCheck, 3, 15); // এপ্রিল 15 (পূর্বের ১৪ থেকে পরিবর্তন করা হয়েছে)
+            // বাংলা বছরের শুরু (পহেলা বৈশাখ) গ্রেগরিয়ান তারিখে - ১৪ এপ্রিল (ফিক্সড)
+            const startOfBengaliYearGregorian = new Date(bengaliYear + 593, 3, 14); // এপ্রিল ১৪
 
             let daysPassed = 0;
             // নির্বাচিত মাসের আগ পর্যন্ত দিন যোগ করুন
@@ -13113,6 +13115,8 @@ case 'scientific':
                 daysPassed += bengaliMonthLengths[i];
             }
             // বর্তমান মাসের দিন যোগ করুন
+            // এখানে (bengaliDay - 1) রাখা হয়েছে কারণ আমরা ১৪ এপ্রিল (১ম দিন) থেকে শুরু করছি।
+            // ১লা বৈশাখের জন্য (১-১) = ০ দিন যোগ হবে।
             daysPassed += (bengaliDay - 1);
 
             // চূড়ান্ত গ্রেগরিয়ান তারিখ গণনা করুন
