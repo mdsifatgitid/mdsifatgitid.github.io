@@ -19374,7 +19374,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeDraggableDashboard();
     makeAllFeaturesInteractive();
 
-    // --- Sidebar Functionality (Sidebar Close Button Added) ---
+    // --- Sidebar Functionality (Sidebar Close Button Added & Highlight Logic Updated) ---
     function initializeSidebar() {
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
@@ -19385,6 +19385,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!sidebar || !sidebarToggle || !sidebarOverlay || !sidebarSearch || !toolList || !sidebarCloseBtn) return;
         
+        // নতুন: মিডিয়া প্লেয়ার চালু আছে কিনা চেক করার ফাংশন
+        const isMediaPlaying = () => {
+            const audio = document.getElementById('audioPlayer');
+            const video = document.getElementById('videoPlayer');
+            // অডিও বা ভিডিও পজ করা না থাকলে এবং শেষ না হলে এবং টাইম ০ এর বেশি হলে প্লেইং ধরা হবে
+            const isAudioPlaying = audio && !audio.paused && !audio.ended && audio.currentTime > 0;
+            const isVideoPlaying = video && !video.paused && !video.ended && video.currentTime > 0;
+            return isAudioPlaying || isVideoPlaying;
+        };
+
+        // নতুন: সাইডবার হাইলাইট আপডেট করার ফাংশন (সংশোধিত)
+        const updateSidebarHighlights = () => {
+            const links = toolList.querySelectorAll('a');
+            
+            // এলার্ম স্ট্যাটাস চেক করা (ভেরিয়েবল অথবা ব্যানার টেক্সট দিয়ে ডাবল চেক)
+            let isAlarmActive = false;
+            
+            // ১. গ্লোবাল ভেরিয়েবল চেক
+            if (typeof hasGlobalAlarmRung !== 'undefined' && hasGlobalAlarmRung) {
+                isAlarmActive = true;
+            } 
+            // ২. ব্যানার টেক্সট চেক (ফলব্যাক: যদি ভেরিয়েবল এক্সেস না পাওয়া যায়)
+            else {
+                const alarmBanner = document.getElementById('bannerAlarmStatus');
+                // এলার্ম বাজলে ব্যানারে "বাজছে" শব্দটি থাকে
+                if (alarmBanner && alarmBanner.textContent.includes('বাজছে')) {
+                    isAlarmActive = true;
+                }
+            }
+
+            links.forEach(a => {
+                const targetTabId = a.dataset.tabId;
+                const targetElement = document.getElementById(targetTabId);
+                const isActive = targetElement && targetElement.classList.contains('active');
+
+                // ক্লাস রিসেট করা (যাতে পুরনো স্টাইল না থাকে)
+                a.className = "block w-full text-left p-2 rounded-lg transition-colors duration-200";
+                
+                // শর্ত ১: যদি এলার্ম বাজে এবং এটি ঘড়ি ট্যাব হয় -> হলুদ হাইলাইট + পালস এনিমেশন
+                if (targetTabId === 'clockTab' && isAlarmActive) {
+                    a.classList.add('bg-yellow-400', 'text-black', 'font-bold', 'shadow-md', 'animate-pulse');
+                }
+                // শর্ত ২: যদি মিডিয়া প্লে হয় এবং এটি প্লেয়ার ট্যাব হয় -> হলুদ হাইলাইট
+                else if (targetTabId === 'playerTab' && isMediaPlaying()) {
+                    a.classList.add('bg-yellow-400', 'text-black', 'font-bold', 'shadow-md');
+                }
+                // শর্ত ৩: সাধারণ একটিভ ট্যাব -> নীল হাইলাইট
+                else if (isActive) {
+                    a.classList.add('bg-indigo-600', 'text-white', 'shadow-md', 'font-semibold');
+                } 
+                // শর্ত ৪: ইনঅ্যাক্টিভ ট্যাব -> সাধারণ স্টাইল
+                else {
+                    a.classList.add('hover:bg-gray-100', 'dark:hover:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+                }
+            });
+        };
+
         // Populate the tool list from existing tab buttons
         const tabButtons = document.querySelectorAll('.tab-button');
         if (toolList.children.length === 0) { // Populate only once
@@ -19412,8 +19469,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     a.dataset.tabId = targetTabId;
                     
-                    // --- স্টাইল সেট করা ---
-                    // চেক করা হচ্ছে আসল টার্গেট ট্যাবটি একটিভ কিনা
+                    // --- স্টাইল সেট করা (প্রাথমিক) ---
                     const targetElement = document.getElementById(targetTabId);
                     if (targetElement && targetElement.classList.contains('active')) {
                         a.className = "block w-full text-left p-2 rounded-lg bg-indigo-600 text-white shadow-md font-semibold transition-colors duration-200";
@@ -19444,13 +19500,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // টগল বাটন ক্লিক করলে সাইডবার খুলবে বা বন্ধ হবে
         sidebarToggle.addEventListener('click', (e) => {
             e.stopPropagation();
+            
+            // নতুন: সাইডবার খোলার আগে হাইলাইট আপডেট করুন
+            if (!document.body.classList.contains('sidebar-open')) {
+                updateSidebarHighlights();
+            }
+
             document.body.classList.toggle('sidebar-open');
 
-            // --- নতুন: সাইডবার খোলার পর একটিভ ট্যাবটি অটোমেটিক স্ক্রোল হবে ---
+            // --- নতুন: সাইডবার খোলার পর একটিভ বা হাইলাইটেড ট্যাবটি অটোমেটিক স্ক্রোল হবে ---
             if (document.body.classList.contains('sidebar-open')) {
                 setTimeout(() => {
-                    // একটিভ লিংকটি খুঁজুন (যেটিতে bg-indigo-600 ক্লাস আছে)
-                    const activeLink = toolList.querySelector('a.bg-indigo-600');
+                    // একটিভ লিংকটি খুঁজুন (যেটিতে bg-indigo-600 অথবা bg-yellow-400 ক্লাস আছে)
+                    const activeLink = toolList.querySelector('a.bg-indigo-600, a.bg-yellow-400');
                     if (activeLink) {
                         activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
