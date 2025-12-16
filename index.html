@@ -16502,7 +16502,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 
 // ====================================================================
-// START: PLAYER TAB SCRIPT
+// START: PLAYER TAB SCRIPT (অডিও রিফ্রেশ পারসিস্টেন্স যুক্ত করা হয়েছে)
 // ====================================================================
 function initializePlayerTab() {
     // অডিও এলিমেন্ট
@@ -16510,6 +16510,7 @@ function initializePlayerTab() {
     const audioPlayer = document.getElementById('audioPlayer');
     const audioFileName = document.getElementById('audioFileName');
     const audioDropZone = audioInput?.closest('.player-section');
+    const audioLoopToggle = document.getElementById('audioLoopToggle');
 
     // ছবি এলিমেন্ট
     const imageInput = document.getElementById('imageInput');
@@ -16520,19 +16521,49 @@ function initializePlayerTab() {
     const videoInput = document.getElementById('videoInput');
     const videoPlayer = document.getElementById('videoPlayer');
     const videoDropZone = videoInput?.closest('.player-section');
+    const videoLoopToggle = document.getElementById('videoLoopToggle');
+
+    // মেমোরি লিক এড়াতে বর্তমান অডিও URL ট্র্যাক করার ভেরিয়েবল
+    let currentAudioUrl = null;
 
     // --- ফাইল হ্যান্ডেল করার ফাংশন ---
-    function handleAudioFile(file) {
+
+    // ১. অডিও হ্যান্ডলার (আপডেট করা হয়েছে: IndexedDB তে সেভ এবং রিফ্রেশে থাকার জন্য)
+    async function handleAudioFile(file) {
         if (!file || !audioPlayer || !audioFileName) return;
-        const objectURL = URL.createObjectURL(file);
-        audioPlayer.src = objectURL;
-        audioPlayer.play();
+
+        // আগের URL থাকলে মেমোরি থেকে মুছে ফেলা
+        if (currentAudioUrl) {
+            URL.revokeObjectURL(currentAudioUrl);
+        }
+
+        // প্লেয়ারে সেট করা
+        currentAudioUrl = URL.createObjectURL(file);
+        audioPlayer.src = currentAudioUrl;
+        audioPlayer.play(); // নতুন ফাইল সিলেক্ট করলে অটো প্লে হবে
         audioFileName.textContent = file.name;
-        const revoke = () => URL.revokeObjectURL(objectURL);
-        audioPlayer.onended = revoke;
-        audioPlayer.onerror = revoke;
+
+        // IndexedDB তে অডিও ডেটা সেভ করা (যাতে রিফ্রেশ করলেও থাকে)
+        try {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const audioData = {
+                    name: file.name,
+                    type: file.type,
+                    content: e.target.result // ArrayBuffer হিসেবে সেভ হবে
+                };
+                // 'persistedPlayerAudio' কী-তে সেভ করা হচ্ছে
+                await idbSet('persistedPlayerAudio', audioData);
+                console.log('Audio file persisted to database.');
+            };
+            reader.readAsArrayBuffer(file);
+        } catch (err) {
+            console.error('Audio save failed:', err);
+            // ফাইল অনেক বড় হলে (যেমন ১০০MB+) IndexedDB তে সেভ নাও হতে পারে
+        }
     }
 
+    // ২. ছবি হ্যান্ডলার (আগের মতোই)
     function handleImageFile(file) {
         if (!file || !imagePreview) return;
         const objectURL = URL.createObjectURL(file);
@@ -16542,6 +16573,7 @@ function initializePlayerTab() {
         imagePreview.onerror = revoke;
     }
 
+    // ৩. ভিডিও হ্যান্ডলার (আগের মতোই)
     function handleVideoFile(file) {
         if (!file || !videoPlayer) return;
         const objectURL = URL.createObjectURL(file);
@@ -16596,14 +16628,17 @@ function initializePlayerTab() {
         videoInput.addEventListener('change', e => handleVideoFile(e.target.files[0]));
     }
 
-    // নতুন: লুপ টগল লিসেনার
+    // লুপ টগল লিসেনার
     if (audioLoopToggle && audioPlayer) {
+        // লোড হওয়ার সময় বর্তমান অবস্থা চেক করা
+        audioPlayer.loop = audioLoopToggle.checked;
         audioLoopToggle.addEventListener('change', () => {
             audioPlayer.loop = audioLoopToggle.checked;
         });
     }
 
     if (videoLoopToggle && videoPlayer) {
+        videoPlayer.loop = videoLoopToggle.checked;
         videoLoopToggle.addEventListener('change', () => {
             videoPlayer.loop = videoLoopToggle.checked;
         });
@@ -16613,6 +16648,34 @@ function initializePlayerTab() {
     setupDragAndDrop(audioDropZone, 'audio/', handleAudioFile);
     setupDragAndDrop(imageDropZone, 'image/', handleImageFile);
     setupDragAndDrop(videoDropZone, 'video/', handleVideoFile);
+
+    // --- নতুন: পেজ লোড বা রিফ্রেশ হলে সেভ করা অডিও লোড করার ফাংশন ---
+    async function loadPersistedAudio() {
+        if (!audioPlayer || !audioFileName) return;
+
+        try {
+            const savedData = await idbGet('persistedPlayerAudio');
+            if (savedData && savedData.content) {
+                // আগের URL থাকলে পরিষ্কার করা
+                if (currentAudioUrl) URL.revokeObjectURL(currentAudioUrl);
+
+                // Blob তৈরি করে প্লেয়ারে সেট করা
+                const blob = new Blob([savedData.content], { type: savedData.type });
+                currentAudioUrl = URL.createObjectURL(blob);
+                
+                audioPlayer.src = currentAudioUrl;
+                audioFileName.textContent = savedData.name + " (সেভ করা)";
+                
+                // দ্রষ্টব্য: রিফ্রেশের পর অটো-প্লে হবে না, ইউজার প্লে বাটনে চাপ দিলে বাজবে। 
+                // এটি ব্রাউজারের অটো-প্লে পলিসির কারণে ভালো এবং ব্যবহারকারীর জন্যও সুবিধাজনক।
+            }
+        } catch (err) {
+            console.error("Failed to load persisted audio:", err);
+        }
+    }
+
+    // ট্যাব ইনিশিয়ালাইজ হওয়ার সাথে সাথে সেভ করা অডিও লোড করার চেষ্টা করুন
+    loadPersistedAudio();
 }
 
 // যখন প্লেয়ার ট্যাবটি দেখানো হবে তখন ফাংশনটি কল করুন
@@ -16627,6 +16690,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 // END: PLAYER TAB SCRIPT
 // ====================================================================
+
+
 
 // ====================================================================
 // START: QR CODE GENERATOR SCRIPT (Updated with Live Generation & Unicode Fix)
