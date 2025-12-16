@@ -16502,9 +16502,18 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 
 // ====================================================================
-// START: PLAYER TAB SCRIPT (অডিও রিফ্রেশ পারসিস্টেন্স যুক্ত করা হয়েছে)
+// START: PLAYER TAB SCRIPT (অডিও প্লেয়িং ফিক্সড)
 // ====================================================================
 function initializePlayerTab() {
+    // --- ফিক্স: প্লেয়ার ট্যাব যেন একবারই ইনিশিয়ালাইজ হয় ---
+    // এটি চেক করে যে প্লেয়ারটি আগে লোড হয়েছে কিনা। লোড হয়ে থাকলে ফাংশনটি থামিয়ে দেয়।
+    // ফলে অডিও রিসেট হয় না এবং বাজতে থাকে।
+    const playerContentDiv = document.getElementById('playerContent');
+    if (playerContentDiv.getAttribute('data-player-initialized') === 'true') {
+        return; 
+    }
+    playerContentDiv.setAttribute('data-player-initialized', 'true');
+
     // অডিও এলিমেন্ট
     const audioInput = document.getElementById('audioInput');
     const audioPlayer = document.getElementById('audioPlayer');
@@ -16528,7 +16537,7 @@ function initializePlayerTab() {
 
     // --- ফাইল হ্যান্ডেল করার ফাংশন ---
 
-    // ১. অডিও হ্যান্ডলার (আপডেট করা হয়েছে: IndexedDB তে সেভ এবং রিফ্রেশে থাকার জন্য)
+    // ১. অডিও হ্যান্ডলার
     async function handleAudioFile(file) {
         if (!file || !audioPlayer || !audioFileName) return;
 
@@ -16559,11 +16568,10 @@ function initializePlayerTab() {
             reader.readAsArrayBuffer(file);
         } catch (err) {
             console.error('Audio save failed:', err);
-            // ফাইল অনেক বড় হলে (যেমন ১০০MB+) IndexedDB তে সেভ নাও হতে পারে
         }
     }
 
-    // ২. ছবি হ্যান্ডলার (আগের মতোই)
+    // ২. ছবি হ্যান্ডলার
     function handleImageFile(file) {
         if (!file || !imagePreview) return;
         const objectURL = URL.createObjectURL(file);
@@ -16573,7 +16581,7 @@ function initializePlayerTab() {
         imagePreview.onerror = revoke;
     }
 
-    // ৩. ভিডিও হ্যান্ডলার (আগের মতোই)
+    // ৩. ভিডিও হ্যান্ডলার
     function handleVideoFile(file) {
         if (!file || !videoPlayer) return;
         const objectURL = URL.createObjectURL(file);
@@ -16649,7 +16657,7 @@ function initializePlayerTab() {
     setupDragAndDrop(imageDropZone, 'image/', handleImageFile);
     setupDragAndDrop(videoDropZone, 'video/', handleVideoFile);
 
-    // --- নতুন: পেজ লোড বা রিফ্রেশ হলে সেভ করা অডিও লোড করার ফাংশন ---
+    // --- পেজ লোড বা রিফ্রেশ হলে সেভ করা অডিও লোড করার ফাংশন ---
     async function loadPersistedAudio() {
         if (!audioPlayer || !audioFileName) return;
 
@@ -16666,15 +16674,14 @@ function initializePlayerTab() {
                 audioPlayer.src = currentAudioUrl;
                 audioFileName.textContent = savedData.name + " (সেভ করা)";
                 
-                // দ্রষ্টব্য: রিফ্রেশের পর অটো-প্লে হবে না, ইউজার প্লে বাটনে চাপ দিলে বাজবে। 
-                // এটি ব্রাউজারের অটো-প্লে পলিসির কারণে ভালো এবং ব্যবহারকারীর জন্যও সুবিধাজনক।
+                // দ্রষ্টব্য: রিফ্রেশের পর অটো-প্লে হবে না।
             }
         } catch (err) {
             console.error("Failed to load persisted audio:", err);
         }
     }
 
-    // ট্যাব ইনিশিয়ালাইজ হওয়ার সাথে সাথে সেভ করা অডিও লোড করার চেষ্টা করুন
+    // প্রথমবার লোড হওয়ার সাথে সাথে সেভ করা অডিও লোড করুন
     loadPersistedAudio();
 }
 
