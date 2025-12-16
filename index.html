@@ -12004,6 +12004,12 @@ function showTab(tabId) {
         if (tab) tab.classList.remove('active');
     });
 
+    // নতুন: ড্রপডাউন মেনুর প্যারেন্ট বাটন থেকে 'active' ক্লাস সরিয়ে দিন (রিসেট)
+    const moreMenuBtn = document.getElementById('moreMenuBtn');
+    const settingsMenuBtn = document.getElementById('settingsMenuBtn');
+    if (moreMenuBtn) moreMenuBtn.classList.remove('active');
+    if (settingsMenuBtn) settingsMenuBtn.classList.remove('active');
+
     // সমস্ত কন্টেন্ট বিভাগ লুকান
     contents.forEach(content => {
         if (content) content.classList.remove('active');
@@ -12230,6 +12236,28 @@ case 'scientific':
                 item.className = "block w-full text-left p-2 rounded-lg bg-indigo-600 text-white shadow-md font-semibold transition-colors duration-200";
             }
         });
+    }
+
+    // --- নতুন: ড্রপডাউন মেনু হাইলাইট করার লজিক ---
+    // 'আরও' মেনুর অন্তর্ভুক্ত ট্যাব আইডি সমূহ
+    const moreMenuTabs = [
+        'clock', 'player', 'quiz', 'history', 'daysObservances', 
+        'holiday', 'zakat', 'qrCode', 'colorPicker', 'invoice', 
+        'imageResizer', 'emergency', 'healthLifestyle', 
+        'allFeatures', 'importantLinks', 'donate'
+    ];
+
+    // 'সেটিংস' মেনুর অন্তর্ভুক্ত ট্যাব আইডি সমূহ
+    const settingsMenuTabs = ['moreSettings'];
+
+    // যদি বর্তমান ট্যাবটি 'আরও' মেনুর অন্তর্ভুক্ত হয়
+    if (moreMenuBtn && moreMenuTabs.includes(tabId)) {
+        moreMenuBtn.classList.add('active');
+    }
+
+    // যদি বর্তমান ট্যাবটি 'সেটিংস' মেনুর অন্তর্ভুক্ত হয়
+    if (settingsMenuBtn && settingsMenuTabs.includes(tabId)) {
+        settingsMenuBtn.classList.add('active');
     }
 
     console.log(`ট্যাব পরিবর্তন করা হয়েছে: ${tabId}`);
