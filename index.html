@@ -19427,20 +19427,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const updateSidebarHighlights = () => {
             const links = toolList.querySelectorAll('a');
             
-            // এলার্ম স্ট্যাটাস চেক করা (ভেরিয়েবল অথবা ব্যানার টেক্সট দিয়ে ডাবল চেক)
+            // এলার্ম স্ট্যাটাস চেক করা - "অ্যালার্ম থামান" বাটন দৃশ্যমান কিনা তা চেক করা হচ্ছে
             let isAlarmActive = false;
+            const stopAlarmBtn = document.getElementById('stopAlarmBtn');
             
-            // ১. গ্লোবাল ভেরিয়েবল চেক
-            if (typeof hasGlobalAlarmRung !== 'undefined' && hasGlobalAlarmRung) {
+            // যদি Stop Alarm বাটন থাকে এবং তাতে 'hidden' ক্লাস না থাকে, তার মানে এলার্ম বাজছে
+            if (stopAlarmBtn && !stopAlarmBtn.classList.contains('hidden')) {
                 isAlarmActive = true;
-            } 
-            // ২. ব্যানার টেক্সট চেক (ফলব্যাক: যদি ভেরিয়েবল এক্সেস না পাওয়া যায়)
-            else {
-                const alarmBanner = document.getElementById('bannerAlarmStatus');
-                // এলার্ম বাজলে ব্যানারে "বাজছে" শব্দটি থাকে
-                if (alarmBanner && alarmBanner.textContent.includes('বাজছে')) {
-                    isAlarmActive = true;
-                }
             }
 
             links.forEach(a => {
@@ -19451,7 +19444,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // ক্লাস রিসেট করা (যাতে পুরনো স্টাইল না থাকে)
                 a.className = "block w-full text-left p-2 rounded-lg transition-colors duration-200";
                 
-                // শর্ত ১: যদি এলার্ম বাজে এবং এটি ঘড়ি ট্যাব হয় -> হলুদ হাইলাইট + পালস এনিমেশন
+                // শর্ত ১: যদি এলার্ম বাজে (স্টপ বাটন দৃশ্যমান) এবং এটি ঘড়ি ট্যাব হয় -> হলুদ হাইলাইট + পালস এনিমেশন
                 if (targetTabId === 'clockTab' && isAlarmActive) {
                     a.classList.add('bg-yellow-400', 'text-black', 'font-bold', 'shadow-md', 'animate-pulse');
                 }
@@ -19744,7 +19737,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const box = child.getBoundingClientRect();
                 const offset = x - box.left - box.width / 2;
                 if (offset < 0 && offset > closest.offset) {
-                    return { offset: offset, element: child };
+                    return { offset, element: child };
                 } else {
                     return closest;
                 }
