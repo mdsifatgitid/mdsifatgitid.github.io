@@ -19963,6 +19963,25 @@ document.addEventListener('DOMContentLoaded', () => {
             return isAudioPlaying || isVideoPlaying;
         };
 
+        // নতুন: ওয়েব সার্চে অডিও/ভিডিও বাজছে কিনা চেক করার ফাংশন
+        const isWebSearchPlaying = () => {
+            try {
+                const iframe = document.getElementById('browserFrame');
+                // ক্রস-অরিজিন পলিসির কারণে বাইরের ওয়েবসাইটের (যেমন গুগল, ইউটিউব) মিডিয়া স্ট্যাটাস সরাসরি রিড করা যায় না।
+                // তবে যদি সেম-অরিজিন বা লোকাল ফাইল হয়, বা এক্সেস থাকে তবে এটি কাজ করবে।
+                if (iframe && iframe.contentDocument) {
+                    const medias = iframe.contentDocument.querySelectorAll('audio, video');
+                    for (let media of medias) {
+                        if (!media.paused && !media.ended && media.currentTime > 0) return true;
+                    }
+                }
+            } catch (e) {
+                // Cross-origin blocked: বাইরের ডোমেইনের ক্ষেত্রে এক্সেস পাওয়া যাবে না, তাই false রিটার্ন করবে।
+                return false;
+            }
+            return false;
+        };
+
         // নতুন: সাইডবার হাইলাইট আপডেট করার ফাংশন (সংশোধিত)
         const updateSidebarHighlights = () => {
             const links = toolList.querySelectorAll('a');
@@ -19992,11 +20011,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 else if (targetTabId === 'playerTab' && isMediaPlaying()) {
                     a.classList.add('bg-yellow-400', 'text-black', 'font-bold', 'shadow-md');
                 }
-                // শর্ত ৩: সাধারণ একটিভ ট্যাব -> নীল হাইলাইট
+                // শর্ত ৩: যদি ওয়েব সার্চে মিডিয়া প্লে হয় -> হলুদ হাইলাইট
+                else if (targetTabId === 'webSearchTab' && isWebSearchPlaying()) {
+                    a.classList.add('bg-yellow-400', 'text-black', 'font-bold', 'shadow-md');
+                }
+                // শর্ত ৪: সাধারণ একটিভ ট্যাব -> নীল হাইলাইট
                 else if (isActive) {
                     a.classList.add('bg-indigo-600', 'text-white', 'shadow-md', 'font-semibold');
                 } 
-                // শর্ত ৪: ইনঅ্যাক্টিভ ট্যাব -> সাধারণ স্টাইল
+                // শর্ত ৫: ইনঅ্যাক্টিভ ট্যাব -> সাধারণ স্টাইল
                 else {
                     a.classList.add('hover:bg-gray-100', 'dark:hover:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
                 }
