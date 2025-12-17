@@ -7516,17 +7516,44 @@ body.sidebar-open #sidebarOverlay {
         </div>
 
         <!-- কুইক লিংকস (গুগল, ইউটিউব ইত্যাদির জন্য) -->
-        <div class="flex flex-wrap justify-center gap-2 mb-2">
+        <div id="shortcutsContainer" class="flex flex-wrap justify-center gap-2 mb-2">
+            <!-- Google -->
             <button onclick="window.open('https://google.com', '_blank')" class="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors flex items-center gap-1">
                 <span class="text-blue-500">G</span><span class="text-red-500">o</span><span class="text-yellow-500">o</span><span class="text-blue-500">g</span><span class="text-green-500">l</span><span class="text-red-500">e</span>
             </button>
+            
+
+            <!-- YouTube -->
             <button onclick="window.open('https://youtube.com', '_blank')" class="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors flex items-center gap-1 text-red-600">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z"/></svg> YouTube
             </button>
+			
+            <!-- Gmail (New) -->
+            <button onclick="window.open('https://mail.google.com', '_blank')" class="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-red-500 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z"/></svg> Gmail
+            </button>
+			
+            <!-- Facebook -->
             <button onclick="window.open('https://facebook.com', '_blank')" class="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-blue-600">Facebook</button>
+            
+            <!-- WhatsApp (New) -->
+            <button onclick="window.open('https://web.whatsapp.com', '_blank')" class="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-green-500 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg> WhatsApp
+            </button>
+
+            <!-- ChatGPT -->
             <button onclick="window.open('https://chatgpt.com', '_blank')" class="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-emerald-600">ChatGPT</button>
+            
+            <!-- Gemini -->
             <button onclick="window.open('https://gemini.google.com', '_blank')" class="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-blue-600 flex items-center gap-1">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0a1 1 0 0 1 1 1v5.5a1 1 0 0 0 .5.5H15a1 1 0 0 1 1 1v.5a1 1 0 0 1-1 1h-5.5a1 1 0 0 0-.5.5V15a1 1 0 0 1-1 1h-.5a1 1 0 0 1-1-1v-5.5a1 1 0 0 0-.5-.5H1a1 1 0 0 1-1-1v-.5a1 1 0 0 1 1-1h5.5a1 1 0 0 0 .5-.5V1a1 1 0 0 1 1-1h.5z"/></svg> Gemini
+            </button>
+            
+            <!-- User Custom Shortcuts will appear here dynamically -->
+            
+            <!-- Add Shortcut Button -->
+            <button id="addShortcutBtn" class="px-3 py-1 bg-gray-200 dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-full text-sm font-bold hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors text-gray-700 dark:text-gray-200 flex items-center gap-1" title="নতুন শর্টকাট যুক্ত করুন">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2z"/></svg>
             </button>
         </div>
         
@@ -16063,22 +16090,24 @@ if (importantLinksTabForCounter) {
 // ====================================================================
 
 // ====================================================================
-// START: WEB SEARCH BROWSER SCRIPT (Optimized with External Links)
+// START: WEB SEARCH BROWSER SCRIPT (Optimized with External Links & Custom Shortcuts)
 // ====================================================================
 function initializeWebSearch() {
     const webSearchContent = document.getElementById('webSearchContent');
     const addressBar = document.getElementById('browserAddress');
     const goBtn = document.getElementById('browserGoBtn');
-    const openExternalBtn = document.getElementById('browserOpenExternalBtn'); // নতুন লাল বাটন
+    const openExternalBtn = document.getElementById('browserOpenExternalBtn');
     const homeBtn = document.getElementById('browserHomeBtn');
     const iframe = document.getElementById('browserFrame');
+    const addShortcutBtn = document.getElementById('addShortcutBtn');
+    const shortcutsContainer = document.getElementById('shortcutsContainer');
 
     if (!webSearchContent || !iframe) return;
 
-    // ডিফল্ট হোমপেজ - Bing ব্যবহার করা হয়েছে কারণ এটি Iframe এ সাপোর্ট করে
+    // ডিফল্ট হোমপেজ - Bing
     const homePage = "https://www.bing.com/search?q=Bangla+Toolbox"; 
 
-    // ১. লেজি লোডিং: ট্যাবে ক্লিক করলেই কেবল লোড হবে
+    // ১. লেজি লোডিং
     if (!iframe.getAttribute('src') || iframe.getAttribute('src') === "" || iframe.getAttribute('src') === "about:blank") {
         iframe.setAttribute('src', homePage);
     }
@@ -16089,25 +16118,22 @@ function initializeWebSearch() {
     }
     webSearchContent.setAttribute('data-browser-initialized', 'true');
 
-    // ইউআরএল প্রসেস করার ফাংশন (অভ্যন্তরীণ - Iframe এর জন্য)
+    // ইউআরএল প্রসেস করার ফাংশন
     function navigateToUrl() {
         let query = addressBar.value.trim();
         if (!query) return;
 
         let url;
-        // যদি ইউআরএল হয়
         if (/^(http|https):\/\/[^ "]+$/.test(query)) {
             url = query;
         } else if (/^[^ "]+(\.[a-z]{2,})+/.test(query)) {
             url = "https://" + query;
         } else {
-            // যদি সাধারণ টেক্সট হয়, তবে Bing এ সার্চ করবে (Iframe ফ্রেন্ডলি)
             url = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
         }
         iframe.src = url;
     }
 
-    // নতুন: ইউআরএল বা সার্চ গুগলে খোলার ফাংশন (নতুন ট্যাবে)
     function openExternalUrl() {
         let query = addressBar.value.trim();
         if (!query) return;
@@ -16118,7 +16144,6 @@ function initializeWebSearch() {
         } else if (/^[^ "]+(\.[a-z]{2,})+/.test(query)) {
             url = "https://" + query;
         } else {
-            // এক্সটারনাল সার্চের জন্য গুগল ব্যবহার হবে
             url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
         }
         window.open(url, '_blank');
@@ -16129,9 +16154,78 @@ function initializeWebSearch() {
         addressBar.value = "";
     }
 
+    // --- কাস্টম শর্টকাট লজিক ---
+    
+    // লোকাল স্টোরেজ থেকে শর্টকাট লোড করে রেন্ডার করা
+    function loadShortcuts() {
+        const savedShortcuts = JSON.parse(localStorage.getItem('customWebShortcuts') || '[]');
+        
+        // আগের ডাইনামিক বাটনগুলো মুছে ফেলুন (স্ট্যাটিক বাটন এবং অ্যাড বাটন বাদে)
+        // আমরা "addShortcutBtn" এর আগে ডাইনামিক বাটনগুলো ইনসার্ট করব
+        const existingCustomBtns = shortcutsContainer.querySelectorAll('.custom-shortcut-btn');
+        existingCustomBtns.forEach(btn => btn.remove());
+
+        savedShortcuts.forEach((shortcut, index) => {
+            createShortcutButton(shortcut.name, shortcut.url, index);
+        });
+    }
+
+    // বাটন তৈরি করে DOM এ যুক্ত করা
+    function createShortcutButton(name, url, index) {
+        const btn = document.createElement('button');
+        btn.className = 'custom-shortcut-btn px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-gray-700 dark:text-gray-200';
+        btn.textContent = name;
+        btn.title = `খুলুন: ${url} (মুছতে রাইট ক্লিক করুন)`;
+        
+        btn.onclick = () => window.open(url, '_blank');
+        
+        // রাইট ক্লিকে ডিলিট করার অপশন
+        btn.oncontextmenu = (e) => {
+            e.preventDefault();
+            if (confirm(`আপনি কি "${name}" শর্টকাটটি মুছে ফেলতে চান?`)) {
+                deleteShortcut(index);
+            }
+        };
+
+        // অ্যাড বাটনের ঠিক আগে ইনসার্ট করুন
+        shortcutsContainer.insertBefore(btn, addShortcutBtn);
+    }
+
+    // নতুন শর্টকাট যোগ করা
+    function addNewShortcut() {
+        const name = prompt("শর্টকাটের নাম দিন (যেমন: LinkedIn):");
+        if (!name || name.trim() === "") return;
+
+        let url = prompt("ওয়েবসাইটের লিংক দিন (যেমন: linkedin.com):");
+        if (!url || url.trim() === "") return;
+
+        // লিংকে প্রোটোকল না থাকলে যোগ করে দিন
+        if (!/^https?:\/\//i.test(url)) {
+            url = 'https://' + url;
+        }
+
+        const shortcuts = JSON.parse(localStorage.getItem('customWebShortcuts') || '[]');
+        shortcuts.push({ name: name.trim(), url: url.trim() });
+        localStorage.setItem('customWebShortcuts', JSON.stringify(shortcuts));
+
+        loadShortcuts(); // রিফ্রেশ
+        showCustomAlert('শর্টকাট যুক্ত হয়েছে!');
+    }
+
+    // শর্টকাট মুছে ফেলা
+    function deleteShortcut(index) {
+        const shortcuts = JSON.parse(localStorage.getItem('customWebShortcuts') || '[]');
+        shortcuts.splice(index, 1);
+        localStorage.setItem('customWebShortcuts', JSON.stringify(shortcuts));
+        loadShortcuts(); // রিফ্রেশ
+        showCustomAlert('শর্টকাট মুছে ফেলা হয়েছে!');
+    }
+
+    // --- ইভেন্ট লিসেনার ---
     if (goBtn) goBtn.onclick = navigateToUrl;
-    if (openExternalBtn) openExternalBtn.onclick = openExternalUrl; // নতুন লিসেনার
+    if (openExternalBtn) openExternalBtn.onclick = openExternalUrl;
     if (homeBtn) homeBtn.onclick = goHome;
+    if (addShortcutBtn) addShortcutBtn.onclick = addNewShortcut;
 
     if (addressBar) {
         addressBar.addEventListener('keypress', function (e) {
@@ -16140,10 +16234,14 @@ function initializeWebSearch() {
             }
         });
     }
+
+    // প্রথমবার লোড করুন
+    loadShortcuts();
 }
 // ====================================================================
 // END: WEB SEARCH BROWSER SCRIPT
 // ====================================================================
+
 
 //নতুন কোনো ট্যাব যুক্ত করলে তার স্ক্রিপ্ট এটির আগে অ্যাড করতে হবে।
 
