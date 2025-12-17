@@ -7557,7 +7557,7 @@ body.sidebar-open #sidebarOverlay {
         <!-- আইফ্রেম -->
         <!-- পরিবর্তন: sandbox থেকে allow-popups সরানো হয়েছে যাতে নতুন ট্যাব ওপেন করা ব্লক হয়, এবং গুগল ব্যবহার করা হচ্ছে যা আইফ্রেমে কাজ করে -->
         <iframe id="browserFrame" class="browser-frame" src="" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"></iframe>
-        <p class="text-xs text-gray-500 mt-1 text-center">নোট: আইফ্রেমের ভেতরে লিংক ওপেন রাখতে এখানে গুগল সার্চ ব্যবহার করা হয়েছে। অনেক ওয়েবসাইট (যেমন: ফেসবুক, ইউটিউব) আইফ্রেমে লোড হয় না, সেগুলো লাল বাটনে ক্লিক করে খুলুন।</p>
+        <p class="text-xs text-gray-500 mt-1 text-center">নোট: আইফ্রেমের ভেতরে লিংক ওপেন রাখতে এখানে গুগল সার্চ ব্যবহার করা হয়েছে। অনেক ওয়েবসাইট (যেমন: ফেসবুক, ইউটিউব) আইফ্রেমে লোড হতে দেয় না, সেগুলো লাল বাটনে ক্লিক করে খুলুন।</p>
     </div>
 </div>
 
@@ -16266,7 +16266,7 @@ function initializeWebSearch() {
         };
     }
 
-    // ইউআরএল প্রসেস এবং নেভিগেশন ফাংশন
+    // ইউআরএল প্রসেস এবং নেভিগেশন ফাংশন (গো বাটন/এন্টার এর জন্য)
     function navigateToUrl() {
         let query = addressBar.value.trim();
         if (!query) return;
@@ -16287,7 +16287,7 @@ function initializeWebSearch() {
         const isBlocked = blockedDomains.some(domain => lowerUrl.includes(domain));
 
         if (isBlocked) {
-            // যদি ব্লকড তালিকায় থাকে, তবে কাস্টম পপআপ দেখান
+            // যদি ব্লকড তালিকায় থাকে, তবে কাস্টম পপআপ দেখান (কারণ এটি আইফ্রেমে লোড হবে না)
             showWebConfirmation(url);
         } else {
             // অন্যথায় আইফ্রেমে লোড করার চেষ্টা করুন
@@ -16295,14 +16295,13 @@ function initializeWebSearch() {
         }
     }
 
-    // লাল বাটন (বাইরে খুলুন) এর জন্য লজিক - এখন পপআপ ব্যবহার করবে
+    // লাল বাটন (বাইরে খুলুন) এর জন্য লজিক - এখন সরাসরি নতুন ট্যাবে খুলবে (পপআপ ছাড়া)
     function openExternalUrl() {
         let query = addressBar.value.trim();
         let url;
         
         if (!query) {
-            // যদি ইনপুট খালি থাকে, তবে ডিফল্ট গুগল খুলুন বা বর্তমান আইফ্রেম সোর্স ব্যবহার করুন
-            // তবে ক্রস-অরিজিনের কারণে আইফ্রেম সোর্স পড়া যাবে না, তাই ইনপুট বক্সের ভ্যালু ব্যবহার করা ভালো
+            // যদি ইনপুট খালি থাকে, তবে ডিফল্ট গুগল খুলুন
              url = "https://www.google.com";
         } else {
             if (/^(http|https):\/\/[^ "]+$/.test(query)) {
@@ -16314,8 +16313,8 @@ function initializeWebSearch() {
             }
         }
         
-        // লাল বাটনে ক্লিক করলেও কনফার্মেশন পপআপ দেখান
-        showWebConfirmation(url);
+        // লাল বাটনে ক্লিক করলে সরাসরি নতুন ট্যাবে ওপেন হবে
+        window.open(url, '_blank');
     }
 
     function goHome() {
@@ -16374,7 +16373,7 @@ function initializeWebSearch() {
 
     // --- ইভেন্ট লিসেনার ---
     if (goBtn) goBtn.onclick = navigateToUrl;
-    if (openExternalBtn) openExternalBtn.onclick = openExternalUrl; // লাল বাটন এখন পপআপ ট্রিগার করবে
+    if (openExternalBtn) openExternalBtn.onclick = openExternalUrl; // লাল বাটনে ক্লিক করলে এখন সরাসরি ওপেন হবে
     if (homeBtn) homeBtn.onclick = goHome;
     if (addShortcutBtn) addShortcutBtn.onclick = addNewShortcut;
 
@@ -22082,4 +22081,4 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- ====================================================================-->
 
 </body>
-</html>
+	</html>
