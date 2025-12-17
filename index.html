@@ -16088,7 +16088,7 @@ if (importantLinksTabForCounter) {
 // ====================================================================
 
 // ====================================================================
-// START: WEB SEARCH BROWSER SCRIPT (Optimized for Iframe Navigation)
+// START: WEB SEARCH BROWSER SCRIPT (Updated Modal Style)
 // ====================================================================
 function initializeWebSearch() {
     const webSearchContent = document.getElementById('webSearchContent');
@@ -16102,52 +16102,220 @@ function initializeWebSearch() {
 
     if (!webSearchContent || !iframe) return;
 
-    // পরিবর্তন: ডিফল্ট হোমপেজ - Google (igu=1 প্যারামিটারসহ যা আইফ্রেম সাপোর্ট করে)
+    // ডিফল্ট হোমপেজ - Google (igu=1 প্যারামিটারসহ যা আইফ্রেম সাপোর্ট করে)
     const homePage = "https://www.google.com/webhp?igu=1"; 
 
-    // ১. লেজি লোডিং
+    // ১. লেজি লোডিং এবং রিসেট
     if (!iframe.getAttribute('src') || iframe.getAttribute('src') === "" || iframe.getAttribute('src') === "about:blank") {
         iframe.setAttribute('src', homePage);
     }
 
-    // ২. ডুপ্লিকেট ইভেন্ট লিসেনার রোধ (একবারই সেটআপ হবে)
+    // ২. ডুপ্লিকেট ইভেন্ট লিসেনার রোধ
     if (webSearchContent.getAttribute('data-browser-initialized') === 'true') {
         return; 
     }
     webSearchContent.setAttribute('data-browser-initialized', 'true');
 
-    // ইউআরএল প্রসেস করার ফাংশন
+    // --- ৩. প্রো-অ্যাক্টিভ ব্লক লিস্ট (অনেক সাইট আইফ্রেম ব্লক করে) ---
+    const blockedDomains = [
+        'facebook.com', 'www.facebook.com', 'm.facebook.com',
+        'instagram.com', 'www.instagram.com',
+        'twitter.com', 'x.com', 'mobile.twitter.com',
+        'linkedin.com', 'www.linkedin.com',
+        'youtube.com', 'www.youtube.com', 'youtu.be', 'm.youtube.com',
+        'github.com', 'www.github.com',
+        'pinterest.com', 'www.pinterest.com',
+        'reddit.com', 'www.reddit.com',
+        'netflix.com', 'www.netflix.com',
+        'quora.com', 'www.quora.com',
+        'tiktok.com', 'www.tiktok.com',
+        'chatgpt.com', 'openai.com',
+        'whatsapp.com', 'web.whatsapp.com',
+        'messenger.com', 'www.messenger.com',
+        'amazon.com', 'www.amazon.com',
+        'yahoo.com', 'www.yahoo.com', 'mail.yahoo.com',
+        'stackoverflow.com',
+        'medium.com',
+        'udemy.com',
+        'coursera.org',
+        'spotify.com', 'open.spotify.com'
+    ];
+
+    // --- নতুন: কাস্টম কনফার্মেশন মডাল (আইফ্রেম এরর এর জন্য) ---
+    function showWebConfirmation(url) {
+        // আগের কোনো মডাল থাকলে সরিয়ে ফেলুন
+        const existingModal = document.getElementById('web-custom-modal');
+        if (existingModal) existingModal.remove();
+
+        const overlay = document.createElement('div');
+        overlay.id = 'web-custom-modal';
+        overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); animation: fadeIn 0.2s ease-out;';
+        
+        const modal = document.createElement('div');
+        // জরুরি নাম্বারের মতো স্টাইল
+        modal.style.cssText = 'background: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.3); max-width: 380px; width: 90%; transform: scale(0.9); transition: transform 0.2s ease;';
+        
+        // ডার্ক মোড সাপোর্ট
+        if (document.documentElement.classList.contains('dark')) {
+            modal.style.background = '#2d3748';
+            modal.style.color = '#e2e8f0';
+            modal.style.borderColor = '#4a5568';
+        }
+
+        modal.innerHTML = `
+            <div style="margin-bottom: 15px; color: #f59e0b; font-size: 3rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="margin: 0 auto;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 10px;">ওয়েবসাইট লোড করা যাচ্ছে না!</h3>
+            <p style="margin-bottom: 25px; font-size: 1rem; line-height: 1.5; opacity: 0.9;">এই ওয়েবসাইটটি আইফ্রেমে সাপোর্ট করে না। আপনি কি এটি <b>নতুন ট্যাবে</b> খুলতে চান?</p>
+            <div style="display: flex; justify-content: center; gap: 15px;">
+                <button id="webModalYes" style="padding: 10px 25px; border: none; border-radius: 8px; background: #10b981; color: white; cursor: pointer; font-weight: 600; flex: 1; transition: transform 0.1s;">হ্যাঁ</button>
+                <button id="webModalNo" style="padding: 10px 25px; border: none; border-radius: 8px; background: #ef4444; color: white; cursor: pointer; font-weight: 600; flex: 1; transition: transform 0.1s;">না</button>
+            </div>
+        `;
+        
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        // এনিমেশন
+        setTimeout(() => {
+            modal.style.transform = 'scale(1)';
+        }, 10);
+
+        const closeModal = () => {
+            modal.style.transform = 'scale(0.9)';
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                if (overlay.parentNode) document.body.removeChild(overlay);
+            }, 200);
+        };
+
+        document.getElementById('webModalYes').onclick = () => {
+            window.open(url, '_blank');
+            closeModal();
+        };
+        
+        document.getElementById('webModalNo').onclick = closeModal;
+        
+        // ব্যাকগ্রাউন্ডে ক্লিক করলে বন্ধ
+        overlay.onclick = (e) => {
+            if (e.target === overlay) closeModal();
+        };
+    }
+
+    // --- নতুন: শর্টকাট ডিলিট করার জন্য কাস্টম কনফার্মেশন মডাল ---
+    function showShortcutDeleteConfirmation(name, onConfirm) {
+        // আগের কোনো মডাল থাকলে সরিয়ে ফেলুন
+        const existingModal = document.getElementById('web-custom-modal');
+        if (existingModal) existingModal.remove();
+
+        const overlay = document.createElement('div');
+        overlay.id = 'web-custom-modal'; // Reusing ID for consistency
+        overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); animation: fadeIn 0.2s ease-out;';
+        
+        const modal = document.createElement('div');
+        modal.style.cssText = 'background: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.3); max-width: 380px; width: 90%; transform: scale(0.9); transition: transform 0.2s ease;';
+        
+        if (document.documentElement.classList.contains('dark')) {
+            modal.style.background = '#2d3748';
+            modal.style.color = '#e2e8f0';
+            modal.style.borderColor = '#4a5568';
+        }
+
+        // ট্র্যাশ আইকন ব্যবহার করা হয়েছে
+        modal.innerHTML = `
+            <div style="margin-bottom: 15px; color: #ef4444; font-size: 3rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="margin: 0 auto;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 10px;">শর্টকাট মুছে ফেলতে চান?</h3>
+            <p style="margin-bottom: 25px; font-size: 1rem; line-height: 1.5; opacity: 0.9;">আপনি কি নিশ্চিত যে আপনি <b>"${name}"</b> শর্টকাটটি মুছে ফেলতে চান?</p>
+            <div style="display: flex; justify-content: center; gap: 15px;">
+                <button id="webModalYes" style="padding: 10px 25px; border: none; border-radius: 8px; background: #ef4444; color: white; cursor: pointer; font-weight: 600; flex: 1; transition: transform 0.1s;">হ্যাঁ, মুছুন</button>
+                <button id="webModalNo" style="padding: 10px 25px; border: none; border-radius: 8px; background: #6b7280; color: white; cursor: pointer; font-weight: 600; flex: 1; transition: transform 0.1s;">না</button>
+            </div>
+        `;
+        
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        setTimeout(() => {
+            modal.style.transform = 'scale(1)';
+        }, 10);
+
+        const closeModal = () => {
+            modal.style.transform = 'scale(0.9)';
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                if (overlay.parentNode) document.body.removeChild(overlay);
+            }, 200);
+        };
+
+        document.getElementById('webModalYes').onclick = () => {
+            onConfirm();
+            closeModal();
+        };
+        
+        document.getElementById('webModalNo').onclick = closeModal;
+        
+        overlay.onclick = (e) => {
+            if (e.target === overlay) closeModal();
+        };
+    }
+
+    // ইউআরএল প্রসেস এবং নেভিগেশন ফাংশন
     function navigateToUrl() {
         let query = addressBar.value.trim();
         if (!query) return;
 
         let url;
+        // ইউআরএল ভ্যালিডেশন এবং ফরম্যাটিং
         if (/^(http|https):\/\/[^ "]+$/.test(query)) {
             url = query;
         } else if (/^[^ "]+(\.[a-z]{2,})+/.test(query)) {
             url = "https://" + query;
         } else {
-            // পরিবর্তন: Bing এর পরিবর্তে Google সার্চ ব্যবহার করা হচ্ছে (igu=1 সহ)
-            // এটি সার্চ রেজাল্টকে একই ফ্রেমে ওপেন করতে সাহায্য করে
+            // সার্চের জন্য গুগল ব্যবহার করা নিরাপদ (igu=1)
             url = `https://www.google.com/search?igu=1&q=${encodeURIComponent(query)}`;
         }
-        iframe.src = url;
+
+        // --- ব্লকড ডোমেইন চেক ---
+        const lowerUrl = url.toLowerCase();
+        const isBlocked = blockedDomains.some(domain => lowerUrl.includes(domain));
+
+        if (isBlocked) {
+            // যদি ব্লকড তালিকায় থাকে, তবে কাস্টম পপআপ দেখান
+            showWebConfirmation(url);
+        } else {
+            // অন্যথায় আইফ্রেমে লোড করার চেষ্টা করুন
+            iframe.src = url;
+        }
     }
 
+    // লাল বাটন (বাইরে খুলুন) এর জন্য লজিক - এখন পপআপ ব্যবহার করবে
     function openExternalUrl() {
         let query = addressBar.value.trim();
-        if (!query) return;
-
         let url;
-        if (/^(http|https):\/\/[^ "]+$/.test(query)) {
-            url = query;
-        } else if (/^[^ "]+(\.[a-z]{2,})+/.test(query)) {
-            url = "https://" + query;
+        
+        if (!query) {
+            // যদি ইনপুট খালি থাকে, তবে ডিফল্ট গুগল খুলুন বা বর্তমান আইফ্রেম সোর্স ব্যবহার করুন
+            // তবে ক্রস-অরিজিনের কারণে আইফ্রেম সোর্স পড়া যাবে না, তাই ইনপুট বক্সের ভ্যালু ব্যবহার করা ভালো
+             url = "https://www.google.com";
         } else {
-            // এক্সটার্নাল ব্রাউজারের জন্যও গুগল ব্যবহার করা হচ্ছে
-            url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            if (/^(http|https):\/\/[^ "]+$/.test(query)) {
+                url = query;
+            } else if (/^[^ "]+(\.[a-z]{2,})+/.test(query)) {
+                url = "https://" + query;
+            } else {
+                url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            }
         }
-        window.open(url, '_blank');
+        
+        // লাল বাটনে ক্লিক করলেও কনফার্মেশন পপআপ দেখান
+        showWebConfirmation(url);
     }
 
     function goHome() {
@@ -16156,12 +16324,8 @@ function initializeWebSearch() {
     }
 
     // --- কাস্টম শর্টকাট লজিক ---
-    
-    // লোকাল স্টোরেজ থেকে শর্টকাট লোড করে রেন্ডার করা
     function loadShortcuts() {
         const savedShortcuts = JSON.parse(localStorage.getItem('customWebShortcuts') || '[]');
-        
-        // আগের ডাইনামিক বাটনগুলো মুছে ফেলুন
         const existingCustomBtns = shortcutsContainer.querySelectorAll('.custom-shortcut-btn');
         existingCustomBtns.forEach(btn => btn.remove());
 
@@ -16170,60 +16334,47 @@ function initializeWebSearch() {
         });
     }
 
-    // বাটন তৈরি করে DOM এ যুক্ত করা
     function createShortcutButton(name, url, index) {
         const btn = document.createElement('button');
         btn.className = 'custom-shortcut-btn px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-gray-700 dark:text-gray-200';
         btn.textContent = name;
         btn.title = `খুলুন: ${url} (মুছতে রাইট ক্লিক করুন)`;
-        
         btn.onclick = () => window.open(url, '_blank');
-        
-        // রাইট ক্লিকে ডিলিট করার অপশন
         btn.oncontextmenu = (e) => {
             e.preventDefault();
-            if (confirm(`আপনি কি "${name}" শর্টকাটটি মুছে ফেলতে চান?`)) {
+            // কাস্টম ডিলিট কনফার্মেশন পপআপ ব্যবহার করা হচ্ছে
+            showShortcutDeleteConfirmation(name, () => {
                 deleteShortcut(index);
-            }
+            });
         };
-
-        // অ্যাড বাটনের ঠিক আগে ইনসার্ট করুন
         shortcutsContainer.insertBefore(btn, addShortcutBtn);
     }
 
-    // নতুন শর্টকাট যোগ করা
     function addNewShortcut() {
         const name = prompt("শর্টকাটের নাম দিন (যেমন: LinkedIn):");
         if (!name || name.trim() === "") return;
-
         let url = prompt("ওয়েবসাইটের লিংক দিন (যেমন: linkedin.com):");
         if (!url || url.trim() === "") return;
-
-        // লিংকে প্রোটোকল না থাকলে যোগ করে দিন
-        if (!/^https?:\/\//i.test(url)) {
-            url = 'https://' + url;
-        }
+        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
 
         const shortcuts = JSON.parse(localStorage.getItem('customWebShortcuts') || '[]');
         shortcuts.push({ name: name.trim(), url: url.trim() });
         localStorage.setItem('customWebShortcuts', JSON.stringify(shortcuts));
-
-        loadShortcuts(); // রিফ্রেশ
+        loadShortcuts();
         showCustomAlert('শর্টকাট যুক্ত হয়েছে!');
     }
 
-    // শর্টকাট মুছে ফেলা
     function deleteShortcut(index) {
         const shortcuts = JSON.parse(localStorage.getItem('customWebShortcuts') || '[]');
         shortcuts.splice(index, 1);
         localStorage.setItem('customWebShortcuts', JSON.stringify(shortcuts));
-        loadShortcuts(); // রিফ্রেশ
+        loadShortcuts();
         showCustomAlert('শর্টকাট মুছে ফেলা হয়েছে!');
     }
 
     // --- ইভেন্ট লিসেনার ---
     if (goBtn) goBtn.onclick = navigateToUrl;
-    if (openExternalBtn) openExternalBtn.onclick = openExternalUrl;
+    if (openExternalBtn) openExternalBtn.onclick = openExternalUrl; // লাল বাটন এখন পপআপ ট্রিগার করবে
     if (homeBtn) homeBtn.onclick = goHome;
     if (addShortcutBtn) addShortcutBtn.onclick = addNewShortcut;
 
@@ -16235,7 +16386,6 @@ function initializeWebSearch() {
         });
     }
 
-    // প্রথমবার লোড করুন
     loadShortcuts();
 }
 // ====================================================================
