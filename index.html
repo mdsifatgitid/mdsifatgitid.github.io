@@ -6239,6 +6239,88 @@ body.sidebar-open #sidebarOverlay {
 /* END: ইতিহাস ট্যাব Styles */
 /* ======================================================== */
 
+/* শুরু নতুন: ওয়েব সার্চ বা ব্রাউজার স্টাইল */
+.web-browser-content {
+    padding: 10px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 98%;
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    height: 80vh; /* পুরো হাইট নেওয়ার জন্য */
+    display: flex;
+    flex-direction: column;
+}
+.dark .web-browser-content {
+    background-color: #2d3748;
+}
+
+.browser-toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    background-color: #e0e7ff;
+    padding: 8px;
+    border-radius: 12px;
+    align-items: center;
+}
+.dark .browser-toolbar {
+    background-color: #4a5568;
+}
+
+.address-bar {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: 1px solid #cce7ff;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+.dark .address-bar {
+    background-color: #2d3748;
+    border-color: #718096;
+    color: white;
+}
+.address-bar:focus {
+    border-color: #3f51b5;
+    box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
+}
+
+.browser-btn {
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+}
+.browser-btn:hover {
+    background-color: #303f9f;
+}
+.browser-btn.new-tab {
+    background-color: #28a745;
+}
+.browser-btn.new-tab:hover {
+    background-color: #218838;
+}
+
+.browser-frame {
+    flex-grow: 1;
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background-color: white;
+}
+/* শেষ নতুন: ওয়েব সার্চ বা ব্রাউজার স্টাইল */
+
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
 </head>
@@ -6319,6 +6401,7 @@ body.sidebar-open #sidebarOverlay {
     <button id="scientificCalcTab" class="tab-button rounded-xl">সাইন্টিফিক ক্যালকুলেটর</button>
 	<button id="dateCalcTab" class="tab-button rounded-xl">তারিখ ও সময়</button>
     <button id="ageCalcTab" class="tab-button rounded-xl">বয়স ক্যালকুলেটর</button>
+	<button id="webSearchTab" class="tab-button rounded-xl">ওয়েব সার্চ</button>
 	<button id="textAssistantTab" class="tab-button rounded-xl">টেক্সট অ্যাসিস্ট্যান্ট</button>
 	<button id="converterTab" class="tab-button rounded-xl">কনভার্টার</button>
 	<button id="prayerTimeTab" class="tab-button rounded-xl">নামাজের সময়সূচি</button>
@@ -7407,6 +7490,50 @@ body.sidebar-open #sidebarOverlay {
 		</div>
 	</div>
 </div>
+
+<!-- নতুন: ওয়েব সার্চ বিভাগ -->
+<div id="webSearchContent" class="calculator-content">
+    <div class="web-browser-content">
+        <!-- ব্রাউজার টুলবার -->
+        <div class="browser-toolbar">
+            <!-- হোম বাটন -->
+            <button id="browserHomeBtn" class="browser-btn" title="হোম">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            </button>
+            
+            <!-- অ্যাড্রেস বার -->
+            <input type="text" id="browserAddress" class="address-bar" placeholder="সার্চ করুন বা ইউআরএল লিখুন">
+            
+            <!-- গো বাটন (অভ্যন্তরীণ - Bing) -->
+            <button id="browserGoBtn" class="browser-btn" title="এখানেই খুঁজুন">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
+
+            <!-- নতুন: ব্রাউজারে খুলুন বাটন (গুগল/ইউটিউব ফিক্স) -->
+            <button id="browserOpenExternalBtn" class="browser-btn" style="background-color: #ef4444;" title="গুগলে খুঁজুন (নতুন ট্যাবে)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </button>
+        </div>
+
+        <!-- কুইক লিংকস (গুগল, ইউটিউব ইত্যাদির জন্য) -->
+        <div class="flex flex-wrap justify-center gap-2 mb-2">
+            <button onclick="window.open('https://google.com', '_blank')" class="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors flex items-center gap-1">
+                <span class="text-blue-500">G</span><span class="text-red-500">o</span><span class="text-yellow-500">o</span><span class="text-blue-500">g</span><span class="text-green-500">l</span><span class="text-red-500">e</span>
+            </button>
+            <button onclick="window.open('https://youtube.com', '_blank')" class="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors flex items-center gap-1 text-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z"/></svg> YouTube
+            </button>
+            <button onclick="window.open('https://facebook.com', '_blank')" class="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-blue-600">Facebook</button>
+            <button onclick="window.open('https://chatgpt.com', '_blank')" class="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-emerald-600">ChatGPT</button>
+        </div>
+        
+        <!-- আইফ্রেম (ব্রাউজার উইন্ডো) -->
+        <iframe id="browserFrame" class="browser-frame" src="" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+        <p class="text-xs text-gray-500 mt-1 text-center">নোট: গুগল, ইউটিউব ও ফেসবুকের মতো সাইটগুলো নিরাপত্তার কারণে (X-Frame-Options) আইফ্রেমে লোড হয় না। তাই এদের জন্য উপরের বাটনগুলো অথবা লাল বাটনটি ব্যবহার করুন।</p>
+    </div>
+</div>
+
+
 <!-- নতুন: নামাজের সময়সূচি বিভাগ -->
 <div id="prayerTimeContent" class="calculator-content">
     <div class="prayer-time-content">
@@ -11695,6 +11822,9 @@ try {
 				const colorPickerTab = document.getElementById('colorPickerTab');
 				const colorPickerContent = document.getElementById('colorPickerContent');
 				const historyTab = document.getElementById('historyTab');
+
+const webSearchTab = document.getElementById('webSearchTab');
+const webSearchContent = document.getElementById('webSearchContent');
 // ====================================================================
 // END: CONST SECTION FOR TAB
 // ====================================================================
@@ -11986,13 +12116,13 @@ function showTab(tabId) {
         basicCalcTab,colorPickerTab, dashboardTab,imageResizerTab,moreSettingsTab,historyTab,
         ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,
         translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
-        qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab,
+        qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab, webSearchTab,
         textAssistantTab,holidayListTab,quizTab,
         allFeaturesTab
     ];
     const contents = [
         basicCalculatorContent,colorPickerContent,dashboardContent,imageResizerContent,moreSettingsContent,historyContent,
-        ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent,  converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent,
+        ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent,  converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent, webSearchContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent,
         weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
         textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,
@@ -12217,6 +12347,11 @@ case 'scientific':
             activeTab = dashboardTab;
             activeContent = dashboardContent;
             break;
+            case 'webSearch':
+            activeTab = webSearchTab;
+            activeContent = webSearchContent;
+            initializeWebSearch(); // নিচে এই ফাংশনটি ডিফাইন করা হয়েছে
+            break;
     }
 
     if (activeTab) activeTab.classList.add('active');
@@ -12294,6 +12429,7 @@ case 'scientific':
         showTab('notepad');
         await initializeNotepad(); // Notepad চালু করার জন্য এই ফাংশন কল করুন
     });
+    if (webSearchTab) webSearchTab.addEventListener('click', () => showTab('webSearch'));
     if (healthLifestyleTab) healthLifestyleTab.addEventListener('click', () => {showTab('healthLifestyle');	initializeHealthLifestyleTab();});
     if (clockTab) clockTab.addEventListener('click', () => showTab('clock'));
     if (playerTab) playerTab.addEventListener('click', () => showTab('player'));
@@ -15924,6 +16060,88 @@ if (importantLinksTabForCounter) {
 // END: VISITOR COUNTER SCRIPT
 // ====================================================================
 
+// ====================================================================
+// START: WEB SEARCH BROWSER SCRIPT (Optimized with External Links)
+// ====================================================================
+function initializeWebSearch() {
+    const webSearchContent = document.getElementById('webSearchContent');
+    const addressBar = document.getElementById('browserAddress');
+    const goBtn = document.getElementById('browserGoBtn');
+    const openExternalBtn = document.getElementById('browserOpenExternalBtn'); // নতুন লাল বাটন
+    const homeBtn = document.getElementById('browserHomeBtn');
+    const iframe = document.getElementById('browserFrame');
+
+    if (!webSearchContent || !iframe) return;
+
+    // ডিফল্ট হোমপেজ - Bing ব্যবহার করা হয়েছে কারণ এটি Iframe এ সাপোর্ট করে
+    const homePage = "https://www.bing.com/search?q=Bangla+Toolbox"; 
+
+    // ১. লেজি লোডিং: ট্যাবে ক্লিক করলেই কেবল লোড হবে
+    if (!iframe.getAttribute('src') || iframe.getAttribute('src') === "" || iframe.getAttribute('src') === "about:blank") {
+        iframe.setAttribute('src', homePage);
+    }
+
+    // ২. ডুপ্লিকেট ইভেন্ট লিসেনার রোধ (একবারই সেটআপ হবে)
+    if (webSearchContent.getAttribute('data-browser-initialized') === 'true') {
+        return; 
+    }
+    webSearchContent.setAttribute('data-browser-initialized', 'true');
+
+    // ইউআরএল প্রসেস করার ফাংশন (অভ্যন্তরীণ - Iframe এর জন্য)
+    function navigateToUrl() {
+        let query = addressBar.value.trim();
+        if (!query) return;
+
+        let url;
+        // যদি ইউআরএল হয়
+        if (/^(http|https):\/\/[^ "]+$/.test(query)) {
+            url = query;
+        } else if (/^[^ "]+(\.[a-z]{2,})+/.test(query)) {
+            url = "https://" + query;
+        } else {
+            // যদি সাধারণ টেক্সট হয়, তবে Bing এ সার্চ করবে (Iframe ফ্রেন্ডলি)
+            url = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+        }
+        iframe.src = url;
+    }
+
+    // নতুন: ইউআরএল বা সার্চ গুগলে খোলার ফাংশন (নতুন ট্যাবে)
+    function openExternalUrl() {
+        let query = addressBar.value.trim();
+        if (!query) return;
+
+        let url;
+        if (/^(http|https):\/\/[^ "]+$/.test(query)) {
+            url = query;
+        } else if (/^[^ "]+(\.[a-z]{2,})+/.test(query)) {
+            url = "https://" + query;
+        } else {
+            // এক্সটারনাল সার্চের জন্য গুগল ব্যবহার হবে
+            url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        }
+        window.open(url, '_blank');
+    }
+
+    function goHome() {
+        iframe.src = homePage;
+        addressBar.value = "";
+    }
+
+    if (goBtn) goBtn.onclick = navigateToUrl;
+    if (openExternalBtn) openExternalBtn.onclick = openExternalUrl; // নতুন লিসেনার
+    if (homeBtn) homeBtn.onclick = goHome;
+
+    if (addressBar) {
+        addressBar.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                navigateToUrl();
+            }
+        });
+    }
+}
+// ====================================================================
+// END: WEB SEARCH BROWSER SCRIPT
+// ====================================================================
 
 //নতুন কোনো ট্যাব যুক্ত করলে তার স্ক্রিপ্ট এটির আগে অ্যাড করতে হবে।
 
