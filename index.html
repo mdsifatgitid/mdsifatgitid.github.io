@@ -11224,7 +11224,7 @@ function initializePrayerTimeTab() {
 
 
 			// --- সেটিংস থেকে গ্লোবাল মডেল ব্যবহার ---
-            const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+            const model = localStorage.getItem('geminiModel') || "gemini-flash-latest";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
             // --- পরিবর্তন শেষ ---
 
@@ -12889,7 +12889,7 @@ case 'scientific':
                                 contents: chatHistory
                             };
                             // সেটিংস থেকে মডেল নেওয়া হচ্ছে, না থাকলে ডিফল্ট মডেল ব্যবহার হবে
-                            const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+                            const model = localStorage.getItem('geminiModel') || "gemini-flash-latest";
                             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
                             const response = await fetch(apiUrl, {
@@ -13663,7 +13663,7 @@ case 'scientific':
                                 }]
                             });
                             const payload = { contents: chatHistory };
-                            const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+                            const model = localStorage.getItem('geminiModel') || "gemini-flash-latest";
             				const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
                             const response = await fetch(apiUrl, {
@@ -13776,7 +13776,7 @@ case 'scientific':
                                 contents: chatHistory
                             };
              // --- গ্লোবাল মডেল ব্যবহার ---
-            const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+            const model = localStorage.getItem('geminiModel') || "gemini-flash-latest";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
                             const response = await fetch(apiUrl, {
@@ -13859,7 +13859,7 @@ case 'scientific':
                                 contents: chatHistory
                             };
            // --- গ্লোবাল মডেল ব্যবহার ---
-            const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+            const model = localStorage.getItem('geminiModel') || "gemini-flash-latest";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
                             const response = await fetch(apiUrl, {
@@ -13972,7 +13972,7 @@ case 'scientific':
                             contents: chatHistory
                         };
        // --- গ্লোবাল মডেল ব্যবহার ---
-        const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+        const model = localStorage.getItem('geminiModel') || "gemini-flash-latest";
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
                         const response = await fetch(apiUrl, {
@@ -14338,7 +14338,7 @@ async function transcribeAudioWithGemini(audioFile) {
             };
 
             // --- গ্লোবাল মডেল ব্যবহার ---
-            const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+            const model = localStorage.getItem('geminiModel') || "gemini-flash-latest";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
@@ -14559,7 +14559,7 @@ async function handleTranslate() {
             }]
         };
         // --- গ্লোবাল মডেল ব্যবহার ---
-        const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+        const model = localStorage.getItem('geminiModel') || "gemini-flash-latest";
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
@@ -14764,7 +14764,7 @@ if (extractTextBtn) {
             };
 
            // --- গ্লোবাল মডেল ব্যবহার ---
-            const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+            const model = localStorage.getItem('geminiModel') || "gemini-flash-latest";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
@@ -18752,7 +18752,7 @@ function initializeHolidayListTab() {
                 contents: [{ parts: [{ text: prompt }] }]
             };
             // --- গ্লোবাল মডেল ব্যবহার ---
-            const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+            const model = localStorage.getItem('geminiModel') || "gemini-flash-latest";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
@@ -18983,7 +18983,7 @@ async function fetchQuizDataFromGemini(category, difficulty, count) {
         
         const payload = { contents: [{ parts: [{ text: prompt }] }] };
         // --- গ্লোবাল মডেল ব্যবহার ---
-        const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+        const model = localStorage.getItem('geminiModel') || "gemini-flash-latest";
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
@@ -21209,7 +21209,7 @@ function initializeMoreSettings() {
           "hijri_day": integer
         }`;
 
-        const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+        const model = localStorage.getItem('geminiModel') || "gemini-flash-latest";
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
         const payload = {
@@ -21629,7 +21629,7 @@ async function fetchDailyHistory() {
 
         const payload = { contents: [{ parts: [{ text: prompt }] }] };
         // --- গ্লোবাল মডেল ব্যবহার ---
-        const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+        const model = localStorage.getItem('geminiModel') || "gemini-flash-latest";
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
@@ -21699,7 +21699,7 @@ async function fetchTomorrowHistory() {
 
         const payload = { contents: [{ parts: [{ text: prompt }] }] };
 		// --- গ্লোবাল মডেল ব্যবহার ---
-        const model = localStorage.getItem('geminiModel') || "gemini-2.5-flash-preview-09-2025";
+        const model = localStorage.getItem('geminiModel') || "gemini-flash-latest";
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
