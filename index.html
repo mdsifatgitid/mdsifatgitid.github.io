@@ -16110,8 +16110,8 @@ function initializeWebSearch() {
 
     if (!webSearchContent || !iframe) return;
 
-    // ডিফল্ট হোমপেজ - Google (igu=1 প্যারামিটারসহ যা আইফ্রেম সাপোর্ট করে)
-    const homePage = "https://www.google.com/webhp?igu=1"; 
+    // ডিফল্ট হোমপেজ - Bangla Toolbox Search (igu=1 প্যারামিটারসহ যা আইফ্রেম সাপোর্ট করে)
+    const homePage = "https://www.google.com/search?igu=1&q=Bangla+Toolbox"; 
 
     // ১. লেজি লোডিং এবং রিসেট
     if (!iframe.getAttribute('src') || iframe.getAttribute('src') === "" || iframe.getAttribute('src') === "about:blank") {
