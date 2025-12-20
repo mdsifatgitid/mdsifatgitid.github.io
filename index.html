@@ -9032,17 +9032,30 @@ body.sidebar-open #sidebarOverlay {
     <div class="donate-section"> <!-- Reusing styling -->
         <h3 class="text-xl font-bold text-gray-700 mb-6 dark:text-gray-200">🚀 ইন্টারনেট স্পিড টেস্ট</h3>
         
-        <div class="grid grid-cols-3 gap-4 mb-8 text-center">
+        <!-- Grid updated to 2 columns on small screens, 4 on medium+ -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 text-center">
+            <!-- Download Speed -->
             <div class="p-4 bg-blue-50 dark:bg-gray-800 rounded-xl border border-blue-100 dark:border-gray-600">
                 <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">DOWNLOAD</div>
                 <div id="dlSpeed" class="text-2xl font-bold text-blue-600">0.00</div>
                 <div class="text-xs text-gray-400">Mbps</div>
             </div>
+            
+            <!-- Upload Speed (New) -->
+            <div class="p-4 bg-orange-50 dark:bg-gray-800 rounded-xl border border-orange-100 dark:border-gray-600">
+                <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">UPLOAD</div>
+                <div id="ulSpeed" class="text-2xl font-bold text-orange-600">0.00</div>
+                <div class="text-xs text-gray-400">Mbps</div>
+            </div>
+
+            <!-- Ping -->
             <div class="p-4 bg-purple-50 dark:bg-gray-800 rounded-xl border border-purple-100 dark:border-gray-600">
                 <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">PING</div>
                 <div id="pingSpeed" class="text-2xl font-bold text-purple-600">0</div>
                 <div class="text-xs text-gray-400">ms</div>
             </div>
+
+            <!-- Status -->
             <div class="p-4 bg-green-50 dark:bg-gray-800 rounded-xl border border-green-100 dark:border-gray-600">
                 <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">STATUS</div>
                 <div id="speedStatus" class="text-lg font-bold text-green-600">Ready</div>
@@ -12857,6 +12870,7 @@ case 'memeGen':
 case 'speedTest':
     activeTab = speedTestTab;
     activeContent = speedTestContent;
+	initializeSpeedTest();
     break; // স্পিড টেস্টে বাটনে ক্লিক করলে ফাংশন কল হবে
     
     }
@@ -17415,105 +17429,138 @@ function initializeMemeGenerator() {
 function initializeSpeedTest() {
     const startBtn = document.getElementById('startSpeedTestBtn');
     const dlSpeedEl = document.getElementById('dlSpeed');
+    const ulSpeedEl = document.getElementById('ulSpeed'); // নতুন আপলোড এলিমেন্ট
     const pingEl = document.getElementById('pingSpeed');
     const statusEl = document.getElementById('speedStatus');
     const progressRing = document.getElementById('speedProgress');
 
+    // বাটন না থাকলে ফাংশন থামিয়ে দিন
     if(!startBtn) return;
 
+    // UI রিসেট করার ফাংশন
     const resetUI = () => {
-        dlSpeedEl.innerText = '0.00';
-        pingEl.innerText = '0';
-        statusEl.innerText = 'Ready';
-        statusEl.className = 'text-lg font-bold text-green-600';
-        progressRing.style.strokeDashoffset = 283;
+        if(dlSpeedEl) dlSpeedEl.innerText = '0.00';
+        if(ulSpeedEl) ulSpeedEl.innerText = '0.00';
+        if(pingEl) pingEl.innerText = '0';
+        if(statusEl) {
+            statusEl.innerText = 'Ready';
+            statusEl.className = 'text-lg font-bold text-green-600';
+        }
+        if(progressRing) progressRing.style.strokeDashoffset = 283; // সার্কেল রিসেট
     };
 
     startBtn.onclick = async () => {
+        // টেস্ট চলাকালীন বাটন ডিজেবল রাখা
         startBtn.disabled = true;
         startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        startBtn.innerHTML = '<span>...</span>'; // লোডিং টেক্সট
         
         resetUI();
         
-        // 1. PING TEST
-        statusEl.innerText = 'Testing Ping...';
-        const pingStart = performance.now();
-        
-        try {
-            // Using a reliable resource for ping (Google generate_204)
-            await fetch('https://www.google.com/generate_204', { 
-                method: 'HEAD',
-                mode: 'no-cors',
-                cache: 'no-store'
-            });
-            const pingEnd = performance.now();
-            const pingTime = Math.round(pingEnd - pingStart);
-            pingEl.innerText = pingTime;
-        } catch (e) {
-            // Fallback
-            pingEl.innerText = Math.max(1, Math.round(performance.now() - pingStart)); 
-        }
-
-        // 2. DOWNLOAD TEST
-        statusEl.innerText = 'Testing Download...';
-        statusEl.className = 'text-lg font-bold text-blue-600';
-        
-        // Cloudflare Speed Test Endpoint (Reliable & CORS enabled usually)
-        // Downloading approx 2MB data for quick test
-        const testFileUrl = "https://speed.cloudflare.com/__down?bytes=2000000"; 
-        const cacheBuster = "&t=" + new Date().getTime();
-
+        // প্রোগ্রেস বার এনিমেশন ভেরিয়েবল
         let progress = 0;
-        const progressInterval = setInterval(() => {
-            progress += (progress < 90) ? 2 : 0; 
-            const offset = 283 - (283 * progress / 100);
-            progressRing.style.strokeDashoffset = offset;
-        }, 100);
+        let progressInterval;
 
-        const startTime = new Date().getTime();
+        const startProgress = () => {
+            clearInterval(progressInterval);
+            progressInterval = setInterval(() => {
+                progress += (progress < 90) ? 0.5 : 0; 
+                if(progressRing) {
+                    const offset = 283 - (283 * progress / 100);
+                    progressRing.style.strokeDashoffset = offset;
+                }
+            }, 50);
+        };
+
+        const stopProgress = () => {
+            clearInterval(progressInterval);
+            if(progressRing) progressRing.style.strokeDashoffset = 0; // পূর্ণ সার্কেল
+        };
+
+        startProgress();
 
         try {
-            const response = await fetch(testFileUrl + cacheBuster);
+            // ১. পিং টেস্ট (Ping Test)
+            if(statusEl) statusEl.innerText = 'Testing Ping...';
+            const pingStart = performance.now();
             
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
+            try {
+                await fetch('https://www.google.com/generate_204', { 
+                    method: 'HEAD',
+                    mode: 'no-cors',
+                    cache: 'no-store'
+                });
+                const pingEnd = performance.now();
+                const pingTime = Math.round(pingEnd - pingStart);
+                if(pingEl) pingEl.innerText = pingTime;
+            } catch (e) {
+                if(pingEl) pingEl.innerText = Math.max(1, Math.round(performance.now() - pingStart)); 
             }
 
-            const blob = await response.blob();
-            const endTime = new Date().getTime();
+            // ২. ডাউনলোড স্পিড টেস্ট (Download Test)
+            if(statusEl) {
+                statusEl.innerText = 'Testing Download...';
+                statusEl.className = 'text-lg font-bold text-blue-600';
+            }
             
-            const downloadSize = blob.size;
-            const duration = (endTime - startTime) / 1000; // in seconds
+            // Cloudflare এর ২ এমবি ফাইল ডাউনলোড করে স্পিড মাপা
+            const dlStartTime = new Date().getTime();
+            const dlResponse = await fetch("https://speed.cloudflare.com/__down?bytes=2000000&t=" + new Date().getTime());
+            const dlBlob = await dlResponse.blob();
+            const dlEndTime = new Date().getTime();
             
-            const bitsLoaded = downloadSize * 8;
-            const speedBps = bitsLoaded / duration;
-            const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
+            const dlDuration = (dlEndTime - dlStartTime) / 1000;
+            const dlBitsLoaded = dlBlob.size * 8;
+            const dlSpeedBps = dlBitsLoaded / dlDuration;
+            const dlSpeedMbps = (dlSpeedBps / (1024 * 1024)).toFixed(2);
             
-            clearInterval(progressInterval);
-            progressRing.style.strokeDashoffset = 0;
-            
-            dlSpeedEl.innerText = speedMbps;
-            statusEl.innerText = 'Completed';
-            statusEl.className = 'text-lg font-bold text-green-600';
+            if(dlSpeedEl) dlSpeedEl.innerText = dlSpeedMbps;
+
+            // ৩. আপলোড স্পিড টেস্ট (Upload Test - New)
+            if(statusEl) {
+                statusEl.innerText = 'Testing Upload...';
+                statusEl.className = 'text-lg font-bold text-orange-600';
+            }
+
+            // ১ এমবি ডামি ডেটা তৈরি
+            const uploadSize = 1000000; // ১ এমবি
+            const uploadContent = new Uint8Array(uploadSize); 
+            const upStartTime = new Date().getTime();
+
+            // httpbin এ পোস্ট রিকোয়েস্ট পাঠানো (CORS সাপোর্টেড)
+            await fetch('https://httpbin.org/post', {
+                method: 'POST',
+                body: uploadContent
+            });
+
+            const upEndTime = new Date().getTime();
+            const upDuration = (upEndTime - upStartTime) / 1000;
+            const upBitsLoaded = uploadSize * 8;
+            const upSpeedBps = upBitsLoaded / upDuration;
+            const upSpeedMbps = (upSpeedBps / (1024 * 1024)).toFixed(2);
+
+            if(ulSpeedEl) ulSpeedEl.innerText = upSpeedMbps;
+
+            // ৪. কমপ্লিট
+            stopProgress();
+            if(statusEl) {
+                statusEl.innerText = 'Completed';
+                statusEl.className = 'text-lg font-bold text-green-600';
+            }
             
         } catch (error) {
-            clearInterval(progressInterval);
+            stopProgress();
             console.error(error);
             
-            // Fallback to Browser API if fetch fails due to CORS or Network
-            if (navigator.connection && navigator.connection.downlink) {
-                 dlSpeedEl.innerText = navigator.connection.downlink;
-                 statusEl.innerText = 'Est. (API)';
-                 statusEl.className = 'text-lg font-bold text-orange-600';
-                 showCustomAlert("কানেকশন সমস্যার কারণে ব্রাউজার API থেকে আনুমানিক স্পিড দেখানো হচ্ছে।");
-            } else {
+            if(statusEl) {
                 statusEl.innerText = 'Error';
                 statusEl.className = 'text-lg font-bold text-red-600';
-                showCustomAlert("ইন্টারনেট কানেকশন চেক করুন।");
             }
+            showCustomAlert("ইন্টারনেট কানেকশন চেক করুন।");
         } finally {
             startBtn.disabled = false;
             startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            startBtn.innerHTML = '<span>GO</span>';
         }
     };
     
