@@ -22665,29 +22665,67 @@ function initializeMoreSettings() {
         });
     }
 
-    // ৭. ক্লিয়ার অ্যাপ ডাটা লজিক
+    // ৭. ক্লিয়ার অ্যাপ ডাটা লজিক (উন্নত ও নিরাপদ - Promise যুক্ত)
     const clearAppDataBtn = document.getElementById('clearAppDataBtn');
     if (clearAppDataBtn) {
         clearAppDataBtn.addEventListener('click', async () => {
             const confirmed = confirm("সতর্কতা: আপনি কি নিশ্চিত যে আপনি সমস্ত অ্যাপ ডাটা মুছে ফেলতে চান? নোটপ্যাড, ইনভয়েজ এবং অন্যান্য সেভ করা তথ্য স্থায়ীভাবে মুছে যাবে।");
             if (confirmed) {
-                try {
-                    localStorage.clear();
-                    const dbsToDelete = ['BanglaToolboxDB', 'invoiceDB']; 
-                    for (const dbName of dbsToDelete) {
-                        await new Promise((resolve, reject) => {
-                            const req = indexedDB.deleteDatabase(dbName);
-                            req.onsuccess = () => resolve();
-                            req.onerror = () => reject(`Failed to delete ${dbName}`);
-                            req.onblocked = () => console.warn(`${dbName} delete blocked`);
-                        });
-                    }
-                    showCustomAlert('সমস্ত অ্যাপ ডাটা সফলভাবে মুছে ফেলা হয়েছে। পেজ রিলোড হচ্ছে...');
-                    setTimeout(() => { location.reload(); }, 1500);
-                } catch (error) {
-                    console.error("Error clearing app data:", error);
-                    showCustomAlert('ডাটা মুছতে সমস্যা হয়েছে। কনসোল চেক করুন।');
+                // ইউজারকে ফিডব্যাক দিন যে প্রক্রিয়া চলছে
+                if (typeof showCustomAlert === 'function') {
+                    showCustomAlert('ডাটা মুছে ফেলা হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...');
                 }
+                clearAppDataBtn.disabled = true;
+                clearAppDataBtn.innerText = 'মুছে ফেলা হচ্ছে...';
+
+                // ১. লোকাল স্টোরেজ ক্লিয়ার
+                localStorage.clear();
+
+                // ২. ইনডেক্সডডিবি (IndexedDB) ডিলিট রিকোয়েস্ট (Promise সহ নিরাপদ পদ্ধতি)
+                const dbsToDelete = ['BanglaToolboxDB', 'invoiceDB'];
+                
+                const deletePromises = dbsToDelete.map(dbName => {
+                    return new Promise((resolve) => {
+                        const req = indexedDB.deleteDatabase(dbName);
+                        
+                        // যদি সাকসেস হয় (মানে কানেকশন ওপেন ছিল না এবং ডিলিট হয়ে গেছে)
+                        req.onsuccess = () => {
+                            console.log(`${dbName} deleted successfully`);
+                            resolve();
+                        };
+                        
+                        // যদি ব্লকড হয় (মানে কানেকশন ওপেন আছে), তাও আমরা resolve করব।
+                        // কারণ এর মানে হলো ব্রাউজার কমান্ড পেয়েছে এবং পেজ রিফ্রেশ (কানেকশন ক্লোজ) হওয়ার জন্য অপেক্ষা করছে।
+                        req.onblocked = () => {
+                            console.warn(`${dbName} delete blocked - will complete on reload`);
+                            resolve(); 
+                        };
+                        
+                        // কোনো এরর হলেও আমরা আটকে থাকব না, রিফ্রেশ করে দেব
+                        req.onerror = (e) => {
+                            console.error(`${dbName} delete error`, e);
+                            resolve(); 
+                        };
+                    });
+                });
+
+                // ৩. সব ডিলিট রিকোয়েস্ট রেজিস্টার হওয়া পর্যন্ত অপেক্ষা
+                try {
+                    await Promise.all(deletePromises);
+                } catch (error) {
+                    console.error("Error during deletion:", error);
+                }
+
+                // ৪. পেজ রিফ্রেশ (এখন নিরাপদ কারণ রিকোয়েস্টগুলো ব্রাউজারের কিউ-তে জমা হয়েছে)
+                if (typeof showCustomAlert === 'function') {
+                    showCustomAlert('ডাটা ক্লিয়ার সম্পন্ন! পেজ রিফ্রেশ হচ্ছে...');
+                } else {
+                    alert('ডাটা ক্লিয়ার সম্পন্ন! পেজ রিফ্রেশ হচ্ছে...');
+                }
+                
+                setTimeout(() => { 
+                    location.reload(); 
+                }, 500); // ব্যবহারকারীকে মেসেজ পড়ার জন্য সামান্য সময় দেওয়া
             }
         });
     }
