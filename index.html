@@ -9008,9 +9008,16 @@ body.sidebar-open #sidebarOverlay {
                             <label class="block text-xs mb-1 dark:text-gray-300">ফন্ট সাইজ</label>
                             <input type="number" id="memeFontSize" value="40" class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
                         </div>
-                        <div class="flex-1 min-w-[80px]">
-                            <label class="block text-xs mb-1 dark:text-gray-300">টেক্সট কালার</label>
-                            <input type="color" id="memeTextColor" value="#ffffff" class="w-full h-10 p-0 border rounded cursor-pointer">
+                        <!-- ফিল কালার সেকশন আপডেট -->
+                        <div class="flex-1 min-w-[100px]">
+                            <label class="block text-xs mb-1 dark:text-gray-300">ফিল কালার</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" id="memeTextColor" value="#ffffff" class="w-10 h-10 p-0 border rounded cursor-pointer">
+                                <label class="flex items-center gap-1 text-xs cursor-pointer select-none text-gray-700 dark:text-gray-300">
+                                    <input type="checkbox" id="memeNoFill" class="w-4 h-4 text-blue-600 rounded">
+                                    ফিল নেই
+                                </label>
+                            </div>
                         </div>
                         <div class="flex-1 min-w-[100px]">
                             <label class="block text-xs mb-1 dark:text-gray-300">বর্ডার কালার</label>
@@ -9034,6 +9041,22 @@ body.sidebar-open #sidebarOverlay {
                         </button>
                         <button id="alignRightBtn" class="p-2 hover:bg-gray-300 dark:hover:bg-gray-600 rounded" title="ডানে">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="7" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="7" y2="18"></line></svg>
+                        </button>
+                    </div>
+
+                    <!-- শেপ ইনসার্ট বাটন -->
+                    <div class="flex gap-2 justify-center bg-gray-100 dark:bg-gray-700 p-2 rounded">
+                        <button id="addRectBtn" class="p-2 hover:bg-gray-300 dark:hover:bg-gray-600 rounded" title="চতুর্ভূজ">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
+                        </button>
+                        <button id="addCircleBtn" class="p-2 hover:bg-gray-300 dark:hover:bg-gray-600 rounded" title="বৃত্ত">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle></svg>
+                        </button>
+                        <button id="addTriangleBtn" class="p-2 hover:bg-gray-300 dark:hover:bg-gray-600 rounded" title="ত্রিভুজ">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>
+                        </button>
+                        <button id="addStarBtn" class="p-2 hover:bg-gray-300 dark:hover:bg-gray-600 rounded" title="স্টার">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                         </button>
                     </div>
 
@@ -17169,8 +17192,9 @@ function initializeMemeGenerator() {
     const cancelEditBtn = document.getElementById('cancelMemeEditBtn'); // নতুন বাটন
     const overlayInput = document.getElementById('memeOverlayInput');
     const colorInput = document.getElementById('memeTextColor');
+    const noFillCheckbox = document.getElementById('memeNoFill'); // নতুন ফিল নেই চেকবক্স
     const borderColorInput = document.getElementById('memeBorderColor');
-    const noBorderCheckbox = document.getElementById('memeNoBorder'); // নতুন চেকবক্স
+    const noBorderCheckbox = document.getElementById('memeNoBorder'); // নতুন বর্ডার নেই চেকবক্স
     const fontSizeInput = document.getElementById('memeFontSize');
     const canvas = document.getElementById('memeCanvas');
     const ctx = canvas.getContext('2d');
@@ -17181,6 +17205,12 @@ function initializeMemeGenerator() {
     const alignCenterBtn = document.getElementById('alignCenterBtn');
     const alignRightBtn = document.getElementById('alignRightBtn');
     
+    // শেপ বাটন
+    const addRectBtn = document.getElementById('addRectBtn');
+    const addCircleBtn = document.getElementById('addCircleBtn');
+    const addTriangleBtn = document.getElementById('addTriangleBtn');
+    const addStarBtn = document.getElementById('addStarBtn');
+
     // ব্রাশ টুল এবং হিস্টোরি ভেরিয়েবল
     const brushToggleBtn = document.getElementById('memeBrushToggleBtn');
     const brushSettings = document.getElementById('memeBrushSettings');
@@ -17298,7 +17328,14 @@ function initializeMemeGenerator() {
             ctx.save();
             if (obj.type === 'text') {
                 ctx.font = `bold ${obj.fontSize}px Impact, sans-serif`;
-                ctx.fillStyle = obj.color;
+                
+                // ফিল কালার হ্যান্ডলিং (স্বচ্ছ হলে ফিল হবে না)
+                if (obj.color && obj.color !== 'transparent') {
+                    ctx.fillStyle = obj.color;
+                    ctx.fillTextLogic = true;
+                } else {
+                    ctx.fillTextLogic = false;
+                }
                 
                 // বর্ডার কালার হ্যান্ডলিং (স্বচ্ছ হলে স্ট্রোক হবে না)
                 if (obj.borderColor && obj.borderColor !== 'transparent') {
@@ -17319,7 +17356,9 @@ function initializeMemeGenerator() {
                     if (ctx.strokeTextLogic) {
                         ctx.strokeText(line, obj.x, obj.y + (i * lineHeight));
                     }
-                    ctx.fillText(line, obj.x, obj.y + (i * lineHeight));
+                    if (ctx.fillTextLogic) {
+                        ctx.fillText(line, obj.x, obj.y + (i * lineHeight));
+                    }
                 });
                 
                 if (index === selectedObjectIndex && !isBrushMode) {
@@ -17333,6 +17372,49 @@ function initializeMemeGenerator() {
 
             } else if (obj.type === 'image') {
                 ctx.drawImage(obj.content, obj.x, obj.y, obj.width, obj.height);
+                if (index === selectedObjectIndex && !isBrushMode) {
+                    drawSelectionBox(obj.x, obj.y, obj.width, obj.height);
+                }
+            } else if (obj.type === 'shape') {
+                if (obj.color && obj.color !== 'transparent') {
+                    ctx.fillStyle = obj.color;
+                } else {
+                    ctx.fillStyle = 'rgba(0,0,0,0)'; // Transparent
+                }
+                
+                if (obj.borderColor && obj.borderColor !== 'transparent') {
+                    ctx.strokeStyle = obj.borderColor;
+                    ctx.lineWidth = 5;
+                }
+
+                ctx.beginPath();
+                if (obj.shapeType === 'rect') {
+                    ctx.rect(obj.x, obj.y, obj.width, obj.height);
+                } else if (obj.shapeType === 'circle') {
+                    // Ellipse supports resizing width and height independently
+                    ctx.ellipse(
+                        obj.x + obj.width / 2, 
+                        obj.y + obj.height / 2, 
+                        Math.abs(obj.width / 2), 
+                        Math.abs(obj.height / 2), 
+                        0, 0, 2 * Math.PI
+                    );
+                } else if (obj.shapeType === 'triangle') {
+                    ctx.moveTo(obj.x + obj.width / 2, obj.y);
+                    ctx.lineTo(obj.x + obj.width, obj.y + obj.height);
+                    ctx.lineTo(obj.x, obj.y + obj.height);
+                    ctx.closePath();
+                } else if (obj.shapeType === 'star') {
+                    drawStar(ctx, obj.x + obj.width / 2, obj.y + obj.height / 2, 5, obj.width / 2, obj.width / 4);
+                }
+                
+                if (obj.color && obj.color !== 'transparent') {
+                    ctx.fill();
+                }
+                if (obj.borderColor && obj.borderColor !== 'transparent') {
+                    ctx.stroke();
+                }
+
                 if (index === selectedObjectIndex && !isBrushMode) {
                     drawSelectionBox(obj.x, obj.y, obj.width, obj.height);
                 }
@@ -17352,6 +17434,30 @@ function initializeMemeGenerator() {
             }
             ctx.restore();
         });
+    }
+
+    // Helper to draw star
+    function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
+        let rot = Math.PI / 2 * 3;
+        let x = cx;
+        let y = cy;
+        let step = Math.PI / spikes;
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - outerRadius);
+        for (let i = 0; i < spikes; i++) {
+            x = cx + Math.cos(rot) * outerRadius;
+            y = cy + Math.sin(rot) * outerRadius;
+            ctx.lineTo(x, y);
+            rot += step;
+
+            x = cx + Math.cos(rot) * innerRadius;
+            y = cy + Math.sin(rot) * innerRadius;
+            ctx.lineTo(x, y);
+            rot += step;
+        }
+        ctx.lineTo(cx, cy - outerRadius);
+        ctx.closePath();
     }
 
     function measureTextObj(obj) {
@@ -17394,7 +17500,16 @@ function initializeMemeGenerator() {
         selectedObjectIndex = index;
         textInput.value = obj.content;
         fontSizeInput.value = obj.fontSize;
-        colorInput.value = obj.color;
+        
+        // ফিল কালার লজিক আপডেট
+        if (obj.color === 'transparent') {
+            noFillCheckbox.checked = true;
+            colorInput.disabled = true;
+        } else {
+            noFillCheckbox.checked = false;
+            colorInput.disabled = false;
+            colorInput.value = obj.color;
+        }
         
         if (obj.borderColor === 'transparent') {
             noBorderCheckbox.checked = true;
@@ -17423,7 +17538,7 @@ function initializeMemeGenerator() {
         if (!text.trim()) return showCustomAlert('অনুগ্রহ করে কিছু টেক্সট লিখুন।');
         
         const fontSize = parseInt(fontSizeInput.value) || 40;
-        const color = colorInput.value;
+        const color = noFillCheckbox.checked ? 'transparent' : colorInput.value;
         const borderColor = noBorderCheckbox.checked ? 'transparent' : borderColorInput.value;
 
         if (isEditingText && selectedObjectIndex !== -1) {
@@ -17464,25 +17579,49 @@ function initializeMemeGenerator() {
         cancelEditBtn.addEventListener('click', resetTextForm);
     }
 
-    // বর্ডার নেই চেকবক্স লজিক
-    noBorderCheckbox.addEventListener('change', () => {
-        // যদি এডিট মোডে থাকে, তাহলে লাইভ আপডেট দেখান
-        if (isEditingText && selectedObjectIndex !== -1) {
-             canvasObjects[selectedObjectIndex].borderColor = noBorderCheckbox.checked ? 'transparent' : borderColorInput.value;
-             renderCanvas();
+    // ফিল নেই চেকবক্স লজিক
+    noFillCheckbox.addEventListener('change', () => {
+        if (selectedObjectIndex !== -1) {
+             const obj = canvasObjects[selectedObjectIndex];
+             if (obj.type === 'text' || obj.type === 'shape') {
+                 obj.color = noFillCheckbox.checked ? 'transparent' : colorInput.value;
+                 colorInput.disabled = noFillCheckbox.checked;
+                 renderCanvas();
+             }
+        } else {
+             colorInput.disabled = noFillCheckbox.checked;
         }
     });
 
-    // ইনপুট চেঞ্জ হলে লাইভ আপডেট (এডিট মোডে)
+    // বর্ডার নেই চেকবক্স লজিক (আপডেট)
+    noBorderCheckbox.addEventListener('change', () => {
+        if (selectedObjectIndex !== -1) {
+             const obj = canvasObjects[selectedObjectIndex];
+             if (obj.type === 'text' || obj.type === 'shape') {
+                 obj.borderColor = noBorderCheckbox.checked ? 'transparent' : borderColorInput.value;
+                 borderColorInput.disabled = noBorderCheckbox.checked;
+                 renderCanvas();
+             }
+        } else {
+             borderColorInput.disabled = noBorderCheckbox.checked;
+        }
+    });
+
+    // ইনপুট চেঞ্জ হলে লাইভ আপডেট (আপডেট)
     const inputsToWatch = [textInput, fontSizeInput, colorInput, borderColorInput];
     inputsToWatch.forEach(input => {
         input.addEventListener('input', () => {
-            if (isEditingText && selectedObjectIndex !== -1) {
+            if (selectedObjectIndex !== -1) {
                 const obj = canvasObjects[selectedObjectIndex];
-                if (input === textInput) obj.content = textInput.value;
-                if (input === fontSizeInput) obj.fontSize = parseInt(fontSizeInput.value) || 20;
-                if (input === colorInput) obj.color = colorInput.value;
+                
+                if (input === colorInput && !noFillCheckbox.checked) obj.color = colorInput.value;
                 if (input === borderColorInput && !noBorderCheckbox.checked) obj.borderColor = borderColorInput.value;
+
+                if (obj.type === 'text') {
+                    if (input === textInput && isEditingText) obj.content = textInput.value;
+                    if (input === fontSizeInput) obj.fontSize = parseInt(fontSizeInput.value) || 20;
+                }
+                
                 renderCanvas();
             }
         });
@@ -17519,6 +17658,41 @@ function initializeMemeGenerator() {
         if (e.target.files[0]) addImageOverlay(e.target.files[0]);
         e.target.value = '';
     });
+
+    // --- Shape Addition Functions ---
+    function addShape(shapeType) {
+        if (!baseImage) {
+            showCustomAlert('অনুগ্রহ করে প্রথমে একটি ব্যাকগ্রাউন্ড ছবি আপলোড করুন।');
+            return;
+        }
+        
+        const size = 100;
+        const centerX = (canvas.width - size) / 2;
+        const centerY = (canvas.height - size) / 2;
+        
+        canvasObjects.push({
+            type: 'shape',
+            shapeType: shapeType,
+            x: centerX,
+            y: centerY,
+            width: size,
+            height: size,
+            color: noFillCheckbox.checked ? 'transparent' : (colorInput.value || '#ff0000'),
+            borderColor: noBorderCheckbox.checked ? 'transparent' : (borderColorInput.value || '#000000')
+        });
+        
+        selectedObjectIndex = canvasObjects.length - 1;
+        if (isBrushMode) brushToggleBtn.click();
+        resetTextForm();
+        saveState();
+        renderCanvas();
+    }
+
+    if(addRectBtn) addRectBtn.addEventListener('click', () => addShape('rect'));
+    if(addCircleBtn) addCircleBtn.addEventListener('click', () => addShape('circle'));
+    if(addTriangleBtn) addTriangleBtn.addEventListener('click', () => addShape('triangle'));
+    if(addStarBtn) addStarBtn.addEventListener('click', () => addShape('star'));
+
 
     function updateAlignButtonsUI() {
         alignLeftBtn.className = "p-2 hover:bg-gray-300 dark:hover:bg-gray-600 rounded";
@@ -17626,12 +17800,31 @@ function initializeMemeGenerator() {
                 isDragging = true;
                 initialObjState = { x: obj.x, y: obj.y };
                 
-                // যদি টেক্সট অবজেক্টে ক্লিক হয় এবং আমরা এডিট মোডে না থাকি, তবে এডিট মোড চালু করবেন না,
-                // কিন্তু যদি আগে থেকেই এডিট মোডে থাকি এবং অন্য টেক্সটে ক্লিক করি, তবে সুইচ করুন।
-                if (obj.type === 'text') {
-                    // সিঙ্গেল ক্লিকে সিলেক্ট হয়, কিন্তু এডিট মোড অন হয় না (ডাবল ক্লিক লাগে)
-                    // তবে যদি ইউজার চায় যে সিলেক্ট করলেই ভ্যালুগুলো ইনপুটে আসুক, তাহলে নিচের লাইনগুলো আনকমেন্ট করুন:
-                    // populateFormForEdit(obj, i); 
+                if (obj.type === 'text' || obj.type === 'shape') {
+                    // ফিল কালার সিঙ্ক
+                    if (obj.color === 'transparent') {
+                        noFillCheckbox.checked = true;
+                        colorInput.disabled = true;
+                    } else {
+                        noFillCheckbox.checked = false;
+                        colorInput.disabled = false;
+                        colorInput.value = obj.color;
+                    }
+                    
+                    // বর্ডার কালার সিঙ্ক
+                    if (obj.borderColor === 'transparent') {
+                        noBorderCheckbox.checked = true;
+                        borderColorInput.disabled = true;
+                    } else {
+                        noBorderCheckbox.checked = false;
+                        borderColorInput.disabled = false;
+                        borderColorInput.value = obj.borderColor;
+                    }
+                    
+                    // টেক্সট হলে ফন্ট সাইজ সিঙ্ক
+                    if (obj.type === 'text') {
+                        fontSizeInput.value = obj.fontSize;
+                    }
                 }
                 
                 renderCanvas();
