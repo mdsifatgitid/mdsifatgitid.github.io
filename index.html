@@ -22,6 +22,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 	<!-- jsPDF CDN (পিডিএফ টুলের জন্য নতুন যুক্ত করা হয়েছে) -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+	    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 	
     <style>
         /* Custom font and basic styles */
@@ -6490,10 +6491,12 @@ body.sidebar-open #sidebarOverlay {
 				<button id="pdfToolsTab" class="tab-button rounded-xl">পিডিএফ টুলস</button>
 				<!-- নতুন ফিচার বাটন শেষ -->
 				<!-- নতুন ফিচার বাটন শুরু (আপডেট ২) -->
-<button id="screenRecorderTab" class="tab-button rounded-xl">স্ক্রিন রেকর্ডার</button>
-<button id="jsonFormatterTab" class="tab-button rounded-xl">জেসন ফর্মাটার</button>
-<button id="memeGenTab" class="tab-button rounded-xl">মিম জেনারেটর</button>
-<button id="speedTestTab" class="tab-button rounded-xl">ইন্টারনেট স্পিড</button>
+				<button id="screenRecorderTab" class="tab-button rounded-xl">স্ক্রিন রেকর্ডার</button>
+				<button id="jsonFormatterTab" class="tab-button rounded-xl">জেসন ফর্মাটার</button>
+				<button id="memeGenTab" class="tab-button rounded-xl">মিম জেনারেটর</button>
+				<button id="speedTestTab" class="tab-button rounded-xl">ইন্টারনেট স্পিড</button>
+				<button id="barcodeGenTab" class="tab-button rounded-xl">বারকোড জেনারেটর</button>
+				<button id="randomPickerTab" class="tab-button rounded-xl">র‍্যান্ডম পিকার</button>
 <!-- নতুন ফিচার বাটন শেষ (আপডেট ২) -->
 				<button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
 				<button id="importantLinksTab" class="tab-button rounded-xl">গুরুত্বপূর্ণ লিংকসমূহ</button>
@@ -7518,7 +7521,12 @@ body.sidebar-open #sidebarOverlay {
                 <li class="mb-2">
                     <strong class="text-green-600 dark:text-green-400">ইন্টারনেট স্পিড:</strong> আপনার ইন্টারনেটের ডাউনলোড, আপলোড স্পিড এবং পিং টেস্ট করুন।
                 </li>
-                
+				<li class="mb-2">
+                    <strong class="text-slate-700 dark:text-slate-400">বারকোড জেনারেটর:</strong> টেক্সট বা নম্বর দিয়ে সহজেই বিভিন্ন ফরম্যাটের বারকোড তৈরি করুন, কালার কাস্টমাইজ করুন এবং ডাউনলোড করুন।
+                </li>
+                <li class="mb-2">
+                    <strong class="text-fuchsia-700 dark:text-fuchsia-400">র‍্যান্ডম পিকার / লটারি:</strong> লটারি, গিভঅ্যাওয়ে বা র‍াফেল ড্র-এর জন্য নামের তালিকা থেকে অটোমেটিক ও নিরপেক্ষভাবে বিজয়ী নির্বাচন করুন।
+                </li>       
                 <li class="mb-2">
                     <strong class="text-lime-700 dark:text-lime-400">ডোনেট:</strong> বাংলা টুলবক্সের উন্নয়নে সহায়তা করুন।
                 </li>
@@ -9643,6 +9651,98 @@ body.sidebar-open #sidebarOverlay {
 </div>
 <!-- ======================================================== -->
 <!-- END: ইতিহাস ট্যাব -->
+<!-- ======================================================== -->
+
+<!-- ======================================================== -->
+<!-- START: Barcode Generator Content -->
+<!-- ======================================================== -->
+<div id="barcodeGenContent" class="calculator-content">
+    <div class="converter-section" style="max-width: 600px; margin: 0 auto;">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">║▌║█║ বারকোড জেনারেটর</h3>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-300 text-left">টেক্সট বা কোড লিখুন:</label>
+                <input type="text" id="barcodeInput" placeholder="যেমন: 12345678" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-indigo-500">
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-300 text-left">ফরম্যাট:</label>
+                    <select id="barcodeFormat" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="CODE128">CODE128 (ডিফল্ট)</option>
+                        <option value="CODE39">CODE39</option>
+                        <option value="EAN13">EAN-13</option>
+                        <option value="UPC">UPC</option>
+                        <option value="ITF14">ITF-14</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-300 text-left">লাইন কালার:</label>
+                    <input type="color" id="barcodeColor" value="#000000" class="w-full h-[46px] p-1 border rounded-lg cursor-pointer bg-white dark:bg-gray-700">
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3 mb-4">
+                <input type="checkbox" id="showBarcodeText" checked class="w-5 h-5 text-indigo-600 rounded">
+                <label for="showBarcodeText" class="text-gray-700 dark:text-gray-300">নিচে টেক্সট দেখান</label>
+            </div>
+
+            <button id="generateBarcodeBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-all flex justify-center items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8v8"/><path d="M11 8v8"/><path d="M15 8v8"/><path d="M19 8v8"/></svg>
+                বারকোড তৈরি করুন
+            </button>
+        </div>
+
+        <!-- Result Area -->
+        <div id="barcodeResultArea" class="mt-8 hidden bg-white p-4 rounded-lg shadow-md flex flex-col items-center">
+            <svg id="barcodeCanvas"></svg>
+            <button id="downloadBarcodeBtn" class="mt-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                ডাউনলোড (PNG)
+            </button>
+        </div>
+    </div>
+</div>
+<!-- ======================================================== -->
+<!-- END: Barcode Generator Content -->
+<!-- ======================================================== -->
+
+<!-- ======================================================== -->
+<!-- START: Random Picker Content -->
+<!-- ======================================================== -->
+<div id="randomPickerContent" class="calculator-content">
+    <div class="converter-section" style="max-width: 600px; margin: 0 auto;">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">🎲 র‍্যান্ডম পিকার / লটারি</h3>
+        <p class="text-sm text-gray-500 mb-4 dark:text-gray-400">নিচে নামগুলো লিখুন (প্রতি লাইনে একটি করে নাম)। এরপর 'লটারি করুন' বাটনে ক্লিক করে একজনকে বেছে নিন।</p>
+        
+        <div class="relative">
+            <textarea id="pickerInput" rows="6" class="w-full p-4 border-2 border-dashed border-gray-300 rounded-xl dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-purple-500 focus:ring-0 transition-colors resize-y" placeholder="নাম ১&#10;নাম ২&#10;নাম ৩..."></textarea>
+            <button id="clearPickerBtn" class="absolute top-2 right-2 p-1 text-gray-400 hover:text-red-500 bg-white dark:bg-gray-800 rounded-full shadow-sm" title="সব মুছুন">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            </button>
+        </div>
+
+        <div class="flex gap-3 mt-4">
+            <button id="addSampleDataBtn" class="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-semibold dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200 transition-colors">নমুনা নাম</button>
+            <button id="startPickerBtn" class="flex-[2] py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-bold shadow-md transform active:scale-95 transition-all flex justify-center items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16 10-4 4-4-4"/></svg>
+                লটারি করুন
+            </button>
+        </div>
+
+        <!-- Result Animation Area -->
+        <div id="pickerResultArea" class="mt-6 hidden text-center">
+            <div class="text-sm text-gray-500 dark:text-gray-400 mb-2">বিজয়ী হলেন:</div>
+            <div id="pickerWinner" class="text-4xl font-bold text-purple-600 dark:text-purple-300 animate-bounce py-4 bg-purple-50 dark:bg-gray-800 rounded-xl border border-purple-100 dark:border-gray-700 shadow-inner">
+                ?
+            </div>
+            <div id="confetti-container" class="fixed top-0 left-0 w-full h-full pointer-events-none z-50 overflow-hidden hidden"></div>
+        </div>
+    </div>
+</div>
+<!-- ======================================================== -->
+<!-- END: Random Picker Content -->
 <!-- ======================================================== -->
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
@@ -12398,6 +12498,10 @@ try {
 				const colorPickerTab = document.getElementById('colorPickerTab');
 				const colorPickerContent = document.getElementById('colorPickerContent');
 				const historyTab = document.getElementById('historyTab');
+				const barcodeGenTab = document.getElementById('barcodeGenTab');
+				const barcodeGenContent = document.getElementById('barcodeGenContent');
+				const randomPickerTab = document.getElementById('randomPickerTab');
+				const randomPickerContent = document.getElementById('randomPickerContent');
 
 const webSearchTab = document.getElementById('webSearchTab');
 const webSearchContent = document.getElementById('webSearchContent');
@@ -12700,16 +12804,16 @@ function stopOtherTabActivities() {
 function showTab(tabId) {
     const tabs = [
         basicCalcTab,colorPickerTab, dashboardTab,imageResizerTab,moreSettingsTab,historyTab,currencyTab, emiCalcTab, ipInfoTab, recipeTab, pdfToolsTab,screenRecorderTab, jsonFormatterTab, memeGenTab, speedTestTab,
-        ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,
+        ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,barcodeGenTab, randomPickerTab,
         translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
-        qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab, webSearchTab,
+        qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab, webSearchTab, 
         textAssistantTab,holidayListTab,quizTab,
         allFeaturesTab
     ];
     const contents = [
         basicCalculatorContent,colorPickerContent,dashboardContent,imageResizerContent,moreSettingsContent,historyContent,currencyContent, emiCalcContent, ipInfoContent, recipeContent, pdfToolsContent,screenRecorderContent, jsonFormatterContent, memeGenContent, speedTestContent,
         ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent,  converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent, webSearchContent,
-        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent,
+        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent, barcodeGenContent, randomPickerContent,
         weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
         textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,
         allFeaturesContent
@@ -12980,6 +13084,16 @@ case 'memeGen':
     activeContent = memeGenContent;
     initializeMemeGenerator();
     break;
+case 'barcode':
+    activeTab = barcodeGenTab;
+    activeContent = barcodeGenContent;
+    initializeBarcodeGenerator();
+    break;
+case 'randomPicker':
+    activeTab = randomPickerTab;
+    activeContent = randomPickerContent;
+    initializeRandomPicker();
+    break;
 case 'speedTest':
     activeTab = speedTestTab;
     activeContent = speedTestContent;
@@ -13013,7 +13127,7 @@ case 'speedTest':
         'clock', 'player', 'quiz', 'history', 'daysObservances', 
         'holiday', 'zakat', 'qrCode', 'colorPicker', 'invoice', 
         'imageResizer', 'emergency', 'healthLifestyle', 
-        'currency', 'emi', 'ip', 'recipe', 'pdf', 
+        'currency', 'emi', 'ip', 'recipe', 'pdf', 'randomPicker','barcode',
         'screenRecorder', 'jsonFormatter', 'memeGen', 'speedTest',
         'allFeatures', 'importantLinks', 'donate'
     ];
@@ -13092,6 +13206,8 @@ if (screenRecorderTab) screenRecorderTab.addEventListener('click', () => showTab
 if (jsonFormatterTab) jsonFormatterTab.addEventListener('click', () => showTab('jsonFormatter'));
 if (memeGenTab) memeGenTab.addEventListener('click', () => showTab('memeGen'));
 if (speedTestTab) speedTestTab.addEventListener('click', () => showTab('speedTest'));
+if (barcodeGenTab) barcodeGenTab.addEventListener('click', () => showTab('barcode'));
+if (randomPickerTab) randomPickerTab.addEventListener('click', () => showTab('randomPicker'));
 
 	
 // ====================================================================
@@ -22126,6 +22242,8 @@ function makeAllFeaturesInteractive() {
         'জেসন ফর্মাটার': 'jsonFormatterTab',
         'মিম জেনারেটর': 'memeGenTab',
         'ইন্টারনেট স্পিড': 'speedTestTab',
+		'বারকোড জেনারেটর': 'barcodeGenTab',
+        'র‍্যান্ডম পিকার / লটারি': 'randomPickerTab',
         // -----------------------------------
 
         'সকল ফিচার': 'allFeaturesTab',
@@ -24270,6 +24388,134 @@ function initializePdfTools() {
 // ====================================================================
 // END: PDF TOOLS SCRIPT
 // ====================================================================
+
+// ========================================================
+// START: Barcode Generator Function
+// ========================================================
+function initializeBarcodeGenerator() {
+    const input = document.getElementById('barcodeInput');
+    const formatSelect = document.getElementById('barcodeFormat');
+    const colorInput = document.getElementById('barcodeColor');
+    const showTextCheck = document.getElementById('showBarcodeText');
+    const generateBtn = document.getElementById('generateBarcodeBtn');
+    const downloadBtn = document.getElementById('downloadBarcodeBtn');
+    const resultArea = document.getElementById('barcodeResultArea');
+    const svgElement = document.getElementById('barcodeCanvas');
+
+    if (!generateBtn) return;
+
+    generateBtn.onclick = () => {
+        const text = input.value.trim();
+        if (!text) return showCustomAlert('দয়া করে টেক্সট বা নম্বর লিখুন।');
+
+        resultArea.classList.remove('hidden');
+        
+        try {
+            JsBarcode("#barcodeCanvas", text, {
+                format: formatSelect.value,
+                lineColor: colorInput.value,
+                width: 2,
+                height: 100,
+                displayValue: showTextCheck.checked,
+                background: "#ffffff", // সাদা ব্যাকগ্রাউন্ড ডাউনলোড এর সুবিধার জন্য
+                margin: 10
+            });
+        } catch (e) {
+            showCustomAlert('কোড জেনারেট করতে সমস্যা হয়েছে। ইনপুট ফরম্যাট চেক করুন।');
+            resultArea.classList.add('hidden');
+        }
+    };
+
+    downloadBtn.onclick = () => {
+        // SVG থেকে ইমেজ কনভার্সন
+        const svgData = new XMLSerializer().serializeToString(svgElement);
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const img = new Image();
+        
+        // SVG এলিমেন্টের সাইজ নেওয়া
+        const svgSize = svgElement.getBoundingClientRect();
+        canvas.width = svgSize.width;
+        canvas.height = svgSize.height;
+
+        img.setAttribute("src", "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData))));
+        
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0);
+            const imgURL = canvas.toDataURL("image/png");
+            
+            const dlLink = document.createElement('a');
+            dlLink.download = `barcode-${input.value}.png`;
+            dlLink.href = imgURL;
+            document.body.appendChild(dlLink);
+            dlLink.click();
+            document.body.removeChild(dlLink);
+        };
+    };
+}
+// ========================================================
+// END: Barcode Generator Function
+// ========================================================
+
+// ========================================================
+// START: Random Picker Function
+// ========================================================
+function initializeRandomPicker() {
+    const input = document.getElementById('pickerInput');
+    const startBtn = document.getElementById('startPickerBtn');
+    const sampleBtn = document.getElementById('addSampleDataBtn');
+    const clearBtn = document.getElementById('clearPickerBtn');
+    const resultArea = document.getElementById('pickerResultArea');
+    const winnerDisplay = document.getElementById('pickerWinner');
+
+    if (!startBtn) return;
+
+    sampleBtn.onclick = () => {
+        input.value = "করিম\nরহিম\nসাকিব\nতামিম\nমাশরাফি\nমুশফিক";
+    };
+
+    clearBtn.onclick = () => {
+        input.value = "";
+        resultArea.classList.add('hidden');
+    };
+
+    startBtn.onclick = () => {
+        const items = input.value.split('\n').map(item => item.trim()).filter(item => item !== "");
+        
+        if (items.length < 2) {
+            return showCustomAlert('লটারির জন্য অন্তত দুটি নাম লিখুন।');
+        }
+
+        resultArea.classList.remove('hidden');
+        startBtn.disabled = true;
+        winnerDisplay.classList.remove('text-purple-600', 'dark:text-purple-300');
+        winnerDisplay.classList.add('text-gray-400');
+        
+        // শাফলিং এনিমেশন ইফেক্ট
+        let counter = 0;
+        const shuffleInterval = setInterval(() => {
+            const randomPreview = items[Math.floor(Math.random() * items.length)];
+            winnerDisplay.textContent = randomPreview;
+            counter++;
+            
+            if (counter > 20) { // ২০ বার নাম পরিবর্তনের পর থামবে
+                clearInterval(shuffleInterval);
+                const finalWinner = items[Math.floor(Math.random() * items.length)];
+                winnerDisplay.textContent = finalWinner;
+                winnerDisplay.classList.remove('text-gray-400');
+                winnerDisplay.classList.add('text-purple-600', 'dark:text-purple-300');
+                
+                // কনফেটি বা জাঁকজমক ইফেক্ট (সিম্পল ইমোজি ব্যবহার করে)
+                showCustomAlert(`🎉 অভিনন্দন! বিজয়ী: ${finalWinner} 🎉`);
+                startBtn.disabled = false;
+            }
+        }, 100); // প্রতি ১০০ms এ নাম পরিবর্তন
+    };
+}
+// ========================================================
+// END: Random Picker Function
+// ========================================================
+
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
         window.onload = function() {
