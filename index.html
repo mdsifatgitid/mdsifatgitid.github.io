@@ -3128,12 +3128,22 @@ input:checked + .slider:before {
     }
 /* আরও মেনু এবং সেটিংস মেনুর জন্য CSS*/
         .tab-menu-container {
-			display: flex;
+            display: flex;
             justify-content: center;
-            align-items: center; /* উল্লম্বভাবে কেন্দ্র করার জন্য যোগ করা হয়েছে */
-            margin: 5px; 5px; 5px; 5px; /* বর্ধিত মার্জিন */
-            gap: 5px; /* বর্ধিত ফাঁক */
+            align-items: center; /* উল্লম্বভাবে কেন্দ্র করার জন্য */
+            margin: 5px; /* মার্জিন */
+            gap: 5px; /* ট্যাবগুলোর মাঝে ফাঁক */
             flex-wrap: wrap; /* ছোট স্ক্রিনে ট্যাবগুলি মোড়ানো */
+        }
+
+        /* নতুন: ড্রপডাউন কন্টেইনারের ব্যাকগ্রাউন্ডে বর্ডার যুক্ত করা হয়েছে */
+        #moreMenuDropdown, #settingsMenuDropdown {
+            border: 1px solid #b3e0ff; /* লাইট মোডে চিকন নীল বর্ডার */
+        }
+        
+        /* ডার্ক মোডের জন্য বর্ডার কালার */
+        .dark #moreMenuDropdown, .dark #settingsMenuDropdown {
+            border: 1px solid #4a5568; /* ডার্ক মোডে ধূসর বর্ডার */
         }
 
 
