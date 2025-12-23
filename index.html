@@ -6725,7 +6725,6 @@ body.sidebar-open #sidebarOverlay {
 				<button id="daysObservancesTab" class="tab-button rounded-xl">দিবসসমূহ</button>
 				<button id="holidayListTab" class="tab-button rounded-xl">ছুটির তালিকা</button>
 				<button id="zakatCalcTab" class="tab-button rounded-xl">যাকাতের হিসাব</button>
-				<button id="tasbeehTab" class="tab-button rounded-xl">ডিজিটাল তাসবিহ</button>
 				<button id="qrCodeTab" class="tab-button rounded-xl">কিউআর কোড</button>
 				<button id="barcodeGenTab" class="tab-button rounded-xl">বারকোড</button>
 				<button id="colorPickerTab" class="tab-button rounded-xl">রঙ বাছাইকারী</button>
@@ -6744,6 +6743,7 @@ body.sidebar-open #sidebarOverlay {
 				<button id="randomPickerTab" class="tab-button rounded-xl">র‍্যান্ডম পিকার</button>
 				<button id="screenRecorderTab" class="tab-button rounded-xl">স্ক্রিন রেকর্ডার</button>
 				<button id="emergencyNumbersTab" class="tab-button rounded-xl">জরুরি নম্বর</button>
+				<button id="tasbeehTab" class="tab-button rounded-xl">ডিজিটাল তাসবিহ</button>
 				<button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
 				<button id="importantLinksTab" class="tab-button rounded-xl">গুরুত্বপূর্ণ লিংকসমূহ</button>
 				<button id="donateTab" class="tab-button rounded-xl">ডোনেট</button>
@@ -7706,6 +7706,7 @@ body.sidebar-open #sidebarOverlay {
                 <li class="mb-2">
                     <strong class="text-teal-700 dark:text-teal-400">নামাজের সময়সূচি:</strong> আপনার জেলা অনুযায়ী নামাজের স্বয়ংক্রিয় সময়সূচি দেখুন এবং প্রয়োজনে ম্যানুয়ালি সময় সেট করার সুবিধাও রয়েছে।
                 </li>
+               
                 <li class="mb-2">
                     <strong class="text-teal-700 dark:text-teal-400">দিবসসমূহ:</strong> বছরের গুরুত্বপূর্ণ জাতীয় ও আন্তর্জাতিক দিবসগুলো দেখুন।
                 </li>
@@ -7715,6 +7716,10 @@ body.sidebar-open #sidebarOverlay {
                  <li class="mb-2">
                     <strong class="text-blue-700 dark:text-blue-400">যাকাত ক্যালকুলেটর:</strong> সোনা, রুপা এবং অন্যান্য সম্পদের উপর ভিত্তি করে আপনার যাকাতের পরিমাণ সহজেই হিসাব করুন।
                 </li>
+                <li class="mb-2">
+    <strong class="text-cyan-700 dark:text-cyan-400">ডিজিটাল তাসবিহ:</strong> আধুনিক ডিজাইনের ডিজিটাল কাউন্টার, যেখানে একাধিক প্রোফাইল তৈরি করে আলাদাভাবে জিকির গণনা সেভ করে রাখা যায়। সাথে রয়েছে ভাইব্রেশন, আনডু, রিডু এবং ম্যানুয়ালি সংখ্যা সেট করার সুবিধা।
+</li>
+
                 <li class="mb-2">
                     <strong class="text-fuchsia-700 dark:text-fuchsia-400">কিউআর কোড:</strong> যেকোনো টেক্সট বা লিঙ্ক থেকে QR কোড তৈরি করুন, ডাউনলোড করুন এবং ছবি থেকে QR কোড স্ক্যান করুন।
                 </li>
@@ -13525,7 +13530,7 @@ case 'speedTest':
     // --- নতুন: ড্রপডাউন মেনু হাইলাইট করার লজিক ---
     // 'আরও' মেনুর অন্তর্ভুক্ত ট্যাব আইডি সমূহ
     const moreMenuTabs = [
-        'clock', 'player', 'quiz', 'history', 'daysObservances', 'tasbeehTab',
+        'clock', 'player', 'quiz', 'history', 'daysObservances', 'tasbeeh',
         'holiday', 'zakat', 'qrCode', 'colorPicker', 'invoice', 'unitPrice',
         'imageResizer', 'emergency', 'healthLifestyle', 
         'currency', 'emi', 'ip', 'recipe', 'pdf', 'randomPicker','barcode',
