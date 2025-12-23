@@ -6370,6 +6370,72 @@ body.sidebar-open #sidebarOverlay {
     gap: 5px;
 }
 
+/* ========================================= */
+/* START: ড্রপডাউন মেনু এনিমেশন স্টাইল */
+/* ========================================= */
+
+/* ড্রপডাউন কন্টেইনার যখন ওপেন হবে (hidden ক্লাস সরে যাবে) */
+#moreMenuDropdown:not(.hidden), 
+#settingsMenuDropdown:not(.hidden) {
+    animation: dropdownFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform-origin: top right; /* ডানদিকের উপর থেকে ওপেন হবে */
+}
+
+/* কন্টেইনারের এনিমেশন */
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* ড্রপডাউনের ভেতরের বাটনগুলোর জন্য এনিমেশন */
+#moreMenuDropdown:not(.hidden) .tab-button,
+#settingsMenuDropdown:not(.hidden) .tab-button {
+    opacity: 0; /* শুরুতে অদৃশ্য থাকবে */
+    animation: tabSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* বাটন স্লাইড এবং ফেড এনিমেশন */
+@keyframes tabSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(15px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* প্রতিটি বাটনে আলাদা ডিলে (Delay) দেওয়া, যাতে একটার পর একটা ঢেউয়ের মতো আসে */
+#moreMenuDropdown:not(.hidden) .tab-button:nth-child(1) { animation-delay: 0.05s; }
+#moreMenuDropdown:not(.hidden) .tab-button:nth-child(2) { animation-delay: 0.08s; }
+#moreMenuDropdown:not(.hidden) .tab-button:nth-child(3) { animation-delay: 0.11s; }
+#moreMenuDropdown:not(.hidden) .tab-button:nth-child(4) { animation-delay: 0.14s; }
+#moreMenuDropdown:not(.hidden) .tab-button:nth-child(5) { animation-delay: 0.17s; }
+#moreMenuDropdown:not(.hidden) .tab-button:nth-child(6) { animation-delay: 0.20s; }
+#moreMenuDropdown:not(.hidden) .tab-button:nth-child(7) { animation-delay: 0.23s; }
+#moreMenuDropdown:not(.hidden) .tab-button:nth-child(8) { animation-delay: 0.26s; }
+#moreMenuDropdown:not(.hidden) .tab-button:nth-child(9) { animation-delay: 0.29s; }
+#moreMenuDropdown:not(.hidden) .tab-button:nth-child(10) { animation-delay: 0.32s; }
+#moreMenuDropdown:not(.hidden) .tab-button:nth-child(11) { animation-delay: 0.35s; }
+#moreMenuDropdown:not(.hidden) .tab-button:nth-child(12) { animation-delay: 0.38s; }
+#moreMenuDropdown:not(.hidden) .tab-button:nth-child(13) { animation-delay: 0.41s; }
+#moreMenuDropdown:not(.hidden) .tab-button:nth-child(14) { animation-delay: 0.44s; }
+#moreMenuDropdown:not(.hidden) .tab-button:nth-child(15) { animation-delay: 0.47s; }
+/* ১৫ এর অধিক বাটন থাকলে সেগুলোর জন্য ফিক্সড ডিলে */
+#moreMenuDropdown:not(.hidden) .tab-button:nth-child(n+16) { animation-delay: 0.50s; }
+
+/* ========================================= */
+/* END: ড্রপডাউন মেনু এনিমেশন স্টাইল */
+/* ========================================= */
+
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
 </head>
