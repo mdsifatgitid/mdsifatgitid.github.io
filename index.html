@@ -6595,6 +6595,7 @@ body.sidebar-open #sidebarOverlay {
 				<button id="healthLifestyleTab" class="tab-button rounded-xl">স্বাস্থ্য ও জীবনধারা</button>
 				<button id="emiCalcTab" class="tab-button rounded-xl">ইএমআই ক্যালকুলেটর</button>
 				<button id="currencyTab" class="tab-button rounded-xl">মুদ্রা রূপান্তরকারী</button>
+				<button id="unitPriceTab" class="tab-button rounded-xl">দামের তুলনা</button>
 				<button id="ipInfoTab" class="tab-button rounded-xl">আইপি ও ডিভাইস ইনফো</button>
 				<button id="speedTestTab" class="tab-button rounded-xl">ইন্টারনেট স্পিড</button>
 				<button id="recipeTab" class="tab-button rounded-xl">রেসিপি জেনারেটর</button>
@@ -7603,6 +7604,9 @@ body.sidebar-open #sidebarOverlay {
                 <li class="mb-2">
                     <strong class="text-blue-600 dark:text-blue-400">মুদ্রা রূপান্তরকারী:</strong> রিয়েল-টাইম এক্সচেঞ্জ রেট সহ বিশ্বের বিভিন্ন দেশের মুদ্রা রূপান্তর করুন।
                 </li>
+				<li class="mb-2">
+				<strong class="text-teal-600 dark:text-teal-400">দামের তুলনা:</strong> দুটি পণ্যের দাম ও পরিমাণ দিয়ে সহজেই বের করুন কোনটি কেনা লাভজনক।
+				</li>
                 <li class="mb-2">
                     <strong class="text-indigo-600 dark:text-indigo-400">ইএমআই ক্যালকুলেটর:</strong> ঋণের পরিমাণ, সুদের হার এবং মেয়াদ দিয়ে মাসিক কিস্তি এবং মোট সুদ হিসাব করুন।
                 </li>
@@ -9851,7 +9855,63 @@ body.sidebar-open #sidebarOverlay {
 <!-- END: Random Picker Content -->
 <!-- ======================================================== -->
 
-<!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
+<!-- ======================================================== -->
+<!-- START: Unit Price Comparator Content -->
+<!-- ======================================================== -->
+<div id="unitPriceContent" class="calculator-content">
+    <div class="converter-section" style="max-width: 600px; margin: 0 auto;">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">⚖️ দামের তুলনা (কোনটি সাশ্রয়ী?)</h3>
+        <p class="text-sm text-gray-500 mb-6 dark:text-gray-400">দুটি পণ্যের দাম ও পরিমাণ লিখুন। আমরা বলে দেব কোনটি কেনা লাভজনক।</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- পণ্য ক (Item A) -->
+            <div class="bg-blue-50 dark:bg-gray-800 p-4 rounded-lg border border-blue-200 dark:border-gray-600">
+                <h4 class="font-bold text-blue-600 dark:text-blue-400 mb-3 text-lg">পণ্য ১</h4>
+                <div class="mb-3">
+                    <label class="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1">দাম (টাকা)</label>
+                    <input type="number" id="priceA" placeholder="যেমন: 50" class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1">পরিমাণ (গ্রাম/লিটার/পিস)</label>
+                    <input type="number" id="qtyA" placeholder="যেমন: 500" class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+                </div>
+            </div>
+
+            <!-- পণ্য খ (Item B) -->
+            <div class="bg-purple-50 dark:bg-gray-800 p-4 rounded-lg border border-purple-200 dark:border-gray-600">
+                <h4 class="font-bold text-purple-600 dark:text-purple-400 mb-3 text-lg">পণ্য ২</h4>
+                <div class="mb-3">
+                    <label class="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1">দাম (টাকা)</label>
+                    <input type="number" id="priceB" placeholder="যেমন: 90" class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1">পরিমাণ (গ্রাম/লিটার/পিস)</label>
+                    <input type="number" id="qtyB" placeholder="যেমন: 1000" class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+                </div>
+            </div>
+        </div>
+
+        <button id="comparePriceBtn" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-all flex justify-center items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" /></svg>
+            তুলনা করুন
+        </button>
+
+        <!-- ফলাফল এরিয়া -->
+        <div id="compareResult" class="hidden mt-6 p-5 rounded-xl border-2 text-center transition-all duration-300">
+            <h4 id="winnerTitle" class="text-2xl font-bold mb-2"></h4>
+            <p id="savingsText" class="text-lg font-medium"></p>
+            <div class="mt-4 text-sm text-gray-600 dark:text-gray-400 grid grid-cols-2 gap-4">
+                <div>পণ্য ১ এর প্রতি ইউনিটের দাম:<br><span id="unitPriceA" class="font-bold">0.00</span> টাকা</div>
+                <div>পণ্য ২ এর প্রতি ইউনিটের দাম:<br><span id="unitPriceB" class="font-bold">0.00</span> টাকা</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ======================================================== -->
+<!-- END: Unit Price Comparator Content -->
+<!-- ======================================================== -->
+
+<!-- এখান থেকে ওপরে নতুন ট্যাবের HTML Content কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
 </div>
 
     <!-- API কী মডেল -->
@@ -12608,6 +12668,8 @@ try {
 				const barcodeGenContent = document.getElementById('barcodeGenContent');
 				const randomPickerTab = document.getElementById('randomPickerTab');
 				const randomPickerContent = document.getElementById('randomPickerContent');
+				const unitPriceTab = document.getElementById('unitPriceTab');
+				const unitPriceContent = document.getElementById('unitPriceContent');
 
 const webSearchTab = document.getElementById('webSearchTab');
 const webSearchContent = document.getElementById('webSearchContent');
@@ -12913,7 +12975,7 @@ function showTab(tabId) {
         ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,barcodeGenTab, randomPickerTab,
         translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
         qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab, webSearchTab, 
-        textAssistantTab,holidayListTab,quizTab,
+        textAssistantTab,holidayListTab,quizTab,unitPriceTab,
         allFeaturesTab
     ];
     const contents = [
@@ -12921,7 +12983,7 @@ function showTab(tabId) {
         ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent,  converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent, webSearchContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent, barcodeGenContent, randomPickerContent,
         weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
-        textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,
+        textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,unitPriceContent,
         allFeaturesContent
     ];
 
@@ -13036,6 +13098,11 @@ case 'scientific':
             activeTab = zakatCalcTab;
             activeContent = zakatCalculatorContent;
             break;
+			    case 'unitPrice':
+        activeTab = unitPriceTab;
+        activeContent = unitPriceContent;
+        initializeUnitPriceComparator();
+        break;
         case 'imageToText':
             activeTab = imageToTextTab;
             activeContent = imageToTextContent;
@@ -13305,6 +13372,7 @@ case 'speedTest':
     if (historyTab) historyTab.addEventListener('click', () => showTab('history'));
 	if (currencyTab) currencyTab.addEventListener('click', () => showTab('currency'));
 if (emiCalcTab) emiCalcTab.addEventListener('click', () => showTab('emi'));
+if (unitPriceTab) unitPriceTab.addEventListener('click', () => showTab('unitPrice'));
 if (ipInfoTab) ipInfoTab.addEventListener('click', () => showTab('ip'));
 if (recipeTab) recipeTab.addEventListener('click', () => showTab('recipe'));
 if (pdfToolsTab) pdfToolsTab.addEventListener('click', () => showTab('pdf'));
@@ -22340,6 +22408,7 @@ function makeAllFeaturesInteractive() {
         
         // --- নতুন যুক্ত করা মিসিং ফিচারসমূহ ---
         'মুদ্রা রূপান্তরকারী': 'currencyTab',
+		'দামের তুলনা': 'unitPriceTab',
         'ইএমআই ক্যালকুলেটর': 'emiCalcTab',
         'আইপি ও ডিভাইস ইনফো': 'ipInfoTab',
         'রেসিপি জেনারেটর (জেমিনি)': 'recipeTab',
@@ -24620,6 +24689,73 @@ function initializeRandomPicker() {
 }
 // ========================================================
 // END: Random Picker Function
+// ========================================================
+
+// ========================================================
+// START: Unit Price Comparator Function
+// ========================================================
+function initializeUnitPriceComparator() {
+    const priceAInput = document.getElementById('priceA');
+    const qtyAInput = document.getElementById('qtyA');
+    const priceBInput = document.getElementById('priceB');
+    const qtyBInput = document.getElementById('qtyB');
+    const compareBtn = document.getElementById('comparePriceBtn');
+    const resultDiv = document.getElementById('compareResult');
+    const winnerTitle = document.getElementById('winnerTitle');
+    const savingsText = document.getElementById('savingsText');
+    const unitPriceAEl = document.getElementById('unitPriceA');
+    const unitPriceBEl = document.getElementById('unitPriceB');
+
+    if (!compareBtn) return;
+
+    compareBtn.onclick = () => {
+        const priceA = parseFloat(priceAInput.value);
+        const qtyA = parseFloat(qtyAInput.value);
+        const priceB = parseFloat(priceBInput.value);
+        const qtyB = parseFloat(qtyBInput.value);
+
+        if (!priceA || !qtyA || !priceB || !qtyB) {
+            showCustomAlert('অনুগ্রহ করে সবগুলোর দাম ও পরিমাণ লিখুন।');
+            resultDiv.classList.add('hidden');
+            return;
+        }
+
+        // প্রতি ইউনিটের দাম বের করা
+        const unitPriceA = priceA / qtyA;
+        const unitPriceB = priceB / qtyB;
+
+        unitPriceAEl.textContent = unitPriceA.toFixed(4);
+        unitPriceBEl.textContent = unitPriceB.toFixed(4);
+
+        resultDiv.classList.remove('hidden', 'bg-green-100', 'border-green-300', 'bg-purple-100', 'border-purple-300', 'bg-gray-100', 'border-gray-300', 'dark:bg-green-900', 'dark:border-green-700', 'dark:bg-purple-900', 'dark:border-purple-700');
+
+        if (unitPriceA < unitPriceB) {
+            // পণ্য ১ লাভজনক
+            const savings = ((unitPriceB - unitPriceA) / unitPriceB) * 100;
+            resultDiv.classList.add('bg-blue-100', 'border-blue-300', 'dark:bg-blue-900', 'dark:border-blue-700');
+            winnerTitle.innerHTML = '🎉 পণ্য ১ বেশি লাভজনক!';
+            winnerTitle.className = 'text-2xl font-bold mb-2 text-blue-700 dark:text-blue-300';
+            // ফিক্স: ব্যাকটিক (`) যোগ করা হয়েছে
+            savingsText.innerHTML = `পণ্য ১ কিনলে আপনি প্রায় <b>${savings.toFixed(2)}%</b> সাশ্রয় করবেন।`;
+        } else if (unitPriceB < unitPriceA) {
+            // পণ্য ২ লাভজনক
+            const savings = ((unitPriceA - unitPriceB) / unitPriceA) * 100;
+            resultDiv.classList.add('bg-purple-100', 'border-purple-300', 'dark:bg-purple-900', 'dark:border-purple-700');
+            winnerTitle.innerHTML = '🎉 পণ্য ২ বেশি লাভজনক!';
+            winnerTitle.className = 'text-2xl font-bold mb-2 text-purple-700 dark:text-purple-300';
+            // ফিক্স: ব্যাকটিক (`) যোগ করা হয়েছে
+            savingsText.innerHTML = `পণ্য ২ কিনলে আপনি প্রায় <b>${savings.toFixed(2)}%</b> সাশ্রয় করবেন।`;
+        } else {
+            // সমান
+            resultDiv.classList.add('bg-gray-100', 'border-gray-300', 'dark:bg-gray-700', 'dark:border-gray-500');
+            winnerTitle.innerHTML = 'সমান সমান!';
+            winnerTitle.className = 'text-2xl font-bold mb-2 text-gray-700 dark:text-gray-300';
+            savingsText.innerHTML = 'দুটি পণ্যের দামের হার একদম সমান। যেকোনোটি কিনতে পারেন।';
+        }
+    };
+}
+// ========================================================
+// END: Unit Price Comparator Function
 // ========================================================
 
 
