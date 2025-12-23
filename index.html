@@ -6371,17 +6371,26 @@ body.sidebar-open #sidebarOverlay {
 }
 
 /* ========================================= */
-/* START: ড্রপডাউন মেনু এনিমেশন স্টাইল */
+/* START: ড্রপডাউন মেনু এনিমেশন স্টাইল (আপডেট করা হয়েছে) */
 /* ========================================= */
 
 /* ড্রপডাউন কন্টেইনার যখন ওপেন হবে (hidden ক্লাস সরে যাবে) */
 #moreMenuDropdown:not(.hidden), 
 #settingsMenuDropdown:not(.hidden) {
-    animation: dropdownFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    /* ফেড-ইন এবং বর্ডার ব্লিংক এনিমেশন একসাথে */
+    animation: dropdownFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards, borderBlink 2s infinite ease-in-out;
     transform-origin: top right; /* ডানদিকের উপর থেকে ওপেন হবে */
+    border: 1px solid #b3e0ff; /* ফলব্যাক বর্ডার */
 }
 
-/* কন্টেইনারের এনিমেশন */
+/* ডার্ক মোডে ড্রপডাউন ওপেন হলে */
+.dark #moreMenuDropdown:not(.hidden), 
+.dark #settingsMenuDropdown:not(.hidden) {
+    animation: dropdownFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards, borderBlinkDark 2s infinite ease-in-out;
+    border: 1px solid #4a5568; /* ফলব্যাক বর্ডার */
+}
+
+/* কন্টেইনারের ওপেনিং এনিমেশন */
 @keyframes dropdownFadeIn {
     from {
         opacity: 0;
@@ -6390,6 +6399,30 @@ body.sidebar-open #sidebarOverlay {
     to {
         opacity: 1;
         transform: scale(1) translateY(0);
+    }
+}
+
+/* লাইট মোড বর্ডার ব্লিংক এনিমেশন */
+@keyframes borderBlink {
+    0%, 100% {
+        border-color: #b3e0ff;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    50% {
+        border-color: #3f51b5; /* নীল রঙে জ্বলবে */
+        box-shadow: 0 0 10px rgba(63, 81, 181, 0.4); /* গ্লো ইফেক্ট */
+    }
+}
+
+/* ডার্ক মোড বর্ডার ব্লিংক এনিমেশন */
+@keyframes borderBlinkDark {
+    0%, 100% {
+        border-color: #4a5568;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        border-color: #90cdf4; /* হালকা নীল রঙে জ্বলবে */
+        box-shadow: 0 0 10px rgba(144, 205, 244, 0.4); /* গ্লো ইফেক্ট */
     }
 }
 
@@ -6434,6 +6467,7 @@ body.sidebar-open #sidebarOverlay {
 /* ========================================= */
 /* END: ড্রপডাউন মেনু এনিমেশন স্টাইল */
 /* ========================================= */
+
 
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
