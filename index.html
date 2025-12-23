@@ -6468,6 +6468,144 @@ body.sidebar-open #sidebarOverlay {
 /* END: ড্রপডাউন মেনু এনিমেশন স্টাইল */
 /* ========================================= */
 
+/* --- ডিজিটাল তাসবিহ মডার্ন স্টাইল --- */
+.tasbeeh-container-modern {
+    font-family: 'Bornomala', sans-serif;
+    padding: 25px;
+    border-radius: 24px;
+    margin: 0 auto;
+    max-width: 900px;
+    background: linear-gradient(145deg, #ffffff, #f0f9ff);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+.dark .tasbeeh-container-modern {
+    background: linear-gradient(145deg, #1a202c, #2d3748);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* কাউন্টার সার্কেল ডিজাইন */
+.tasbeeh-counter-ring {
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 8px solid #e0f2fe;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.05), 0 10px 20px rgba(59, 130, 246, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 30px auto;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+.dark .tasbeeh-counter-ring {
+    background: #2d3748;
+    border-color: #4a5568;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.3), 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+.tasbeeh-counter-ring:active {
+    transform: scale(0.95);
+    border-color: #3b82f6;
+}
+
+/* কাউন্টার টেক্সট */
+.tasbeeh-count-text {
+    font-size: 5.5rem;
+    font-weight: 700;
+    color: #3b82f6;
+    line-height: 1;
+}
+.dark .tasbeeh-count-text {
+    color: #60a5fa;
+}
+.tasbeeh-label {
+    font-size: 1.1rem;
+    color: #64748b;
+    margin-top: 5px;
+}
+.dark .tasbeeh-label {
+    color: #94a3b8;
+}
+
+/* ইউজার লিস্ট স্টাইল */
+.user-list-container {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
+    scrollbar-width: thin;
+}
+.user-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+.dark .user-card {
+    background: #2d3748;
+    border-color: #4a5568;
+}
+.user-card:hover {
+    transform: translateX(5px);
+    border-color: #3b82f6;
+}
+.user-card.active-user {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    border-color: #bfdbfe;
+}
+.dark .user-card.active-user {
+    background: #374151;
+    border-color: #4a5568;
+    border-left-color: #60a5fa;
+}
+.user-info h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+.dark .user-info h4 {
+    color: #f1f5f9;
+}
+.user-info p {
+    font-size: 0.9rem;
+    color: #64748b;
+}
+.dark .user-info p {
+    color: #cbd5e0;
+}
+.user-actions button {
+    padding: 6px;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+.user-actions button:hover {
+    background: #e2e8f0;
+}
+.dark .user-actions button:hover {
+    background: #4a5568;
+}
+
+/* ক্লিক এনিমেশন */
+@keyframes clickPulse {
+    0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+    70% { box-shadow: 0 0 0 20px rgba(59, 130, 246, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+}
+.pulse-animation {
+    animation: clickPulse 0.3s ease-out;
+}
 
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
@@ -6587,6 +6725,7 @@ body.sidebar-open #sidebarOverlay {
 				<button id="daysObservancesTab" class="tab-button rounded-xl">দিবসসমূহ</button>
 				<button id="holidayListTab" class="tab-button rounded-xl">ছুটির তালিকা</button>
 				<button id="zakatCalcTab" class="tab-button rounded-xl">যাকাতের হিসাব</button>
+				<button id="tasbeehTab" class="tab-button rounded-xl">ডিজিটাল তাসবিহ</button>
 				<button id="qrCodeTab" class="tab-button rounded-xl">কিউআর কোড</button>
 				<button id="barcodeGenTab" class="tab-button rounded-xl">বারকোড</button>
 				<button id="colorPickerTab" class="tab-button rounded-xl">রঙ বাছাইকারী</button>
@@ -9911,6 +10050,88 @@ body.sidebar-open #sidebarOverlay {
 <!-- END: Unit Price Comparator Content -->
 <!-- ======================================================== -->
 
+<!-- ডিজিটাল তাসবিহ সেকশন শুরু -->
+<div id="tasbeehContent" class="calculator-content">
+    <div class="tasbeeh-container-modern">
+        
+        <!-- হেডার এবং প্রোফাইল সিলেকশন -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <div>
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                    📿 ডিজিটাল তাসবিহ
+                </h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    বর্তমান প্রোফাইল: <span id="currentProfileName" class="font-bold text-blue-600 dark:text-blue-400">ডিফল্ট</span>
+                </p>
+            </div>
+            
+            <button id="toggleUserListBtn" class="px-4 py-2 bg-indigo-100 dark:bg-gray-700 text-indigo-700 dark:text-indigo-300 rounded-xl font-semibold hover:bg-indigo-200 dark:hover:bg-gray-600 transition-colors flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                প্রোফাইল তালিকা
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- বাম পাশ: কাউন্টার -->
+            <div class="lg:col-span-2 flex flex-col items-center">
+                <!-- মেইন কাউন্টার বাটন -->
+                <div id="tasbeehDisplayArea" class="tasbeeh-counter-ring">
+                    <div id="tasbeehCountDisplay" class="tasbeeh-count-text">০</div>
+                    <div class="tasbeeh-label">গণনা করতে ক্লিক করুন</div>
+                </div>
+
+                <!-- কন্ট্রোল বাটনস -->
+                <div class="flex flex-wrap justify-center gap-4 w-full max-w-md">
+                    <button id="tasbeehUndoBtn" class="flex-1 px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors flex justify-center items-center gap-2 disabled:opacity-50" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
+                        আনডু
+                    </button>
+                    
+                    <button id="tasbeehResetBtn" class="flex-1 px-4 py-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl font-bold hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors flex justify-center items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/></svg>
+                        রিসেট
+                    </button>
+
+                    <button id="tasbeehRedoBtn" class="flex-1 px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors flex justify-center items-center gap-2 disabled:opacity-50" disabled>
+                        রিডু
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5v0A5.5 5.5 0 0 0 9.5 20H13"/></svg>
+                    </button>
+                </div>
+                
+                <!-- টার্গেট/ম্যানুয়াল সেট -->
+                <div class="mt-6 w-full max-w-md p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <label class="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">সংখ্যা সেট করুন:</label>
+                    <div class="flex gap-2">
+                        <input type="number" id="tasbeehManualInput" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="0">
+                        <button id="tasbeehSetBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg">সেট</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ডান পাশ: ইউজার লিস্ট (ডিফল্টভাবে ডেস্কটপে দেখা যাবে, মোবাইলে টগল হবে) -->
+            <div id="tasbeehUserSection" class="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hidden lg:block">
+                <h4 class="text-lg font-bold text-gray-700 dark:text-gray-200 mb-4 border-b pb-2 dark:border-gray-600">ব্যবহারকারী / প্রোফাইল</h4>
+                
+                <!-- নতুন প্রোফাইল যোগ -->
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="newProfileName" placeholder="নতুন নাম লিখুন..." class="flex-grow p-2 text-sm border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
+                    <button id="addProfileBtn" class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-lg" title="যোগ করুন">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
+                </div>
+
+                <!-- লিস্ট -->
+                <div id="tasbeehProfilesList" class="user-list-container">
+                    <!-- জাভাস্ক্রিপ্ট দিয়ে লিস্ট এখানে জেনারেট হবে -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ডিজিটাল তাসবিহ সেকশন শেষ -->
+
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের HTML Content কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
 </div>
 
@@ -12670,6 +12891,8 @@ try {
 				const randomPickerContent = document.getElementById('randomPickerContent');
 				const unitPriceTab = document.getElementById('unitPriceTab');
 				const unitPriceContent = document.getElementById('unitPriceContent');
+				const tasbeehTab = document.getElementById('tasbeehTab');
+				const tasbeehContent = document.getElementById('tasbeehContent');
 
 const webSearchTab = document.getElementById('webSearchTab');
 const webSearchContent = document.getElementById('webSearchContent');
@@ -12975,7 +13198,7 @@ function showTab(tabId) {
         ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,barcodeGenTab, randomPickerTab,
         translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
         qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab, webSearchTab, 
-        textAssistantTab,holidayListTab,quizTab,unitPriceTab,
+        textAssistantTab,holidayListTab,quizTab,unitPriceTab,tasbeehTab,
         allFeaturesTab
     ];
     const contents = [
@@ -12983,7 +13206,7 @@ function showTab(tabId) {
         ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent,  converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent, webSearchContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent, barcodeGenContent, randomPickerContent,
         weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
-        textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,unitPriceContent,
+        textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,unitPriceContent,tasbeehContent,
         allFeaturesContent
     ];
 
@@ -13088,7 +13311,12 @@ case 'scientific':
             activeTab = prayerTimeTab;
             activeContent = prayerTimeContent;
             initializePrayerTimeTab();
-            break;
+        break;
+			case 'tasbeeh':
+			activeTab = tasbeehTab;
+			activeContent = tasbeehContent;
+			initializeTasbeeh();
+		break;
         case 'daysObservances':
             activeTab = daysObservancesTab;
             activeContent = daysObservancesContent;
@@ -13297,7 +13525,7 @@ case 'speedTest':
     // --- নতুন: ড্রপডাউন মেনু হাইলাইট করার লজিক ---
     // 'আরও' মেনুর অন্তর্ভুক্ত ট্যাব আইডি সমূহ
     const moreMenuTabs = [
-        'clock', 'player', 'quiz', 'history', 'daysObservances', 
+        'clock', 'player', 'quiz', 'history', 'daysObservances', 'tasbeehTab',
         'holiday', 'zakat', 'qrCode', 'colorPicker', 'invoice', 'unitPrice',
         'imageResizer', 'emergency', 'healthLifestyle', 
         'currency', 'emi', 'ip', 'recipe', 'pdf', 'randomPicker','barcode',
@@ -13382,6 +13610,10 @@ if (memeGenTab) memeGenTab.addEventListener('click', () => showTab('memeGen'));
 if (speedTestTab) speedTestTab.addEventListener('click', () => showTab('speedTest'));
 if (barcodeGenTab) barcodeGenTab.addEventListener('click', () => showTab('barcode'));
 if (randomPickerTab) randomPickerTab.addEventListener('click', () => showTab('randomPicker'));
+if (tasbeehTab) {tasbeehTab.addEventListener('click', () => {showTab('tasbeeh');
+        initializeTasbeeh(); // ফাংশনটি কল করুন
+    });
+}
 
 	
 // ====================================================================
@@ -22379,6 +22611,7 @@ function makeAllFeaturesInteractive() {
         'ওয়ার্ড কাউন্টার': 'wordCounterTab',
         'ট্রান্সলেটর (জেমিনি)': 'translatorTab',
         'বানান সংশোধন': 'spellCheckTab',
+		'ডিজিটাল তাসবিহ': 'tasbeehTab',
         'লেখা সাজানো': 'textBeautifierTab',
         'শব্দের অর্থ': 'wordMeaningTab',
         'স্পিচ টুলস': 'sttTab', // অথবা ttsTab দেওয়া যেতে পারে
@@ -24756,6 +24989,301 @@ function initializeUnitPriceComparator() {
 }
 // ========================================================
 // END: Unit Price Comparator Function
+// ========================================================
+
+// ========================================================
+// START: Modern Digital Tasbeeh Script (Multi-user)
+// ========================================================
+function initializeTasbeeh() {
+    const displayArea = document.getElementById('tasbeehDisplayArea');
+    const displayCount = document.getElementById('tasbeehCountDisplay');
+    const currentProfileNameEl = document.getElementById('currentProfileName');
+    
+    // Controls
+    const resetBtn = document.getElementById('tasbeehResetBtn');
+    const undoBtn = document.getElementById('tasbeehUndoBtn');
+    const redoBtn = document.getElementById('tasbeehRedoBtn');
+    const manualInput = document.getElementById('tasbeehManualInput');
+    const setBtn = document.getElementById('tasbeehSetBtn');
+    
+    // User Management
+    const toggleUserListBtn = document.getElementById('toggleUserListBtn');
+    const userSection = document.getElementById('tasbeehUserSection');
+    const newProfileInput = document.getElementById('newProfileName');
+    const addProfileBtn = document.getElementById('addProfileBtn');
+    const profilesListEl = document.getElementById('tasbeehProfilesList');
+
+    if (!displayArea) return;
+
+    // State Variables
+    let profiles = [];
+    let activeProfileId = null;
+    let history = []; // Session based history for undo/redo
+    let historyIndex = -1;
+
+    // --- Helper: Convert Number to Bengali ---
+    const toBengali = (num) => {
+        return num.toLocaleString('bn-BD');
+    };
+
+    // --- Database Operations ---
+    async function loadProfiles() {
+        try {
+            const storedProfiles = await idbGet('tasbeeh_profiles_v2');
+            if (storedProfiles && Array.isArray(storedProfiles) && storedProfiles.length > 0) {
+                profiles = storedProfiles;
+            } else {
+                // Default Profile creation if none exists
+                profiles = [{ id: Date.now(), name: 'আমার তাসবিহ', count: 0 }];
+                await saveProfiles();
+            }
+            
+            // Load last active ID
+            const lastActive = await idbGet('tasbeeh_active_id');
+            if (lastActive && profiles.find(p => p.id === lastActive)) {
+                activeProfileId = lastActive;
+            } else {
+                activeProfileId = profiles[0].id;
+            }
+            
+            renderUI();
+        } catch (e) {
+            console.error("Tasbeeh load error:", e);
+        }
+    }
+
+    async function saveProfiles() {
+        await idbSet('tasbeeh_profiles_v2', profiles);
+    }
+
+    async function saveActiveId() {
+        await idbSet('tasbeeh_active_id', activeProfileId);
+    }
+
+    // --- Logic Functions ---
+    function getActiveProfile() {
+        return profiles.find(p => p.id === activeProfileId);
+    }
+
+    function renderUI() {
+        const activeProfile = getActiveProfile();
+        if (!activeProfile) return;
+
+        // Update Main Display
+        displayCount.innerText = toBengali(activeProfile.count);
+        currentProfileNameEl.innerText = activeProfile.name;
+        manualInput.value = activeProfile.count;
+
+        // Update Buttons
+        undoBtn.disabled = historyIndex <= 0;
+        redoBtn.disabled = historyIndex >= history.length - 1;
+
+        // Render List
+        renderProfileList();
+    }
+
+    function renderProfileList() {
+        profilesListEl.innerHTML = '';
+        profiles.forEach(profile => {
+            const div = document.createElement('div');
+            const isActive = profile.id === activeProfileId;
+            div.className = `user-card ${isActive ? 'active-user' : ''}`;
+            
+            div.innerHTML = `
+                <div class="user-info flex-grow" onclick="switchProfile(${profile.id})">
+                    <h4>${profile.name}</h4>
+                    <p>গণনা: ${toBengali(profile.count)}</p>
+                </div>
+                <div class="user-actions flex gap-1">
+                    <button onclick="editProfileName(${profile.id})" class="text-blue-500 hover:text-blue-700" title="নাম পরিবর্তন">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                    </button>
+                    ${profiles.length > 1 ? `
+                    <button onclick="deleteProfile(${profile.id})" class="text-red-500 hover:text-red-700" title="মুছুন">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>` : ''}
+                </div>
+            `;
+            profilesListEl.appendChild(div);
+        });
+    }
+
+    // --- Actions ---
+    
+    // Global functions for HTML inline onclick access
+    window.switchProfile = (id) => {
+        if (activeProfileId === id) return;
+        activeProfileId = id;
+        saveActiveId();
+        // Reset session history on switch
+        history = [getActiveProfile().count];
+        historyIndex = 0;
+        renderUI();
+        
+        // Mobile view: close list after selection
+        if (window.innerWidth < 1024) {
+            userSection.classList.add('hidden');
+        }
+    };
+
+    window.deleteProfile = async (id) => {
+        if (confirm("আপনি কি নিশ্চিত যে এই প্রোফাইলটি মুছে ফেলতে চান?")) {
+            profiles = profiles.filter(p => p.id !== id);
+            // If deleted active profile, switch to the first one available
+            if (activeProfileId === id) {
+                activeProfileId = profiles[0].id;
+                history = [profiles[0].count];
+                historyIndex = 0;
+                saveActiveId();
+            }
+            await saveProfiles();
+            renderUI();
+            showCustomAlert('প্রোফাইল মুছে ফেলা হয়েছে।');
+        }
+    };
+
+    window.editProfileName = async (id) => {
+        const profile = profiles.find(p => p.id === id);
+        const newName = prompt("নতুন নাম লিখুন:", profile.name);
+        if (newName && newName.trim() !== "") {
+            profile.name = newName.trim();
+            await saveProfiles();
+            renderUI();
+        }
+    };
+
+    function addToHistory(countVal) {
+        if (historyIndex < history.length - 1) {
+            history = history.slice(0, historyIndex + 1);
+        }
+        history.push(countVal);
+        // Limit history depth
+        if (history.length > 50) history.shift();
+        else historyIndex++;
+    }
+
+    function increment() {
+        const profile = getActiveProfile();
+        if (!profile) return;
+
+        profile.count++;
+        addToHistory(profile.count);
+        saveProfiles();
+        renderUI();
+
+        // Animation
+        displayArea.classList.remove('pulse-animation');
+        void displayArea.offsetWidth; // trigger reflow
+        displayArea.classList.add('pulse-animation');
+        
+        if (navigator.vibrate) navigator.vibrate(30);
+    }
+
+    function createNewProfile() {
+        const name = newProfileInput.value.trim();
+        if (!name) return showCustomAlert("অনুগ্রহ করে একটি নাম লিখুন।");
+
+        const newProfile = {
+            id: Date.now(),
+            name: name,
+            count: 0
+        };
+        profiles.push(newProfile);
+        saveProfiles();
+        
+        // Switch to new profile
+        activeProfileId = newProfile.id;
+        saveActiveId();
+        history = [0];
+        historyIndex = 0;
+        
+        newProfileInput.value = '';
+        renderUI();
+        showCustomAlert("নতুন প্রোফাইল তৈরি হয়েছে!");
+    }
+
+    // --- Event Listeners ---
+    
+    displayArea.onclick = increment;
+    
+    resetBtn.onclick = async () => {
+        if (confirm("গণনা রিসেট করতে চান?")) {
+            const profile = getActiveProfile();
+            profile.count = 0;
+            addToHistory(0);
+            await saveProfiles();
+            renderUI();
+        }
+    };
+
+    setBtn.onclick = async () => {
+        const val = parseInt(manualInput.value, 10);
+        if (!isNaN(val) && val >= 0) {
+            const profile = getActiveProfile();
+            profile.count = val;
+            addToHistory(val);
+            await saveProfiles();
+            renderUI();
+            showCustomAlert('সংখ্যা আপডেট করা হয়েছে।');
+        }
+    };
+
+    undoBtn.onclick = async () => {
+        if (historyIndex > 0) {
+            historyIndex--;
+            const val = history[historyIndex];
+            const profile = getActiveProfile();
+            profile.count = val;
+            await saveProfiles();
+            renderUI();
+        }
+    };
+
+    redoBtn.onclick = async () => {
+        if (historyIndex < history.length - 1) {
+            historyIndex++;
+            const val = history[historyIndex];
+            const profile = getActiveProfile();
+            profile.count = val;
+            await saveProfiles();
+            renderUI();
+        }
+    };
+
+    addProfileBtn.onclick = createNewProfile;
+    
+    // Toggle User List (Mobile)
+    toggleUserListBtn.onclick = () => {
+        userSection.classList.toggle('hidden');
+    };
+
+    // Keyboard Shortcut (Spacebar)
+    if (!window.tasbeehKeyboardListenerAdded) {
+        document.addEventListener('keydown', (e) => {
+            const content = document.getElementById('tasbeehContent');
+            if (content && content.classList.contains('active') && e.target.tagName !== 'INPUT') {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    increment();
+                }
+            }
+        });
+        window.tasbeehKeyboardListenerAdded = true;
+    }
+
+    // Initial Load
+    loadProfiles().then(() => {
+        // Initialize history with current count
+        const p = getActiveProfile();
+        if(p) {
+            history = [p.count];
+            historyIndex = 0;
+            renderUI();
+        }
+    });
+}
+// ========================================================
+// END: Digital Tasbeeh Script
 // ========================================================
 
 
