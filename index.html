@@ -14425,7 +14425,7 @@ if (diffCheckerTab) diffCheckerTab.addEventListener('click', () => showTab('diff
 // ====================================================================
 
 // ====================================================================
-// START:  তারিখ ও সময় ক্যালকুলেটর লজিক
+// START:  তারিখ ও সময় ক্যালকুলেটর লজিক
 // ====================================================================
                 
                 const showTodayDatesBtn = document.getElementById('showTodayDatesBtn');
@@ -14775,16 +14775,15 @@ if (diffCheckerTab) diffCheckerTab.addEventListener('click', () => showTab('diff
 
             const gregDate = hijriToGregorian(hYear, hMonth, hDay);
             
-            // ফিক্স: ১ দিন বেশি আসছিল, তাই এখানে ১ দিন বিয়োগ করে অ্যাডজাস্ট করা হলো
-            gregDate.setDate(gregDate.getDate() - 1);
-
             // *** সেটিংসের অ্যাডজাস্টমেন্টের সাথে সমন্বয় ***
             // পরিবর্তন: এখন গ্লোবাল ফাংশন থেকে ভ্যালু নেওয়া হচ্ছে
             const hijriAdjustment = getGlobalHijriAdjustment();
             
-            // হিজরি -> ইংরেজি কনভার্সনের সময় আমাদের এই অ্যাডজাস্টমেন্টকে বিয়োগ করতে হবে 
-            // কারণ আমরা ক্যালকুলেটেড ডেট থেকে অ্যাডজাস্টেড ডেটে যেতে চাই না, বরং ইনপুট ডেট থেকে অরিজিনাল ডেটে যেতে চাই।
-            gregDate.setDate(gregDate.getDate() - hijriAdjustment);
+            // হিজরি -> ইংরেজি কনভার্সনের জন্য ডাইনামিক অ্যাডজাস্টমেন্ট লজিক:
+            // যদি hijriAdjustment = -2 হয়, তাহলে (-2 + 1) = -1 (১ দিন কমবে)।
+            // যদি hijriAdjustment = -1 হয়, তাহলে (-1 + 1) = 0 (অপরিবর্তিত থাকবে)।
+            
+            gregDate.setDate(gregDate.getDate() + (hijriAdjustment + 2));
 
             const gregorianDateFormatted = gregDate.toLocaleDateString('bn-BD', {
                 year: 'numeric',
