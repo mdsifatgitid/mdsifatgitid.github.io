@@ -15,14 +15,16 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.4.13/dist/easy.qrcode.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-   <!-- Chart.js CDN (গ্রাফের জন্য নতুন যুক্ত করা হয়েছে) -->
+		<!-- Chart.js CDN (গ্রাফের জন্য নতুন যুক্ত করা হয়েছে) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Cropper.js CDN (নতুন যুক্ত করা হয়েছে) -->
+		<!-- Cropper.js CDN (নতুন যুক্ত করা হয়েছে) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-	<!-- jsPDF CDN (পিডিএফ টুলের জন্য নতুন যুক্ত করা হয়েছে) -->
+		<!-- jsPDF CDN (পিডিএফ টুলের জন্য নতুন যুক্ত করা হয়েছে) -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 	    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+		<!-- Diff Match Patch CDN (ডিফ চেকারের জন্য) -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"></script>
 	
     <style>
         /* Custom font and basic styles */
@@ -6640,6 +6642,132 @@ body.sidebar-open #sidebarOverlay {
 /* END: অডিও ভিজুয়ালাইজার আইকন স্টাইল */
 /* ========================================= */
 
+/* ======================================================== */
+/* START: Diff Checker Styles (Sublime Text Look) */
+/* ======================================================== */
+.diff-checker-content {
+    padding: 20px;
+    border-radius: 16px;
+    margin: 0 auto;
+    max-width: 95%; /* প্রশস্ত ভিউ */
+    background-color: #f8f9fa;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.dark .diff-checker-content {
+    background-color: #2d3748;
+}
+
+.diff-editor-container {
+    display: flex;
+    gap: 15px;
+    height: 400px; /* ফিক্সড হাইট */
+}
+
+.diff-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    overflow: hidden;
+}
+.dark .diff-pane {
+    background-color: #1e1e1e; /* Sublime Dark BG */
+    border-color: #4a5568;
+}
+
+.diff-pane-header {
+    padding: 8px 12px;
+    background-color: #e2e8f0;
+    font-weight: 600;
+    color: #4a5568;
+    border-bottom: 1px solid #d1d5db;
+    font-size: 0.9rem;
+}
+.dark .diff-pane-header {
+    background-color: #2d2d2d;
+    color: #e2e8f0;
+    border-bottom-color: #4a5568;
+}
+
+.diff-textarea {
+    flex: 1;
+    width: 100%;
+    resize: none;
+    padding: 10px;
+    border: none;
+    outline: none;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace; /* Code Font */
+    font-size: 14px;
+    line-height: 1.5;
+    background-color: transparent;
+    color: #333;
+}
+.dark .diff-textarea {
+    color: #d4d4d4; /* Light code text */
+}
+
+/* ফলাফলের স্টাইল */
+.diff-result-view {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 15px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    white-space: pre-wrap; /* কোডের ফরম্যাট ঠিক রাখতে */
+    word-break: break-all;
+    text-align: left;
+    height: 400px;
+    overflow-y: auto;
+}
+.dark .diff-result-view {
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+    border-color: #4a5568;
+}
+
+/* হাইলাইটিং কালার (Sublime Style) */
+del.diff-del {
+    background-color: #da3e3e; /* Red for deleted */
+    color: white;
+    text-decoration: none;
+    padding: 1px 0;
+    border-radius: 2px;
+}
+ins.diff-ins {
+    background-color: #2e7d32; /* Green for added */
+    color: white;
+    text-decoration: none;
+    padding: 1px 0;
+    border-radius: 2px;
+}
+
+.diff-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+    .diff-editor-container {
+        flex-direction: column;
+        height: auto;
+    }
+    .diff-textarea {
+        min-height: 200px;
+    }
+}
+/* ======================================================== */
+/* END: Diff Checker Styles */
+/* ======================================================== */
+
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -6777,6 +6905,7 @@ body.sidebar-open #sidebarOverlay {
 				<button id="screenRecorderTab" class="tab-button rounded-xl">স্ক্রিন রেকর্ডার</button>
 				<button id="emergencyNumbersTab" class="tab-button rounded-xl">জরুরি নম্বর</button>
 				<button id="tasbeehTab" class="tab-button rounded-xl">ডিজিটাল তাসবিহ</button>
+				<button id="diffCheckerTab" class="tab-button rounded-xl">ডিফ চেকার (Diff)</button>
 				<button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
 				<button id="importantLinksTab" class="tab-button rounded-xl">গুরুত্বপূর্ণ লিংকসমূহ</button>
 				<button id="donateTab" class="tab-button rounded-xl">ডোনেট</button>
@@ -10169,6 +10298,44 @@ body.sidebar-open #sidebarOverlay {
 
 <!-- ডিজিটাল তাসবিহ সেকশন শেষ -->
 
+<!-- নতুন: ডিফ চেকার বিভাগ -->
+<div id="diffCheckerContent" class="calculator-content">
+    <div class="diff-checker-content">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">অ্যাডভান্সড কোড/টেক্সট ডিফ চেকার</h3>
+        
+        <div class="diff-controls">
+            <button id="compareDiffBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow transition-all">তুলনা করুন (Compare)</button>
+            <button id="clearDiffBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg shadow transition-all">মুছুন</button>
+        </div>
+
+        <div class="diff-editor-container" id="diffInputContainer">
+            <!-- বাম পাশ: অরিজিনাল -->
+            <div class="diff-pane">
+                <div class="diff-pane-header">অরিজিনাল টেক্সট / কোড (Old Version)</div>
+                <textarea id="diffInput1" class="diff-textarea" placeholder="এখানে পুরনো কোড বা লেখা পেস্ট করুন..."></textarea>
+            </div>
+            <!-- ডান পাশ: নতুন -->
+            <div class="diff-pane">
+                <div class="diff-pane-header">পরিবর্তিত টেক্সট / কোড (New Version)</div>
+                <textarea id="diffInput2" class="diff-textarea" placeholder="এখানে নতুন কোড বা লেখা পেস্ট করুন..."></textarea>
+            </div>
+        </div>
+
+        <!-- ফলাফল দেখানোর এরিয়া -->
+        <div id="diffResultContainer" class="hidden">
+            <div class="flex justify-between items-center mb-2">
+                <h4 class="font-bold text-gray-700 dark:text-gray-300">ফলাফল (পরিবর্তনসমূহ):</h4>
+                <button id="backToDiffInputBtn" class="text-sm bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition">আবার এডিট করুন</button>
+            </div>
+            <div id="diffOutput" class="diff-result-view"></div>
+            <div class="mt-2 text-xs text-gray-500 dark:text-gray-400 flex gap-4 justify-center">
+                <span class="flex items-center gap-1"><span class="w-3 h-3 bg-[#da3e3e] inline-block rounded"></span> মুছে ফেলা হয়েছে (Deleted)</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-3 bg-[#2e7d32] inline-block rounded"></span> যুক্ত করা হয়েছে (Inserted)</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- শেষ: ডিফ চেকার বিভাগ -->
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের HTML Content কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
 </div>
@@ -10304,6 +10471,22 @@ async function clearExpiredItems() {
 }
 // ====================================================================
 // END: IndexedDB with Expiry
+// ====================================================================
+
+// ====================================================================
+// START: GLOBAL HIJRI ADJUSTMENT SETTING
+// ====================================================================
+
+// হিজরি তারিখ অ্যাডজাস্টমেন্টের জন্য সেন্ট্রাল ফাংশন
+function getGlobalHijriAdjustment() {
+    // যদি সেটিংসে ইউজার কিছু সেট না করে থাকে, তবে এই ভ্যালুটি কাজ করবে।
+    const defaultValue = '-1'; 
+    
+    return parseInt(localStorage.getItem('hijriDateAdjustment') || defaultValue, 10);
+}
+
+// ====================================================================
+// END: GLOBAL HIJRI ADJUSTMENT SETTING
 // ====================================================================
 
 // ====================================================================
@@ -11068,7 +11251,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentTime = Date.now();
             const currentDay = now.getDate();
 
-// অটো আপডেট লজিক চেক (পরিবর্তিত: ডিফল্ট false করা হয়েছে)
+            // অটো আপডেট লজিক চেক (পরিবর্তিত: ডিফল্ট false করা হয়েছে)
             // পরিবর্তন: === 'true' ব্যবহার করা হয়েছে যাতে ডিফল্ট false থাকে
             const isAutoUpdate = localStorage.getItem('autoUpdateDate') === 'true';
             
@@ -11116,9 +11299,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Hijri Date
                 let hijriCalculationDate = new Date(now);
                 
-                // সেটিংস থেকে হিজরি অ্যাডজাস্টমেন্ট লোড করুন (ডিফল্ট -২)
-                // ব্যবহারকারীর ইনপুট অনুযায়ী দিন যোগ বা বিয়োগ হবে
-                const hijriAdjustment = parseInt(localStorage.getItem('hijriDateAdjustment') || '-2', 10);
+                // পরিবর্তন: এখন গ্লোবাল ফাংশন থেকে ভ্যালু নেওয়া হচ্ছে
+                const hijriAdjustment = getGlobalHijriAdjustment();
+                
                 hijriCalculationDate.setDate(hijriCalculationDate.getDate() + hijriAdjustment);
 
                 const hijriDateFormatter = new Intl.DateTimeFormat('ar-SA', {
@@ -12943,6 +13126,8 @@ const memeGenTab = document.getElementById('memeGenTab');
 const memeGenContent = document.getElementById('memeGenContent');
 const speedTestTab = document.getElementById('speedTestTab');
 const speedTestContent = document.getElementById('speedTestContent');
+const diffCheckerTab = document.getElementById('diffCheckerTab');
+const diffCheckerContent = document.getElementById('diffCheckerContent');
 
 // ====================================================================
 // END: CONST SECTION FOR TAB
@@ -13236,7 +13421,7 @@ function showTab(tabId) {
         ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,barcodeGenTab, randomPickerTab,
         translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
         qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab, webSearchTab, 
-        textAssistantTab,holidayListTab,quizTab,unitPriceTab,tasbeehTab,
+        textAssistantTab,holidayListTab,quizTab,unitPriceTab,tasbeehTab,diffCheckerTab,
         allFeaturesTab
     ];
     const contents = [
@@ -13245,6 +13430,7 @@ function showTab(tabId) {
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent, barcodeGenContent, randomPickerContent,
         weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
         textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,unitPriceContent,tasbeehContent,
+		diffCheckerContent,
         allFeaturesContent
     ];
 
@@ -13329,6 +13515,11 @@ case 'scientific':
             activeTab = converterTab;
             activeContent = converterContent;
             break;
+		case 'diffChecker':
+			activeTab = diffCheckerTab;
+			activeContent = diffCheckerContent;
+			initializeDiffChecker();
+		break;
         case 'measurement':
             activeTab = measurementTab;
             activeContent = measurementContent;
@@ -13652,6 +13843,7 @@ if (tasbeehTab) {tasbeehTab.addEventListener('click', () => {showTab('tasbeeh');
         initializeTasbeeh(); // ফাংশনটি কল করুন
     });
 }
+if (diffCheckerTab) diffCheckerTab.addEventListener('click', () => showTab('diffChecker'));
 
 	
 // ====================================================================
@@ -14317,8 +14509,9 @@ if (tasbeehTab) {tasbeehTab.addEventListener('click', () => {showTab('tasbeeh');
                     // হিজরি তারিখ (সেটিংস থেকে অ্যাডজাস্টমেন্ট সহ)
                     let hijriCalculationDate = new Date(dateToDisplay);
                     
-                    // সেটিংস থেকে হিজরি অ্যাডজাস্টমেন্ট লোড করুন (ডিফল্ট -২)
-                    const hijriAdjustment = parseInt(localStorage.getItem('hijriDateAdjustment') || '-2', 10);
+                    // পরিবর্তন: এখন গ্লোবাল ফাংশন থেকে ভ্যালু নেওয়া হচ্ছে
+                    const hijriAdjustment = getGlobalHijriAdjustment();
+                    
                     hijriCalculationDate.setDate(hijriCalculationDate.getDate() + hijriAdjustment);
 
                     const hijriDateFormatter = new Intl.DateTimeFormat('ar-SA', {
@@ -14417,7 +14610,10 @@ if (tasbeehTab) {tasbeehTab.addEventListener('click', () => {showTab('tasbeeh');
 
                         // ২. হিজরি তারিখ বের করা (সেটিংস থেকে অ্যাডজাস্টমেন্ট সহ)
                         let hijriCalculationDate = new Date(gregorianDate);
-                        const hijriAdjustment = parseInt(localStorage.getItem('hijriDateAdjustment') || '-2', 10);
+                        
+                        // পরিবর্তন: এখন গ্লোবাল ফাংশন থেকে ভ্যালু নেওয়া হচ্ছে
+                        const hijriAdjustment = getGlobalHijriAdjustment();
+                        
                         hijriCalculationDate.setDate(hijriCalculationDate.getDate() + hijriAdjustment);
 
                         const hijriDateFormatter = new Intl.DateTimeFormat('ar-SA', {
@@ -14582,10 +14778,12 @@ if (tasbeehTab) {tasbeehTab.addEventListener('click', () => {showTab('tasbeeh');
             // ফিক্স: ১ দিন বেশি আসছিল, তাই এখানে ১ দিন বিয়োগ করে অ্যাডজাস্ট করা হলো
             gregDate.setDate(gregDate.getDate() - 1);
 
-            // *** সেটিংসের অ্যাডজাস্টমেন্টের সাথে সমন্বয় (নতুন সংযোজন) ***
-            // ইংরেজি -> হিজরি কনভার্টারে অ্যাডজাস্টমেন্ট যোগ করা হয়, তাই রিভার্সে বিয়োগ করতে হবে।
-            // এখানে hijriDateAdjustment হলো একটি স্ট্রিং, তাই parseInt দিয়ে ইন্টিজারে রূপান্তর করা জরুরি।
-            const hijriAdjustment = parseInt(localStorage.getItem('hijriDateAdjustment') || '-2', 10);
+            // *** সেটিংসের অ্যাডজাস্টমেন্টের সাথে সমন্বয় ***
+            // পরিবর্তন: এখন গ্লোবাল ফাংশন থেকে ভ্যালু নেওয়া হচ্ছে
+            const hijriAdjustment = getGlobalHijriAdjustment();
+            
+            // হিজরি -> ইংরেজি কনভার্সনের সময় আমাদের এই অ্যাডজাস্টমেন্টকে বিয়োগ করতে হবে 
+            // কারণ আমরা ক্যালকুলেটেড ডেট থেকে অ্যাডজাস্টেড ডেটে যেতে চাই না, বরং ইনপুট ডেট থেকে অরিজিনাল ডেটে যেতে চাই।
             gregDate.setDate(gregDate.getDate() - hijriAdjustment);
 
             const gregorianDateFormatted = gregDate.toLocaleDateString('bn-BD', {
@@ -23622,13 +23820,14 @@ function initializeMoreSettings() {
         });
     }
 
-    // ৪. হিজরি তারিখ অ্যাডজাস্টার লজিক
+// ৪. হিজরি তারিখ অ্যাডজাস্টার লজিক
     const hijriDateAdjustInput = document.getElementById('hijriDateAdjustInput');
     const saveHijriAdjustBtn = document.getElementById('saveHijriAdjustBtn');
 
     if (hijriDateAdjustInput && saveHijriAdjustBtn) {
-        const savedHijriAdj = localStorage.getItem('hijriDateAdjustment') || '-2';
-        hijriDateAdjustInput.value = savedHijriAdj;
+        // যদি লোকাল স্টোরেজে কিছু না থাকে, তবে আমাদের গ্লোবাল ডিফল্ট ভ্যালুটি দেখাবে
+        const currentAdjustment = getGlobalHijriAdjustment();
+        hijriDateAdjustInput.value = currentAdjustment;
 
         saveHijriAdjustBtn.onclick = () => {
             const val = hijriDateAdjustInput.value;
@@ -25323,6 +25522,81 @@ function initializeTasbeeh() {
 }
 // ========================================================
 // END: Digital Tasbeeh Script
+// ========================================================
+
+// ========================================================
+// START: Advanced Diff Checker Logic
+// ========================================================
+function initializeDiffChecker() {
+    const compareBtn = document.getElementById('compareDiffBtn');
+    const clearBtn = document.getElementById('clearDiffBtn');
+    const backBtn = document.getElementById('backToDiffInputBtn');
+    const input1 = document.getElementById('diffInput1');
+    const input2 = document.getElementById('diffInput2');
+    const resultContainer = document.getElementById('diffResultContainer');
+    const inputContainer = document.getElementById('diffInputContainer');
+    const output = document.getElementById('diffOutput');
+
+    if (!compareBtn) return;
+
+    // ক্লিয়ার বাটন
+    clearBtn.onclick = () => {
+        input1.value = '';
+        input2.value = '';
+        resultContainer.classList.add('hidden');
+        inputContainer.classList.remove('hidden');
+        showCustomAlert('টেক্সটবক্স পরিষ্কার করা হয়েছে।');
+    };
+
+    // ব্যাক বাটন
+    backBtn.onclick = () => {
+        resultContainer.classList.add('hidden');
+        inputContainer.classList.remove('hidden');
+    };
+
+    // তুলনা বাটন (Main Logic)
+    compareBtn.onclick = () => {
+        const text1 = input1.value;
+        const text2 = input2.value;
+
+        if (!text1 && !text2) {
+            return showCustomAlert('অনুগ্রহ করে তুলনা করার জন্য টেক্সট লিখুন।');
+        }
+
+        // Google diff-match-patch ব্যবহার
+        const dmp = new diff_match_patch();
+        const diffs = dmp.diff_main(text1, text2);
+        
+        // শব্দ অনুযায়ী ক্লিনআপ (যাতে ক্যারেক্টার লেভেলে হিজিবিজি না দেখায়)
+        dmp.diff_cleanupSemantic(diffs);
+
+        // HTML তৈরি করা
+        let html = [];
+        diffs.forEach(part => {
+            const type = part[0]; // -1 (delete), 0 (equal), 1 (insert)
+            let text = part[1];
+            
+            // HTML Escape (নিরাপত্তার জন্য)
+            text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+
+            if (type === 1) { // Insert
+                html.push(`<ins class="diff-ins">${text}</ins>`);
+            } else if (type === -1) { // Delete
+                html.push(`<del class="diff-del">${text}</del>`);
+            } else { // Equal
+                html.push(`<span>${text}</span>`);
+            }
+        });
+
+        output.innerHTML = html.join('');
+        
+        // ভিউ সুইচ করা
+        inputContainer.classList.add('hidden');
+        resultContainer.classList.remove('hidden');
+    };
+}
+// ========================================================
+// END: Advanced Diff Checker Logic
 // ========================================================
 
 
