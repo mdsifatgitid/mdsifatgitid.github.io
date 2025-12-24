@@ -7913,6 +7913,9 @@ ins.diff-ins {
 				<li class="mb-2">
 				<strong class="text-teal-600 dark:text-teal-400">দামের তুলনা:</strong> দুটি পণ্যের দাম ও পরিমাণ দিয়ে সহজেই বের করুন কোনটি কেনা লাভজনক।
 				</li>
+				<li class="mb-2">
+                <strong class="text-slate-700 dark:text-slate-400">ডিফ চেকার (Diff):</strong> দুটি টেক্সট বা কোডের মধ্যে পার্থক্য তুলনা করুন এবং পরিবর্তনগুলো হাইলাইট আকারে দেখুন।
+                </li>
                 <li class="mb-2">
                     <strong class="text-indigo-600 dark:text-indigo-400">ইএমআই ক্যালকুলেটর:</strong> ঋণের পরিমাণ, সুদের হার এবং মেয়াদ দিয়ে মাসিক কিস্তি এবং মোট সুদ হিসাব করুন।
                 </li>
@@ -13752,9 +13755,9 @@ case 'speedTest':
     }
 
     // --- নতুন: ড্রপডাউন মেনু হাইলাইট করার লজিক ---
-    // 'আরও' মেনুর অন্তর্ভুক্ত ট্যাব আইডি সমূহ
+    // 'আরও' মেনুর অন্তর্ভুক্ত ট্যাব আইডি সমূহ tabidmap
     const moreMenuTabs = [
-        'clock', 'player', 'quiz', 'history', 'daysObservances', 'tasbeeh',
+        'clock', 'player', 'quiz', 'history', 'daysObservances', 'tasbeeh','diffChecker',
         'holiday', 'zakat', 'qrCode', 'colorPicker', 'invoice', 'unitPrice',
         'imageResizer', 'emergency', 'healthLifestyle', 
         'currency', 'emi', 'ip', 'recipe', 'pdf', 'randomPicker','barcode',
@@ -22850,7 +22853,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // --- "All Features" Tab Interactivity (Unchanged) ---
+    // --- "All Features" Tab Interactivity (Unchanged) --- moremenutab
     function makeAllFeaturesInteractive() {
         const featuresList = document.querySelector('#featuresDisplayArea ul');
         if (!featuresList) return;
@@ -22908,6 +22911,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'আরও': 'allFeaturesTab',
             'সেটিংস': 'moreSettingsTab',
             'আরও সেটিংস': 'moreSettingsTab',
+			'ডিফ চেকার (Diff)': 'diffCheckerTab',
         };
 
         featuresList.querySelectorAll('li > strong').forEach(strongEl => {
