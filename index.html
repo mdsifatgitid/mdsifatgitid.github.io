@@ -6607,6 +6607,39 @@ body.sidebar-open #sidebarOverlay {
     animation: clickPulse 0.3s ease-out;
 }
 
+/* ========================================= */
+/* START: অডিও ভিজুয়ালাইজার আইকন স্টাইল (নতুন) */
+/* ========================================= */
+.playing-icon {
+    display: inline-flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-left: auto; /* আইকনটিকে ডানদিকে সরাবে */
+    gap: 2px;
+    padding-bottom: 3px;
+}
+
+.playing-icon .bar {
+    width: 3px;
+    background-color: currentColor; /* টেক্সটের রঙের সাথে মিলবে */
+    border-radius: 2px;
+    animation: visualizer-bounce 0.5s infinite ease-in-out alternate;
+}
+
+.playing-icon .bar:nth-child(1) { height: 6px; animation-delay: 0s; }
+.playing-icon .bar:nth-child(2) { height: 12px; animation-delay: 0.2s; }
+.playing-icon .bar:nth-child(3) { height: 8px; animation-delay: 0.4s; }
+
+@keyframes visualizer-bounce {
+    0% { height: 4px; }
+    100% { height: 14px; }
+}
+/* ========================================= */
+/* END: অডিও ভিজুয়ালাইজার আইকন স্টাইল */
+/* ========================================= */
+
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -22202,18 +22235,18 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeDraggableDashboard();
     makeAllFeaturesInteractive();
 
-    // --- Sidebar Functionality (Sidebar Close Button Added & Highlight Logic Updated) ---
+    // --- Sidebar Functionality (Sidebar Close Button & Audio Visualizer Added) ---
     function initializeSidebar() {
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebarCloseBtn = document.getElementById('sidebarClose'); // নতুন ক্লোজ বাটন
+        const sidebarCloseBtn = document.getElementById('sidebarClose'); // ক্লোজ বাটন
         const sidebarOverlay = document.getElementById('sidebarOverlay');
         const sidebarSearch = document.getElementById('sidebarSearch');
         const toolList = document.getElementById('sidebar-tool-list');
 
         if (!sidebar || !sidebarToggle || !sidebarOverlay || !sidebarSearch || !toolList || !sidebarCloseBtn) return;
         
-        // নতুন: মিডিয়া প্লেয়ার চালু আছে কিনা চেক করার ফাংশন
+        // মিডিয়া প্লেয়ার চালু আছে কিনা চেক করার ফাংশন
         const isMediaPlaying = () => {
             const audio = document.getElementById('audioPlayer');
             const video = document.getElementById('videoPlayer');
@@ -22223,12 +22256,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return isAudioPlaying || isVideoPlaying;
         };
 
-        // নতুন: ওয়েব সার্চে অডিও/ভিডিও বাজছে কিনা চেক করার ফাংশন
+        // ওয়েব সার্চে অডিও/ভিডিও বাজছে কিনা চেক করার ফাংশন
         const isWebSearchPlaying = () => {
             try {
                 const iframe = document.getElementById('browserFrame');
-                // ক্রস-অরিজিন পলিসির কারণে বাইরের ওয়েবসাইটের (যেমন গুগল, ইউটিউব) মিডিয়া স্ট্যাটাস সরাসরি রিড করা যায় না।
-                // তবে যদি সেম-অরিজিন বা লোকাল ফাইল হয়, বা এক্সেস থাকে তবে এটি কাজ করবে।
                 if (iframe && iframe.contentDocument) {
                     const medias = iframe.contentDocument.querySelectorAll('audio, video');
                     for (let media of medias) {
@@ -22236,54 +22267,103 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             } catch (e) {
-                // Cross-origin blocked: বাইরের ডোমেইনের ক্ষেত্রে এক্সেস পাওয়া যাবে না, তাই false রিটার্ন করবে।
+                // Cross-origin blocked হলে এক্সেস পাওয়া যাবে না
                 return false;
             }
             return false;
         };
 
-        // নতুন: সাইডবার হাইলাইট আপডেট করার ফাংশন (সংশোধিত)
+        // সাইডবার হাইলাইট আপডেট করার ফাংশন (ভিজুয়ালাইজার লজিক সহ)
         const updateSidebarHighlights = () => {
             const links = toolList.querySelectorAll('a');
             
-            // এলার্ম স্ট্যাটাস চেক করা - "অ্যালার্ম থামান" বাটন দৃশ্যমান কিনা তা চেক করা হচ্ছে
+            // এলার্ম স্ট্যাটাস চেক - "অ্যালার্ম থামান" বাটন দৃশ্যমান কিনা
             let isAlarmActive = false;
             const stopAlarmBtn = document.getElementById('stopAlarmBtn');
-            
-            // যদি Stop Alarm বাটন থাকে এবং তাতে 'hidden' ক্লাস না থাকে, তার মানে এলার্ম বাজছে
             if (stopAlarmBtn && !stopAlarmBtn.classList.contains('hidden')) {
                 isAlarmActive = true;
             }
+
+            // নতুন: কোনো মিডিয়া বা এলার্ম বাজছে কিনা তা ট্র্যাক করার জন্য ভেরিয়েবল
+            let isAnyMediaActive = false;
 
             links.forEach(a => {
                 const targetTabId = a.dataset.tabId;
                 const targetElement = document.getElementById(targetTabId);
                 const isActive = targetElement && targetElement.classList.contains('active');
 
-                // ক্লাস রিসেট করা (যাতে পুরনো স্টাইল না থাকে)
-                a.className = "block w-full text-left p-2 rounded-lg transition-colors duration-200";
-                
-                // শর্ত ১: যদি এলার্ম বাজে (স্টপ বাটন দৃশ্যমান) এবং এটি ঘড়ি ট্যাব হয় -> হলুদ হাইলাইট + পালস এনিমেশন
+                // মূল টেক্সট সংরক্ষণ (যাতে আইকন যুক্ত করার পর টেক্সট হারিয়ে না যায়)
+                if (!a.dataset.originalText) {
+                    a.dataset.originalText = a.textContent;
+                }
+                const originalText = a.dataset.originalText;
+
+                // ডিফল্ট স্টাইল এবং আইকন কনটেইনার সেটআপ (Flex ব্যবহার করা হয়েছে আইকন ডানে রাখার জন্য)
+                let newClass = "block w-full text-left p-2 rounded-lg transition-colors duration-200 flex justify-between items-center";
+                let iconHtml = ""; // ডিফল্টভাবে কোনো আইকন নেই
+
+                // শর্ত ১: এলার্ম বাজলে (ঘড়ি ট্যাব) -> হলুদ হাইলাইট + পালস এনিমেশন + ঘণ্টা আইকন
                 if (targetTabId === 'clockTab' && isAlarmActive) {
-                    a.classList.add('bg-yellow-400', 'text-black', 'font-bold', 'shadow-md', 'animate-pulse');
+                    newClass += ' bg-yellow-400 text-black font-bold shadow-md animate-pulse';
+                    iconHtml = '<span>🔔</span>';
+                    isAnyMediaActive = true;
                 }
-                // শর্ত ২: যদি মিডিয়া প্লে হয় এবং এটি প্লেয়ার ট্যাব হয় -> হলুদ হাইলাইট
-                else if (targetTabId === 'playerTab' && isMediaPlaying()) {
-                    a.classList.add('bg-yellow-400', 'text-black', 'font-bold', 'shadow-md');
+                // শর্ত ২: মিডিয়া প্লে হলে (প্লেয়ার বা ওয়েব সার্চ) -> হলুদ হাইলাইট + ভিজুয়ালাইজার আইকন
+                else if ((targetTabId === 'playerTab' && isMediaPlaying()) || 
+                         (targetTabId === 'webSearchTab' && isWebSearchPlaying())) {
+                    newClass += ' bg-yellow-400 text-black font-bold shadow-md';
+                    // অডিও ভিজুয়ালাইজার আইকন HTML
+                    iconHtml = `
+                        <span class="playing-icon" title="মিডিয়া বাজছে">
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                        </span>`;
+                    isAnyMediaActive = true;
                 }
-                // শর্ত ৩: যদি ওয়েব সার্চে মিডিয়া প্লে হয় -> হলুদ হাইলাইট
-                else if (targetTabId === 'webSearchTab' && isWebSearchPlaying()) {
-                    a.classList.add('bg-yellow-400', 'text-black', 'font-bold', 'shadow-md');
-                }
-                // শর্ত ৪: সাধারণ একটিভ ট্যাব -> নীল হাইলাইট
+                // শর্ত ৩: সাধারণ একটিভ ট্যাব -> নীল হাইলাইট
                 else if (isActive) {
-                    a.classList.add('bg-indigo-600', 'text-white', 'shadow-md', 'font-semibold');
+                    newClass += ' bg-indigo-600 text-white shadow-md font-semibold';
                 } 
-                // শর্ত ৫: ইনঅ্যাক্টিভ ট্যাব -> সাধারণ স্টাইল
+                // শর্ত ৪: ইনঅ্যাক্টিভ ট্যাব -> সাধারণ স্টাইল
                 else {
-                    a.classList.add('hover:bg-gray-100', 'dark:hover:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+                    newClass += ' hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300';
+                }
+
+                // শুধুমাত্র পরিবর্তন হলেই DOM আপডেট করুন (পারফরম্যান্স অপ্টিমাইজেশন)
+                if (a.className !== newClass) {
+                    a.className = newClass;
+                }
+                
+                // আইকন বা টেক্সট আপডেট
+                const newInnerHtml = `<span>${originalText}</span>${iconHtml}`;
+                if (a.innerHTML !== newInnerHtml) {
+                    a.innerHTML = newInnerHtml;
                 }
             });
+
+            // --- নতুন: সাইডবার টগল বাটনের আইকন আপডেট (ভিজুয়ালাইজার) ---
+            if (sidebarToggle) {
+                // আমরা একটি ডাটা এট্রিবিউট ব্যবহার করে স্টেট চেক করব যাতে বারবার DOM আপডেট না হয়
+                const currentState = sidebarToggle.getAttribute('data-visualizer-active');
+                const newState = isAnyMediaActive ? 'true' : 'false';
+
+                if (currentState !== newState) {
+                    if (isAnyMediaActive) {
+                        // অডিও বাজলে বা ট্যাব হলুদ হলে ভিজুয়ালাইজার আইকন দেখাবে
+                        sidebarToggle.innerHTML = `
+                            <span class="playing-icon" style="margin:0; width: 24px; height: 24px; gap: 4px;">
+                                <span class="bar" style="width: 3px; background-color: white;"></span>
+                                <span class="bar" style="width: 3px; background-color: white; animation-delay: 0.2s;"></span>
+                                <span class="bar" style="width: 3px; background-color: white; animation-delay: 0.4s;"></span>
+                            </span>`;
+                    } else {
+                        // স্বাভাবিক অবস্থায় হ্যামবার্গার আইকন
+                        sidebarToggle.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>`;
+                    }
+                    sidebarToggle.setAttribute('data-visualizer-active', newState);
+                }
+            }
         };
 
         // Populate the tool list from existing tab buttons
@@ -22296,30 +22376,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (button.id === 'moreMenuBtn') buttonText = 'আরও';
                 if (button.id === 'settingsMenuBtn') buttonText = 'সেটিংস';
 
-                // ড্যাশবোর্ড বাটনটি আগে বাদ দেওয়া হতো, এখন সেই শর্তটি সরিয়ে দেওয়া হয়েছে
                 if (button.id && buttonText) { 
                     const li = document.createElement('li');
                     const a = document.createElement('a');
                     a.href = "#";
-                    a.textContent = buttonText;
+                    a.textContent = buttonText; // প্রথমে শুধু টেক্সট সেট হবে
                     
-                    // --- লজিক পরিবর্তন: নির্দিষ্ট বাটনের জন্য টার্গেট ট্যাব সেট করা ---
+                    // টার্গেট ট্যাব সেট করা
                     let targetTabId = button.id;
                     if (button.id === 'moreMenuBtn') {
-                        targetTabId = 'allFeaturesTab'; // 'আরও' তে ক্লিক করলে 'সকল ফিচার' ওপেন হবে
+                        targetTabId = 'allFeaturesTab'; 
                     } else if (button.id === 'settingsMenuBtn') {
-                        targetTabId = 'moreSettingsTab'; // 'সেটিংস' এ ক্লিক করলে 'আরও সেটিংস' ওপেন হবে
+                        targetTabId = 'moreSettingsTab'; 
                     }
                     
                     a.dataset.tabId = targetTabId;
                     
-                    // --- স্টাইল সেট করা (প্রাথমিক) ---
-                    const targetElement = document.getElementById(targetTabId);
-                    if (targetElement && targetElement.classList.contains('active')) {
-                        a.className = "block w-full text-left p-2 rounded-lg bg-indigo-600 text-white shadow-md font-semibold transition-colors duration-200";
-                    } else {
-                        a.className = "block w-full text-left p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors duration-200";
-                    }
+                    // প্রাথমিক স্টাইল (বাকিটা updateSidebarHighlights হ্যান্ডেল করবে)
+                    a.className = "block w-full text-left p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors duration-200 flex justify-between items-center";
 
                     a.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -22335,45 +22409,43 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-
         // সাইডবার খোলা এবং বন্ধ করার ফাংশন
         function closeSidebar() {
             document.body.classList.remove('sidebar-open');
         }
 
-        // টগল বাটন ক্লিক করলে সাইডবার খুলবে বা বন্ধ হবে
+        // টগল বাটন ক্লিক
         sidebarToggle.addEventListener('click', (e) => {
             e.stopPropagation();
             
-            // নতুন: সাইডবার খোলার আগে হাইলাইট আপডেট করুন
+            // সাইডবার খোলার আগে হাইলাইট আপডেট করুন
             if (!document.body.classList.contains('sidebar-open')) {
                 updateSidebarHighlights();
             }
 
             document.body.classList.toggle('sidebar-open');
 
-            // --- নতুন: সাইডবার খোলার পর একটিভ বা হাইলাইটেড ট্যাবটি অটোমেটিক স্ক্রোল হবে ---
+            // সাইডবার খোলার পর একটিভ ট্যাব স্ক্রোল করা
             if (document.body.classList.contains('sidebar-open')) {
                 setTimeout(() => {
-                    // একটিভ লিংকটি খুঁজুন (যেটিতে bg-indigo-600 অথবা bg-yellow-400 ক্লাস আছে)
                     const activeLink = toolList.querySelector('a.bg-indigo-600, a.bg-yellow-400');
                     if (activeLink) {
                         activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
-                }, 300); // সাইডবার এনিমেশনের জন্য ৩০০ms অপেক্ষা
+                }, 300);
             }
         });
         
-        // নতুন: ক্লোজ বাটন (অ্যারে আইকন) ক্লিক করলে সাইডবার বন্ধ হবে
+        // ক্লোজ বাটন ক্লিক
         sidebarCloseBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             closeSidebar();
         });
 
-        // ফিক্স: সাইডবারের বাইরে (overlay অংশে) ক্লিক করা হলে সাইডবার বন্ধ হবে
+        // ওভারলে ক্লিক
         sidebarOverlay.addEventListener('click', closeSidebar);
 
-        // Search functionality (unchanged)
+        // সার্চ ফাংশনালিটি
         sidebarSearch.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
             toolList.querySelectorAll('li').forEach(li => {
@@ -22385,9 +22457,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+
+        // রিয়েল-টাইমে হাইলাইট চেক করার জন্য ইন্টারভ্যাল সেট করা (প্রতি ৫০০ms)
+        if (window.sidebarHighlightInterval) clearInterval(window.sidebarHighlightInterval);
+        window.sidebarHighlightInterval = setInterval(updateSidebarHighlights, 500);
+        
+        // শুরুতে একবার কল করা
+        updateSidebarHighlights();
     }
 
-    // --- Draggable Dashboard Functionality (UPDATED to allow 'আরও' and 'সেটিংস') ---
+    // --- Draggable Dashboard Functionality (Unchanged) ---
     function initializeDraggableDashboard() {
         const dashboardGrid = document.getElementById('dashboard-grid');
         const allTabs = document.querySelectorAll('.tab-button');
@@ -22398,56 +22477,39 @@ document.addEventListener('DOMContentLoaded', () => {
         let draggedTabId = null; 
         let draggingCard = null; 
         
-        // Make all tabs draggable
         allTabs.forEach(tab => {
             const buttonText = tab.textContent.trim();
-            // ফিক্স: 'dashboardTab' বাদে সব ট্যাবকে draggable করা হয়েছে, যাতে 'আরও' এবং 'সেটিংস' ড্যাশবোর্ডে যোগ করা যায়।
             if (tab.id && buttonText && tab.id !== 'dashboardTab') { 
                 tab.setAttribute('draggable', 'true');
-                
                 tab.addEventListener('dragstart', (e) => {
                     draggedTabId = e.target.id;
                     draggingCard = null; 
                     e.target.classList.add('dragging');
                 });
-                
                 tab.addEventListener('dragend', (e) => {
                     e.target.classList.remove('dragging');
                 });
             } else {
-                 // dashboardTab draggable হবে না
                 tab.setAttribute('draggable', 'false');
             }
         });
 
-        // Setup dropzone 
         dashboardGrid.addEventListener('dragover', (e) => {
             e.preventDefault();
             if (!draggingCard) { 
                  dashboardGrid.classList.add('drag-over');
             } else { 
                 const afterElement = getDragAfterElement(dashboardGrid, e.clientX);
-                
-                // অপটিমাইজেশন: ফ্লিকারিং কমাতে অপ্রয়োজনীয় DOM মুভমেন্ট বন্ধ করা হয়েছে।
                 let shouldMove = true;
                 if (afterElement === null) {
-                    // যদি শেষ পজিশন হয়, তবে মুভ করার দরকার নেই যদি কার্ডটি ইতিমধ্যেই শেষ চাইল্ড হয়।
-                    if (draggingCard === dashboardGrid.lastElementChild) {
-                        shouldMove = false;
-                    }
+                    if (draggingCard === dashboardGrid.lastElementChild) shouldMove = false;
                 } else {
-                    // যদি afterElement এর আগে পজিশন হয়, তবে মুভ করার দরকার নেই যদি কার্ডটি ইতিমধ্যেই তার আগের এলিমেন্ট হয়।
-                    if (draggingCard === afterElement.previousElementSibling) {
-                        shouldMove = false;
-                    }
+                    if (draggingCard === afterElement.previousElementSibling) shouldMove = false;
                 }
 
                 if (shouldMove) {
-                    if (afterElement == null) {
-                        dashboardGrid.appendChild(draggingCard);
-                    } else {
-                        dashboardGrid.insertBefore(draggingCard, afterElement);
-                    }
+                    if (afterElement == null) dashboardGrid.appendChild(draggingCard);
+                    else dashboardGrid.insertBefore(draggingCard, afterElement);
                 }
             }
         });
@@ -22473,14 +22535,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // ম্যানুয়ালি টেক্সট ঠিক করা (আইকন ছাড়া)
             let buttonText = tabButton.firstChild.nodeType === 3 ? tabButton.firstChild.textContent.trim() : tabButton.textContent.trim();
             if (tabId === 'moreMenuBtn') buttonText = 'আরও';
             if (tabId === 'settingsMenuBtn') buttonText = 'সেটিংস';
 
             createDashboardCard(tabId, buttonText);
-            
-            // ফিক্স: শুধুমাত্র ড্র্যাগ করা বাটনটিকে লুকানো হয়েছে
             tabButton.style.setProperty('display', 'none', 'important'); 
 
             savedItems.push(tabId);
@@ -22508,9 +22567,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             card.addEventListener('click', () => {
-                // এখানেও একই রিডাইরেকশন লজিক ব্যবহার করা যেতে পারে, তবে বাটন ক্লিক করলে তার নিজস্ব লজিক কাজ করবে
-                // 'আরও' এবং 'সেটিংস' বাটনের নিজস্ব কোনো ক্লিক ইভেন্ট নেই যা ট্যাব ওপেন করে (এরা ড্রপডাউন খোলে)
-                // তাই এখানেও ম্যানুয়াল হ্যান্ডলিং প্রয়োজন হতে পারে যদি আপনি চান ড্যাশবোর্ড থেকেও ট্যাব ওপেন হোক
                 if (tabId === 'moreMenuBtn') {
                     const allFeaturesTab = document.getElementById('allFeaturesTab');
                     if(allFeaturesTab) allFeaturesTab.click();
@@ -22540,7 +22596,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const cardToRemove = dashboardGrid.querySelector(`.dashboard-card[data-tab-id="${tabId}"]`);
             if (cardToRemove) cardToRemove.remove();
 
-            // ফিক্স: ড্যাশবোর্ড থেকে রিমুভ করার পর বাটনটিকে দৃশ্যমান করা হয়েছে
             const originalButton = document.getElementById(tabId);
             if (originalButton) originalButton.style.display = ''; 
 
@@ -22576,7 +22631,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         function loadDashboard() {
             const items = getDashboardItems();
-            dashboardGrid.innerHTML = ''; // Clear first
+            dashboardGrid.innerHTML = ''; 
             items.forEach(tabId => {
                 const tabButton = document.getElementById(tabId);
                 if (tabButton) {
@@ -22585,7 +22640,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (tabId === 'settingsMenuBtn') buttonText = 'সেটিংস';
 
                     createDashboardCard(tabId, buttonText);
-                    // ফিক্স: বাটনটিকে লুকানো হয়েছে
                     tabButton.style.setProperty('display', 'none', 'important');
                 }
             });
@@ -22593,131 +22647,111 @@ document.addEventListener('DOMContentLoaded', () => {
         
         loadDashboard();
         
-        // Add dashboard tab functionality
         const dashboardTab = document.getElementById('dashboardTab');
         if (dashboardTab) {
             dashboardTab.addEventListener('click', () => showTab('dashboard'));
         }
     }
     
-// --- "All Features" Tab Interactivity ---
-function makeAllFeaturesInteractive() {
-    const featuresList = document.querySelector('#featuresDisplayArea ul');
-    if (!featuresList) return;
+    // --- "All Features" Tab Interactivity (Unchanged) ---
+    function makeAllFeaturesInteractive() {
+        const featuresList = document.querySelector('#featuresDisplayArea ul');
+        if (!featuresList) return;
 
-    // Corrected and updated map
-    const featureToTabIdMap = {
-        'সাধারণ ও সাইন্টিফিক ক্যালকুলেটর': 'basicCalcTab',
-        'বয়স ও তারিখ ক্যালকুলেটর': 'ageCalcTab',
-        'পরিমাপ (ইউনিট কনভার্টার)': 'measurementTab',
-        'স্বাস্থ্য ও জীবনধারা': 'healthLifestyleTab',
-        'টাইপিং টেস্ট': 'typingTestTab',
-        'ফন্ট কনভার্টার': 'converterTab',
-        'ওয়ার্ড কাউন্টার': 'wordCounterTab',
-        'ট্রান্সলেটর (জেমিনি)': 'translatorTab',
-        'বানান সংশোধন': 'spellCheckTab',
-		'ডিজিটাল তাসবিহ': 'tasbeehTab',
-        'লেখা সাজানো': 'textBeautifierTab',
-        'শব্দের অর্থ': 'wordMeaningTab',
-        'স্পিচ টুলস': 'sttTab', // অথবা ttsTab দেওয়া যেতে পারে
-        'লেখা সম্পর্কিত টুলস (জেমিনি)': 'textAssistantTab', // এটি আগে sttTab ছিল, ঠিক করা হলো
-        'টেক্সট টু স্পিচ': 'ttsTab',
-        'স্পিচ টু টেক্সট (জেমিনি)': 'sttTab',
-        'ছবি থেকে লেখা (OCR - জেমিনি)': 'imageToTextTab',
-        'ছবি রিসাইজার': 'imageResizerTab',
-        'টেক্সট অ্যাসিস্ট্যান্ট (জেমিনি)': 'textAssistantTab',
-        'ওয়েব সার্চ': 'webSearchTab',
-        'গুগল ম্যাপ': 'mapTab',
-        'আবহাওয়া': 'weatherTab',
-        'নামাজের সময়সূচি': 'prayerTimeTab',
-        'দিবসসমূহ': 'daysObservancesTab',
-        'ছুটির তালিকা': 'holidayListTab',
-        'যাকাত ক্যালকুলেটর': 'zakatCalcTab',
-        'কিউআর কোড': 'qrCodeTab',
-        'রঙ বাছাইকারী': 'colorPickerTab',
-        'জরুরি নম্বর': 'emergencyNumbersTab',
-        'ইনভয়েজ': 'invoiceTab',
-        'ঘড়ি': 'clockTab',
-        'প্লেয়ার': 'playerTab',
-        'নোটপ্যাড / টু-ডু লিস্ট': 'notepadTab',
-        'কুইজ (জেমিনি)': 'quizTab',
-        'ডোনেট': 'donateTab',
-        'ডেভেলোপার প্রোফাইল': 'importantLinksTab',
-        
-        // --- নতুন যুক্ত করা মিসিং ফিচারসমূহ ---
-        'মুদ্রা রূপান্তরকারী': 'currencyTab',
-		'দামের তুলনা': 'unitPriceTab',
-        'ইএমআই ক্যালকুলেটর': 'emiCalcTab',
-        'আইপি ও ডিভাইস ইনফো': 'ipInfoTab',
-        'রেসিপি জেনারেটর (জেমিনি)': 'recipeTab',
-        'পিডিএফ টুলস': 'pdfToolsTab',
-        'স্ক্রিন রেকর্ডার': 'screenRecorderTab',
-        'জেসন ফর্মাটার': 'jsonFormatterTab',
-        'মিম জেনারেটর': 'memeGenTab',
-        'ইন্টারনেট স্পিড': 'speedTestTab',
-		'বারকোড জেনারেটর': 'barcodeGenTab',
-        'র‍্যান্ডম পিকার / লটারি': 'randomPickerTab',
-        // -----------------------------------
+        const featureToTabIdMap = {
+            'সাধারণ ও সাইন্টিফিক ক্যালকুলেটর': 'basicCalcTab',
+            'বয়স ও তারিখ ক্যালকুলেটর': 'ageCalcTab',
+            'পরিমাপ (ইউনিট কনভার্টার)': 'measurementTab',
+            'স্বাস্থ্য ও জীবনধারা': 'healthLifestyleTab',
+            'টাইপিং টেস্ট': 'typingTestTab',
+            'ফন্ট কনভার্টার': 'converterTab',
+            'ওয়ার্ড কাউন্টার': 'wordCounterTab',
+            'ট্রান্সলেটর (জেমিনি)': 'translatorTab',
+            'বানান সংশোধন': 'spellCheckTab',
+            'ডিজিটাল তাসবিহ': 'tasbeehTab',
+            'লেখা সাজানো': 'textBeautifierTab',
+            'শব্দের অর্থ': 'wordMeaningTab',
+            'স্পিচ টুলস': 'sttTab',
+            'লেখা সম্পর্কিত টুলস (জেমিনি)': 'textAssistantTab',
+            'টেক্সট টু স্পিচ': 'ttsTab',
+            'স্পিচ টু টেক্সট (জেমিনি)': 'sttTab',
+            'ছবি থেকে লেখা (OCR - জেমিনি)': 'imageToTextTab',
+            'ছবি রিসাইজার': 'imageResizerTab',
+            'টেক্সট অ্যাসিস্ট্যান্ট (জেমিনি)': 'textAssistantTab',
+            'ওয়েব সার্চ': 'webSearchTab',
+            'গুগল ম্যাপ': 'mapTab',
+            'আবহাওয়া': 'weatherTab',
+            'নামাজের সময়সূচি': 'prayerTimeTab',
+            'দিবসসমূহ': 'daysObservancesTab',
+            'ছুটির তালিকা': 'holidayListTab',
+            'যাকাত ক্যালকুলেটর': 'zakatCalcTab',
+            'কিউআর কোড': 'qrCodeTab',
+            'রঙ বাছাইকারী': 'colorPickerTab',
+            'জরুরি নম্বর': 'emergencyNumbersTab',
+            'ইনভয়েজ': 'invoiceTab',
+            'ঘড়ি': 'clockTab',
+            'প্লেয়ার': 'playerTab',
+            'নোটপ্যাড / টু-ডু লিস্ট': 'notepadTab',
+            'কুইজ (জেমিনি)': 'quizTab',
+            'ডোনেট': 'donateTab',
+            'ডেভেলোপার প্রোফাইল': 'importantLinksTab',
+            'মুদ্রা রূপান্তরকারী': 'currencyTab',
+            'দামের তুলনা': 'unitPriceTab',
+            'ইএমআই ক্যালকুলেটর': 'emiCalcTab',
+            'আইপি ও ডিভাইস ইনফো': 'ipInfoTab',
+            'রেসিপি জেনারেটর (জেমিনি)': 'recipeTab',
+            'পিডিএফ টুলস': 'pdfToolsTab',
+            'স্ক্রিন রেকর্ডার': 'screenRecorderTab',
+            'জেসন ফর্মাটার': 'jsonFormatterTab',
+            'মিম জেনারেটর': 'memeGenTab',
+            'ইন্টারনেট স্পিড': 'speedTestTab',
+            'বারকোড জেনারেটর': 'barcodeGenTab',
+            'র‍্যান্ডম পিকার / লটারি': 'randomPickerTab',
+            'সকল ফিচার': 'allFeaturesTab',
+            'আরও': 'allFeaturesTab',
+            'সেটিংস': 'moreSettingsTab',
+            'আরও সেটিংস': 'moreSettingsTab',
+        };
 
-        'সকল ফিচার': 'allFeaturesTab',
-        'আরও': 'allFeaturesTab',
-        'সেটিংস': 'moreSettingsTab',
-        'আরও সেটিংস': 'moreSettingsTab',
-    };
+        featuresList.querySelectorAll('li > strong').forEach(strongEl => {
+            const featureName = strongEl.textContent.trim().replace(/:$/, '').trim();
+            const tabId = featureToTabIdMap[featureName];
 
-    featuresList.querySelectorAll('li > strong').forEach(strongEl => {
-        // Trim whitespace and remove trailing colon if present
-        const featureName = strongEl.textContent.trim().replace(/:$/, '').trim();
-        const tabId = featureToTabIdMap[featureName];
+            if (tabId) {
+                strongEl.style.cursor = 'pointer';
+                strongEl.style.textDecoration = 'underline';
+                strongEl.title = `"${featureName}" ট্যাবে যান`;
+                strongEl.addEventListener('click', () => {
+                    const tabButton = document.getElementById(tabId);
+                    if (tabButton) {
+                        const dropdown = tabButton.closest('.absolute'); 
+                        if (dropdown && dropdown.classList.contains('hidden')) {
+                            let dropdownToggleButton;
+                            if (dropdown.id === 'moreMenuDropdown') dropdownToggleButton = document.getElementById('moreMenuBtn');
+                            else if (dropdown.id === 'settingsMenuDropdown') dropdownToggleButton = document.getElementById('settingsMenuBtn');
 
-        if (tabId) {
-            strongEl.style.cursor = 'pointer';
-            strongEl.style.textDecoration = 'underline';
-            strongEl.title = `"${featureName}" ট্যাবে যান`;
-            strongEl.addEventListener('click', () => {
-                const tabButton = document.getElementById(tabId);
-                if (tabButton) {
-                    // Check if the tab is inside a hidden dropdown
-                    const dropdown = tabButton.closest('.absolute'); // Find the parent dropdown if it exists
-                    if (dropdown && dropdown.classList.contains('hidden')) {
-                        // If it's in a hidden dropdown, simulate opening the dropdown first
-                        // Find the button that controls this dropdown (e.g., 'আরও' button)
-                        let dropdownToggleButton;
-                        if (dropdown.id === 'moreMenuDropdown') {
-                            dropdownToggleButton = document.getElementById('moreMenuBtn');
-                        } else if (dropdown.id === 'settingsMenuDropdown') {
-                            dropdownToggleButton = document.getElementById('settingsMenuBtn');
-                        }
-
-                        if (dropdownToggleButton) {
-                            // Briefly show the dropdown to allow the click to register
-                            dropdown.classList.remove('hidden');
-                            tabButton.click();
-                            // Optional: Hide the dropdown again after a short delay or keep it open
-                            // dropdown.classList.add('hidden');
+                            if (dropdownToggleButton) {
+                                dropdown.classList.remove('hidden');
+                                tabButton.click();
+                            } else {
+                                 tabButton.click(); 
+                            }
                         } else {
-                             tabButton.click(); // If toggle button not found, try clicking directly
+                            tabButton.click(); 
                         }
                     } else {
-                        tabButton.click(); // Click the tab button directly if not in a hidden dropdown
+                        showCustomAlert(`"${featureName}" ট্যাব (${tabId}) খুঁজে পাওয়া যায়নি।`);
                     }
-                } else {
-                    showCustomAlert(`"${featureName}" ট্যাব (${tabId}) খুঁজে পাওয়া যায়নি।`);
-                    console.error(`Tab button with ID "${tabId}" not found for feature "${featureName}".`);
-                }
-            });
-        } else {
-             console.warn(`No tab ID found in map for feature: "${featureName}"`);
-             // Optionally add styling to indicate it's not clickable
-             // strongEl.style.textDecoration = 'none';
-             // strongEl.style.cursor = 'default';
-        }
-    });
-}
+                });
+            }
+        });
+    }
 });
 // ====================================================================
 // END: NEW SIDEBAR, DASHBOARD & INTERACTIVITY SCRIPT (UPDATED)
 // ====================================================================
+
+
 
 // ========================================================
 // START: Image Resizer Script (ছবি রিসাইজার) - পরিবর্তিত ও সংশোধিত
@@ -25498,6 +25532,7 @@ function initializeTasbeeh() {
 <!-- ====================================================================-->
 <!-- END: SIDEBAR SCRIPT-->
 <!-- ====================================================================-->
+
 
 </body>
 </html>
