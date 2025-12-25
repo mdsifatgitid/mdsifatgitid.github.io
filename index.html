@@ -23218,7 +23218,6 @@ function initializeImageResizer() {
             column3.prepend(undoRedoSection);
         } else {
             // ফলব্যাক: যদি লেআউটটি প্রত্যাশিত না হয়, তবে পুরানো পদ্ধতিতে যোগ করার চেষ্টা করুন
-            console.warn("Expected 3-column grid not found for history. Using fallback insertion.");
             const cropSection = cropToggleBtn.parentElement;
             if (cropSection) {
                 cropSection.parentElement.insertBefore(undoRedoSection, cropSection);
@@ -23283,7 +23282,6 @@ function initializeImageResizer() {
             
             // --- START: স্ট্রেচ বাগ ফিক্স (সংশোধিত) ---
             // ছবি লোড হওয়ার পর ইনপুট বক্স সবসময় আপডেট করুন
-            // এটি নিশ্চিত করে যে 'processImage' ফাংশন সঠিক ডাইমেনশন পায়
             if (widthInput) widthInput.value = originalImage.width;
             if (heightInput) heightInput.value = originalImage.height;
             // --- END: স্ট্রেচ বাগ ফিক্স (সংশোধিত) ---
@@ -23385,19 +23383,45 @@ function initializeImageResizer() {
             heightInput.value = originalImage.height;
             processImage();
         } else {
+            // *** পরিবর্তিত: ক্রপ মোড চালু করার সময় ইনপুট ভ্যালু চেক করা ***
+            let initWidth = parseInt(widthInput.value);
+            let initHeight = parseInt(heightInput.value);
+            // যদি ইনপুট ভ্যালু না থাকে বা অবৈধ হয়, তবে আসল ছবির সাইজ ব্যবহার করুন
+            if (isNaN(initWidth)) initWidth = originalImage.width;
+            if (isNaN(initHeight)) initHeight = originalImage.height;
+
             cropper = new Cropper(originalPreview, {
                 viewMode: 1,
-                autoCropArea: 0.8,
+                autoCropArea: 1, // ডিফল্ট সিলেকশন পুরো ছবি জুড়ে
                 background: false,
-                // নতুন: ফ্লিপড অবস্থা বজায় রাখুন
                 scaleX: scaleX,
                 scaleY: scaleY,
+                ready() {
+                    // ক্রপার রেডি হলে ইনপুটের ডাইমেনশন সেট করুন
+                    // this.cropper.setData({ width: initWidth, height: initHeight });
+                },
                 crop(event) {
-                    const data = event.detail;
-                    widthInput.value = Math.round(data.width);
-                    heightInput.value = Math.round(data.height);
+                    // *** ফিক্স: ইনপুট বক্স আর অটো আপডেট হবে না। ***
+                    // ব্যবহারকারী ক্রপ বক্স ড্রাগ করলে ইনপুটের মান পরিবর্তন হবে না।
+                    // ফলে ইনপুটের মানই হবে ফাইনাল আউটপুট সাইজ।
+                    // const data = event.detail;
+                    // widthInput.value = Math.round(data.width);
+                    // heightInput.value = Math.round(data.height);
                 },
             });
+            
+            // *** নতুন: অনুপাত ঠিক রাখুন অপশন অনুযায়ী অ্যাসপেক্ট রেশিও সেট করুন ***
+            if (aspectRatioLock.checked) {
+                // ইনপুট অনুযায়ী অনুপাত সেট করা হবে
+                if (initWidth && initHeight) {
+                    cropper.setAspectRatio(initWidth / initHeight);
+                } else {
+                    cropper.setAspectRatio(originalAspectRatio);
+                }
+            } else {
+                cropper.setAspectRatio(NaN);
+            }
+
             cropToggleBtn.classList.add('active');
             cropToggleBtn.innerHTML = `
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
@@ -23446,10 +23470,6 @@ function initializeImageResizer() {
                     sourceCanvas.width = originalImage.width;
                     sourceCanvas.height = originalImage.height;
                     const tempCtx = sourceCanvas.getContext('2d');
-                    
-                    // এখানে ম্যানুয়াল রোটেশন বা ফ্লিপ প্রয়োগ করা যেত, 
-                    // কিন্তু ক্রপার না থাকলে রোটেট বা ফ্লিপ বাটন কাজ করবে না (নিচের লজিক অনুযায়ী)
-                    // তাই শুধু ছবিটি আঁকলেই চলবে
                     tempCtx.drawImage(originalImage, 0, 0);
                 }
 
@@ -23575,12 +23595,25 @@ function initializeImageResizer() {
 
     if (widthInput) {
         widthInput.addEventListener('input', () => {
+            // *** সংশোধিত: ক্রপ মোডেও ইনপুট নিলে আপডেট হবে ***
             if (cropper) {
-                return; // ক্রপ মোডে থাকলে ইনপুট পরিবর্তন ইগনোর করুন
-            }
-            if (aspectRatioLock.checked && originalImage) {
-                const newWidth = parseInt(widthInput.value);
-                if (!isNaN(newWidth) && newWidth > 0) heightInput.value = Math.round(newWidth / originalAspectRatio) || 1;
+                const val = parseInt(widthInput.value);
+                if (!isNaN(val)) {
+                    // ক্রপ বক্সের সাইজ আপডেট করুন
+                    // let data = cropper.getData();
+                    // data.width = val;
+                    // cropper.setData(data);
+                    
+                    // যদি অনুপাত লক করা থাকে, তবে নতুন অনুপাত সেট করুন (যাতে ড্রাগ করলেও ঠিক থাকে)
+                    if (aspectRatioLock.checked && heightInput.value) {
+                        cropper.setAspectRatio(val / parseInt(heightInput.value));
+                    }
+                }
+            } else {
+                if (aspectRatioLock.checked && originalImage) {
+                    const newWidth = parseInt(widthInput.value);
+                    if (!isNaN(newWidth) && newWidth > 0) heightInput.value = Math.round(newWidth / originalAspectRatio) || 1;
+                }
             }
             debouncedProcess();
         });
@@ -23588,12 +23621,25 @@ function initializeImageResizer() {
 
     if (heightInput) {
         heightInput.addEventListener('input', () => {
+            // *** সংশোধিত: ক্রপ মোডেও ইনপুট নিলে আপডেট হবে ***
             if (cropper) {
-                 return; // ক্রপ মোডে থাকলে ইনপুট পরিবর্তন ইগনোর করুন
-            }
-            if (aspectRatioLock.checked && originalImage) {
-                const newHeight = parseInt(heightInput.value);
-                if (!isNaN(newHeight) && newHeight > 0) widthInput.value = Math.round(newHeight * originalAspectRatio) || 1;
+                const val = parseInt(heightInput.value);
+                if (!isNaN(val)) {
+                    // ক্রপ বক্সের সাইজ আপডেট করুন
+                    // let data = cropper.getData();
+                    // data.height = val;
+                    // cropper.setData(data);
+                    
+                    // যদি অনুপাত লক করা থাকে, তবে নতুন অনুপাত সেট করুন
+                    if (aspectRatioLock.checked && widthInput.value) {
+                        cropper.setAspectRatio(parseInt(widthInput.value) / val);
+                    }
+                }
+            } else {
+                if (aspectRatioLock.checked && originalImage) {
+                    const newHeight = parseInt(heightInput.value);
+                    if (!isNaN(newHeight) && newHeight > 0) widthInput.value = Math.round(newHeight * originalAspectRatio) || 1;
+                }
             }
             debouncedProcess();
         });
@@ -23601,19 +23647,30 @@ function initializeImageResizer() {
     
     if (aspectRatioLock) {
         aspectRatioLock.addEventListener('change', () => {
+            // *** সংশোধিত: লক চেক করার সাথে সাথে বর্তমান ইনপুট ভ্যালু দিয়ে অনুপাত ফিক্স করা ***
             if (cropper) {
-                cropper.setAspectRatio(aspectRatioLock.checked ? originalAspectRatio : NaN);
-            }
-             // --- START: নতুন পরিবর্তন ---
-            // ব্যবহারকারী টিক দেওয়া মাত্রই অনুপাত আপডেট করুন
-            if (aspectRatioLock.checked && originalImage && !cropper) {
-                const newWidth = parseInt(widthInput.value);
-                if (!isNaN(newWidth) && newWidth > 0) {
-                    heightInput.value = Math.round(newWidth / originalAspectRatio) || 1;
-                    debouncedProcess();
+                if (aspectRatioLock.checked) {
+                    const w = parseInt(widthInput.value);
+                    const h = parseInt(heightInput.value);
+                    if (w && h) {
+                        cropper.setAspectRatio(w / h);
+                    } else {
+                        // ভ্যালু না থাকলে ইমেজের রেশিও নিন
+                        cropper.setAspectRatio(originalAspectRatio);
+                    }
+                } else {
+                    cropper.setAspectRatio(NaN); // ফ্রি মোড
+                }
+            } else {
+                // ক্রপার ছাড়া সাধারণ মোডে রেশিও আপডেট লজিক
+                if (aspectRatioLock.checked && originalImage && widthInput.value) {
+                    const newWidth = parseInt(widthInput.value);
+                    if (!isNaN(newWidth) && newWidth > 0) {
+                        heightInput.value = Math.round(newWidth / originalAspectRatio) || 1;
+                        debouncedProcess();
+                    }
                 }
             }
-            // --- END: নতুন পরিবর্তন ---
         });
     }
 
@@ -23694,24 +23751,24 @@ function initializeImageResizer() {
         downloadBtn.addEventListener('click', async () => {
             if (cropper) {
                 // ক্রপ মোডে থাকলে, প্রথমে ক্রপ করা ছবিটি পান
-                const croppedCanvas = cropper.getCroppedCanvas();
-                
-                // --- START: স্ট্রেচ বাগ ফিক্স ---
-                // ক্রপ করা ক্যানভাস থেকে নতুন প্রস্থ ও উচ্চতা নিন
-                const newWidth = croppedCanvas.width;
-                const newHeight = croppedCanvas.height;
-                // --- END: স্ট্রেচ বাগ ফিক্স ---
+                // *** ফিক্স: এখানে ইনপুটের ভ্যালু অনুযায়ী ফাইনাল সাইজ সেট করা হচ্ছে ***
+                const finalWidth = parseInt(widthInput.value) || 0;
+                const finalHeight = parseInt(heightInput.value) || 0;
 
+                const cropOptions = {};
+                // যদি ভ্যালু থাকে তবে সেই সাইজে রিসাইজ করে ক্যানভাস নেওয়া হবে
+                if (finalWidth > 0 && finalHeight > 0) {
+                    cropOptions.width = finalWidth;
+                    cropOptions.height = finalHeight;
+                }
+
+                const croppedCanvas = cropper.getCroppedCanvas(cropOptions);
+                
                 const newImageDataUrl = croppedCanvas.toDataURL(formatSelect.value, parseInt(qualitySlider.value) / 100);
                 
                 // ক্রপ করা ছবিটিকে নতুন 'originalImage' হিসেবে সেট করুন
                 pushToHistory(newImageDataUrl); 
                 toggleCropMode(); // ক্রপ মোড বন্ধ করুন
-                
-                // --- START: স্ট্রেচ বাগ ফিক্স (লাইন দুটি মুছে ফেলা হয়েছে) ---
-                // widthInput.value = newWidth; (এই লাইনটি মুছে ফেলা হয়েছে)
-                // heightInput.value = newHeight; (এই লাইনটি মুছে ফেলা হয়েছে)
-                // --- END: স্ট্রেচ বাগ ফিক্স ---
                 
                 // এই কলটি প্রথমবার (স্ট্রেচড) ছবিটি লোড করবে
                 loadImageFromDataURL(newImageDataUrl, true); 
