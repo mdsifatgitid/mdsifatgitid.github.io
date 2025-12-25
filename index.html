@@ -6934,6 +6934,7 @@ body.sidebar-open #sidebarOverlay {
 				<button id="emergencyNumbersTab" class="tab-button rounded-xl">জরুরি নম্বর</button>
 				<button id="tasbeehTab" class="tab-button rounded-xl">ডিজিটাল তাসবিহ</button>
 				<button id="diffCheckerTab" class="tab-button rounded-xl">ডিফ চেকার (Diff)</button>
+				<button id="expenseTrackerTab" class="tab-button rounded-xl">আয়-ব্যয় হিসাব</button>
 				<button id="allFeaturesTab" class="tab-button rounded-xl">সকল ফিচার</button>
 				<button id="importantLinksTab" class="tab-button rounded-xl">গুরুত্বপূর্ণ লিংকসমূহ</button>
 				<button id="donateTab" class="tab-button rounded-xl">ডোনেট</button>
@@ -7941,8 +7942,12 @@ body.sidebar-open #sidebarOverlay {
 				<li class="mb-2">
 				<strong class="text-teal-600 dark:text-teal-400">দামের তুলনা:</strong> দুটি পণ্যের দাম ও পরিমাণ দিয়ে সহজেই বের করুন কোনটি কেনা লাভজনক।
 				</li>
+				</li>
 				<li class="mb-2">
                 <strong class="text-slate-700 dark:text-slate-400">ডিফ চেকার (Diff):</strong> দুটি টেক্সট বা কোডের মধ্যে পার্থক্য তুলনা করুন এবং পরিবর্তনগুলো হাইলাইট আকারে দেখুন।
+                </li>
+				 <li class="mb-2">
+                    <strong class="text-teal-600 dark:text-teal-400">আয়-ব্যয় হিসাব:</strong> আপনার দৈনন্দিন আয়ের ও ব্যয়ের হিসাব রাখুন, এডিট করুন এবং চার্ট দেখুন।
                 </li>
                 <li class="mb-2">
                     <strong class="text-indigo-600 dark:text-indigo-400">ইএমআই ক্যালকুলেটর:</strong> ঋণের পরিমাণ, সুদের হার এবং মেয়াদ দিয়ে মাসিক কিস্তি এবং মোট সুদ হিসাব করুন।
@@ -10404,6 +10409,98 @@ body.sidebar-open #sidebarOverlay {
 </div>
 <!-- শেষ: ডিফ চেকার বিভাগ -->
 
+<!-- START: Expense Tracker Content (আয়-ব্যয় হিসাব) -->
+<div id="expenseTrackerContent" class="calculator-content">
+    <div class="days-observances-container"> <!-- Reusing container style -->
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">💰 আয়-ব্যয় হিসাব</h3>
+        
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-3 gap-2 mb-6">
+            <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg border border-blue-200 dark:border-blue-700">
+                <h4 class="text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-300">বর্তমান ব্যালেন্স</h4>
+                <p id="expBalance" class="text-lg sm:text-xl font-bold text-blue-800 dark:text-blue-100 mt-1">৳ ০</p>
+            </div>
+            <div class="bg-green-100 dark:bg-green-900 p-3 rounded-lg border border-green-200 dark:border-green-700">
+                <h4 class="text-xs sm:text-sm font-semibold text-green-600 dark:text-green-300">মোট আয়</h4>
+                <p id="expTotalIncome" class="text-lg sm:text-xl font-bold text-green-800 dark:text-green-100 mt-1">৳ ০</p>
+            </div>
+            <div class="bg-red-100 dark:bg-red-900 p-3 rounded-lg border border-red-200 dark:border-red-700">
+                <h4 class="text-xs sm:text-sm font-semibold text-red-600 dark:text-red-300">মোট ব্যয়</h4>
+                <p id="expTotalExpense" class="text-lg sm:text-xl font-bold text-red-800 dark:text-red-100 mt-1">৳ ০</p>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow mb-6 flex justify-center">
+            <div style="width: 250px; height: 250px;">
+                <canvas id="expenseChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Input Form -->
+        <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 mb-6 text-left">
+            <h4 class="font-bold text-gray-700 dark:text-gray-200 mb-3 border-b pb-2 dark:border-gray-600">নতুন লেনদেন যুক্ত করুন</h4>
+            
+            <div class="flex gap-2 mb-3">
+                <label class="flex-1 cursor-pointer">
+                    <input type="radio" name="transType" value="expense" class="peer sr-only" checked>
+                    <div class="p-2 text-center rounded-md border border-red-300 bg-white text-gray-600 peer-checked:bg-red-500 peer-checked:text-white transition-all">ব্যয় (Expense)</div>
+                </label>
+                <label class="flex-1 cursor-pointer">
+                    <input type="radio" name="transType" value="income" class="peer sr-only">
+                    <div class="p-2 text-center rounded-md border border-green-300 bg-white text-gray-600 peer-checked:bg-green-500 peer-checked:text-white transition-all">আয় (Income)</div>
+                </label>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">বিবরণ</label>
+                    <input type="text" id="expDesc" placeholder="যেমন: বাজার খরচ" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">পরিমাণ (টাকা)</label>
+                    <input type="number" id="expAmount" placeholder="0" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">ক্যাটাগরি</label>
+                    <select id="expCategory" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="Food">খাবার</option>
+                        <option value="Transport">যাতায়াত</option>
+                        <option value="Shopping">কেনাকাটা</option>
+                        <option value="Bills">বিল ও ইউটিলিটি</option>
+                        <option value="Salary">বেতন/উপার্জন</option>
+                        <option value="Others">অন্যান্য</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">তারিখ</label>
+                    <input type="date" id="expDate" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+            </div>
+
+            <button id="addTransactionBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors flex justify-center items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                লেনদেন যুক্ত করুন
+            </button>
+        </div>
+
+        <!-- History List -->
+        <div>
+            <div class="flex justify-between items-center mb-3">
+                <h4 class="font-bold text-gray-700 dark:text-gray-200">লেনদেনের ইতিহাস</h4>
+                <button id="clearAllTransBtn" class="text-xs text-red-500 hover:text-red-700 underline">সব মুছুন</button>
+            </div>
+            <div id="transactionList" class="space-y-2 max-h-80 overflow-y-auto pr-1">
+                <!-- Transactions will be injected here -->
+                <p class="text-center text-gray-400 text-sm py-4">কোনো লেনদেন পাওয়া যায়নি।</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: Expense Tracker Content -->
 
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের HTML Content কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
@@ -13198,6 +13295,8 @@ const speedTestTab = document.getElementById('speedTestTab');
 const speedTestContent = document.getElementById('speedTestContent');
 const diffCheckerTab = document.getElementById('diffCheckerTab');
 const diffCheckerContent = document.getElementById('diffCheckerContent');
+const expenseTrackerTab = document.getElementById('expenseTrackerTab');
+const expenseTrackerContent = document.getElementById('expenseTrackerContent');
 
 // ====================================================================
 // END: CONST SECTION FOR TAB
@@ -13491,7 +13590,7 @@ function showTab(tabId) {
         ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,barcodeGenTab, randomPickerTab,
         translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
         qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab, webSearchTab, 
-        textAssistantTab,holidayListTab,quizTab,unitPriceTab,tasbeehTab,diffCheckerTab,
+        textAssistantTab,holidayListTab,quizTab,unitPriceTab,tasbeehTab,diffCheckerTab,expenseTrackerTab,
         allFeaturesTab
     ];
     const contents = [
@@ -13500,7 +13599,7 @@ function showTab(tabId) {
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent, barcodeGenContent, randomPickerContent,
         weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
         textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,unitPriceContent,tasbeehContent,
-		diffCheckerContent,
+		diffCheckerContent,expenseTrackerContent,
         allFeaturesContent
     ];
 
@@ -13569,8 +13668,13 @@ case 'basic':
         case 'date':
             activeTab = dateCalcTab;
             activeContent = dateCalculatorContent;
-            break;
-case 'scientific':
+        break;
+			case 'expenseTracker':
+			activeTab = expenseTrackerTab;
+			activeContent = expenseTrackerContent;
+			initializeExpenseTracker();
+		break;
+		case 'scientific':
             activeTab = scientificCalcTab;
             activeContent = scientificCalculatorContent;
             // নতুন: ডেস্কটপে (নন-টাচ ডিভাইস) অটো-ফোকাস লজিক
@@ -13826,7 +13930,7 @@ case 'speedTest':
     const moreMenuTabs = [
         'clock', 'player', 'quiz', 'history', 'daysObservances', 'tasbeeh','diffChecker',
         'holiday', 'zakat', 'qrCode', 'colorPicker', 'invoice', 'unitPrice',
-        'imageResizer', 'emergency', 'healthLifestyle', 
+        'imageResizer', 'emergency', 'healthLifestyle', 'expenseTracker',
         'currency', 'emi', 'ip', 'recipe', 'pdf', 'randomPicker','barcode',
         'screenRecorder', 'jsonFormatter', 'memeGen', 'speedTest',
         'allFeatures', 'importantLinks', 'donate'
@@ -13914,6 +14018,7 @@ if (tasbeehTab) {tasbeehTab.addEventListener('click', () => {showTab('tasbeeh');
     });
 }
 if (diffCheckerTab) diffCheckerTab.addEventListener('click', () => showTab('diffChecker'));
+if (expenseTrackerTab) expenseTrackerTab.addEventListener('click', () => {    showTab('expenseTracker');    initializeExpenseTracker(); });
 
 	
 // ====================================================================
@@ -22979,6 +23084,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'সেটিংস': 'moreSettingsTab',
             'আরও সেটিংস': 'moreSettingsTab',
 			'ডিফ চেকার (Diff)': 'diffCheckerTab',
+			'আয়-ব্যয় হিসাব':'expenseTrackerTab',
         };
 
         featuresList.querySelectorAll('li > strong').forEach(strongEl => {
@@ -25690,6 +25796,239 @@ function initializeDiffChecker() {
 // END: Advanced Diff Checker Logic
 // ========================================================
 
+// ========================================================
+// START: Expense Tracker Script (Updated with Edit & Clear Chart)
+// ========================================================
+function initializeExpenseTracker() {
+    const balanceEl = document.getElementById('expBalance');
+    const incomeEl = document.getElementById('expTotalIncome');
+    const expenseEl = document.getElementById('expTotalExpense');
+    const listEl = document.getElementById('transactionList');
+    const formBtn = document.getElementById('addTransactionBtn');
+    const clearBtn = document.getElementById('clearAllTransBtn');
+    const dateInput = document.getElementById('expDate');
+    const chartCanvas = document.getElementById('expenseChart');
+
+    // ইনপুট ফিল্ডস
+    const descInput = document.getElementById('expDesc');
+    const amountInput = document.getElementById('expAmount');
+    const categoryInput = document.getElementById('expCategory');
+    const typeInputs = document.getElementsByName('transType');
+
+    // চার্ট ইন্সট্যান্স রাখার জন্য
+    let expenseChartInstance = null;
+
+    // ডিফল্ট ডেট আজকের দিন সেট করা
+    if(dateInput && !dateInput.value) {
+        dateInput.valueAsDate = new Date();
+    }
+
+    // ডাটা লোড করা এবং UI আপডেট করা
+    async function loadAndRender() {
+        const transactions = await idbGet('expense_transactions') || [];
+        updateValues(transactions);
+        renderList(transactions);
+        renderChart(transactions);
+    }
+
+    // মোট হিসাব আপডেট করা
+    function updateValues(transactions) {
+        const amounts = transactions.map(t => t.type === 'income' ? t.amount : -t.amount);
+        
+        const total = amounts.reduce((acc, item) => acc + item, 0);
+        const income = amounts.filter(item => item > 0).reduce((acc, item) => acc + item, 0);
+        const expense = (amounts.filter(item => item < 0).reduce((acc, item) => acc + item, 0) * -1);
+
+        if(balanceEl) balanceEl.innerText = `৳ ${total.toLocaleString('bn-BD')}`;
+        if(incomeEl) incomeEl.innerText = `৳ ${income.toLocaleString('bn-BD')}`;
+        if(expenseEl) expenseEl.innerText = `৳ ${expense.toLocaleString('bn-BD')}`;
+    }
+
+    // তালিকা রেন্ডার করা (এডিট বাটন সহ)
+    function renderList(transactions) {
+        if(!listEl) return;
+        listEl.innerHTML = '';
+
+        if (transactions.length === 0) {
+            listEl.innerHTML = '<p class="text-center text-gray-400 text-sm py-4">কোনো লেনদেন নেই।</p>';
+            return;
+        }
+
+        // নতুন থেকে পুরাতন সাজানো
+        const sortedTrans = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        sortedTrans.forEach(t => {
+            const item = document.createElement('div');
+            const isIncome = t.type === 'income';
+            const sign = isIncome ? '+' : '-';
+            const borderClass = isIncome ? 'border-l-4 border-green-500' : 'border-l-4 border-red-500';
+            const textClass = isIncome ? 'text-green-600' : 'text-red-600';
+
+            item.className = `bg-white dark:bg-gray-700 p-3 rounded shadow-sm flex justify-between items-center ${borderClass}`;
+            
+            // এডিট বাটন যোগ করা হয়েছে
+            item.innerHTML = `
+                <div>
+                    <h5 class="font-bold text-gray-800 dark:text-gray-100">${t.desc}</h5>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">${t.date} | ${getCategoryBangla(t.category)}</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-bold ${textClass}">${sign}৳${t.amount.toLocaleString('bn-BD')}</p>
+                    <div class="flex gap-2 justify-end mt-1">
+                        <button class="text-xs text-blue-500 hover:text-blue-700 edit-btn" data-id="${t.id}">এডিট</button>
+                        <button class="text-xs text-red-400 hover:text-red-500 delete-btn" data-id="${t.id}">&times; মুছুন</button>
+                    </div>
+                </div>
+            `;
+            
+            // এডিট ইভেন্ট
+            item.querySelector('.edit-btn').addEventListener('click', async (e) => {
+                e.stopPropagation();
+                // ইনপুট ফিল্ডে মান বসানো
+                descInput.value = t.desc;
+                amountInput.value = t.amount;
+                categoryInput.value = t.category;
+                dateInput.value = t.date;
+                // রেডিও বাটন সেট করা
+                for (const radio of typeInputs) {
+                    if (radio.value === t.type) radio.checked = true;
+                }
+
+                // ডাটাবেস থেকে সরানো (যাতে আপডেটের মতো কাজ করে)
+                // ব্যবহারকারী "লেনদেন যুক্ত করুন" ক্লিক করলে এটি নতুন করে সেভ হবে
+                const newTrans = transactions.filter(tr => tr.id !== t.id);
+                await idbSet('expense_transactions', newTrans);
+                
+                loadAndRender();
+                showCustomAlert('তথ্য এডিট মোডে নেওয়া হয়েছে। পরিবর্তন করে "লেনদেন যুক্ত করুন" বাটনে ক্লিক করুন।');
+                // স্ক্রল করে উপরে ফর্মের কাছে নিয়ে যাওয়া
+                document.querySelector('.bg-gray-50.dark\\:bg-gray-800')?.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // ডিলেট ইভেন্ট
+            item.querySelector('.delete-btn').addEventListener('click', async (e) => {
+                e.stopPropagation();
+                if(confirm('এই লেনদেনটি মুছে ফেলতে চান?')) {
+                    const newTrans = transactions.filter(tr => tr.id !== t.id);
+                    await idbSet('expense_transactions', newTrans);
+                    loadAndRender();
+                }
+            });
+
+            listEl.appendChild(item);
+        });
+    }
+
+    // চার্ট রেন্ডার করা (Pie Chart)
+    function renderChart(transactions) {
+        if (!chartCanvas || typeof Chart === 'undefined') return;
+
+        const income = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
+        const expense = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
+
+        if (expenseChartInstance) {
+            expenseChartInstance.destroy();
+        }
+
+        // যদি ডাটা না থাকে
+        if (income === 0 && expense === 0) return;
+
+        expenseChartInstance = new Chart(chartCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: ['আয়', 'ব্যয়'],
+                datasets: [{
+                    data: [income, expense],
+                    backgroundColor: ['#10b981', '#ef4444'], // Green, Red
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: document.documentElement.classList.contains('dark') ? '#e5e7eb' : '#374151' }
+                    }
+                }
+            }
+        });
+    }
+
+    // ক্যাটাগরি বাংলায় দেখানোর হেল্পার
+    function getCategoryBangla(cat) {
+        const map = { 'Food': 'খাবার', 'Transport': 'যাতায়াত', 'Shopping': 'কেনাকাটা', 'Bills': 'বিল', 'Salary': 'বেতন', 'Others': 'অন্যান্য' };
+        return map[cat] || cat;
+    }
+
+    // নতুন লেনদেন যোগ করা
+    if(formBtn) {
+        formBtn.onclick = async () => {
+            const desc = descInput.value.trim();
+            const amount = parseFloat(amountInput.value);
+            const category = categoryInput.value;
+            const date = dateInput.value;
+            
+            let type = 'expense';
+            for (const radio of typeInputs) {
+                if (radio.checked) {
+                    type = radio.value;
+                    break;
+                }
+            }
+
+            if (desc === '' || isNaN(amount) || amount <= 0 || !date) {
+                showCustomAlert('অনুগ্রহ করে সঠিক বিবরণ, পরিমাণ এবং তারিখ দিন।');
+                return;
+            }
+
+            const transaction = {
+                id: Date.now(),
+                desc,
+                amount,
+                category,
+                date,
+                type
+            };
+
+            const transactions = await idbGet('expense_transactions') || [];
+            transactions.push(transaction);
+            await idbSet('expense_transactions', transactions);
+
+            showCustomAlert('লেনদেন সফলভাবে যুক্ত হয়েছে!');
+            
+            // ফর্ম রিসেট
+            descInput.value = '';
+            amountInput.value = '';
+            loadAndRender();
+        };
+    }
+
+    // সব ডাটা মুছে ফেলা (চার্ট সহ)
+    if(clearBtn) {
+        clearBtn.onclick = async () => {
+            if(confirm('সতর্কতা: আপনি কি নিশ্চিত যে সব লেনদেনের ইতিহাস মুছে ফেলতে চান?')) {
+                await idbSet('expense_transactions', []);
+                
+                // চার্ট ধ্বংস করা
+                if (expenseChartInstance) {
+                    expenseChartInstance.destroy();
+                    expenseChartInstance = null;
+                }
+                
+                loadAndRender();
+                showCustomAlert('সব ইতিহাস মুছে ফেলা হয়েছে।');
+            }
+        };
+    }
+
+    // ইনিশিয়াল লোড
+    loadAndRender();
+}
+// ========================================================
+// END: Expense Tracker Script
+// ========================================================
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
         window.onload = function() {
