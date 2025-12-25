@@ -10391,10 +10391,20 @@ body.sidebar-open #sidebarOverlay {
                     <div id="diffOutputNew" class="diff-result-content"></div>
                 </div>
             </div>
+
+            <!-- নতুন: কম্বাইন্ড ভিউ (একসাথে) -->
+            <div class="diff-result-box mt-2" style="min-height: 200px;">
+                <div class="diff-pane-header border-b-2 border-indigo-200 dark:border-indigo-900">
+                    <span class="text-indigo-600 dark:text-indigo-300">কম্বাইন্ড ভিউ (সব পরিবর্তন একসাথে)</span>
+                </div>
+                <div id="diffOutputCombined" class="diff-result-content"></div>
+            </div>
         </div>
     </div>
 </div>
 <!-- শেষ: ডিফ চেকার বিভাগ -->
+
+
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের HTML Content কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
 </div>
@@ -25584,7 +25594,7 @@ function initializeTasbeeh() {
 // ========================================================
 
 // ========================================================
-// START: Advanced Diff Checker Logic (Modern Side-by-Side)
+// START: Advanced Diff Checker Logic (Modern Side-by-Side & Combined)
 // ========================================================
 function initializeDiffChecker() {
     const compareBtn = document.getElementById('compareDiffBtn');
@@ -25598,6 +25608,7 @@ function initializeDiffChecker() {
     
     const outputOld = document.getElementById('diffOutputOld');
     const outputNew = document.getElementById('diffOutputNew');
+    const outputCombined = document.getElementById('diffOutputCombined'); // নতুন কম্বাইন্ড আউটপুট
 
     if (!compareBtn) return;
 
@@ -25632,9 +25643,10 @@ function initializeDiffChecker() {
         // শব্দ অনুযায়ী ক্লিনআপ (যাতে ক্যারেক্টার লেভেলে হিজিবিজি না দেখায়)
         dmp.diff_cleanupSemantic(diffs);
 
-        // HTML তৈরি করা (দুটি আলাদা স্ট্রিং)
+        // HTML তৈরি করা
         let htmlOld = [];
         let htmlNew = [];
+        let htmlCombined = []; // নতুন কম্বাইন্ড ভিউ এর জন্য অ্যারে
 
         diffs.forEach(part => {
             const type = part[0]; // -1 (delete), 0 (equal), 1 (insert)
@@ -25642,24 +25654,31 @@ function initializeDiffChecker() {
             
             // HTML Escape (নিরাপত্তার জন্য)
             text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+            
+            // নতুন লাইন হ্যান্ডলিং (ভিজুয়ালি সুন্দর দেখানোর জন্য)
+            const formattedText = text.replace(/\n/g, '<br>');
 
             if (type === 0) { 
-                // Equal (উভয় পাশে থাকবে)
-                htmlOld.push(`<span>${text}</span>`);
-                htmlNew.push(`<span>${text}</span>`);
+                // Equal (উভয় পাশে এবং কম্বাইন্ডে থাকবে)
+                htmlOld.push(`<span>${formattedText}</span>`);
+                htmlNew.push(`<span>${formattedText}</span>`);
+                htmlCombined.push(`<span>${formattedText}</span>`);
             } else if (type === -1) { 
-                // Delete (শুধু বাম পাশে লাল হয়ে থাকবে)
-                htmlOld.push(`<span class="diff-removed">${text}</span>`);
+                // Delete (বাম পাশে এবং কম্বাইন্ডে লাল হয়ে থাকবে)
+                htmlOld.push(`<span class="diff-removed">${formattedText}</span>`);
                 // ডান পাশে দেখাবে না
+                htmlCombined.push(`<span class="diff-removed">${formattedText}</span>`);
             } else if (type === 1) { 
-                // Insert (শুধু ডান পাশে সবুজ হয়ে থাকবে)
+                // Insert (ডান পাশে এবং কম্বাইন্ডে সবুজ হয়ে থাকবে)
                 // বাম পাশে দেখাবে না
-                htmlNew.push(`<span class="diff-added">${text}</span>`);
+                htmlNew.push(`<span class="diff-added">${formattedText}</span>`);
+                htmlCombined.push(`<span class="diff-added">${formattedText}</span>`);
             }
         });
 
         outputOld.innerHTML = htmlOld.join('');
         outputNew.innerHTML = htmlNew.join('');
+        outputCombined.innerHTML = htmlCombined.join(''); // কম্বাইন্ড রেজাল্ট সেট করা
         
         // ভিউ সুইচ করা
         inputContainer.classList.add('hidden');
