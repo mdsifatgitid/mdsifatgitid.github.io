@@ -6643,13 +6643,13 @@ body.sidebar-open #sidebarOverlay {
 /* ========================================= */
 
 /* ======================================================== */
-/* START: Diff Checker Styles (Sublime Text Look) */
+/* START: Diff Checker Styles (Modern Side-by-Side) */
 /* ======================================================== */
 .diff-checker-content {
     padding: 20px;
     border-radius: 16px;
     margin: 0 auto;
-    max-width: 95%; /* প্রশস্ত ভিউ */
+    max-width: 98%; /* আরো প্রশস্ত ভিউ */
     background-color: #f8f9fa;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -6663,7 +6663,7 @@ body.sidebar-open #sidebarOverlay {
 .diff-editor-container {
     display: flex;
     gap: 15px;
-    height: 400px; /* ফিক্সড হাইট */
+    height: 300px; /* ইনপুট সেকশনের হাইট কমানো হয়েছে যাতে রেজাল্ট বড় দেখা যায় */
 }
 
 .diff-pane {
@@ -6676,17 +6676,20 @@ body.sidebar-open #sidebarOverlay {
     overflow: hidden;
 }
 .dark .diff-pane {
-    background-color: #1e1e1e; /* Sublime Dark BG */
+    background-color: #1e1e1e;
     border-color: #4a5568;
 }
 
 .diff-pane-header {
-    padding: 8px 12px;
+    padding: 10px 15px;
     background-color: #e2e8f0;
-    font-weight: 600;
+    font-weight: 700;
     color: #4a5568;
     border-bottom: 1px solid #d1d5db;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 .dark .diff-pane-header {
     background-color: #2d2d2d;
@@ -6698,69 +6701,94 @@ body.sidebar-open #sidebarOverlay {
     flex: 1;
     width: 100%;
     resize: none;
-    padding: 10px;
+    padding: 15px;
     border: none;
     outline: none;
-    font-family: 'Consolas', 'Monaco', 'Courier New', monospace; /* Code Font */
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.6;
     background-color: transparent;
     color: #333;
 }
 .dark .diff-textarea {
-    color: #d4d4d4; /* Light code text */
+    color: #d4d4d4;
 }
 
-/* ফলাফলের স্টাইল */
-.diff-result-view {
-    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    font-size: 14px;
-    line-height: 1.5;
-    padding: 15px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-    white-space: pre-wrap; /* কোডের ফরম্যাট ঠিক রাখতে */
-    word-break: break-all;
-    text-align: left;
-    height: 400px;
-    overflow-y: auto;
+/* রেজাল্ট সেকশন স্টাইল */
+.diff-result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    height: 500px; /* রেজাল্ট দেখার জন্য বড় জায়গা */
 }
-.dark .diff-result-view {
+
+.diff-result-box {
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.dark .diff-result-box {
     background-color: #1e1e1e;
-    color: #d4d4d4;
     border-color: #4a5568;
 }
 
-/* হাইলাইটিং কালার (Sublime Style) */
-del.diff-del {
-    background-color: #da3e3e; /* Red for deleted */
-    color: white;
-    text-decoration: none;
-    padding: 1px 0;
-    border-radius: 2px;
+.diff-result-content {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #333;
 }
-ins.diff-ins {
-    background-color: #2e7d32; /* Green for added */
-    color: white;
-    text-decoration: none;
-    padding: 1px 0;
+.dark .diff-result-content {
+    color: #d4d4d4;
+}
+
+/* হাইলাইটিং কালার */
+.diff-removed {
+    background-color: #ffeef0;
+    color: #b91c1c;
+    text-decoration: line-through;
     border-radius: 2px;
+    padding: 0 2px;
+}
+.dark .diff-removed {
+    background-color: #450a0a;
+    color: #fecaca;
+}
+
+.diff-added {
+    background-color: #e6ffed;
+    color: #166534;
+    font-weight: bold;
+    border-radius: 2px;
+    padding: 0 2px;
+}
+.dark .diff-added {
+    background-color: #064e3b;
+    color: #a7f3d0;
 }
 
 .diff-controls {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 15px;
     margin-bottom: 10px;
 }
 
 @media (max-width: 768px) {
-    .diff-editor-container {
+    .diff-editor-container, .diff-result-grid {
+        grid-template-columns: 1fr;
         flex-direction: column;
         height: auto;
     }
-    .diff-textarea {
+    .diff-textarea, .diff-result-content {
         min-height: 200px;
     }
 }
@@ -9861,7 +9889,7 @@ ins.diff-ins {
         <div class="setting-item">
             <div class="setting-text" style="flex-grow: 1; margin-right: 15px;">
                 <label for="hijriDateAdjustInput" class="font-semibold text-gray-700 dark:text-gray-300">হিজরি তারিখ অ্যাডজাস্টার</label>
-                <p class="text-sm text-gray-500 dark:text-gray-400">হিজরি তারিখ ১-২ দিন কম/বেশি করতে এখানে সংখ্যা লিখুন (যেমন: -1 বা 1)। ডিফল্ট: -2</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">হিজরি তারিখ ১-২ দিন কম/বেশি করতে এখানে সংখ্যা লিখুন (যেমন: -1 বা 1)। ডিফল্ট: -1</p>
                 <div class="flex gap-2 mt-2">
                     <input type="number" id="hijriDateAdjustInput" placeholder="-2" class="flex-grow p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-indigo-500 text-sm">
                     <button id="saveHijriAdjustBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded text-sm">সেভ</button>
@@ -10307,33 +10335,61 @@ ins.diff-ins {
         <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">অ্যাডভান্সড কোড/টেক্সট ডিফ চেকার</h3>
         
         <div class="diff-controls">
-            <button id="compareDiffBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow transition-all">তুলনা করুন (Compare)</button>
-            <button id="clearDiffBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg shadow transition-all">মুছুন</button>
+            <button id="compareDiffBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-xl shadow-lg transition-all transform hover:scale-105">তুলনা করুন (Compare)</button>
+            <button id="clearDiffBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-8 rounded-xl shadow-lg transition-all transform hover:scale-105">মুছুন</button>
         </div>
 
+        <!-- ইনপুট সেকশন -->
         <div class="diff-editor-container" id="diffInputContainer">
             <!-- বাম পাশ: অরিজিনাল -->
             <div class="diff-pane">
-                <div class="diff-pane-header">অরিজিনাল টেক্সট / কোড (Old Version)</div>
+                <div class="diff-pane-header">
+                    <span>অরিজিনাল টেক্সট (Old Version)</span>
+                    <span class="text-xs bg-gray-200 dark:bg-gray-600 px-2 py-1 rounded">Source</span>
+                </div>
                 <textarea id="diffInput1" class="diff-textarea" placeholder="এখানে পুরনো কোড বা লেখা পেস্ট করুন..."></textarea>
             </div>
             <!-- ডান পাশ: নতুন -->
             <div class="diff-pane">
-                <div class="diff-pane-header">পরিবর্তিত টেক্সট / কোড (New Version)</div>
+                <div class="diff-pane-header">
+                    <span>পরিবর্তিত টেক্সট (New Version)</span>
+                    <span class="text-xs bg-gray-200 dark:bg-gray-600 px-2 py-1 rounded">Changed</span>
+                </div>
                 <textarea id="diffInput2" class="diff-textarea" placeholder="এখানে নতুন কোড বা লেখা পেস্ট করুন..."></textarea>
             </div>
         </div>
 
-        <!-- ফলাফল দেখানোর এরিয়া -->
-        <div id="diffResultContainer" class="hidden">
-            <div class="flex justify-between items-center mb-2">
-                <h4 class="font-bold text-gray-700 dark:text-gray-300">ফলাফল (পরিবর্তনসমূহ):</h4>
-                <button id="backToDiffInputBtn" class="text-sm bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition">আবার এডিট করুন</button>
+        <!-- ফলাফল দেখানোর এরিয়া (প্রাথমিকভাবে লুকানো) -->
+        <div id="diffResultContainer" class="hidden flex flex-col gap-4">
+            <div class="flex justify-between items-center bg-blue-100 dark:bg-blue-900 p-3 rounded-lg border border-blue-200 dark:border-blue-700">
+                <div class="flex items-center gap-4 text-sm font-semibold">
+                    <span class="flex items-center gap-1 text-red-600 dark:text-red-300">
+                        <span class="w-3 h-3 bg-red-500 rounded-full"></span> মুছে ফেলা হয়েছে
+                    </span>
+                    <span class="flex items-center gap-1 text-green-600 dark:text-green-300">
+                        <span class="w-3 h-3 bg-green-500 rounded-full"></span> নতুন যুক্ত করা হয়েছে
+                    </span>
+                </div>
+                <button id="backToDiffInputBtn" class="text-sm bg-white dark:bg-gray-800 px-4 py-2 rounded-lg border hover:bg-gray-100 dark:hover:bg-gray-700 transition font-bold shadow-sm">
+                    ← আবার এডিট করুন
+                </button>
             </div>
-            <div id="diffOutput" class="diff-result-view"></div>
-            <div class="mt-2 text-xs text-gray-500 dark:text-gray-400 flex gap-4 justify-center">
-                <span class="flex items-center gap-1"><span class="w-3 h-3 bg-[#da3e3e] inline-block rounded"></span> মুছে ফেলা হয়েছে (Deleted)</span>
-                <span class="flex items-center gap-1"><span class="w-3 h-3 bg-[#2e7d32] inline-block rounded"></span> যুক্ত করা হয়েছে (Inserted)</span>
+
+            <div class="diff-result-grid">
+                <!-- বাম পাশ: কি ছিল -->
+                <div class="diff-result-box">
+                    <div class="diff-pane-header border-b-2 border-red-200 dark:border-red-900">
+                        <span class="text-red-600 dark:text-red-300">পুরানো সংস্করণ (মুছে ফেলা অংশ)</span>
+                    </div>
+                    <div id="diffOutputOld" class="diff-result-content"></div>
+                </div>
+                <!-- ডান পাশ: কি হয়েছে -->
+                <div class="diff-result-box">
+                    <div class="diff-pane-header border-b-2 border-green-200 dark:border-green-900">
+                        <span class="text-green-600 dark:text-green-300">নতুন সংস্করণ (যুক্ত করা অংশ)</span>
+                    </div>
+                    <div id="diffOutputNew" class="diff-result-content"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -25528,7 +25584,7 @@ function initializeTasbeeh() {
 // ========================================================
 
 // ========================================================
-// START: Advanced Diff Checker Logic
+// START: Advanced Diff Checker Logic (Modern Side-by-Side)
 // ========================================================
 function initializeDiffChecker() {
     const compareBtn = document.getElementById('compareDiffBtn');
@@ -25536,9 +25592,12 @@ function initializeDiffChecker() {
     const backBtn = document.getElementById('backToDiffInputBtn');
     const input1 = document.getElementById('diffInput1');
     const input2 = document.getElementById('diffInput2');
+    
     const resultContainer = document.getElementById('diffResultContainer');
     const inputContainer = document.getElementById('diffInputContainer');
-    const output = document.getElementById('diffOutput');
+    
+    const outputOld = document.getElementById('diffOutputOld');
+    const outputNew = document.getElementById('diffOutputNew');
 
     if (!compareBtn) return;
 
@@ -25573,8 +25632,10 @@ function initializeDiffChecker() {
         // শব্দ অনুযায়ী ক্লিনআপ (যাতে ক্যারেক্টার লেভেলে হিজিবিজি না দেখায়)
         dmp.diff_cleanupSemantic(diffs);
 
-        // HTML তৈরি করা
-        let html = [];
+        // HTML তৈরি করা (দুটি আলাদা স্ট্রিং)
+        let htmlOld = [];
+        let htmlNew = [];
+
         diffs.forEach(part => {
             const type = part[0]; // -1 (delete), 0 (equal), 1 (insert)
             let text = part[1];
@@ -25582,16 +25643,23 @@ function initializeDiffChecker() {
             // HTML Escape (নিরাপত্তার জন্য)
             text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 
-            if (type === 1) { // Insert
-                html.push(`<ins class="diff-ins">${text}</ins>`);
-            } else if (type === -1) { // Delete
-                html.push(`<del class="diff-del">${text}</del>`);
-            } else { // Equal
-                html.push(`<span>${text}</span>`);
+            if (type === 0) { 
+                // Equal (উভয় পাশে থাকবে)
+                htmlOld.push(`<span>${text}</span>`);
+                htmlNew.push(`<span>${text}</span>`);
+            } else if (type === -1) { 
+                // Delete (শুধু বাম পাশে লাল হয়ে থাকবে)
+                htmlOld.push(`<span class="diff-removed">${text}</span>`);
+                // ডান পাশে দেখাবে না
+            } else if (type === 1) { 
+                // Insert (শুধু ডান পাশে সবুজ হয়ে থাকবে)
+                // বাম পাশে দেখাবে না
+                htmlNew.push(`<span class="diff-added">${text}</span>`);
             }
         });
 
-        output.innerHTML = html.join('');
+        outputOld.innerHTML = htmlOld.join('');
+        outputNew.innerHTML = htmlNew.join('');
         
         // ভিউ সুইচ করা
         inputContainer.classList.add('hidden');
