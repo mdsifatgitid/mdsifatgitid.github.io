@@ -1,0 +1,22 @@
+{
+  "name": "Bangla Toolbox",
+  "short_name": "BanglaToolbox",
+  "description": "All-in-one utility toolbox for Bengali users.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://mdsifatgitid.github.io/converticon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://mdsifatgitid.github.io/converticon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
