@@ -26164,7 +26164,7 @@ function initializeExpenseTracker() {
 // ========================================================
 
 // ====================================================================
-// START: VOICE COMMAND & PWA LOGIC (নতুন ফিচার)
+// START: VOICE COMMAND & PWA LOGIC (সংশোধিত)
 // ====================================================================
 
 // --- 1. Voice Command Logic ---
@@ -26217,129 +26217,144 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
 }
 
 function processVoiceCommand(command) {
-    // কমান্ড এবং ট্যাব আইডির ম্যাপিং
+    // কমান্ড এবং ট্যাব বাটনের আইডির ম্যাপিং
+    // পরিবর্তন: সরাসরি বাটনের আইডিতে ম্যাপ করা হয়েছে যাতে click() ইভেন্ট ব্যবহার করা যায়
     const commandMap = {
-        'ক্যালকুলেটর': 'basic',
-        'হিসাব': 'basic',
-        'বেসিক': 'basic',
-        'সাইন্টিফিক': 'scientific',
-        'বিজ্ঞান': 'scientific',
-        'তারিখ': 'date',
-        'সময়': 'date',
-        'বয়স': 'age',
-        'ওয়েব': 'webSearch',
-        'সার্চ': 'webSearch',
-        'ব্রাউজার': 'webSearch',
-        'চ্যাট': 'textAssistant',
-        'জেমিনি': 'textAssistant',
-        'কনভার্টার': 'converter',
-        'বিজয়': 'converter',
-        'অভ্র': 'converter',
-        'নামাজ': 'prayerTime',
-        'আজান': 'prayerTime',
-        'ট্রান্সলেটর': 'translator',
-        'অনুবাদ': 'translator',
-        'ওয়ার্ড': 'wordCounter',
-        'শব্দ': 'wordCounter',
-        'অর্থ': 'wordMeaning',
-        'বানান': 'spellCheck',
-        'শুদ্ধ': 'spellCheck',
-        'সাজানো': 'beautify',
-        'ওসিআর': 'imageToText',
-        'ছবি থেকে লেখা': 'imageToText',
-        'টাইপিং': 'typingTest',
-        'টাইপ': 'typingTest',
-        'ভয়েস টু টেক্সট': 'stt',
-        'কথা থেকে লেখা': 'stt',
-        'টেক্সট টু স্পিচ': 'tts',
-        'পড়ে শোনাও': 'tts',
-        'ম্যাপ': 'map',
-        'মানচিত্র': 'map',
-        'আবহাওয়া': 'weather',
-        'পরিমাপ': 'measurement',
-        'ইউনিট': 'measurement',
-        'নোটপ্যাড': 'notepad',
-        'নোট': 'notepad',
-        'টুডু': 'notepad',
-        'ড্যাশবোর্ড': 'dashboard',
-        'হোম': 'dashboard',
-        'ঘড়ি': 'clock',
-        'স্টপওয়াচ': 'clock',
-        'টাইমার': 'clock',
-        'প্লেয়ার': 'player',
-        'গান': 'player',
-        'ভিডিও': 'player',
-        'কুইজ': 'quiz',
-        'প্রশ্ন': 'quiz',
-        'ইতিহাস': 'history',
-        'আজকের দিন': 'history',
-        'দিবস': 'daysObservances',
-        'ছুটি': 'holiday',
-        'বন্ধ': 'holiday',
-        'যাকাত': 'zakat',
-        'কিউআর': 'qrCode',
-        'স্ক্যান': 'qrCode',
-        'বারকোড': 'barcode',
-        'রং': 'colorPicker',
-        'কালার': 'colorPicker',
-        'জরুরি': 'emergency',
-        'নাম্বার': 'emergency',
-        'ইনভয়েস': 'invoice',
-        'বিল': 'invoice',
-        'রিসাইজার': 'imageResizer',
-        'ছবি এডিট': 'imageResizer',
-        'স্বাস্থ্য': 'healthLifestyle',
-        'বিএমআই': 'healthLifestyle',
-        'ইএমআই': 'emi',
-        'লোন': 'emi',
-        'মুদ্রা': 'currency',
-        'কারেন্সি': 'currency',
-        'টাকা': 'currency',
-        'দাম': 'unitPrice',
-        'তুলনা': 'unitPrice',
-        'আইপি': 'ip',
-        'রেসিপি': 'recipe',
-        'রান্না': 'recipe',
-        'পিডিএফ': 'pdf',
-        'জেসন': 'jsonFormatter',
-        'মিম': 'memeGen',
-        'লটারি': 'randomPicker',
-        'রেকর্ডার': 'screenRecorder',
-        'স্ক্রিন': 'screenRecorder',
-        'তাসবিহ': 'tasbeeh',
-        'জিকির': 'tasbeeh',
-        'ডিফ': 'diffChecker',
-        'পার্থক্য': 'diffChecker',
-        'আয় ব্যয়': 'expenseTracker',
-        'খরচ': 'expenseTracker',
-        'ডোনেট': 'donate',
-        'সাহায্য': 'donate',
-        'লিংক': 'importantLinks',
-        'প্রোফাইল': 'importantLinks'
+        'ক্যালকুলেটর': 'basicCalcTab',
+        'হিসাব': 'basicCalcTab',
+        'বেসিক': 'basicCalcTab',
+        'সাইন্টিফিক': 'scientificCalcTab',
+        'বিজ্ঞান': 'scientificCalcTab',
+        'তারিখ': 'dateCalcTab',
+        'সময়': 'dateCalcTab',
+        'বয়স': 'ageCalcTab',
+        'ওয়েব': 'webSearchTab',
+        'সার্চ': 'webSearchTab',
+        'ব্রাউজার': 'webSearchTab',
+        'চ্যাট': 'textAssistantTab',
+        'জেমিনি': 'textAssistantTab',
+        'কনভার্টার': 'converterTab',
+        'বিজয়': 'converterTab',
+        'অভ্র': 'converterTab',
+        'নামাজ': 'prayerTimeTab',
+        'আজান': 'prayerTimeTab',
+        'ট্রান্সলেটর': 'translatorTab',
+        'অনুবাদ': 'translatorTab',
+        'ওয়ার্ড': 'wordCounterTab',
+        'শব্দ': 'wordCounterTab',
+        'অর্থ': 'wordMeaningTab',
+        'বানান': 'spellCheckTab',
+        'শুদ্ধ': 'spellCheckTab',
+        'সাজানো': 'textBeautifierTab',
+        'ওসিআর': 'imageToTextTab',
+        'ছবি থেকে লেখা': 'imageToTextTab',
+        'টাইপিং': 'typingTestTab',
+        'টাইপ': 'typingTestTab',
+        'ভয়েস টু টেক্সট': 'sttTab',
+        'কথা থেকে লেখা': 'sttTab',
+        'টেক্সট টু স্পিচ': 'ttsTab',
+        'পড়ে শোনাও': 'ttsTab',
+        'ম্যাপ': 'mapTab',
+        'মানচিত্র': 'mapTab',
+        'আবহাওয়া': 'weatherTab',
+        'পরিমাপ': 'measurementTab',
+        'ইউনিট': 'measurementTab',
+        'নোটপ্যাড': 'notepadTab',
+        'নোট': 'notepadTab',
+        'টুডু': 'notepadTab',
+        'ড্যাশবোর্ড': 'dashboardTab',
+        'হোম': 'dashboardTab',
+        'ঘড়ি': 'clockTab',
+        'স্টপওয়াচ': 'clockTab',
+        'টাইমার': 'clockTab',
+        'প্লেয়ার': 'playerTab',
+        'গান': 'playerTab',
+        'ভিডিও': 'playerTab',
+        'কুইজ': 'quizTab',
+        'প্রশ্ন': 'quizTab',
+        'ইতিহাস': 'historyTab',
+        'আজকের দিন': 'historyTab',
+        'দিবস': 'daysObservancesTab',
+        'ছুটি': 'holidayListTab',
+        'বন্ধ': 'holidayListTab',
+        'যাকাত': 'zakatCalcTab',
+        'কিউআর': 'qrCodeTab',
+        'স্ক্যান': 'qrCodeTab',
+        'বারকোড': 'barcodeGenTab',
+        'রং': 'colorPickerTab',
+        'কালার': 'colorPickerTab',
+        'জরুরি': 'emergencyNumbersTab',
+        'নাম্বার': 'emergencyNumbersTab',
+        'ইনভয়েস': 'invoiceTab',
+        'বিল': 'invoiceTab',
+        'রিসাইজার': 'imageResizerTab',
+        'ছবি এডিট': 'imageResizerTab',
+        'স্বাস্থ্য': 'healthLifestyleTab',
+        'বিএমআই': 'healthLifestyleTab',
+        'ইএমআই': 'emiCalcTab',
+        'লোন': 'emiCalcTab',
+        'মুদ্রা': 'currencyTab',
+        'কারেন্সি': 'currencyTab',
+        'টাকা': 'currencyTab',
+        'দাম': 'unitPriceTab',
+        'তুলনা': 'unitPriceTab',
+        'আইপি': 'ipInfoTab',
+        'রেসিপি': 'recipeTab',
+        'রান্না': 'recipeTab',
+        'পিডিএফ': 'pdfToolsTab',
+        'জেসন': 'jsonFormatterTab',
+        'মিম': 'memeGenTab',
+        'লটারি': 'randomPickerTab',
+        'রেকর্ডার': 'screenRecorderTab',
+        'স্ক্রিন': 'screenRecorderTab',
+        'তাসবিহ': 'tasbeehTab',
+        'জিকির': 'tasbeehTab',
+        'ডিফ': 'diffCheckerTab',
+        'পার্থক্য': 'diffCheckerTab',
+        'আয় ব্যয়': 'expenseTrackerTab',
+        'খরচ': 'expenseTrackerTab',
+        'ডোনেট': 'donateTab',
+        'সাহায্য': 'donateTab',
+        'লিংক': 'importantLinksTab',
+        'প্রোফাইল': 'importantLinksTab',
+        'স্পিড': 'speedTestTab',
+        'গতি': 'speedTestTab'
     };
 
     // ফাজি ম্যাচিং (Fuzzy Matching) - ইনপুটের মধ্যে কিওয়ার্ড খুঁজবে
-    let foundTab = null;
+    let foundButtonId = null;
     let matchedKeyword = "";
 
     for (const key in commandMap) {
         if (command.includes(key)) {
-            foundTab = commandMap[key];
+            foundButtonId = commandMap[key];
             matchedKeyword = key;
             break; // প্রথম মিল পেলেই থামবে
         }
     }
 
-    if (foundTab) {
-        if (typeof showTab === 'function') {
-            showTab(foundTab);
+    if (foundButtonId) {
+        const targetButton = document.getElementById(foundButtonId);
+        if (targetButton) {
+            // বাটনে ক্লিক সিমুলেট করা হচ্ছে
+            // এটি showTab() এবং অন্যান্য প্রয়োজনীয় ইনিশিয়ালাইজেশন ফাংশন রান করবে
+            targetButton.click();
             
-            // বিশেষ ট্যাবগুলোর জন্য ইনিশিয়ালাইজেশন ফাংশন কল করা (যদি থাকে)
-            if (foundTab === 'tasbeeh' && typeof initializeTasbeeh === 'function') initializeTasbeeh();
-            if (foundTab === 'notepad' && typeof initializeNotepad === 'function') initializeNotepad();
-            if (foundTab === 'clock' && typeof initializeClockTab === 'function') initializeClockTab();
-            
-            showCustomAlert(`চালু করা হচ্ছে: ${matchedKeyword} (${foundTab})`);
+            // যদি বাটনটি ড্রপডাউনের ভেতরে থাকে এবং ড্রপডাউন বন্ধ থাকে, তবে ড্রপডাউনটি ওপেন করার চেষ্টা করা
+            const dropdown = targetButton.closest('.absolute'); 
+            if (dropdown && dropdown.classList.contains('hidden')) {
+                let dropdownToggleBtn;
+                if (dropdown.id === 'moreMenuDropdown') dropdownToggleBtn = document.getElementById('moreMenuBtn');
+                else if (dropdown.id === 'settingsMenuDropdown') dropdownToggleBtn = document.getElementById('settingsMenuBtn');
+                
+                if (dropdownToggleBtn) {
+                    dropdownToggleBtn.click();
+                }
+            }
+
+            showCustomAlert(`চালু করা হচ্ছে: ${matchedKeyword}`);
+        } else {
+            console.error(`Tab button with ID '${foundButtonId}' not found.`);
         }
     } else {
         showCustomAlert(`দুঃখিত, "${command}" এর জন্য কোনো ফিচার খুঁজে পাইনি।`);
@@ -26400,6 +26415,8 @@ window.addEventListener('appinstalled', () => {
 // ====================================================================
 // END: VOICE COMMAND & PWA LOGIC
 // ====================================================================
+
+
 
 
 
