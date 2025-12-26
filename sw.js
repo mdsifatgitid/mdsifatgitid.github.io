@@ -1,9 +1,8 @@
-const CACHE_NAME = 'bangla-toolbox-v2';
+const CACHE_NAME = 'bangla-toolbox-v3'; // ভার্সন আপডেট করা হয়েছে
 const urlsToCache = [
     './', 
-    // আপনার HTML ফাইলের নাম যদি ভিন্ন হয়, তবে নিচের লাইনটি পরিবর্তন করুন
-    './index.html', 
-    './manifest.json',
+    './index.html', // আপনার গিটহাবে থাকা সঠিক ফাইলের নাম
+    './manifest.json', // নিশ্চিত করুন JSON ফাইলটি manifest.json নামেই আছে
     'https://cdn.tailwindcss.com',
     'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
     'https://cdn.jsdelivr.net/npm/easyqrcodejs@4.4.13/dist/easy.qrcode.min.js',
@@ -16,7 +15,6 @@ const urlsToCache = [
     'https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js',
     'https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/SUTONNYMJ.TTF',
     'https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/Bornomala-Regular.ttf',
-    // Firebase স্ক্রিপ্টগুলো ক্যাশ করা হচ্ছে যাতে অ্যাপ ক্রাশ না করে
     'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js',
     'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js',
     'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js',
@@ -29,7 +27,6 @@ self.addEventListener('install', event => {
         caches.open(CACHE_NAME)
             .then(cache => {
                 console.log('Opened cache');
-                // একটি একটি করে ফাইল ক্যাশ করার চেষ্টা করবে, যাতে একটি ফেইল হলে সব বন্ধ না হয়
                 return Promise.all(
                     urlsToCache.map(url => {
                         return cache.add(url).catch(err => {
@@ -47,11 +44,9 @@ self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request)
             .then(response => {
-                // ক্যাশে পাওয়া গেলে সেটি রিটার্ন করবে
                 if (response) {
                     return response;
                 }
-                // না পাওয়া গেলে নেটওয়ার্ক থেকে আনবে
                 return fetch(event.request);
             })
     );
