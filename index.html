@@ -6815,7 +6815,7 @@ body.sidebar-open #sidebarOverlay {
     justify-content: center;
     align-items: center;
     transition: all 0.3s ease;
-    margin-right: 8px;
+    /* margin-right: 8px; মুছে ফেলা হয়েছে যাতে আইকনগুলো কাছাকাছি থাকে */
     position: relative;
 }
 .dark .voice-command-btn {
@@ -6849,11 +6849,7 @@ body.sidebar-open #sidebarOverlay {
 /* PWA Install Button (ডিফল্টভাবে লুকানো থাকবে) */
 #pwaInstallBtn {
     display: none;
-    background-color: #10b981;
-    color: white;
-}
-#pwaInstallBtn:hover {
-    background-color: #059669;
+    /* আগের কালার কোড মুছে ফেলা হয়েছে, এখন এটি ভয়েস বাটনের স্টাইল পাবে */
 }
 /* ========================================= */
 /* END: Voice Command & PWA Styles */
@@ -6930,15 +6926,18 @@ body.sidebar-open #sidebarOverlay {
         <div class="flex justify-center items-center gap-3 mb-2 mt-2">
             <h2 id="main-heading" class="text-2xl font-bold text-gray-800 dark:text-white mb-0">বাংলা টুলবক্স</h2>
             
-            <!-- Voice Command Button (Moved Here) -->
-            <button id="voiceCommandBtn" type="button" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm" title="ভয়েস কমান্ড">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
-            </button>
+            <div class="flex items-center gap-1"> <!-- বাটন দুটিকে একটি গ্রুপে রাখা হয়েছে এবং গ্যাপ কমানো হয়েছে -->
+                <!-- Voice Command Button -->
+                <button id="voiceCommandBtn" type="button" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm" title="ভয়েস কমান্ড">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
+                </button>
 
-            <!-- PWA Install Button (Moved Here) -->
-            <button id="pwaInstallBtn" type="button" class="w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm" title="অ্যাপটি ইন্সটল করুন" style="display: none;">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-            </button>
+                <!-- PWA Install Button -->
+                <!-- ক্লাস voice-command-btn যুক্ত করা হয়েছে -->
+                <button id="pwaInstallBtn" type="button" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm" title="অ্যাপটি ইন্সটল করুন" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                </button>
+            </div>
         </div>
         <!-- টাইটেল এবং ভয়েস কমান্ড বাটন এরিয়া শেষ -->
 
