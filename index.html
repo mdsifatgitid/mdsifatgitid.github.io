@@ -26223,126 +26223,91 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
 
 function processVoiceCommand(command) {
     // কমান্ড এবং ট্যাব বাটনের আইডির ম্যাপিং
-    // পরিবর্তন: সরাসরি বাটনের আইডিতে ম্যাপ করা হয়েছে যাতে click() ইভেন্ট ব্যবহার করা যায়
     const commandMap = {
-        'ক্যালকুলেটর': 'basicCalcTab',
-        'হিসাব': 'basicCalcTab',
-        'বেসিক': 'basicCalcTab',
-        'সাইন্টিফিক': 'scientificCalcTab',
-        'বিজ্ঞান': 'scientificCalcTab',
-        'তারিখ': 'dateCalcTab',
-        'সময়': 'dateCalcTab',
-        'বয়স': 'ageCalcTab',
-        'ওয়েব': 'webSearchTab',
-        'সার্চ': 'webSearchTab',
-        'ব্রাউজার': 'webSearchTab',
-        'চ্যাট': 'textAssistantTab',
-        'জেমিনি': 'textAssistantTab',
-        'কনভার্টার': 'converterTab',
-        'বিজয়': 'converterTab',
-        'অভ্র': 'converterTab',
-        'নামাজ': 'prayerTimeTab',
-        'আজান': 'prayerTimeTab',
-        'ট্রান্সলেটর': 'translatorTab',
-        'অনুবাদ': 'translatorTab',
-        'ওয়ার্ড': 'wordCounterTab',
-        'শব্দ': 'wordCounterTab',
-        'অর্থ': 'wordMeaningTab',
-        'বানান': 'spellCheckTab',
-        'শুদ্ধ': 'spellCheckTab',
-        'সাজানো': 'textBeautifierTab',
-        'ওসিআর': 'imageToTextTab',
-        'ছবি থেকে লেখা': 'imageToTextTab',
-        'টাইপিং': 'typingTestTab',
-        'টাইপ': 'typingTestTab',
-        'ভয়েস টু টেক্সট': 'sttTab',
-        'কথা থেকে লেখা': 'sttTab',
-        'টেক্সট টু স্পিচ': 'ttsTab',
-        'পড়ে শোনাও': 'ttsTab',
-        'ম্যাপ': 'mapTab',
-        'মানচিত্র': 'mapTab',
-        'আবহাওয়া': 'weatherTab',
-        'পরিমাপ': 'measurementTab',
-        'ইউনিট': 'measurementTab',
-        'নোটপ্যাড': 'notepadTab',
-        'নোট': 'notepadTab',
-        'টুডু': 'notepadTab',
-        'ড্যাশবোর্ড': 'dashboardTab',
-        'হোম': 'dashboardTab',
-        'ঘড়ি': 'clockTab',
-        'স্টপওয়াচ': 'clockTab',
-        'টাইমার': 'clockTab',
-        'প্লেয়ার': 'playerTab',
-        'গান': 'playerTab',
-        'ভিডিও': 'playerTab',
-        'কুইজ': 'quizTab',
-        'প্রশ্ন': 'quizTab',
-        'ইতিহাস': 'historyTab',
-        'আজকের দিন': 'historyTab',
-        'দিবস': 'daysObservancesTab',
-        'ছুটি': 'holidayListTab',
-        'বন্ধ': 'holidayListTab',
-        'যাকাত': 'zakatCalcTab',
-        'কিউআর': 'qrCodeTab',
-        'স্ক্যান': 'qrCodeTab',
-        'বারকোড': 'barcodeGenTab',
-        'রং': 'colorPickerTab',
-        'কালার': 'colorPickerTab',
-        'জরুরি': 'emergencyNumbersTab',
-        'নাম্বার': 'emergencyNumbersTab',
-        'ইনভয়েস': 'invoiceTab',
-        'বিল': 'invoiceTab',
-        'রিসাইজার': 'imageResizerTab',
-        'ছবি এডিট': 'imageResizerTab',
-        'স্বাস্থ্য': 'healthLifestyleTab',
-        'বিএমআই': 'healthLifestyleTab',
-        'ইএমআই': 'emiCalcTab',
-        'লোন': 'emiCalcTab',
-        'মুদ্রা': 'currencyTab',
-        'কারেন্সি': 'currencyTab',
-        'টাকা': 'currencyTab',
-        'দাম': 'unitPriceTab',
-        'তুলনা': 'unitPriceTab',
-        'আইপি': 'ipInfoTab',
-        'রেসিপি': 'recipeTab',
-        'রান্না': 'recipeTab',
-        'পিডিএফ': 'pdfToolsTab',
-        'জেসন': 'jsonFormatterTab',
-        'মিম': 'memeGenTab',
-        'লটারি': 'randomPickerTab',
-        'রেকর্ডার': 'screenRecorderTab',
-        'স্ক্রিন': 'screenRecorderTab',
-        'তাসবিহ': 'tasbeehTab',
-        'জিকির': 'tasbeehTab',
-        'ডিফ': 'diffCheckerTab',
-        'পার্থক্য': 'diffCheckerTab',
-        'আয় ব্যয়': 'expenseTrackerTab',
-        'খরচ': 'expenseTrackerTab',
-        'ডোনেট': 'donateTab',
-        'সাহায্য': 'donateTab',
-        'লিংক': 'importantLinksTab',
-        'প্রোফাইল': 'importantLinksTab',
-        'স্পিড': 'speedTestTab',
-        'গতি': 'speedTestTab'
+        // ট্যাবসমূহ (পুরো নাম এবং সংক্ষিপ্ত কিওয়ার্ড সহ)
+        'সাধারণ ক্যালকুলেটর, ক্যালকুলেটর, হিসাব, বেসিক': 'basicCalcTab',
+        'সাইন্টিফিক ক্যালকুলেটর, সাইন্টিফিক, বিজ্ঞান': 'scientificCalcTab',
+        'তারিখ ও সময়, তারিখ, সময়': 'dateCalcTab',
+        'বয়স ক্যালকুলেটর, বয়স': 'ageCalcTab',
+        'ওয়েব সার্চ, ওয়েব, সার্চ, ব্রাউজার': 'webSearchTab',
+        'টেক্সট অ্যাসিস্ট্যান্ট, চ্যাট, জেমিনি': 'textAssistantTab',
+        'কনভার্টার, ফন্ট কনভার্টার, বিজয়, অভ্র': 'converterTab',
+        'নামাজের সময়সূচি, নামাজ, আজান': 'prayerTimeTab',
+        'ট্রান্সলেটর, অনুবাদ': 'translatorTab',
+        'ওয়ার্ড কাউন্টার, ওয়ার্ড, শব্দ': 'wordCounterTab',
+        'শব্দের অর্থ, অর্থ': 'wordMeaningTab',
+        'বানান সংশোধন, বানান, শুদ্ধ': 'spellCheckTab',
+        'লেখা সাজানো, সাজানো': 'textBeautifierTab',
+        'ছবি থেকে লেখা, ওসিআর': 'imageToTextTab',
+        'টাইপিং টেস্ট, টাইপিং, টাইপ': 'typingTestTab',
+        'কথা থেকে লেখা, ভয়েস টু টেক্সট': 'sttTab',
+        'লেখা থেকে কথা, টেক্সট টু স্পিচ, পড়ে শোনাও': 'ttsTab',
+        'গুগল ম্যাপ, ম্যাপ, মানচিত্র': 'mapTab',
+        'আবহাওয়া, আবহাওয়া': 'weatherTab',
+        'পরিমাপ, ইউনিট': 'measurementTab',
+        'নোটপ্যাড, নোট, টুডু': 'notepadTab',
+        'ড্যাশবোর্ড, হোম': 'dashboardTab',
+        'ঘড়ি, ঘড়ি, স্টপওয়াচ, টাইমার, ক্লক, বিশ্ব ঘড়ি, বিশ্বঘড়ি': 'clockTab',
+        'প্লেয়ার, প্লেয়ার, গান, ভিডিও': 'playerTab',
+        'কুইজ, প্রশ্ন': 'quizTab',
+        'ইতিহাস, আজকের দিন': 'historyTab',
+        'দিবসসমূহ, দিবস': 'daysObservancesTab',
+        'ছুটির তালিকা, ছুটি, বন্ধ': 'holidayListTab',
+        'যাকাতের হিসাব, যাকাত': 'zakatCalcTab',
+        'কিউআর কোড, কিউআর, স্ক্যান': 'qrCodeTab',
+        'বারকোড, বারকোড জেনারেটর': 'barcodeGenTab',
+        'রঙ বাছাইকারী, রং, কালার': 'colorPickerTab',
+        'জরুরি নম্বর, জরুরি, নাম্বার': 'emergencyNumbersTab',
+        'ইনভয়েজ, ইনভয়েস, বিল': 'invoiceTab',
+        'ছবি রিসাইজার, রিসাইজার, ছবি এডিট': 'imageResizerTab',
+        'স্বাস্থ্য ও জীবনধারা, স্বাস্থ্য, বিএমআই': 'healthLifestyleTab',
+        'ইএমআই ক্যালকুলেটর, ইএমআই, লোন': 'emiCalcTab',
+        'মুদ্রা রূপান্তরকারী, মুদ্রা, কারেন্সি, টাকা': 'currencyTab',
+        'দামের তুলনা, দাম, তুলনা': 'unitPriceTab',
+        'আইপি ও ডিভাইস ইনফো, আইপি': 'ipInfoTab',
+        'রেসিপি জেনারেটর, রেসিপি, রান্না': 'recipeTab',
+        'পিডিএফ টুলস, পিডিএফ': 'pdfToolsTab',
+        'জেসন ফর্মাটার, জেসন': 'jsonFormatterTab',
+        'মিম জেনারেটর, মিম': 'memeGenTab',
+        'র‍্যান্ডম পিকার, লটারি': 'randomPickerTab',
+        'স্ক্রিন রেকর্ডার, রেকর্ডার, স্ক্রিন': 'screenRecorderTab',
+        'ডিজিটাল তাসবিহ, তাসবিহ, জিকির': 'tasbeehTab',
+        'ডিফ চেকার, ডিফ, পার্থক্য': 'diffCheckerTab',
+        'আয়-ব্যয় হিসাব, আয় ব্যয়, খরচ': 'expenseTrackerTab',
+        'ডোনেট, সাহায্য': 'donateTab',
+        'গুরুত্বপূর্ণ লিংকসমূহ, লিংক, প্রোফাইল': 'importantLinksTab',
+        'ইন্টারনেট স্পিড, স্পিড, গতি': 'speedTestTab',
+
+        // বিশেষ কমান্ড (সেটিংস, থিম, ইত্যাদি)
+        'সকল ফিচার, আরও': 'allFeaturesTab',
+        'আরও সেটিংস, সেটিংস, সেটিং': 'moreSettingsTab',
+        'এপিআই কী, এপিআই': 'setApiKeyBtn',
+        'ডার্ক মোড, লাইট মোড, থিম': 'theme-toggle'
     };
 
     // ফাজি ম্যাচিং (Fuzzy Matching) - ইনপুটের মধ্যে কিওয়ার্ড খুঁজবে
     let foundButtonId = null;
     let matchedKeyword = "";
 
-    for (const key in commandMap) {
-        if (command.includes(key)) {
-            foundButtonId = commandMap[key];
-            matchedKeyword = key;
-            break; // প্রথম মিল পেলেই থামবে
+    // লুপ ঘুরিয়ে প্রতিটি কিওয়ার্ড চেক করা হচ্ছে
+    for (const keys in commandMap) {
+        // কমা দিয়ে আলাদা করে অ্যারে তৈরি করা হচ্ছে এবং স্পেস ট্রিম করা হচ্ছে
+        const keywords = keys.split(',').map(k => k.trim()); 
+        
+        for (const key of keywords) {
+            if (command.includes(key)) {
+                foundButtonId = commandMap[keys];
+                matchedKeyword = key;
+                break; // প্রথম মিল পেলেই থামবে
+            }
         }
+        if (foundButtonId) break; // বাটন আইডি পাওয়া গেলে প্রধান লুপ থামানো হবে
     }
 
     if (foundButtonId) {
         const targetButton = document.getElementById(foundButtonId);
         if (targetButton) {
             // বাটনে ক্লিক সিমুলেট করা হচ্ছে
-            // এটি showTab() এবং অন্যান্য প্রয়োজনীয় ইনিশিয়ালাইজেশন ফাংশন রান করবে
             targetButton.click();
             
             // যদি বাটনটি ড্রপডাউনের ভেতরে থাকে এবং ড্রপডাউন বন্ধ থাকে, তবে ড্রপডাউনটি ওপেন করার চেষ্টা করা
