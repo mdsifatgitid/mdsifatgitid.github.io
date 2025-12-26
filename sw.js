@@ -3,6 +3,7 @@ const urlsToCache = [
     './', 
     // আপনার HTML ফাইলের নাম যদি ভিন্ন হয়, তবে নিচের লাইনটি পরিবর্তন করুন
     './index.html', 
+    './manifest.json',
     'https://cdn.tailwindcss.com',
     'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
     'https://cdn.jsdelivr.net/npm/easyqrcodejs@4.4.13/dist/easy.qrcode.min.js',
