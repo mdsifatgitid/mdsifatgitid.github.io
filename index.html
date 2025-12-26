@@ -26185,7 +26185,17 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
 
     recognition.onstart = function() {
         voiceBtn.classList.add('listening');
-        showCustomAlert("শুনছি... বলুন (যেমন: 'ক্যালকুলেটর', 'নোটপ্যাড', 'আবহাওয়া')");
+        // ইনপুট বক্সে ফোকাস থাকলে এলার্ট দেখানোর দরকার নেই, কারণ তখন ইউজার টাইপ করতে চাচ্ছে
+        const activeEl = document.activeElement;
+        const isInputFocused = activeEl && (
+            (activeEl.tagName === 'INPUT' && activeEl.type !== 'button' && activeEl.type !== 'submit') || 
+            activeEl.tagName === 'TEXTAREA' || 
+            activeEl.isContentEditable
+        );
+
+        if (!isInputFocused) {
+            showCustomAlert("শুনছি... বলুন (যেমন: 'ক্যালকুলেটর', 'নোটপ্যাড', 'আবহাওয়া')");
+        }
     };
 
     recognition.onend = function() {
@@ -26193,9 +26203,45 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     };
 
     recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript.toLowerCase().trim();
-        console.log("Voice Command Recieved:", transcript);
-        processVoiceCommand(transcript);
+        const transcript = event.results[0][0].transcript.trim();
+        console.log("Voice Command/Text Received:", transcript);
+
+        // ফোকাস করা এলিমেন্ট চেক করা
+        const activeEl = document.activeElement;
+        const isEditable = activeEl && (
+            (activeEl.tagName === 'INPUT' && (activeEl.type === 'text' || activeEl.type === 'search' || activeEl.type === 'number' || activeEl.type === 'url' || activeEl.type === 'email')) || 
+            activeEl.tagName === 'TEXTAREA' || 
+            activeEl.isContentEditable
+        );
+
+        if (isEditable) {
+            // যদি কোনো ইনপুট ফিল্ড সিলেক্ট করা থাকে, সেখানে টেক্সট ইনসার্ট হবে
+            if (activeEl.isContentEditable) {
+                // নোটপ্যাড বা contenteditable ডিভ-এর জন্য
+                // execCommand 'insertText' কার্সরের পজিশনে প্লেইন টেক্সট ইনসার্ট করে এবং আনডু হিস্ট্রি ঠিক রাখে
+                document.execCommand('insertText', false, transcript + ' ');
+            } else {
+                // ইনপুট বা টেক্সটএরিয়া-এর জন্য
+                const start = activeEl.selectionStart;
+                const end = activeEl.selectionEnd;
+                const text = activeEl.value;
+                const before = text.substring(0, start);
+                const after = text.substring(end, text.length);
+                
+                // টেক্সট ইনসার্ট করা (শেষে একটি স্পেসসহ)
+                activeEl.value = before + transcript + " " + after;
+                
+                // কার্সর পজিশন আপডেট করা
+                const newCursorPos = start + transcript.length + 1;
+                activeEl.selectionStart = activeEl.selectionEnd = newCursorPos;
+                
+                // ইভেন্ট ডিসপ্যাচ করা যাতে রিয়েল-টাইম ক্যালকুলেশন বা লজিক কাজ করে (যেমন: ওয়ার্ড কাউন্টার)
+                activeEl.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        } else {
+            // যদি কোনো ইনপুট ফিল্ড সিলেক্ট করা না থাকে, তবে কমান্ড হিসেবে প্রসেস হবে
+            processVoiceCommand(transcript.toLowerCase());
+        }
     };
 
     recognition.onerror = function(event) {
@@ -26207,6 +26253,11 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     };
 
     if (voiceBtn) {
+        // নতুন: মাউসডাউন ইভেন্টে প্রিভেন্ট ডিফল্ট দেওয়া হয়েছে যাতে ইনপুট ফিল্ড থেকে ফোকাস না সরে যায়
+        voiceBtn.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+        });
+
         voiceBtn.addEventListener('click', () => {
             try {
                 recognition.start();
@@ -26388,8 +26439,6 @@ window.addEventListener('appinstalled', () => {
 // ====================================================================
 // END: VOICE COMMAND & PWA LOGIC
 // ====================================================================
-
-
 
 
 
