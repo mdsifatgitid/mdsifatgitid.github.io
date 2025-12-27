@@ -22898,12 +22898,57 @@ document.addEventListener('DOMContentLoaded', () => {
         // ওভারলে ক্লিক
         sidebarOverlay.addEventListener('click', closeSidebar);
 
-        // সার্চ ফাংশনালিটি
+        // সার্চ ফাংশনালিটি (আপডেট করা হয়েছে: সিনোনিম সাপোর্ট সহ)
         sidebarSearch.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
+            
+            // টুলের সিনোনিম বা প্রতিশব্দ ম্যাপিং (এখানে আপনি আরও শব্দ যোগ করতে পারেন)
+            const toolSynonyms = {
+                'imageResizerTab': ['picture', 'photo', 'crop', 'resize', 'jpg', 'png', 'image editor', 'রিসাইজ', 'ছবি'],
+                'basicCalcTab': ['math', 'calculation', 'add', 'subtract', 'হিসাব', 'গণনা', 'যোগ', 'ক্যালকুলেটর'],
+                'scientificCalcTab': ['science', 'math', 'complex', 'cos', 'sin', 'বিজ্ঞান'],
+                'notepadTab': ['write', 'todo', 'list', 'text', 'save', 'নোট', 'লিখুন', 'খাতা'],
+                'weatherTab': ['temperature', 'rain', 'sun', 'forecast', 'আবহাওয়া', 'তাপমাত্রা', 'বৃষ্টি'],
+                'translatorTab': ['language', 'english', 'bengali', 'translate', 'অনুবাদ', 'ভাষা'],
+                'converterTab': ['bijoy', 'avro', 'unicode', 'font', 'writing', 'বিজয়', 'অভ্র', 'কনভার্ট'],
+                'ageCalcTab': ['birthday', 'years', 'old', 'জন্মদিন', 'বয়স'],
+                'dateCalcTab': ['calendar', 'time', 'day', 'তারিখ', 'সময়'],
+                'qrCodeTab': ['scan', 'generate', 'code', 'কিউআর', 'কোড'],
+                'prayerTimeTab': ['salah', 'namaz', 'azan', 'time', 'নামাজ', 'আজান', 'সূচি'],
+                'textAssistantTab': ['ai', 'chat', 'gemini', 'gpt', 'help', 'এআই', 'চ্যাট', 'বট'],
+                'colorPickerTab': ['hex', 'rgb', 'palette', 'রঙ', 'কালার'],
+                'speedTestTab': ['internet', 'wifi', 'data', 'mbps', 'নেট', 'স্পিড', 'গতি'],
+                'screenRecorderTab': ['video', 'capture', 'record', 'রেকর্ড', 'স্ক্রিন'],
+                'memeGenTab': ['funny', 'troll', 'caption', 'মিম', 'জোকস'],
+                'pdfToolsTab': ['document', 'convert', 'merge', 'পিডিএফ', 'ফাইল'],
+                'sttTab': ['voice', 'speech', 'record', 'কথা', 'ভয়েস'],
+                'ttsTab': ['listen', 'read', 'speech', 'শোনা', 'পাঠ'],
+                'mapTab': ['location', 'gps', 'navigation', 'মানচিত্র', 'ম্যাপ'],
+                'currencyTab': ['money', 'dollar', 'taka', 'exchange', 'মুদ্রা', 'টাকা'],
+                'emiCalcTab': ['loan', 'interest', 'bank', 'ঋণ', 'কিস্তি'],
+                'healthLifestyleTab': ['bmi', 'water', 'health', 'শরীর', 'স্বাস্থ্য'],
+                'zakatCalcTab': ['islam', 'donation', 'charity', 'যাকাত', 'দান'],
+                'unitPriceTab': ['compare', 'price', 'shop', 'বাজার', 'দাম'],
+                'barcodeGenTab': ['product', 'scan', 'বারকোড'],
+                'randomPickerTab': ['lottery', 'winner', 'draw', 'লটারি', 'ভাগ্য'],
+                'jsonFormatterTab': ['code', 'developer', 'debug', 'জেসন'],
+                'diffCheckerTab': ['compare text', 'code compare', 'পার্থক্য'],
+                'expenseTrackerTab': ['cost', 'budget', 'income', 'খরচ', 'হিসাব'],
+                'tasbeehTab': ['zikr', 'count', 'pray', 'তাসবিহ', 'জিকির'],
+                'historyTab': ['today', 'past', 'event', 'ইতিহাস'],
+                'holidayListTab': ['vacation', 'off day', 'calendar', 'ছুটি']
+            };
+
             toolList.querySelectorAll('li').forEach(li => {
+                const link = li.querySelector('a');
                 const toolName = li.textContent.toLowerCase();
-                if (toolName.includes(searchTerm)) {
+                const tabId = link ? link.dataset.tabId : '';
+                
+                // সিনোনিম চেক
+                const synonyms = toolSynonyms[tabId] || [];
+                const hasSynonymMatch = synonyms.some(s => s.toLowerCase().includes(searchTerm));
+
+                if (toolName.includes(searchTerm) || hasSynonymMatch) {
                     li.style.display = 'block';
                 } else {
                     li.style.display = 'none';
@@ -22912,6 +22957,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // রিয়েল-টাইমে হাইলাইট চেক করার জন্য ইন্টারভ্যাল সেট করা (প্রতি ৫০০ms)
+        
         if (window.sidebarHighlightInterval) clearInterval(window.sidebarHighlightInterval);
         window.sidebarHighlightInterval = setInterval(updateSidebarHighlights, 500);
         
@@ -26440,6 +26486,88 @@ window.addEventListener('appinstalled', () => {
 // END: VOICE COMMAND & PWA LOGIC
 // ====================================================================
 
+/* ====================================================================*/
+/* START: GLOBAL KEYBOARD SHORTCUTS */
+/* ====================================================================*/
+function initializeGlobalShortcuts() {
+    document.addEventListener('keydown', (e) => {
+        // যদি ইউজার কোনো ইনপুট ফিল্ডে টাইপ করে, তবে শর্টকাট কাজ করবে না
+        const activeTag = document.activeElement.tagName.toLowerCase();
+        const isEditable = document.activeElement.isContentEditable;
+        if (activeTag === 'input' || activeTag === 'textarea' || isEditable) {
+            return;
+        }
+
+        // Alt কী চেপে ধরে শর্টকাট ব্যবহার করতে হবে (ব্রাউজার কনফ্লিক্ট এড়াতে)
+        if (e.altKey && !e.ctrlKey && !e.shiftKey) {
+            const key = e.key.toLowerCase();
+            let targetTabId = null;
+
+            // শর্টকাট ম্যাপিং (Alt + Key)
+            const shortcutMap = {
+                'c': 'basicCalcTab',        // Calculator
+                's': 'scientificCalcTab',   // Scientific
+                'n': 'notepadTab',          // Notepad
+                'w': 'weatherTab',          // Weather
+                't': 'translatorTab',       // Translator
+                'b': 'converterTab',        // Font Converter (Bijoy)
+                'p': 'playerTab',           // Player
+                'h': 'historyTab',          // History
+                'q': 'qrCodeTab',           // QR Code
+                'i': 'invoiceTab',          // Invoice
+                'm': 'mapTab',              // Map
+                'a': 'textAssistantTab',    // AI Assistant
+                'z': 'zakatCalcTab',        // Zakat
+                'd': 'dashboardTab',        // Dashboard
+                'b': 'webSearchTab',        // Browser
+                'r': 'imageResizerTab',     // Resizer
+                'l': 'holidayListTab',      // List (Holiday)
+                'e': 'expenseTrackerTab'    // Expense
+            };
+
+            if (shortcutMap[key]) {
+                targetTabId = shortcutMap[key];
+            }
+
+            // ট্যাব পরিবর্তন করুন
+            if (targetTabId) {
+                e.preventDefault(); // ডিফল্ট ব্রাউজার অ্যাকশন বন্ধ করুন
+                const tabButton = document.getElementById(targetTabId);
+                
+                // যদি বাটনটি ড্রপডাউনের ভেতরে থাকে এবং ড্রপডাউন বন্ধ থাকে, তবে এটি খুঁজে বের করে ক্লিক করতে হবে
+                if (tabButton) {
+                    // ড্রপডাউন ওপেন করার লজিক (অপশনাল, শুধু ক্লিক করলেই হবে showTab হ্যান্ডেল করবে)
+                    tabButton.click();
+                    showCustomAlert(`শর্টকাট সক্রিয়: ${tabButton.textContent.trim()}`);
+                }
+            }
+        }
+        
+        // ফুলস্ক্রিন টগল (Alt + F)
+        if (e.altKey && e.key.toLowerCase() === 'f') {
+            e.preventDefault();
+            const fullscreenToggle = document.getElementById('fullscreenToggle');
+            if (fullscreenToggle) {
+                fullscreenToggle.click();
+            }
+        }
+        
+        // সাইডবার টগল (Alt + X)
+        if (e.altKey && e.key.toLowerCase() === 'x') {
+            e.preventDefault();
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            if (sidebarToggle) sidebarToggle.click();
+        }
+    });
+    
+    console.log("Global keyboard shortcuts initialized.");
+}
+
+// স্ক্রিপ্ট লোড হওয়ার পর শর্টকাট ইনিশিয়ালাইজ করুন
+document.addEventListener('DOMContentLoaded', initializeGlobalShortcuts);
+/* ====================================================================*/
+/* END: GLOBAL KEYBOARD SHORTCUTS */
+/* ====================================================================*/
 
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
