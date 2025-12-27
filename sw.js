@@ -1,8 +1,8 @@
-const CACHE_NAME = 'bangla-toolbox-v3'; // ভার্সন আপডেট করা হয়েছে
+const CACHE_NAME = 'bangla-toolbox-v3'; // ভার্সন v2 থেকে v3 করা হয়েছে যাতে ব্রাউজার নতুন আপডেটটি ধরে
 const urlsToCache = [
     './', 
-    './index.html', // আপনার গিটহাবে থাকা সঠিক ফাইলের নাম
-    './manifest.json', // নিশ্চিত করুন JSON ফাইলটি manifest.json নামেই আছে
+    './index.html', 
+    './manifest.json',
     'https://cdn.tailwindcss.com',
     'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
     'https://cdn.jsdelivr.net/npm/easyqrcodejs@4.4.13/dist/easy.qrcode.min.js',
@@ -15,13 +15,14 @@ const urlsToCache = [
     'https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js',
     'https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/SUTONNYMJ.TTF',
     'https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/Bornomala-Regular.ttf',
+    // Firebase স্ক্রিপ্টগুলো
     'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js',
     'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js',
     'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js',
     'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js'
 ];
 
-// ইনস্টল ইভেন্ট: ফাইলগুলো ক্যাশে সেভ করা
+// ইনস্টল ইভেন্ট
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -39,20 +40,36 @@ self.addEventListener('install', event => {
     self.skipWaiting();
 });
 
-// ফেচ ইভেন্ট: অফলাইনে ক্যাশ থেকে ফাইল লোড করা
+// ফেচ ইভেন্ট: (আপডেট করা হয়েছে)
 self.addEventListener('fetch', event => {
-    event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                if (response) {
-                    return response;
-                }
-                return fetch(event.request);
-            })
-    );
+    // ১. যদি রিকোয়েস্টটি HTML পেজের জন্য হয় (যেমন index.html), তবে আগে নেটওয়ার্ক চেক করবে
+    if (event.request.mode === 'navigate') {
+        event.respondWith(
+            fetch(event.request)
+                .then((networkResponse) => {
+                    return caches.open(CACHE_NAME).then((cache) => {
+                        // নতুন ভার্সনটি ক্যাশে আপডেট করে রাখবো
+                        cache.put(event.request, networkResponse.clone());
+                        return networkResponse;
+                    });
+                })
+                .catch(() => {
+                    // ইন্টারনেট না থাকলে ক্যাশ থেকে পুরনো পেজ দেখাবে
+                    return caches.match(event.request);
+                })
+        );
+    } else {
+        // ২. অন্যান্য ফাইল (ইমেজ, সিএসএস, জেএস) এর জন্য আগের মতোই ক্যাশ থেকে লোড হবে (দ্রুত লোডিংয়ের জন্য)
+        event.respondWith(
+            caches.match(event.request)
+                .then(response => {
+                    return response || fetch(event.request);
+                })
+        );
+    }
 });
 
-// অ্যাক্টিভেট ইভেন্ট: পুরনো ক্যাশ পরিষ্কার করা
+// অ্যাক্টিভেট ইভেন্ট: পুরনো ক্যাশ পরিষ্কার করা এবং নতুন সার্ভিস ওয়ার্কার সক্রিয় করা
 self.addEventListener('activate', event => {
     const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
@@ -66,4 +83,5 @@ self.addEventListener('activate', event => {
             );
         })
     );
+    return self.clients.claim(); // পেজ রিফ্রেশ ছাড়াই নতুন সার্ভিস ওয়ার্কারকে নিয়ন্ত্রণ নিতে বলা
 });
