@@ -6851,6 +6851,51 @@ body.sidebar-open #sidebarOverlay {
     display: none;
     /* আগের কালার কোড মুছে ফেলা হয়েছে, এখন এটি ভয়েস বাটনের স্টাইল পাবে */
 }
+
+/* টুলটিপ ডিজাইন */
+    .has-tooltip {
+        position: relative;
+    }
+    .has-tooltip::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        background-color: #1f2937; /* Gray-800 */
+        color: white;
+        padding: 4px 12px;
+        font-size: 0.75rem;
+        border-radius: 9999px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        z-index: 100;
+        pointer-events: none;
+
+        /* ডিফল্ট পজিশন (আইকনের উপরে) */
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .has-tooltip:hover::after {
+        opacity: 1;
+        visibility: visible;
+        /* ডিফল্ট এনিমেশন (নিচ থেকে উপরে) */
+        transform: translateX(-50%) translateY(-5px);
+    }
+
+    /* শুধুমাত্র সাইডবার টগল বাটনের জন্য টুলটিপ ডানে হবে */
+    #sidebarToggle.has-tooltip::after {
+        bottom: auto; /* ডিফল্ট পজিশন রিসেট */
+        top: 50%;
+        left: 125%; /* আইকনের ডানপাশে */
+        transform: translateY(-50%); /* লম্বভাবে মাঝখানে */
+    }
+    
+    #sidebarToggle.has-tooltip:hover::after {
+        /* সাইডবারের জন্য এনিমেশন (বাম থেকে ডানে) */
+        transform: translateY(-50%) translateX(5px);
+    }
 /* ========================================= */
 /* END: Voice Command & PWA Styles */
 /* ========================================= */
@@ -6960,7 +7005,7 @@ body.sidebar-open #sidebarOverlay {
     <button id="ageCalcTab" class="tab-button rounded-xl">বয়স ক্যালকুলেটর</button>
 	<button id="webSearchTab" class="tab-button rounded-xl">ওয়েব সার্চ</button>
 	<button id="textAssistantTab" class="tab-button rounded-xl">টেক্সট অ্যাসিস্ট্যান্ট</button>
-	<button id="converterTab" class="tab-button rounded-xl">কনভার্টার</button>
+  <button id="converterTab" class="tab-button rounded-xl has-tooltip" data-tooltip="শর্টকাট: Alt+B">কনভার্টার</button>
 	<button id="prayerTimeTab" class="tab-button rounded-xl">নামাজের সময়সূচি</button>
     <button id="translatorTab" class="tab-button rounded-xl">ট্রান্সলেটর</button>
 	<button id="wordCounterTab" class="tab-button rounded-xl">ওয়ার্ড কাউন্টার</button>
@@ -26725,7 +26770,7 @@ document.addEventListener('DOMContentLoaded', initializeGlobalShortcuts);
 <!-- ====================================================================-->
 
 <!-- Sidebar Toggle Button -->
-<button id="sidebarToggle" class="fixed top-4 left-4 z-40 w-12 h-12 bg-indigo-600 text-white rounded-full shadow-lg flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-transform duration-300 ease-in-out hover:bg-indigo-700">
+<button id="sidebarToggle" class="fixed top-4 left-4 z-40 w-12 h-12 bg-indigo-600 text-white rounded-full shadow-lg flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-transform duration-300 ease-in-out hover:bg-indigo-700 has-tooltip" data-tooltip="সাইডবার (শর্টকাট: Alt+X)">
     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
 </button>
 
