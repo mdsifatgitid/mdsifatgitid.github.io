@@ -1,6 +1,6 @@
 {
   "name": "Bangla Toolbox",
-  "short_name": "BanglaTools",
+  "short_name": "BanglaToolbox",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -19,3 +19,4 @@
     }
   ]
 }
+
