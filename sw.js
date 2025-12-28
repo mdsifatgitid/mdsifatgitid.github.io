@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bangla-toolbox-v3'; // ভার্সন v3 রাখা হয়েছে
+const CACHE_NAME = 'bangla-toolbox-v4'; // ভার্সন v4 করা হয়েছে
 const urlsToCache = [
     './', 
     './index.html', 
@@ -75,3 +75,5 @@ self.addEventListener('activate', event => {
     );
     return self.clients.claim();
 });
+
+
