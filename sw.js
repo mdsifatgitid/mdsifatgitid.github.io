@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bangla-toolbox-v4'; // ভার্সন v4
+const CACHE_NAME = 'bangla-toolbox-v5'; // ভার্সন পরিবর্তন করে v5 করা হয়েছে
 const urlsToCache = [
     './', 
     './index.html', 
@@ -23,14 +23,15 @@ const urlsToCache = [
     'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js'
 ];
 
-// ইনস্টল ইভেন্ট: ফাইলগুলো প্রাথমিকভাবে ক্যাশ করা হবে
+// ১. ইনস্টল ইভেন্ট: ফাইলগুলো ক্যাশ করা হবে
 self.addEventListener('install', event => {
+    // নতুন সার্ভিস ওয়ার্কার ইনস্টল হওয়ার সাথে সাথে অ্যাক্টিভ করার জন্য
+    self.skipWaiting();
+
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
-                console.log('Opened cache');
-                // একটি ফাইল ফেইল করলেও যেন বাকিগুলো ক্যাশ হয়, তাই map ব্যবহার করা ভালো
-                // তবে সহজ উপায়ে addAll ব্যবহার করা যেতে পারে, কিন্তু এখানে আপনার কোড স্টাইল রাখা হলো
+                console.log('Opened cache v5');
                 return Promise.all(
                     urlsToCache.map(url => {
                         return cache.add(url).catch(err => {
@@ -40,21 +41,17 @@ self.addEventListener('install', event => {
                 );
             })
     );
-    self.skipWaiting();
 });
 
-// ফেচ ইভেন্ট: সব রিকোয়েস্টের জন্য Network First স্ট্র্যাটেজি
+// ২. ফেচ ইভেন্ট: সব রিকোয়েস্টের জন্য Network First স্ট্র্যাটেজি
+// এটি প্রথমে নেটওয়ার্ক থেকে নতুন ফাইল আনার চেষ্টা করবে, ব্যর্থ হলে ক্যাশ দেখাবে।
 self.addEventListener('fetch', event => {
-    // শুধুমাত্র GET মেথড হ্যান্ডেল করা হবে
-    if (event.request.method !== 'GET') {
-        return;
-    }
+    if (event.request.method !== 'GET') return;
 
     event.respondWith(
         fetch(event.request)
             .then((networkResponse) => {
-                // অনলাইনে থাকলে: নেটওয়ার্ক থেকে ডেটা আনবে এবং রিটার্ন করবে
-                // ক্যাশ আপডেট করবে (যদি রেসপন্স ভ্যালিড হয়)
+                // নেটওয়ার্ক থেকে সফলভাবে ডেটা পেলে ক্যাশ আপডেট করুন
                 if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
                     const responseToCache = networkResponse.clone();
                     caches.open(CACHE_NAME).then((cache) => {
@@ -64,13 +61,13 @@ self.addEventListener('fetch', event => {
                 return networkResponse;
             })
             .catch(() => {
-                // অফলাইনে থাকলে: ক্যাশ থেকে ডেটা লোড করবে
+                // নেটওয়ার্ক না থাকলে ক্যাশ থেকে লোড করুন
                 return caches.match(event.request);
             })
     );
 });
 
-// অ্যাক্টিভেট ইভেন্ট: পুরনো ক্যাশ পরিষ্কার করা
+// ৩. অ্যাক্টিভেট ইভেন্ট: পুরনো ক্যাশ (v1, v2, v3, v4...) মুছে ফেলা
 self.addEventListener('activate', event => {
     const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
@@ -83,7 +80,9 @@ self.addEventListener('activate', event => {
                     }
                 })
             );
+        }).then(() => {
+            // ক্লায়েন্টদের (ব্রাউজার ট্যাব) নিয়ন্ত্রণ নিন
+            return self.clients.claim();
         })
     );
-    return self.clients.claim();
 });
