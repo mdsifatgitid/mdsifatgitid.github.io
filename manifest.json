@@ -1,10 +1,11 @@
 {
   "name": "Bangla Toolbox",
-  "short_name": "BanglaToolbox",
+  "short_name": "BanglaTools",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#4f46e5",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "https://mdsifatgitid.github.io/converticon.png",
