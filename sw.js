@@ -41,25 +41,32 @@ self.addEventListener('install', event => {
     self.skipWaiting();
 });
 
-// ফেচ ইভেন্ট: সব রিকোয়েস্টের জন্য Network First স্ট্র্যাটেজি
+// ফ// ফেচ ইভেন্ট: সব রিকোয়েস্টের জন্য Network First স্ট্র্যাটেজি
 self.addEventListener('fetch', event => {
+    // শুধুমাত্র GET মেথড হ্যান্ডেল করা হবে, POST বা অন্যান্য রিকোয়েস্ট সরাসরি নেটওয়ার্কে যাবে
+    if (event.request.method !== 'GET') {
+        return;
+    }
+
     event.respondWith(
         fetch(event.request)
             .then((networkResponse) => {
-                // নেটওয়ার্ক থাকলে সেখান থেকেই ডেটা নেবে এবং ক্যাশ আপডেট করে রাখবে
-                return caches.open(CACHE_NAME).then((cache) => {
-                    cache.put(event.request, networkResponse.clone());
-                    return networkResponse;
+                // অনলাইনে থাকলে: নেটওয়ার্ক থেকে ডেটা আনবে এবং রিটার্ন করবে
+                // পাশাপাশি ভবিষ্যতের অফলাইন ব্যবহারের জন্য ক্যাশ আপডেট করে রাখবে (ব্যাকগ্রাউন্ডে)
+                const responseToCache = networkResponse.clone();
+                caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, responseToCache);
                 });
+                
+                return networkResponse;
             })
             .catch(() => {
-                // শুধুমাত্র নেটওয়ার্ক না থাকলে (অফলাইন) ক্যাশ থেকে লোড করবে
+                // অফলাইনে থাকলে: শুধুমাত্র তখনই ক্যাশ থেকে ডেটা লোড করবে
                 return caches.match(event.request);
             })
     );
 });
-
-// অ্যাক্টিভেট ইভেন্ট: পুরনো ক্যাশ পরিষ্কার করা
+অ্যাক্টিভেট ইভেন্ট: পুরনো ক্যাশ পরিষ্কার করা
 self.addEventListener('activate', event => {
     const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
@@ -75,5 +82,4 @@ self.addEventListener('activate', event => {
     );
     return self.clients.claim();
 });
-
 
