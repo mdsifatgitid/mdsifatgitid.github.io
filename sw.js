@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bangla-toolbox-v3'; // ভার্সন v2 থেকে v3 করা হয়েছে যাতে ব্রাউজার নতুন আপডেটটি ধরে
+const CACHE_NAME = 'bangla-toolbox-v3'; // ভার্সন v3 রাখা হয়েছে
 const urlsToCache = [
     './', 
     './index.html', 
@@ -23,7 +23,7 @@ const urlsToCache = [
     'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js'
 ];
 
-// ইনস্টল ইভেন্ট
+// ইনস্টল ইভেন্ট: ফাইলগুলো প্রাথমিকভাবে ক্যাশ করা হবে
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -41,36 +41,25 @@ self.addEventListener('install', event => {
     self.skipWaiting();
 });
 
-// ফেচ ইভেন্ট: (আপডেট করা হয়েছে)
+// ফেচ ইভেন্ট: সব রিকোয়েস্টের জন্য Network First স্ট্র্যাটেজি
 self.addEventListener('fetch', event => {
-    // ১. যদি রিকোয়েস্টটি HTML পেজের জন্য হয় (যেমন index.html), তবে আগে নেটওয়ার্ক চেক করবে
-    if (event.request.mode === 'navigate') {
-        event.respondWith(
-            fetch(event.request)
-                .then((networkResponse) => {
-                    return caches.open(CACHE_NAME).then((cache) => {
-                        // নতুন ভার্সনটি ক্যাশে আপডেট করে রাখবো
-                        cache.put(event.request, networkResponse.clone());
-                        return networkResponse;
-                    });
-                })
-                .catch(() => {
-                    // ইন্টারনেট না থাকলে ক্যাশ থেকে পুরনো পেজ দেখাবে
-                    return caches.match(event.request);
-                })
-        );
-    } else {
-        // ২. অন্যান্য ফাইল (ইমেজ, সিএসএস, জেএস) এর জন্য আগের মতোই ক্যাশ থেকে লোড হবে (দ্রুত লোডিংয়ের জন্য)
-        event.respondWith(
-            caches.match(event.request)
-                .then(response => {
-                    return response || fetch(event.request);
-                })
-        );
-    }
+    event.respondWith(
+        fetch(event.request)
+            .then((networkResponse) => {
+                // নেটওয়ার্ক থাকলে সেখান থেকেই ডেটা নেবে এবং ক্যাশ আপডেট করে রাখবে
+                return caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, networkResponse.clone());
+                    return networkResponse;
+                });
+            })
+            .catch(() => {
+                // শুধুমাত্র নেটওয়ার্ক না থাকলে (অফলাইন) ক্যাশ থেকে লোড করবে
+                return caches.match(event.request);
+            })
+    );
 });
 
-// অ্যাক্টিভেট ইভেন্ট: পুরনো ক্যাশ পরিষ্কার করা এবং নতুন সার্ভিস ওয়ার্কার সক্রিয় করা
+// অ্যাক্টিভেট ইভেন্ট: পুরনো ক্যাশ পরিষ্কার করা
 self.addEventListener('activate', event => {
     const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
@@ -84,5 +73,5 @@ self.addEventListener('activate', event => {
             );
         })
     );
-    return self.clients.claim(); // পেজ রিফ্রেশ ছাড়াই নতুন সার্ভিস ওয়ার্কারকে নিয়ন্ত্রণ নিতে বলা
+    return self.clients.claim();
 });
