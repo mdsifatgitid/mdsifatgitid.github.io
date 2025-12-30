@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bangla-toolbox-v6'; // ভার্সন পরিবর্তন করে v6 করা হয়েছে
+const CACHE_NAME = 'bangla-toolbox-v7'; // ভার্সন পরিবর্তন করে v7 করা হয়েছে (যাতে ব্রাউজার নতুন ফাইলটি নেয়)
 const urlsToCache = [
     './', 
     './index.html', 
@@ -15,12 +15,8 @@ const urlsToCache = [
     'https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js',
     'https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js',
     'https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/SUTONNYMJ.TTF',
-    'https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/Bornomala-Regular.ttf',
-    // Firebase স্ক্রিপ্টগুলো
-    'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js',
-    'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js',
-    'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js',
-    'https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js'
+    'https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/Bornomala-Regular.ttf'
+    // Firebase স্ক্রিপ্টগুলো এখান থেকে সরানো হয়েছে
 ];
 
 // ১. ইনস্টল ইভেন্ট: ফাইলগুলো ক্যাশ করা হবে
@@ -31,7 +27,7 @@ self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
-                console.log('Opened cache v5');
+                console.log('Opened cache ' + CACHE_NAME);
                 return Promise.all(
                     urlsToCache.map(url => {
                         return cache.add(url).catch(err => {
