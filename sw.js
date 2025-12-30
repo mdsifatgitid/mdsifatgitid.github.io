@@ -1,8 +1,8 @@
-const CACHE_NAME = 'bangla-toolbox-v7'; // ভার্সন পরিবর্তন করে v7 করা হয়েছে (যাতে ব্রাউজার নতুন ফাইলটি নেয়)
+const CACHE_NAME = 'bangla-toolbox-v8'; // ভার্সন পরিবর্তন করা হয়েছে যাতে নতুন ফাইল আপডেট নেয়
 const urlsToCache = [
     './', 
-    './index.html', 
-    './manifest.json',
+    './index.html', // নিশ্চিত করুন আপনার মেইন ফাইলের নাম index.html
+    './manifest.json', // নিশ্চিত করুন ফাইলের নাম manifest.json
     'https://cdn.tailwindcss.com',
     'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
     'https://cdn.jsdelivr.net/npm/easyqrcodejs@4.4.13/dist/easy.qrcode.min.js',
@@ -16,14 +16,11 @@ const urlsToCache = [
     'https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js',
     'https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/SUTONNYMJ.TTF',
     'https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/Bornomala-Regular.ttf'
-    // Firebase স্ক্রিপ্টগুলো এখান থেকে সরানো হয়েছে
 ];
 
-// ১. ইনস্টল ইভেন্ট: ফাইলগুলো ক্যাশ করা হবে
+// ১. ইনস্টল ইভেন্ট
 self.addEventListener('install', event => {
-    // নতুন সার্ভিস ওয়ার্কার ইনস্টল হওয়ার সাথে সাথে অ্যাক্টিভ করার জন্য
     self.skipWaiting();
-
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
@@ -39,15 +36,12 @@ self.addEventListener('install', event => {
     );
 });
 
-// ২. ফেচ ইভেন্ট: সব রিকোয়েস্টের জন্য Network First স্ট্র্যাটেজি
-// এটি প্রথমে নেটওয়ার্ক থেকে নতুন ফাইল আনার চেষ্টা করবে, ব্যর্থ হলে ক্যাশ দেখাবে।
+// ২. ফেচ ইভেন্ট
 self.addEventListener('fetch', event => {
     if (event.request.method !== 'GET') return;
-
     event.respondWith(
         fetch(event.request)
             .then((networkResponse) => {
-                // নেটওয়ার্ক থেকে সফলভাবে ডেটা পেলে ক্যাশ আপডেট করুন
                 if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
                     const responseToCache = networkResponse.clone();
                     caches.open(CACHE_NAME).then((cache) => {
@@ -57,13 +51,12 @@ self.addEventListener('fetch', event => {
                 return networkResponse;
             })
             .catch(() => {
-                // নেটওয়ার্ক না থাকলে ক্যাশ থেকে লোড করুন
                 return caches.match(event.request);
             })
     );
 });
 
-// ৩. অ্যাক্টিভেট ইভেন্ট: পুরনো ক্যাশ (v1, v2, v3, v4...) মুছে ফেলা
+// ৩. অ্যাক্টিভেট ইভেন্ট
 self.addEventListener('activate', event => {
     const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
@@ -71,13 +64,11 @@ self.addEventListener('activate', event => {
             return Promise.all(
                 cacheNames.map(cacheName => {
                     if (cacheWhitelist.indexOf(cacheName) === -1) {
-                        console.log('Deleting old cache:', cacheName);
                         return caches.delete(cacheName);
                     }
                 })
             );
         }).then(() => {
-            // ক্লায়েন্টদের (ব্রাউজার ট্যাব) নিয়ন্ত্রণ নিন
             return self.clients.claim();
         })
     );
