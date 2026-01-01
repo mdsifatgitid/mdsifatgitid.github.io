@@ -446,7 +446,7 @@
              width: 100%;
         }		
 
-        /* ৩. ট্যাব বাটন (ভেরিয়েবল ব্যবহার করে আপডেট করা) */
+/* ৩. ট্যাব বাটন (ভেরিয়েবল ব্যবহার করে আপডেট করা) */
         .tab-button {
             padding: 10px 16px;
             background-color: var(--tab-bg); 
@@ -479,6 +479,12 @@
         .tab-button:hover:not(.active) {
             background-color: #e0f2fe;
             transform: translateY(-1px);
+        }
+
+        /* ডার্ক মোডে ট্যাবের ওপর হোভার করলে টেক্সট সাদা করার জন্য */
+        .dark .tab-button:hover:not(.active) {
+            background-color: #475569;
+            color: white;
         }
 
         /* ৪. ফন্ট কনভার্টার সেকশন (ভেরিয়েবল ব্যবহার করে আপডেট করা) */
