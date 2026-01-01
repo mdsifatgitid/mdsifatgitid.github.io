@@ -22961,9 +22961,9 @@ function initializeColorPicker() {
 /* ==================================================================== */
 
 
-// ====================================================================
-// START: NEW SIDEBAR, DASHBOARD & INTERACTIVITY SCRIPT (UPDATED)
-// ====================================================================
+/* ======================================================== */
+/* START: NEW SIDEBAR, DASHBOARD & INTERACTIVITY SCRIPT (UPDATED) */
+/* ======================================================== */
 document.addEventListener('DOMContentLoaded', () => {
     
     // --- Initialize all new features ---
@@ -22971,7 +22971,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeDraggableDashboard();
     makeAllFeaturesInteractive();
 
-    // --- Sidebar Functionality (Sidebar Close Button & Audio Visualizer Added) ---
+    // --- Sidebar Functionality (Sidebar Close Button & Audio Visualizer Added & Keyboard Nav) ---
     function initializeSidebar() {
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
@@ -22986,7 +22986,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const isMediaPlaying = () => {
             const audio = document.getElementById('audioPlayer');
             const video = document.getElementById('videoPlayer');
-            // অডিও বা ভিডিও পজ করা না থাকলে এবং শেষ না হলে এবং টাইম ০ এর বেশি হলে প্লেইং ধরা হবে
             const isAudioPlaying = audio && !audio.paused && !audio.ended && audio.currentTime > 0;
             const isVideoPlaying = video && !video.paused && !video.ended && video.currentTime > 0;
             return isAudioPlaying || isVideoPlaying;
@@ -23003,24 +23002,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             } catch (e) {
-                // Cross-origin blocked হলে এক্সেস পাওয়া যাবে না
                 return false;
             }
             return false;
         };
 
-        // সাইডবার হাইলাইট আপডেট করার ফাংশন (ভিজুয়ালাইজার লজিক সহ)
+        // সাইডবার হাইলাইট আপডেট করার ফাংশন
         const updateSidebarHighlights = () => {
             const links = toolList.querySelectorAll('a');
             
-            // এলার্ম স্ট্যাটাস চেক - "অ্যালার্ম থামান" বাটন দৃশ্যমান কিনা
             let isAlarmActive = false;
             const stopAlarmBtn = document.getElementById('stopAlarmBtn');
             if (stopAlarmBtn && !stopAlarmBtn.classList.contains('hidden')) {
                 isAlarmActive = true;
             }
 
-            // নতুন: কোনো মিডিয়া বা এলার্ম বাজছে কিনা তা ট্র্যাক করার জন্য ভেরিয়েবল
             let isAnyMediaActive = false;
 
             links.forEach(a => {
@@ -23028,27 +23024,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 const targetElement = document.getElementById(targetTabId);
                 const isActive = targetElement && targetElement.classList.contains('active');
 
-                // মূল টেক্সট সংরক্ষণ (যাতে আইকন যুক্ত করার পর টেক্সট হারিয়ে না যায়)
                 if (!a.dataset.originalText) {
                     a.dataset.originalText = a.textContent;
                 }
                 const originalText = a.dataset.originalText;
 
-                // ডিফল্ট স্টাইল এবং আইকন কনটেইনার সেটআপ (Flex ব্যবহার করা হয়েছে আইকন ডানে রাখার জন্য)
-                let newClass = "block w-full text-left p-2 rounded-lg transition-colors duration-200 flex justify-between items-center";
-                let iconHtml = ""; // ডিফল্টভাবে কোনো আইকন নেই
+                let newClass = "block w-full text-left p-2 rounded-lg transition-colors duration-200 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-indigo-500"; // ফোকাস রিং যোগ করা হয়েছে
+                let iconHtml = ""; 
 
-                // শর্ত ১: এলার্ম বাজলে (ঘড়ি ট্যাব) -> হলুদ হাইলাইট + পালস এনিমেশন + ঘণ্টা আইকন
                 if (targetTabId === 'clockTab' && isAlarmActive) {
                     newClass += ' bg-yellow-400 text-black font-bold shadow-md animate-pulse';
                     iconHtml = '<span>🔔</span>';
                     isAnyMediaActive = true;
                 }
-                // শর্ত ২: মিডিয়া প্লে হলে (প্লেয়ার বা ওয়েব সার্চ) -> হলুদ হাইলাইট + ভিজুয়ালাইজার আইকন
                 else if ((targetTabId === 'playerTab' && isMediaPlaying()) || 
                          (targetTabId === 'webSearchTab' && isWebSearchPlaying())) {
                     newClass += ' bg-yellow-400 text-black font-bold shadow-md';
-                    // অডিও ভিজুয়ালাইজার আইকন HTML
                     iconHtml = `
                         <span class="playing-icon" title="মিডিয়া বাজছে">
                             <span class="bar"></span>
@@ -23057,36 +23048,29 @@ document.addEventListener('DOMContentLoaded', () => {
                         </span>`;
                     isAnyMediaActive = true;
                 }
-                // শর্ত ৩: সাধারণ একটিভ ট্যাব -> নীল হাইলাইট
                 else if (isActive) {
                     newClass += ' bg-indigo-600 text-white shadow-md font-semibold';
                 } 
-                // শর্ত ৪: ইনঅ্যাক্টিভ ট্যাব -> সাধারণ স্টাইল
                 else {
                     newClass += ' hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300';
                 }
 
-                // শুধুমাত্র পরিবর্তন হলেই DOM আপডেট করুন (পারফরম্যান্স অপ্টিমাইজেশন)
                 if (a.className !== newClass) {
                     a.className = newClass;
                 }
                 
-                // আইকন বা টেক্সট আপডেট
                 const newInnerHtml = `<span>${originalText}</span>${iconHtml}`;
                 if (a.innerHTML !== newInnerHtml) {
                     a.innerHTML = newInnerHtml;
                 }
             });
 
-            // --- নতুন: সাইডবার টগল বাটনের আইকন আপডেট (ভিজুয়ালাইজার) ---
             if (sidebarToggle) {
-                // আমরা একটি ডাটা এট্রিবিউট ব্যবহার করে স্টেট চেক করব যাতে বারবার DOM আপডেট না হয়
                 const currentState = sidebarToggle.getAttribute('data-visualizer-active');
                 const newState = isAnyMediaActive ? 'true' : 'false';
 
                 if (currentState !== newState) {
                     if (isAnyMediaActive) {
-                        // অডিও বাজলে বা ট্যাব হলুদ হলে ভিজুয়ালাইজার আইকন দেখাবে
                         sidebarToggle.innerHTML = `
                             <span class="playing-icon" style="margin:0; width: 24px; height: 24px; gap: 4px;">
                                 <span class="bar" style="width: 3px; background-color: white;"></span>
@@ -23094,7 +23078,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="bar" style="width: 3px; background-color: white; animation-delay: 0.4s;"></span>
                             </span>`;
                     } else {
-                        // স্বাভাবিক অবস্থায় হ্যামবার্গার আইকন
                         sidebarToggle.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>`;
                     }
                     sidebarToggle.setAttribute('data-visualizer-active', newState);
@@ -23102,13 +23085,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        // Populate the tool list from existing tab buttons
         const tabButtons = document.querySelectorAll('.tab-button');
-        if (toolList.children.length === 0) { // Populate only once
+        if (toolList.children.length === 0) { 
             tabButtons.forEach(button => {
                 let buttonText = button.textContent.trim();
-                
-                // SVG বা আইকনের টেক্সট এড়াতে এবং নির্দিষ্ট নাম সেট করতে
                 if (button.id === 'moreMenuBtn') buttonText = 'আরও';
                 if (button.id === 'settingsMenuBtn') buttonText = 'সেটিংস';
 
@@ -23116,76 +23096,106 @@ document.addEventListener('DOMContentLoaded', () => {
                     const li = document.createElement('li');
                     const a = document.createElement('a');
                     a.href = "#";
-                    a.textContent = buttonText; // প্রথমে শুধু টেক্সট সেট হবে
+                    a.textContent = buttonText;
                     
-                    // টার্গেট ট্যাব সেট করা
                     let targetTabId = button.id;
-                    if (button.id === 'moreMenuBtn') {
-                        targetTabId = 'allFeaturesTab'; 
-                    } else if (button.id === 'settingsMenuBtn') {
-                        targetTabId = 'moreSettingsTab'; 
-                    }
+                    if (button.id === 'moreMenuBtn') targetTabId = 'allFeaturesTab'; 
+                    else if (button.id === 'settingsMenuBtn') targetTabId = 'moreSettingsTab'; 
                     
                     a.dataset.tabId = targetTabId;
                     
-                    // প্রাথমিক স্টাইল (বাকিটা updateSidebarHighlights হ্যান্ডেল করবে)
-                    a.className = "block w-full text-left p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors duration-200 flex justify-between items-center";
+                    // ফোকাস স্টাইল যোগ করা হয়েছে
+                    a.className = "block w-full text-left p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors duration-200 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-indigo-500";
 
                     a.addEventListener('click', (e) => {
                         e.preventDefault();
                         const targetTab = document.getElementById(a.dataset.tabId);
                         if (targetTab) {
-                            targetTab.click(); // ট্যাবে ক্লিক সিমুুলেট করা
+                            targetTab.click(); 
                         }
                         closeSidebar();
                     });
+                    
+                    // কিবোর্ড ইভেন্ট: এন্টার চাপলে ক্লিক হবে
+                    a.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            a.click();
+                        }
+                    });
+
                     li.appendChild(a);
                     toolList.appendChild(li);
                 }
             });
         }
 
-        // সাইডবার খোলা এবং বন্ধ করার ফাংশন
         function closeSidebar() {
             document.body.classList.remove('sidebar-open');
+            // সাইডবার বন্ধ হলে টগল বাটনে ফোকাস ফেরত দিন (অ্যাক্সেসিবিলিটির জন্য)
+            if(sidebarToggle) sidebarToggle.focus();
         }
 
         // টগল বাটন ক্লিক
         sidebarToggle.addEventListener('click', (e) => {
             e.stopPropagation();
-            
-            // সাইডবার খোলার আগে হাইলাইট আপডেট করুন
             if (!document.body.classList.contains('sidebar-open')) {
                 updateSidebarHighlights();
             }
-
             document.body.classList.toggle('sidebar-open');
 
-            // সাইডবার খোলার পর একটিভ ট্যাব স্ক্রোল করা
+            // সাইডবার খোলার পর সার্চ বক্সে ফোকাস করুন
             if (document.body.classList.contains('sidebar-open')) {
                 setTimeout(() => {
-                    const activeLink = toolList.querySelector('a.bg-indigo-600, a.bg-yellow-400');
-                    if (activeLink) {
-                        activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                }, 300);
+                    sidebarSearch.focus();
+                }, 100);
             }
         });
         
-        // ক্লোজ বাটন ক্লিক
         sidebarCloseBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             closeSidebar();
         });
 
-        // ওভারলে ক্লিক
         sidebarOverlay.addEventListener('click', closeSidebar);
 
-        // সার্চ ফাংশনালিটি (আপডেট করা হয়েছে: সিনোনিম সাপোর্ট সহ)
+        // --- সাইডবার কিবোর্ড নেভিগেশন (নতুন ফিচার) ---
+        sidebarSearch.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                // সার্চ বক্স থেকে নিচের অ্যারো চাপলে প্রথম টুলে ফোকাস যাবে
+                const visibleLinks = Array.from(toolList.querySelectorAll('li:not([style*="display: none"]) a'));
+                if (visibleLinks.length > 0) {
+                    visibleLinks[0].focus();
+                }
+            }
+        });
+
+        toolList.addEventListener('keydown', (e) => {
+            const visibleLinks = Array.from(toolList.querySelectorAll('li:not([style*="display: none"]) a'));
+            const currentIndex = visibleLinks.indexOf(document.activeElement);
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                const nextIndex = currentIndex + 1;
+                if (nextIndex < visibleLinks.length) {
+                    visibleLinks[nextIndex].focus();
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                const prevIndex = currentIndex - 1;
+                if (prevIndex >= 0) {
+                    visibleLinks[prevIndex].focus();
+                } else {
+                    // তালিকার শুরুতে থাকলে সার্চ বক্সে ফিরে যান
+                    sidebarSearch.focus();
+                }
+            }
+        });
+
+        // সার্চ ফাংশনালিটি
         sidebarSearch.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
-            
-            // টুলের সিনোনিম বা প্রতিশব্দ ম্যাপিং (এখানে আপনি আরও শব্দ যোগ করতে পারেন)
             const toolSynonyms = {
                 'imageResizerTab': ['picture', 'photo', 'crop', 'resize', 'jpg', 'png', 'image editor', 'রিসাইজ', 'ছবি'],
                 'basicCalcTab': ['math', 'calculation', 'add', 'subtract', 'হিসাব', 'গণনা', 'যোগ', 'ক্যালকুলেটর'],
@@ -23226,8 +23236,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const link = li.querySelector('a');
                 const toolName = li.textContent.toLowerCase();
                 const tabId = link ? link.dataset.tabId : '';
-                
-                // সিনোনিম চেক
                 const synonyms = toolSynonyms[tabId] || [];
                 const hasSynonymMatch = synonyms.some(s => s.toLowerCase().includes(searchTerm));
 
@@ -23239,16 +23247,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // রিয়েল-টাইমে হাইলাইট চেক করার জন্য ইন্টারভ্যাল সেট করা (প্রতি ৫০০ms)
-        
         if (window.sidebarHighlightInterval) clearInterval(window.sidebarHighlightInterval);
         window.sidebarHighlightInterval = setInterval(updateSidebarHighlights, 500);
-        
-        // শুরুতে একবার কল করা
         updateSidebarHighlights();
     }
 
-    // --- Draggable Dashboard Functionality (Unchanged) ---
+    // --- Draggable Dashboard Functionality ---
     function initializeDraggableDashboard() {
         const dashboardGrid = document.getElementById('dashboard-grid');
         const allTabs = document.querySelectorAll('.tab-button');
@@ -23435,7 +23439,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // --- "All Features" Tab Interactivity (Unchanged) --- moremenutab
+    // --- "All Features" Tab Interactivity ---
     function makeAllFeaturesInteractive() {
         const featuresList = document.querySelector('#featuresDisplayArea ul');
         if (!featuresList) return;
@@ -23538,9 +23542,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-// ====================================================================
-// END: NEW SIDEBAR, DASHBOARD & INTERACTIVITY SCRIPT (UPDATED)
-// ====================================================================
+/* ======================================================== */
+/* END: NEW SIDEBAR, DASHBOARD & INTERACTIVITY SCRIPT (UPDATED) */
+/* ======================================================== */
 
 
 
@@ -26782,14 +26786,40 @@ window.addEventListener('appinstalled', () => {
 /* ====================================================================*/
 function initializeGlobalShortcuts() {
     document.addEventListener('keydown', (e) => {
-        // যদি ইউজার কোনো ইনপুট ফিল্ডে টাইপ করে, তবে শর্টকাট কাজ করবে না
         const activeTag = document.activeElement.tagName.toLowerCase();
         const isEditable = document.activeElement.isContentEditable;
-        if (activeTag === 'input' || activeTag === 'textarea' || isEditable) {
+        const isInputFocused = activeTag === 'input' || activeTag === 'textarea' || isEditable;
+
+        // --- নতুন: Control কী শর্টকাট (ট্যাব নেভিগেশন ও ইনপুট ফোকাস) ---
+        if (e.ctrlKey && !e.altKey && !e.shiftKey) {
+            // ১. Ctrl + Right Arrow: পরবর্তী আইটেমে যান
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                navigateTabs('next');
+            }
+            // ২. Ctrl + Left Arrow: পূর্ববর্তী আইটেমে যান
+            else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                navigateTabs('prev');
+            }
+            // ৩. Ctrl + Down Arrow: ইনপুট বক্সে ফোকাস করুন (সিলেকশন)
+            else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                focusNextInput();
+            }
+            // ৪. Ctrl + Up Arrow: ফোকাস সরান (আনসিলেকশন/আনফোকাস)
+            else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                blurActiveTabInput();
+            }
+        }
+
+        // --- পুরাতন: Alt কী শর্টকাট ---
+        // যদি ইউজার ইনপুট ফিল্ডে টাইপ করে, তবে Alt শর্টকাট কাজ করবে না
+        if (isInputFocused) {
             return;
         }
 
-        // Alt কী চেপে ধরে শর্টকাট ব্যবহার করতে হবে (ব্রাউজার কনফ্লিক্ট এড়াতে)
         if (e.altKey && !e.ctrlKey && !e.shiftKey) {
             const key = e.key.toLowerCase();
             let targetTabId = null;
@@ -26829,20 +26859,16 @@ function initializeGlobalShortcuts() {
                 targetTabId = shortcutMap[key];
             }
 
-            // ট্যাব পরিবর্তন করুন
             if (targetTabId) {
-                e.preventDefault(); // ডিফল্ট ব্রাউজার অ্যাকশন বন্ধ করুন
+                e.preventDefault(); 
                 const tabButton = document.getElementById(targetTabId);
                 
-                // যদি বাটনটি ড্রপডাউনের ভেতরে থাকে এবং ড্রপডাউন বন্ধ থাকে, তবে এটি খুঁজে বের করে ক্লিক করতে হবে
                 if (tabButton) {
-                    // ড্রপডাউন ওপেন করার লজিক (অপশনাল, শুধু ক্লিক করলেই হবে showTab হ্যান্ডেল করবে)
                     tabButton.click();
                     showCustomAlert(`শর্টকাট সক্রিয়: ${tabButton.textContent.trim()}`);
                 }
             }
         }
-        
         
         // সাইডবার টগল (Alt + X)
         if (e.altKey && e.key.toLowerCase() === 'x') {
@@ -26851,8 +26877,135 @@ function initializeGlobalShortcuts() {
             if (sidebarToggle) sidebarToggle.click();
         }
     });
+
+    // --- সাহায্যকারী ফাংশন: উন্নত ট্যাব নেভিগেশন (সাইডবার ভিত্তিক) ---
+    function navigateTabs(direction) {
+        // ১. বিশেষ বাটন (টপ বার) - এগুলো সাইডবারে নেই
+        const topButtons = [
+            document.getElementById('voiceCommandBtn'),
+            document.getElementById('theme-toggle')
+        ].filter(el => el && el.offsetParent !== null); // শুধুমাত্র দৃশ্যমান বাটন
+
+        // ২. সাইডবারের লিংকগুলো (সাজানো তালিকা)
+        // নোট: সাইডবার অফ-স্ক্রিন থাকলেও এর আইটেমগুলো DOM-এ আছে। আমরা সেগুলোকেই সোর্স হিসেবে ব্যবহার করব।
+        const sidebarList = document.getElementById('sidebar-tool-list');
+        const sidebarLinks = sidebarList ? Array.from(sidebarList.querySelectorAll('a')) : [];
+        
+        // সম্পূর্ণ নেভিগেশন লিস্ট (ভয়েস, থিম, তারপর সাইডবারের সব টুলস)
+        const navigationList = [...topButtons, ...sidebarLinks];
+
+        if (navigationList.length === 0) return;
+
+        // বর্তমান ফোকাস করা বাটন খুঁজে বের করা
+        let currentIndex = navigationList.indexOf(document.activeElement);
+
+        // যদি ফোকাস না থাকে, তবে বর্তমানে অ্যাক্টিভ ট্যাবটি খুঁজে বের করার চেষ্টা করি
+        if (currentIndex === -1) {
+            // সাইডবার স্ক্রিপ্টে active লিংকে 'bg-indigo-600' ক্লাস যোগ করা হয়, সেটি দিয়ে খুঁজছি
+            const activeSidebarLink = sidebarLinks.find(link => link.classList.contains('bg-indigo-600'));
+            
+            if (activeSidebarLink) {
+                currentIndex = navigationList.indexOf(activeSidebarLink);
+            }
+        }
+
+        // যদি তাও না পাওয়া যায়, শুরু থেকে শুরু
+        if (currentIndex === -1) currentIndex = -1;
+
+        let nextIndex;
+        if (direction === 'next') {
+            nextIndex = (currentIndex + 1) % navigationList.length;
+        } else {
+            nextIndex = (currentIndex - 1 + navigationList.length) % navigationList.length;
+        }
+
+        const targetElement = navigationList[nextIndex];
+
+        if (targetElement) {
+            // স্ক্রল প্রিভেন্ট করে ফোকাস করা (যাতে সাইডবার অফ-স্ক্রিন থাকলেও পেজ জাম্প না করে)
+            targetElement.focus({ preventScroll: true });
+
+            // বিশেষ শর্ত: থিম এবং ভয়েস বাটন বাদে বাকি সব (সাইডবার আইটেম) অটোমেটিক ক্লিক হবে
+            const isThemeOrVoice = (targetElement.id === 'theme-toggle' || targetElement.id === 'voiceCommandBtn');
+            
+            if (!isThemeOrVoice) {
+                targetElement.click(); // ট্যাব পরিবর্তন করবে
+            }
+            // থিম বা ভয়েস বাটন হলে শুধু ফোকাস থাকবে, ক্লিক হবে না (এন্টার চাপলে কাজ করবে)
+        }
+    }
+
+    // --- সাহায্যকারী ফাংশন: ইনপুট ফোকাস নেভিগেশন (সিলেকশন ফিক্স) ---
+    function focusNextInput() {
+        // বর্তমানে সক্রিয় কন্টেন্ট এরিয়া খুঁজুন
+        const activeContent = document.querySelector('.calculator-content.active');
+        if (!activeContent) return;
+
+        // সকল ইনপুট এলিমেন্ট সংগ্রহ করুন (দৃশ্যমান এবং এনাবলড)
+        // textarea, select, এবং contenteditable সহ
+        const inputs = Array.from(activeContent.querySelectorAll('input, textarea, [contenteditable="true"], select'))
+            .filter(el => {
+                const style = window.getComputedStyle(el);
+                return style.display !== 'none' && 
+                       style.visibility !== 'hidden' && 
+                       !el.disabled && 
+                       el.type !== 'hidden';
+            });
+        
+        if (inputs.length === 0) return;
+
+        // বর্তমানে ফোকাসড ইনপুটটি খুঁজুন
+        const currentIndex = inputs.indexOf(document.activeElement);
+
+        if (currentIndex === -1) {
+            // কেউ ফোকাসড নেই -> প্রথমটিতে ফোকাস দিন
+            inputs[0].focus({ preventScroll: false });
+            // প্রয়োজনে স্ক্রল করে সামনে আনা
+            inputs[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            moveCursorToEnd(inputs[0]);
+        } else {
+            // ফোকাসড আছে -> পরেরটিতে যান (লুপ করবে)
+            const nextIndex = (currentIndex + 1) % inputs.length;
+            inputs[nextIndex].focus({ preventScroll: false });
+            inputs[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            moveCursorToEnd(inputs[nextIndex]);
+        }
+    }
+
+    // কার্সর শেষে নিয়ে যাওয়ার ফাংশন
+    function moveCursorToEnd(el) {
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+            try {
+                // কিছু ইনপুট টাইপে (যেমন date, number) selection সাপোর্ট করে না
+                const val = el.value;
+                if (typeof el.selectionStart === "number") {
+                    el.selectionStart = el.selectionEnd = val.length;
+                }
+            } catch (e) { /* ignore error for unsupported types */ }
+        } else if (el.isContentEditable) {
+            // ContentEditable div এর জন্য (যেমন নোটপ্যাড)
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            range.collapse(false);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    }
+
+    // --- সাহায্যকারী ফাংশন: ইনপুট আনফোকাস (Blur) ---
+    function blurActiveTabInput() {
+        if (document.activeElement && 
+           (document.activeElement.tagName === 'INPUT' || 
+            document.activeElement.tagName === 'TEXTAREA' || 
+            document.activeElement.isContentEditable ||
+            document.activeElement.tagName === 'SELECT')) {
+            
+            document.activeElement.blur(); // ফোকাস সরিয়ে নিন
+        }
+    }
     
-    console.log("Global keyboard shortcuts initialized.");
+    console.log("Global keyboard shortcuts initialized with sidebar-based navigation.");
 }
 
 // স্ক্রিপ্ট লোড হওয়ার পর শর্টকাট ইনিশিয়ালাইজ করুন
