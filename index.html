@@ -22982,7 +22982,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeDraggableDashboard();
     makeAllFeaturesInteractive();
 
-    // --- Sidebar Functionality (Sidebar Close Button & Audio Visualizer Added & Keyboard Nav) ---
+    // --- Sidebar Functionality (Updated: Auto Scroll including Yellow Highlight) ---
     function initializeSidebar() {
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
@@ -23147,19 +23147,25 @@ document.addEventListener('DOMContentLoaded', () => {
             if(sidebarToggle) sidebarToggle.focus();
         }
 
-        // টগল বাটন ক্লিক
+        // টগল বাটন ক্লিক - আপডেট করা হয়েছে
         sidebarToggle.addEventListener('click', (e) => {
             e.stopPropagation();
+            
+            // সাইডবার খোলার আগে হাইলাইট আপডেট করুন
             if (!document.body.classList.contains('sidebar-open')) {
                 updateSidebarHighlights();
             }
             document.body.classList.toggle('sidebar-open');
-
-            // সাইডবার খোলার পর সার্চ বক্সে ফোকাস করুন
+            
+            // সাইডবার ওপেন হলে একটিভ ট্যাবে স্ক্রল করুন
             if (document.body.classList.contains('sidebar-open')) {
                 setTimeout(() => {
-                    sidebarSearch.focus();
-                }, 100);
+                    // একটিভ লিংক খুঁজে বের করা (যেটিতে bg-indigo-600 অথবা bg-yellow-400 ক্লাস আছে)
+                    const activeLink = toolList.querySelector('a.bg-indigo-600, a.bg-yellow-400');
+                    if (activeLink) {
+                        activeLink.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                    }
+                }, 300); // ট্রানজিশন শেষ হওয়ার জন্য সময় দেওয়া হলো
             }
         });
         
@@ -23170,7 +23176,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         sidebarOverlay.addEventListener('click', closeSidebar);
 
-        // --- সাইডবার কিবোর্ড নেভিগেশন (নতুন ফিচার) ---
+        // --- সাইডবার কিবোর্ড নেভিগেশন ---
+        
+        // ১. সাইডবার ওপেন অবস্থায় ডাউন অ্যারো চাপলে সার্চে ফোকাস
+        document.addEventListener('keydown', (e) => {
+            if (document.body.classList.contains('sidebar-open')) {
+                const active = document.activeElement;
+                // যদি ফোকাস বর্তমানে সাইডবারের কোনো উপাদানে না থাকে
+                const isFocusInSidebar = sidebar.contains(active);
+                
+                if (!isFocusInSidebar && e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    sidebarSearch.focus();
+                }
+            }
+        });
+
+        // ২. সার্চ বক্সে ফোকাস থাকা অবস্থায় কিবোর্ড নেভিগেশন
         sidebarSearch.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowDown') {
                 e.preventDefault();
@@ -23182,6 +23204,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // ৩. লিস্ট আইটেমে ফোকাস থাকা অবস্থায় কিবোর্ড নেভিগেশন
         toolList.addEventListener('keydown', (e) => {
             const visibleLinks = Array.from(toolList.querySelectorAll('li:not([style*="display: none"]) a'));
             const currentIndex = visibleLinks.indexOf(document.activeElement);
@@ -23198,7 +23221,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (prevIndex >= 0) {
                     visibleLinks[prevIndex].focus();
                 } else {
-                    // তালিকার শুরুতে থাকলে সার্চ বক্সে ফিরে যান
+                    // তালিকার শুরুতে থাকলে এবং আপ অ্যারো চাপলে সার্চ বক্সে ফিরে যান
                     sidebarSearch.focus();
                 }
             }
@@ -23556,8 +23579,6 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ======================================================== */
 /* END: NEW SIDEBAR, DASHBOARD & INTERACTIVITY SCRIPT (UPDATED) */
 /* ======================================================== */
-
-
 
 // ========================================================
 // START: Image Resizer Script (ছবি রিসাইজার) - পরিবর্তিত ও সংশোধিত
