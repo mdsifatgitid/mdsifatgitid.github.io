@@ -26806,7 +26806,7 @@ function initializeGlobalShortcuts() {
                 'd': 'dashboardTab',        // Dashboard
                 'g': 'webSearchTab',        // Browser
                 'r': 'imageResizerTab',     // Resizer
-                 'e': 'expenseTrackerTab',    // Expense
+                'e': 'expenseTrackerTab',    // Expense
                 'v': 'voiceCommandBtn', // Voicecommand 
                 'l': 'theme-toggle', // Theme Toggle 
                 'u': 'moreSettingsTab', // Settings
@@ -26837,14 +26837,6 @@ function initializeGlobalShortcuts() {
             }
         }
         
-        // ফুলস্ক্রিন টগল (Alt + F)
-        if (e.altKey && e.key.toLowerCase() === 'f') {
-            e.preventDefault();
-            const fullscreenToggle = document.getElementById('fullscreenToggle');
-            if (fullscreenToggle) {
-                fullscreenToggle.click();
-            }
-        }
         
         // সাইডবার টগল (Alt + X)
         if (e.altKey && e.key.toLowerCase() === 'x') {
