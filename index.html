@@ -6970,11 +6970,22 @@ body.sidebar-open #sidebarOverlay {
     transition: all 0.3s ease;
     /* margin-right: 8px; মুছে ফেলা হয়েছে যাতে আইকনগুলো কাছাকাছি থাকে */
     position: relative;
+    /* ফোকাস স্টাইল যোগ করা হয়েছে */
+    outline: none;
 }
+/* ফোকাস হলে রিং ইফেক্ট */
+.voice-command-btn:focus, .theme-toggle-button:focus {
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5); /* Indigo color ring */
+}
+
 .dark .voice-command-btn {
     background-color: #4a5568;
     color: #f7fafc;
 }
+.dark .voice-command-btn:focus, .dark .theme-toggle-button:focus {
+    box-shadow: 0 0 0 3px rgba(165, 180, 252, 0.5); /* Lighter ring for dark mode */
+}
+
 .voice-command-btn:hover {
     transform: scale(1.1);
     background-color: #c7d2fe;
@@ -26814,6 +26825,15 @@ function initializeGlobalShortcuts() {
             }
         }
 
+        // এন্টার কি হ্যান্ডলিং (ভয়েস এবং থিম বাটনের জন্য)
+        if (e.key === 'Enter') {
+            const activeId = document.activeElement.id;
+            if (activeId === 'theme-toggle' || activeId === 'voiceCommandBtn') {
+                e.preventDefault();
+                document.activeElement.click();
+            }
+        }
+
         // --- পুরাতন: Alt কী শর্টকাট ---
         // যদি ইউজার ইনপুট ফিল্ডে টাইপ করে, তবে Alt শর্টকাট কাজ করবে না
         if (isInputFocused) {
@@ -26887,11 +26907,13 @@ function initializeGlobalShortcuts() {
         ].filter(el => el && el.offsetParent !== null); // শুধুমাত্র দৃশ্যমান বাটন
 
         // ২. সাইডবারের লিংকগুলো (সাজানো তালিকা)
-        // নোট: সাইডবার অফ-স্ক্রিন থাকলেও এর আইটেমগুলো DOM-এ আছে। আমরা সেগুলোকেই সোর্স হিসেবে ব্যবহার করব।
         const sidebarList = document.getElementById('sidebar-tool-list');
-        const sidebarLinks = sidebarList ? Array.from(sidebarList.querySelectorAll('a')) : [];
+        let sidebarLinks = sidebarList ? Array.from(sidebarList.querySelectorAll('a')) : [];
         
-        // সম্পূর্ণ নেভিগেশন লিস্ট (ভয়েস, থিম, তারপর সাইডবারের সব টুলস)
+        // ফিল্টারিং: শুধুমাত্র 'setApiKeyBtn' (API Key) বাটনটি স্কিপ করবে, বাকি সব থাকবে
+        sidebarLinks = sidebarLinks.filter(link => link.dataset.tabId !== 'setApiKeyBtn');
+
+        // সম্পূর্ণ নেভিগেশন লিস্ট (ভয়েস, থিম, তারপর সাইডবারের মেইন টুলস)
         const navigationList = [...topButtons, ...sidebarLinks];
 
         if (navigationList.length === 0) return;
@@ -26901,7 +26923,7 @@ function initializeGlobalShortcuts() {
 
         // যদি ফোকাস না থাকে, তবে বর্তমানে অ্যাক্টিভ ট্যাবটি খুঁজে বের করার চেষ্টা করি
         if (currentIndex === -1) {
-            // সাইডবার স্ক্রিপ্টে active লিংকে 'bg-indigo-600' ক্লাস যোগ করা হয়, সেটি দিয়ে খুঁজছি
+            // সাইডবার স্ক্রিপ্টে active লিংকে 'bg-indigo-600' ক্লাস যোগ করা হয়
             const activeSidebarLink = sidebarLinks.find(link => link.classList.contains('bg-indigo-600'));
             
             if (activeSidebarLink) {
@@ -26922,7 +26944,7 @@ function initializeGlobalShortcuts() {
         const targetElement = navigationList[nextIndex];
 
         if (targetElement) {
-            // স্ক্রল প্রিভেন্ট করে ফোকাস করা (যাতে সাইডবার অফ-স্ক্রিন থাকলেও পেজ জাম্প না করে)
+            // স্ক্রল প্রিভেন্ট করে ফোকাস করা
             targetElement.focus({ preventScroll: true });
 
             // বিশেষ শর্ত: থিম এবং ভয়েস বাটন বাদে বাকি সব (সাইডবার আইটেম) অটোমেটিক ক্লিক হবে
