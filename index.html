@@ -26931,8 +26931,20 @@ function initializeGlobalShortcuts() {
         const sidebarList = document.getElementById('sidebar-tool-list');
         let sidebarLinks = sidebarList ? Array.from(sidebarList.querySelectorAll('a')) : [];
         
-        // ফিল্টারিং: শুধুমাত্র 'setApiKeyBtn' (API Key) বাটনটি স্কিপ করবে, বাকি সব থাকবে
-        sidebarLinks = sidebarLinks.filter(link => link.dataset.tabId !== 'setApiKeyBtn');
+        // ফিল্টারিং: অপ্রয়োজনীয় বাটন স্কিপ করা
+        sidebarLinks = sidebarLinks.filter(link => {
+            // ১. 'setApiKeyBtn' (API Key) বাটনটি স্কিপ করবে
+            if (link.dataset.tabId === 'setApiKeyBtn') return false;
+
+            // ২. 'আরও' বাটনটি স্কিপ করবে (যেটি 'allFeaturesTab' এ পয়েন্ট করে কিন্তু নাম 'আরও')
+            // কিন্তু 'সকল ফিচার' বাটনটি (যেটিও 'allFeaturesTab' এ পয়েন্ট করে) থাকবে
+            const text = link.textContent.trim();
+            if (link.dataset.tabId === 'allFeaturesTab' && (text === 'আরও' || text.startsWith('আরও'))) {
+                return false;
+            }
+
+            return true;
+        });
 
         // সম্পূর্ণ নেভিগেশন লিস্ট (ভয়েস, থিম, তারপর সাইডবারের মেইন টুলস)
         const navigationList = [...topButtons, ...sidebarLinks];
