@@ -8133,11 +8133,11 @@ body.sidebar-open #sidebarOverlay {
 <!-- সকল ফিচার বিভাগ -->
 <div id="allFeaturesContent" class="calculator-content">
     <div class="news-content !p-2 sm:!p-5"> <!-- মোবাইলে প্যাডিং কমানো হয়েছে -->
-        <div id="featuresDisplayArea" class="news-display-area rounded-lg !p-3 sm:!p-5">
+        <div id="featuresDisplayArea" class="news-display-area rounded-lg !p-3 sm:!p-5 mb-6">
             <h3 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200">এই অ্যাপের সকল ফিচার</h3>
             
             <!-- লম্বা তালিকার জন্য স্ক্রল এবং টেক্সট র‍্যাপিং ফিক্স -->
-            <div class="overflow-y-auto max-h-[75vh] pr-1">
+            <div class="overflow-y-auto max-h-[60vh] pr-1"> <!-- উচ্চতা সামান্য কমানো হলো যাতে নিচের সেকশন দেখা যায় -->
                 <ul class="list-disc list-outside ml-4 sm:ml-6 text-left space-y-2 text-sm sm:text-base break-words">
                     <li class="mb-2">
                         <strong class="text-indigo-700 dark:text-indigo-400 hover:text-indigo-600 cursor-pointer transition-colors">সাধারণ ও সাইন্টিফিক ক্যালকুলেটর:</strong> মৌলিক এবং জটিল গাণিতিক গণনার সুবিধা। প্রতিটি গণনার জন্য জেমিনি দ্বারা সহজ ব্যাখ্যা পাওয়ার সুযোগ রয়েছে।
@@ -8301,6 +8301,108 @@ body.sidebar-open #sidebarOverlay {
                 </ul>
             </div>
         </div>
+
+        <!-- কীবোর্ড শর্টকাট সেকশন (নতুন যোগ করা) -->
+        <div id="shortcutsSection"> <!-- Removed 'calculator-content' class -->
+            <div class="days-observances-container">
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-indigo-600 dark:text-indigo-400">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                    </svg>
+                    কীবোর্ড শর্টকাট তালিকা
+                </h3>
+                
+                <p class="text-center text-gray-600 dark:text-gray-400 mb-8">দ্রুত কাজ করার জন্য নিচের শর্টকাটগুলো ব্যবহার করুন। (Mac ব্যবহারকারীরা Alt এর পরিবর্তে Option কী ব্যবহার করতে পারেন)</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+                    
+                    <!-- নেভিগেশন ও গ্লোবাল -->
+                    <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md border-l-4 border-blue-500 hover:shadow-lg transition-shadow">
+                        <h4 class="text-lg font-bold text-blue-600 dark:text-blue-400 mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path></svg>
+                            নেভিগেশন ও কন্ট্রোল
+                        </h4>
+                        <ul class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                            <li class="flex justify-between items-center"><span>পরবর্তী ট্যাব</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Ctrl + Right ➡</kbd></li>
+                            <li class="flex justify-between items-center"><span>পূর্ববর্তী ট্যাব</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Ctrl + Left ⬅</kbd></li>
+                            <li class="flex justify-between items-center"><span>ইনপুট ফোকাস</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Ctrl + Down ⬇</kbd></li>
+                            <li class="flex justify-between items-center"><span>ফোকাস সরান</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Ctrl + Up ⬆</kbd></li>
+                            <li class="flex justify-between items-center"><span>সাইডবার মেনু</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + X</kbd></li>
+                            <li class="flex justify-between items-center"><span>থিম পরিবর্তন (Dark/Light)</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + L</kbd></li>
+                            <li class="flex justify-between items-center"><span>ভয়েস কমান্ড</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + V</kbd></li>
+                        </ul>
+                    </div>
+
+                    <!-- এডিটিং টুলস -->
+                    <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md border-l-4 border-green-500 hover:shadow-lg transition-shadow">
+                        <h4 class="text-lg font-bold text-green-600 dark:text-green-400 mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            এডিটিং ও লেখালেখি
+                        </h4>
+                        <ul class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                            <li class="flex justify-between items-center"><span>নোটপ্যাড</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + N</kbd></li>
+                            <li class="flex justify-between items-center"><span>ফন্ট কনভার্টার</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + B</kbd></li>
+                            <li class="flex justify-between items-center"><span>টেক্সট অ্যাসিস্ট্যান্ট (AI)</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + A</kbd></li>
+                            <li class="flex justify-between items-center"><span>ট্রান্সলেটর</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + T</kbd></li>
+                            <li class="flex justify-between items-center"><span>টাইপিং টেস্ট</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + Y</kbd></li>
+                            <li class="flex justify-between items-center"><span>বোল্ড (নোটপ্যাড)</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Ctrl + B</kbd></li>
+                            <li class="flex justify-between items-center"><span>ইটালিক (নোটপ্যাড)</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Ctrl + I</kbd></li>
+                        </ul>
+                    </div>
+
+                    <!-- ইউটিলিটি টুলস -->
+                    <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md border-l-4 border-purple-500 hover:shadow-lg transition-shadow">
+                        <h4 class="text-lg font-bold text-purple-600 dark:text-purple-400 mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                            ইউটিলিটি ও গণনা
+                        </h4>
+                        <ul class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                            <li class="flex justify-between items-center"><span>সাধারণ ক্যালকুলেটর</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + C</kbd></li>
+                            <li class="flex justify-between items-center"><span>সাইন্টিফিক ক্যালকুলেটর</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + S</kbd></li>
+                            <li class="flex justify-between items-center"><span>আয়-ব্যয় হিসাব</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + E</kbd></li>
+                            <li class="flex justify-between items-center"><span>ইনভয়েজ</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + I</kbd></li>
+                            <li class="flex justify-between items-center"><span>যাকাত ক্যালকুলেটর</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + Z</kbd></li>
+                            <li class="flex justify-between items-center"><span>ঘড়ি ও অ্যালার্ম</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + O</kbd></li>
+                            <li class="flex justify-between items-center"><span>কিউআর কোড</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + Q</kbd></li>
+                        </ul>
+                    </div>
+
+                    <!-- মিডিয়া ও অন্যান্য -->
+                    <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md border-l-4 border-orange-500 hover:shadow-lg transition-shadow">
+                        <h4 class="text-lg font-bold text-orange-600 dark:text-orange-400 mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            মিডিয়া ও অন্যান্য
+                        </h4>
+                        <ul class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                            <li class="flex justify-between items-center"><span>মিডিয়া প্লেয়ার</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + P</kbd></li>
+                            <li class="flex justify-between items-center"><span>ছবি রিসাইজার</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + R</kbd></li>
+                            <li class="flex justify-between items-center"><span>ওয়েব সার্চ</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + G</kbd></li>
+                            <li class="flex justify-between items-center"><span>আবহাওয়া</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + W</kbd></li>
+                            <li class="flex justify-between items-center"><span>গুগল ম্যাপ</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + M</kbd></li>
+                            <li class="flex justify-between items-center"><span>ইতিহাস</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + H</kbd></li>
+                        </ul>
+                    </div>
+
+                    <!-- সেটিংস ও মেনু -->
+                    <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md border-l-4 border-gray-500 hover:shadow-lg transition-shadow md:col-span-2 lg:col-span-1">
+                        <h4 class="text-lg font-bold text-gray-600 dark:text-gray-300 mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            সেটিংস ও মেনু
+                        </h4>
+                        <ul class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                            <li class="flex justify-between items-center"><span>ড্যাশবোর্ড</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + D</kbd></li>
+                            <li class="flex justify-between items-center"><span>সেটিংস মেনু</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + U</kbd></li>
+                            <li class="flex justify-between items-center"><span>সকল ফিচার (আরও)</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + F</kbd></li>
+                            <li class="flex justify-between items-center"><span>গুরুত্বপূর্ণ লিংক</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + K</kbd></li>
+                            <li class="flex justify-between items-center"><span>ডোনেট</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + J</kbd></li>
+                            <li class="flex justify-between items-center"><span>মোর মেনু (ড্রপডাউন)</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + .</kbd></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 <!-- শেষ: সকল ফিচার ট্যাব -->
