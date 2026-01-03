@@ -17523,7 +17523,50 @@ let globalActiveAlarmSound = null;
 let hasGlobalAlarmRung = false;
 let globalAudioContext = null;
 let globalAlarmCheckInterval = null;
-let defaultSoundTimeout = null; // ডিফল্ট সাউন্ড বন্ধ করার টাইমার
+let defaultSoundTimeout = null; 
+
+// --- টাইমার ফিক্স: গ্লোবাল টাইমার ভেরিয়েবল (যাতে ডুপ্লিকেট না হয়) ---
+let globalStopwatchTimer = null;
+let globalCountdownInterval = null;
+// window.worldClockIntervalId ইতিমধ্যে গ্লোবাল হিসেবে আছে
+
+// গ্লোবাল ফাংশন: ঘড়ি ট্যাবের নির্দিষ্ট সেকশনে যাওয়ার জন্য (ওভাররাইড)
+window.switchToClockTab = function(section = 'alarm') {
+    // ১. ঘড়ি ট্যাব সক্রিয় করুন
+    if (typeof showTab === 'function') {
+        showTab('clock');
+    } else {
+        const clockTabBtn = document.getElementById('clockTab');
+        if (clockTabBtn) clockTabBtn.click();
+    }
+
+    // ২. স্ক্রলিং লজিক (Retry Mechanism সহ)
+    let attempts = 0;
+    const maxAttempts = 15; // ১৫ বার চেষ্টা করবে
+    
+    const attemptScroll = () => {
+        const targetSection = document.querySelector(`.clock-section.${section}`);
+        
+        // এলিমেন্ট আছে এবং দৃশ্যমান কিনা চেক
+        if (targetSection && targetSection.offsetParent !== null) {
+            // একটু সময় দিয়ে স্ক্রল করা যাতে ট্যাব রেন্ডারিং শেষ হয়
+            setTimeout(() => {
+                targetSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetSection.classList.add('ring-4', 'ring-indigo-500', 'ring-opacity-50');
+                setTimeout(() => {
+                    targetSection.classList.remove('ring-4', 'ring-indigo-500', 'ring-opacity-50');
+                }, 2000);
+            }, 50);
+        } else {
+            attempts++;
+            if (attempts < maxAttempts) {
+                setTimeout(attemptScroll, 100); 
+            }
+        }
+    };
+
+    setTimeout(attemptScroll, 100);
+}
 
 // IndexedDB হেল্পার
 async function idbDelete(key) {
@@ -17539,24 +17582,17 @@ async function idbDelete(key) {
 // --- সিস্টেম ইনিশিয়ালাইজেশন ---
 async function initBackgroundAlarmSystem() {
     try {
-        // ১. ইন্টারসেপ্টর সবার আগে সেটআপ করুন যাতে কোনো আপডেট মিস না হয়
         setupDOMInterceptor();
 
-        // ২. ডাটাবেস থেকে অ্যালার্ম লোড করুন
         const savedAlarm = await idbGet('activeAlarm');
         if (savedAlarm && savedAlarm.time) {
             globalAlarmTimeValue = savedAlarm.time;
-            console.log("Alarm restored from DB:", globalAlarmTimeValue);
-            // ডাটা পাওয়ার সাথে সাথেই একবার ম্যানুয়ালি ব্যানার আপডেট করার চেষ্টা করুন
             forceUpdateBanner();
         }
 
-        // ৩. অডিও পলিসি আনলক (আপডেটেড)
-        // ব্যবহারকারী পেজের যেকোনো জায়গায় ক্লিক করলেই অডিও সিস্টেম আনলক হবে
         const unlockEvents = ['click', 'touchstart', 'keydown', 'mousedown', 'pointerdown'];
         const unlockHandler = () => {
             unlockAudioContext();
-            // একবার আনলক হয়ে গেলে ইভেন্ট লিসেনারগুলো সরিয়ে ফেলা ভালো
             unlockEvents.forEach(evt => document.body.removeEventListener(evt, unlockHandler));
         };
         
@@ -17564,7 +17600,6 @@ async function initBackgroundAlarmSystem() {
             document.body.addEventListener(evt, unlockHandler, { once: true })
         );
 
-        // ৪. মনিটরিং চালু করুন
         startAlarmMonitoring();
 
     } catch (e) {
@@ -17572,7 +17607,7 @@ async function initBackgroundAlarmSystem() {
     }
 }
 
-// --- DOM ইন্টারসেপ্টর (ব্লিংক ফিক্সের মূল সমাধান) ---
+// --- DOM ইন্টারসেপ্টর ---
 function setupDOMInterceptor() {
     if (document.getElementById.isProxy) return;
 
@@ -17585,11 +17620,14 @@ function setupDOMInterceptor() {
             return new Proxy(element, {
                 set(target, prop, value) {
                     if (prop === 'innerHTML') {
-                        // মূল ঘড়ি যখনই সময় আপডেট করবে, আমরা আমাদের অ্যালার্ম টেক্সট জুড়ে দেব
                         const alarmHtml = getAlarmBannerHTML();
-                        if (alarmHtml) {
-                            value = value + alarmHtml;
-                        }
+                        const countdownHtml = getCountdownBannerHTML();
+                        
+                        let combinedHtml = value;
+                        if (alarmHtml) combinedHtml += alarmHtml;
+                        if (countdownHtml) combinedHtml += countdownHtml;
+                        
+                        value = combinedHtml;
                     }
                     target[prop] = value;
                     return true;
@@ -17609,34 +17647,31 @@ function setupDOMInterceptor() {
     document.getElementById.isProxy = true;
 }
 
-// --- মনিটরিং লুপ (শুধুমাত্র ট্রিগার চেক এবং ট্যাব UI আপডেটের জন্য) ---
+// --- মনিটরিং লুপ ---
 function startAlarmMonitoring() {
     if (globalAlarmCheckInterval) clearInterval(globalAlarmCheckInterval);
     
     globalAlarmCheckInterval = setInterval(() => {
-        if (!globalAlarmTimeValue) return;
-
-        // ১. অ্যালার্ম বাজার সময় হয়েছে কিনা চেক
-        checkAlarmTrigger();
-
-        // ২. অ্যালার্ম ট্যাব খোলা থাকলে সেখানকার UI আপডেট (ব্যানার নয়)
-        updateAlarmStatusUI();
+        if (globalAlarmTimeValue) {
+            checkAlarmTrigger();
+            updateAlarmStatusUI();
+        }
     }, 500);
 }
 
-// --- ফোর্স ব্যানার আপডেট (প্রথম লোডের জন্য) ---
+// --- ফোর্স ব্যানার আপডেট ---
 function forceUpdateBanner() {
     const banner = document.getElementById('currentDateTimeBanner');
     if (banner) {
-        // আমরা ব্যানারকে "টাচ" করছি যাতে প্রক্সি ট্রিগার হয়
-        const currentHTML = banner.innerHTML;
-        if (!currentHTML.includes('bannerAlarmStatus')) {
-             banner.innerHTML = currentHTML; // এটি প্রক্সি সেটারকে কল করবে
-        }
+        let cleanHTML = banner.innerHTML;
+        cleanHTML = cleanHTML.split('<span id="bannerAlarmStatus"')[0];
+        cleanHTML = cleanHTML.split('<span id="bannerCountdownStatus"')[0];
+        
+        banner.innerHTML = cleanHTML; 
     }
 }
 
-// --- অ্যালার্ম ব্যানার HTML জেনারেটর (আপডেটেড: ক্লিক ইভেন্ট যোগ করা হয়েছে) ---
+// --- অ্যালার্ম ব্যানার HTML ---
 function getAlarmBannerHTML() {
     if (!globalAlarmTimeValue) return '';
 
@@ -17650,8 +17685,7 @@ function getAlarmBannerHTML() {
     }
 
     if (hasGlobalAlarmRung) {
-        // অ্যালার্ম বাজার সময় ক্লিকযোগ্য করা হয়েছে
-        return `<span id="bannerAlarmStatus" onclick="switchToClockTab()" style="margin-left:15px; color:#dc2626; font-weight:bold; animation: pulse 1s infinite; vertical-align: middle; cursor: pointer;" title="অ্যালার্ম বন্ধ করতে ক্লিক করুন"> | 🔔 অ্যালার্ম বাজছে!</span>`;
+        return `<span id="bannerAlarmStatus" onclick="switchToClockTab('alarm')" class="text-red-600 dark:text-red-400 font-bold animate-pulse ml-4 cursor-pointer align-middle select-none" title="অ্যালার্ম বন্ধ করতে ক্লিক করুন"> | 🔔 অ্যালার্ম বাজছে!</span>`;
     }
 
     const diff = target - now;
@@ -17666,8 +17700,38 @@ function getAlarmBannerHTML() {
         ? `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
         : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 
-    // অ্যালার্ম কাউন্টডাউন ক্লিকযোগ্য করা হয়েছে
-    return `<span id="bannerAlarmStatus" onclick="switchToClockTab()" class="text-red-600 dark:text-red-300" style="margin-left:15px; font-size: 0.9rem; vertical-align: middle; cursor: pointer;" title="অ্যালার্ম সেকশনে যেতে ক্লিক করুন">|🔔${timeStr} (${remainingStr})</span>`;
+    return `<span id="bannerAlarmStatus" onclick="switchToClockTab('alarm')" class="text-red-600 dark:text-red-300 ml-4 text-sm cursor-pointer align-middle select-none" title="অ্যালার্ম সেকশনে যেতে ক্লিক করুন"> | 🔔 ${timeStr} (${remainingStr})</span>`;
+}
+
+// --- কাউন্টডাউন ব্যানার HTML ---
+function getCountdownBannerHTML() {
+    try {
+        const savedState = JSON.parse(localStorage.getItem('countdownState'));
+        if (!savedState || !savedState.isRunning || !savedState.endTime) return '';
+
+        const now = Date.now();
+        const timeLeft = Math.ceil((savedState.endTime - now) / 1000);
+
+        if (timeLeft <= 0) return '';
+
+        const d = Math.floor(timeLeft / (3600 * 24));
+        const h = Math.floor((timeLeft % (3600 * 24)) / 3600);
+        const m = Math.floor((timeLeft % 3600) / 60);
+        const s = timeLeft % 60;
+
+        let timeStr = "";
+        if (d > 0) {
+            timeStr = `${d}d ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        } else {
+            timeStr = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+        
+        const title = savedState.title ? ` (${savedState.title})` : '';
+
+        return `<span id="bannerCountdownStatus" onclick="switchToClockTab('countdown')" class="text-blue-600 dark:text-blue-300 ml-4 text-sm cursor-pointer align-middle select-none" title="কাউন্টডাউন টাইমার দেখতে ক্লিক করুন"> | ⏳ ${timeStr}${title}</span>`;
+    } catch (e) {
+        return '';
+    }
 }
 
 // --- ট্রিগার লজিক ---
@@ -17684,18 +17748,16 @@ function checkAlarmTrigger() {
             if (stopBtn) stopBtn.classList.remove('hidden');
             
             hasGlobalAlarmRung = true;
-            
-            // ব্যানারকে ফোর্স আপডেট করুন যাতে "অ্যালার্ম বাজছে" লেখাটি আসে
             forceUpdateBanner();
         }
     } else if (currentTime !== globalAlarmTimeValue) {
         if (hasGlobalAlarmRung) {
-            hasGlobalAlarmRung = false; // অটো রিসেট
+            hasGlobalAlarmRung = false; 
         }
     }
 }
 
-// --- অডিও লজিক (Silect Buffer সহ আপডেটেড) ---
+// --- অডিও লজিক ---
 function unlockAudioContext() {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!globalAudioContext && AudioContext) {
@@ -17703,21 +17765,17 @@ function unlockAudioContext() {
     }
     
     if (globalAudioContext) {
-        // ১. যদি সাসপেন্ডেড থাকে তবে রিজিউম করুন
         if (globalAudioContext.state === 'suspended') {
             globalAudioContext.resume().then(() => {
                 console.log("AudioContext resumed on interaction.");
             });
         }
-        
-        // ২. একটি সাইলেন্ট বাফার বাজিয়ে অডিও ইঞ্জিনকে 'Warm up' করুন (ক্রোমের পলিসির জন্য গুরুত্বপূর্ণ)
         try {
             const buffer = globalAudioContext.createBuffer(1, 1, 22050);
             const source = globalAudioContext.createBufferSource();
             source.buffer = buffer;
             source.connect(globalAudioContext.destination);
             source.start(0);
-            console.log("Silent buffer played to unlock audio.");
         } catch (e) {
             console.error("Failed to play silent buffer:", e);
         }
@@ -17725,9 +17783,8 @@ function unlockAudioContext() {
 }
 
 async function playGlobalAlarmSound() {
-    stopGlobalAlarmSound(); // আগের সাউন্ড বন্ধ করুন
+    stopGlobalAlarmSound(); 
 
-    // ১. কাস্টম সাউন্ড চেষ্টা করুন
     try {
         const soundData = await idbGet('customAlarmSound');
         if (soundData && soundData.data) {
@@ -17735,14 +17792,13 @@ async function playGlobalAlarmSound() {
             const audioUrl = URL.createObjectURL(blob);
             const customAudio = new Audio(audioUrl);
             
-            customAudio.loop = false; // কাস্টম সাউন্ড লুপ হবে না
+            customAudio.loop = false;
             globalActiveAlarmSound = customAudio;
             
             const playPromise = customAudio.play();
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
-                    console.error("Custom audio play failed (likely autoplay policy):", error);
-                    // কাস্টম ফেইল করলে ডিফল্টে ফলব্যাক করার চেষ্টা করা যেতে পারে
+                    console.error("Custom audio play failed:", error);
                 });
             }
             
@@ -17754,7 +17810,6 @@ async function playGlobalAlarmSound() {
         }
     } catch (e) { console.error("Custom audio error", e); }
 
-    // ২. ডিফল্ট সাউন্ড (Web Audio API)
     try {
         if (!globalAudioContext) unlockAudioContext();
         const ctx = globalAudioContext;
@@ -17770,7 +17825,7 @@ async function playGlobalAlarmSound() {
 
         if (selectedSound === 'chime') {
             oscillator.type = 'sine';
-            for(let i = 0; i < 5; i++) { // 5 * 2s = 10s
+            for(let i = 0; i < 5; i++) { 
                 let startTime = now + (i * 2);
                 oscillator.frequency.setValueAtTime(880, startTime); 
                 oscillator.frequency.setValueAtTime(1046.50, startTime + 0.6);
@@ -17781,7 +17836,7 @@ async function playGlobalAlarmSound() {
         } else if (selectedSound === 'radar') {
             oscillator.type = 'sawtooth';
             oscillator.frequency.setValueAtTime(600, now);
-            for(let i = 0; i < 10; i++) { // 10 * 1s = 10s
+            for(let i = 0; i < 10; i++) { 
                 let startTime = now + i;
                 gainNode.gain.setValueAtTime(0.5, startTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 0.5);
@@ -17789,7 +17844,7 @@ async function playGlobalAlarmSound() {
         } else { // beep
             oscillator.type = 'square';
             oscillator.frequency.setValueAtTime(440, now);
-            for(let i = 0; i < 10; i++) { // 10 * 1s = 10s
+            for(let i = 0; i < 10; i++) { 
                 let startTime = now + i;
                 gainNode.gain.setValueAtTime(0.5, startTime);
                 gainNode.gain.setValueAtTime(0.5, startTime + 0.5);
@@ -17798,23 +17853,20 @@ async function playGlobalAlarmSound() {
         }
 
         oscillator.start(now);
-        // ১০ সেকেন্ড পর বন্ধ নিশ্চিত করা
         oscillator.stop(now + 10); 
         
         globalActiveAlarmSound = oscillator;
         oscillator.stopSound = function() { try { this.stop(); } catch(e){} };
 
-        // ফিক্স: ঠিক ১০ সেকেন্ড পর UI রিসেট করার জন্য টাইমার
         if (defaultSoundTimeout) clearTimeout(defaultSoundTimeout);
         defaultSoundTimeout = setTimeout(() => {
             stopGlobalAlarmSound();
-        }, 10000); // ১০ সেকেন্ড
+        }, 10000); 
 
     } catch(e) { console.error("Oscillator error:", e); }
 }
 
 function stopGlobalAlarmSound() {
-    // সাউন্ড বন্ধ করা
     if (globalActiveAlarmSound) {
         if (globalActiveAlarmSound.stopSound) globalActiveAlarmSound.stopSound();
         else if (globalActiveAlarmSound.pause) {
@@ -17830,7 +17882,6 @@ function stopGlobalAlarmSound() {
     if (stopBtn) stopBtn.classList.add('hidden');
     
     hasGlobalAlarmRung = false; 
-    // ব্যানার আপডেট
     forceUpdateBanner();
 }
 
@@ -17887,7 +17938,9 @@ function initializeClockTab() {
     const resetBtn = document.getElementById('resetStopwatch');
     const lapBtn = document.getElementById('lapStopwatch');
     const lapsList = document.getElementById('lapsList');
-    let stopwatchTimer = null, startTime = 0, elapsedTime = 0, isRunning = false, lapCounter = 0;
+    
+    // টাইমার ভেরিয়েবল (এখন গ্লোবাল ব্যবহার করা হচ্ছে)
+    let startTime = 0, elapsedTime = 0, isRunning = false, lapCounter = 0;
 
     // অ্যালার্ম ভেরিয়েবল
     const alarmTimeInput = document.getElementById('alarmTimeInput');
@@ -17910,10 +17963,37 @@ function initializeClockTab() {
     }
     function updateStopwatchDisplay() { if(stopwatchDisplay) stopwatchDisplay.textContent = formatStopwatchTime(elapsedTime); }
     
-    if(startBtn && !startBtn.onclick) startBtn.onclick = () => { if (!isRunning) { startTime = Date.now() - elapsedTime; stopwatchTimer = setInterval(() => { elapsedTime = Date.now() - startTime; updateStopwatchDisplay(); }, 10); isRunning = true; } };
-    if(stopBtn && !stopBtn.onclick) stopBtn.onclick = () => { if (isRunning) { clearInterval(stopwatchTimer); isRunning = false; } };
-    if(resetBtn && !resetBtn.onclick) resetBtn.onclick = () => { clearInterval(stopwatchTimer); isRunning = false; elapsedTime = 0; lapCounter = 0; updateStopwatchDisplay(); if(lapsList) lapsList.innerHTML = ''; };
-    if(lapBtn && !lapBtn.onclick) lapBtn.onclick = () => { if (isRunning && lapsList) { lapCounter++; const li = document.createElement('li'); li.innerHTML = `<span>ল্যাপ ${lapCounter}</span><span>${formatStopwatchTime(elapsedTime)}</span>`; lapsList.prepend(li); } };
+    // ফিক্স: গ্লোবাল টাইমার ব্যবহার
+    if(startBtn && !startBtn.onclick) startBtn.onclick = () => { 
+        if (!isRunning) { 
+            startTime = Date.now() - elapsedTime; 
+            if(globalStopwatchTimer) clearInterval(globalStopwatchTimer);
+            globalStopwatchTimer = setInterval(() => { elapsedTime = Date.now() - startTime; updateStopwatchDisplay(); }, 10); 
+            isRunning = true; 
+        } 
+    };
+    if(stopBtn && !stopBtn.onclick) stopBtn.onclick = () => { 
+        if (isRunning) { 
+            clearInterval(globalStopwatchTimer); 
+            isRunning = false; 
+        } 
+    };
+    if(resetBtn && !resetBtn.onclick) resetBtn.onclick = () => { 
+        clearInterval(globalStopwatchTimer); 
+        isRunning = false; 
+        elapsedTime = 0; 
+        lapCounter = 0; 
+        updateStopwatchDisplay(); 
+        if(lapsList) lapsList.innerHTML = ''; 
+    };
+    if(lapBtn && !lapBtn.onclick) lapBtn.onclick = () => { 
+        if (isRunning && lapsList) { 
+            lapCounter++; 
+            const li = document.createElement('li'); 
+            li.innerHTML = `<span>ল্যাপ ${lapCounter}</span><span>${formatStopwatchTime(elapsedTime)}</span>`; 
+            lapsList.prepend(li); 
+        } 
+    };
 
     // অ্যালার্ম ফাংশন
     async function setupAlarmUI(timeValue) {
@@ -17922,7 +18002,6 @@ function initializeClockTab() {
             hasGlobalAlarmRung = false;
             await idbSet('activeAlarm', { time: timeValue });
             
-            // নতুন অ্যালার্ম সেট করলে ব্যানার আপডেট করুন
             forceUpdateBanner();
             updateAlarmStatusUI();
             showCustomAlert(`অ্যালার্ম ${formatTo12Hour(timeValue)} এর জন্য সেট করা হয়েছে।`);
@@ -17940,7 +18019,7 @@ function initializeClockTab() {
         }
         
         await idbDelete('activeAlarm');
-        forceUpdateBanner(); // ব্যানার থেকে লেখা সরাতে
+        forceUpdateBanner(); 
     }
 
     // ইভেন্ট লিসেনার
@@ -17985,7 +18064,6 @@ function initializeClockTab() {
         alarmSoundSelect.onchange = () => localStorage.setItem('alarmSound', alarmSoundSelect.value);
     }
 
-    // ট্যাব খুললে বর্তমান অবস্থা চেক
     if (globalAlarmTimeValue) {
         if(alarmTimeInput) alarmTimeInput.value = globalAlarmTimeValue;
         updateAlarmStatusUI();
@@ -17993,9 +18071,9 @@ function initializeClockTab() {
     }
     loadCustomAlarmSoundUI();
 	
-// --- কাউন্টডাউন টাইমার লজিক শুরু (আপডেটেড: দিন, ঘন্টা, মিনিট, সেকেন্ড ফরম্যাট) ---
+// --- কাউন্টডাউন টাইমার লজিক শুরু (আপডেটেড: গ্লোবাল টাইমার ব্যবহার) ---
     const cdTitleInput = document.getElementById('cdTitle');
-    const cdDaysInput = document.getElementById('cdDays'); // নতুন: দিনের ইনপুট
+    const cdDaysInput = document.getElementById('cdDays');
     const cdHoursInput = document.getElementById('cdHours');
     const cdMinutesInput = document.getElementById('cdMinutes');
     const cdSecondsInput = document.getElementById('cdSeconds');
@@ -18004,16 +18082,10 @@ function initializeClockTab() {
     const pauseCountBtn = document.getElementById('pauseCountdown');
     const resetCountBtn = document.getElementById('resetCountdown');
 
-    let countdownInterval = null;
+    // let countdownInterval = null; // রিমুভড, গ্লোবাল ব্যবহার করা হবে
     let endTime = 0;
     let remainingTime = 0;
     let isCountdownRunning = false;
-
-    // সংখ্যা বাংলায় দেখানোর হেল্পার ফাংশন (অপশনাল, যদি ফন্ট অটোমেটিক না করে)
-    const toBengaliDigits = (num) => {
-        const numbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-        return String(num).split('').map(digit => !isNaN(parseInt(digit)) ? numbers[parseInt(digit)] : digit).join('');
-    };
 
     // লোড স্টেট
     function loadCountdownState() {
@@ -18078,7 +18150,6 @@ function initializeClockTab() {
         localStorage.setItem('countdownState', JSON.stringify(state));
     }
 
-    // আপডেটেড ডিসপ্লে ফাংশন (Bornomala ফন্টে দিন, ঘণ্টা, মিনিট, সেকেন্ড সহ প্রদর্শন)
     function updateDisplay(seconds) {
         const d = Math.floor(seconds / (3600 * 24));
         const h = Math.floor((seconds % (3600 * 24)) / 3600);
@@ -18087,30 +18158,28 @@ function initializeClockTab() {
 
         let displayStr = "";
         
-        // দিন থাকলে ফরম্যাট: দিন ঘণ্টা মিনিট সেকেন্ড
-        // না থাকলে ফরম্যাট: ঘণ্টা মিনিট সেকেন্ড
         if (d > 0) {
              displayStr = `${String(d).padStart(2, '0')} দিন ${String(h).padStart(2, '0')} ঘণ্টা ${String(m).padStart(2, '0')} মিনিট ${String(s).padStart(2, '0')} সেকেন্ড`;
-             // লেখা বড় হলে ফন্ট সাইজ একটু ছোট করা যাতে এক লাইনে ধরে
              countdownDisplay.style.fontSize = "1.8rem";
         } else {
              displayStr = `${String(h).padStart(2, '0')} ঘণ্টা ${String(m).padStart(2, '0')} মিনিট ${String(s).padStart(2, '0')} সেকেন্ড`;
              countdownDisplay.style.fontSize = "2.2rem";
         }
         
-        // Bornomala ফন্ট CSS এ সেট করা আছে, তাই এখানে ইংরেজি সংখ্যা দিলেও সেটা স্টাইলিশ দেখাবে
         countdownDisplay.textContent = displayStr;
+        forceUpdateBanner(); 
     }
 
     function startInterval() {
-        clearInterval(countdownInterval);
+        // ফিক্স: গ্লোবাল টাইমার ক্লিয়ার
+        clearInterval(globalCountdownInterval);
         
         const tick = () => {
             const now = Date.now();
             const left = Math.ceil((endTime - now) / 1000);
             
             if (left <= 0) {
-                clearInterval(countdownInterval);
+                clearInterval(globalCountdownInterval);
                 isCountdownRunning = false;
                 remainingTime = 0;
                 updateDisplay(0);
@@ -18124,6 +18193,7 @@ function initializeClockTab() {
                 
                 localStorage.removeItem('countdownState');
                 localStorage.setItem('countdownState', JSON.stringify({ title: cdTitleInput.value }));
+                forceUpdateBanner();
                 
             } else {
                 remainingTime = left;
@@ -18132,7 +18202,8 @@ function initializeClockTab() {
         };
 
         tick();
-        countdownInterval = setInterval(tick, 1000);
+        // ফিক্স: গ্লোবাল টাইমার সেট
+        globalCountdownInterval = setInterval(tick, 1000);
     }
 
     function startCountdown() {
@@ -18141,12 +18212,11 @@ function initializeClockTab() {
         if (remainingTime > 0 && startCountBtn.textContent === 'চালিয়ে যান') {
             endTime = Date.now() + remainingTime * 1000;
         } else {
-            const d = parseInt(cdDaysInput.value) || 0; // দিন যোগ করা হয়েছে
+            const d = parseInt(cdDaysInput.value) || 0;
             const h = parseInt(cdHoursInput.value) || 0;
             const m = parseInt(cdMinutesInput.value) || 0;
             const s = parseInt(cdSecondsInput.value) || 0;
             
-            // মোট সেকেন্ড গণনা (দিন * ৮৬৪০০ + ঘন্টা * ৩৬০০ + ...)
             const totalSec = (d * 86400) + (h * 3600) + (m * 60) + s;
 
             if (totalSec <= 0) {
@@ -18165,15 +18235,17 @@ function initializeClockTab() {
     }
 
     function pauseCountdown() {
-        clearInterval(countdownInterval);
+        clearInterval(globalCountdownInterval);
         isCountdownRunning = false;
         updateButtons(false);
         startCountBtn.textContent = 'চালিয়ে যান';
         saveCountdownState();
+        forceUpdateBanner();
     }
 
     function resetCountdown() {
-        clearInterval(countdownInterval);
+        // ফিক্স: নিশ্চিতভাবে গ্লোবাল টাইমার বন্ধ করা
+        clearInterval(globalCountdownInterval);
         isCountdownRunning = false;
         remainingTime = 0;
         endTime = 0;
@@ -18183,7 +18255,6 @@ function initializeClockTab() {
         cdMinutesInput.value = '';
         cdSecondsInput.value = '';
         
-        // ডিসপ্লে রিসেট (দিন সহ)
         countdownDisplay.textContent = "00 দিন 00 ঘণ্টা 00 মিনিট 00 সেকেন্ড";
         countdownDisplay.style.fontSize = "1.8rem";
         
@@ -18192,6 +18263,7 @@ function initializeClockTab() {
         startCountBtn.textContent = 'শুরু';
         
         localStorage.setItem('countdownState', JSON.stringify({ title: cdTitleInput.value }));
+        forceUpdateBanner();
     }
 
     function disableInputs(disabled) {
@@ -18299,7 +18371,6 @@ function initializeWorldClock() {
         });
     }
 
-    // ড্রপডাউন পপুলেট করা
     if (timezoneSelect && timezoneSelect.children.length <= 1) {
         timezonesWithCountries.forEach(tz => { 
             const option = document.createElement('option'); 
