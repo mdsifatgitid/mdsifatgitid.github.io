@@ -3515,10 +3515,12 @@ input:checked + .slider:before {
         grid-template-columns: repeat(2, 1fr);
         grid-template-areas:
             "stopwatch alarm"
-            "world-clock world-clock";
+            "world-clock world-clock"
+            "countdown countdown"; /* কাউন্টডাউন সবার নিচে */
     }
     .stopwatch { grid-area: stopwatch; }
     .alarm { grid-area: alarm; }
+    .countdown { grid-area: countdown; }
     .world-clock { grid-area: world-clock; }
 }
 
@@ -8767,7 +8769,7 @@ body.sidebar-open #sidebarOverlay {
     </div>
 </div>
 
-<!-- নতুন: ঘড়ি ট্যাব (স্টপওয়াচ, অ্যালার্ম, বিশ্ব ঘড়ি) -->
+<!-- নতুন: ঘড়ি ট্যাব (স্টপওয়াচ, অ্যালার্ম, বিশ্ব ঘড়ি, কাউন্টডাউন) -->
 <div id="clockContent" class="calculator-content">
     <div class="clock-container">
         <!-- স্টপওয়াচ সেকশন -->
@@ -8787,41 +8789,38 @@ body.sidebar-open #sidebarOverlay {
         </div>
 
         <!-- অ্যালার্ম সেকশন -->
-<!-- আপনার HTML ফাইলের পুরনো অ্যালার্ম সেকশনটি এই কোড দিয়ে সম্পূর্ণরূপে প্রতিস্থাপন করুন -->
-<div class="clock-section alarm">
-    <h3 class="section-title">অ্যালার্ম</h3>
-    <div class="alarm-input-group">
-        <input type="time" id="alarmTimeInput" class="alarm-time-input">
-    </div>
-    <!-- অ্যালার্ম সাউন্ড সিলেকশন -->
-    <div class="alarm-sound-selector mb-4">
-        <label for="alarmSoundSelect" class="block text-left mb-2 font-semibold text-gray-700 dark:text-gray-200">ডিফল্ট অ্যালার্ম সাউন্ড:</label>
-        <select id="alarmSoundSelect" class="w-full p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white">
-            <option value="beep">বিপ</option>
-            <option value="chime">চাইম</option>
-            <option value="radar">রাডার</option>
-        </select>
-        
-        <!-- নতুন: কাস্টম অডিও আপলোড -->
-        <div class="mt-4">
-            <label class="block text-left text-sm font-medium text-gray-600 dark:text-gray-300">অথবা নিজের অডিও ফাইল দিন (mp3, wav, ogg):</label>
-            <div class="flex items-center gap-2 mt-2">
-                <input type="file" id="customAlarmSoundInput" class="hidden" accept="audio/*">
-                <label for="customAlarmSoundInput" class="custom-file-upload-small">ফাইল বাছাই করুন</label>
-                <span id="customAlarmFileName" class="text-sm text-gray-500 dark:text-gray-400 truncate" style="max-width: 120px;">কোনো ফাইল নেই</span>
-                <button id="removeCustomAlarmSound" class="hidden" title="কাস্টম সাউন্ড সরান">&times;</button>
+        <div class="clock-section alarm">
+            <h3 class="section-title">অ্যালার্ম</h3>
+            <div class="alarm-input-group">
+                <input type="time" id="alarmTimeInput" class="alarm-time-input">
             </div>
+            <!-- অ্যালার্ম সাউন্ড সিলেকশন -->
+            <div class="alarm-sound-selector mb-4">
+                <label for="alarmSoundSelect" class="block text-left mb-2 font-semibold text-gray-700 dark:text-gray-200">ডিফল্ট অ্যালার্ম সাউন্ড:</label>
+                <select id="alarmSoundSelect" class="w-full p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+                    <option value="beep">বিপ</option>
+                    <option value="chime">চাইম</option>
+                    <option value="radar">রাডার</option>
+                </select>
+                
+                <!-- কাস্টম অডিও আপলোড -->
+                <div class="mt-4">
+                    <label class="block text-left text-sm font-medium text-gray-600 dark:text-gray-300">অথবা নিজের অডিও ফাইল দিন (mp3, wav, ogg):</label>
+                    <div class="flex items-center gap-2 mt-2">
+                        <input type="file" id="customAlarmSoundInput" class="hidden" accept="audio/*">
+                        <label for="customAlarmSoundInput" class="custom-file-upload-small">ফাইল বাছাই করুন</label>
+                        <span id="customAlarmFileName" class="text-sm text-gray-500 dark:text-gray-400 truncate" style="max-width: 120px;">কোনো ফাইল নেই</span>
+                        <button id="removeCustomAlarmSound" class="hidden" title="কাস্টম সাউন্ড সরান">&times;</button>
+                    </div>
+                </div>
+            </div>
+            <div class="alarm-controls">
+                <button id="setAlarmBtn" class="control-btn set-alarm-btn">অ্যালার্ম সেট করুন</button>
+                <button id="stopAlarmBtn" class="control-btn stop-btn hidden">অ্যালার্ম থামান</button>
+                <button id="clearAlarmBtn" class="control-btn clear-alarm-btn">অ্যালার্ম মুছুন</button>
+            </div>
+            <div id="alarmStatus" class="alarm-status">কোনো অ্যালার্ম সেট করা নেই।</div>
         </div>
-
-    </div>
-    <div class="alarm-controls">
-        <button id="setAlarmBtn" class="control-btn set-alarm-btn">অ্যালার্ম সেট করুন</button>
-        <!-- নতুন 'থামান' বাটন যোগ করা হয়েছে -->
-        <button id="stopAlarmBtn" class="control-btn stop-btn hidden">অ্যালার্ম থামান</button>
-        <button id="clearAlarmBtn" class="control-btn clear-alarm-btn">অ্যালার্ম মুছুন</button>
-    </div>
-    <div id="alarmStatus" class="alarm-status">কোনো অ্যালার্ম সেট করা নেই।</div>
-</div>
 
         <!-- বিশ্ব ঘড়ি সেকশন -->
         <div class="clock-section world-clock">
@@ -8831,7 +8830,45 @@ body.sidebar-open #sidebarOverlay {
                 <select id="timezone-select" class="w-full p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-blue-500"></select>
             </div>
             <div class="world-clock-grid">
-                <!-- ঘড়িগুলো এবং নির্বাচিত কার্ড জাভাস্ক্রিপ্ট দ্বারা এখানে যুক্ত হবে -->
+                <!-- ঘড়িগুলো এখানে যুক্ত হবে -->
+            </div>
+        </div>
+
+<!-- কাউন্টডাউন টাইমার সেকশন (আপডেটেড: দিন, ঘন্টা, মিনিট, সেকেন্ড ফরম্যাট) -->
+        <div class="clock-section countdown">
+            <h3 class="section-title">কাউন্টডাউন টাইমার</h3>
+            <!-- টাইটেল ইনপুট -->
+            <div class="mb-4">
+                 <input type="text" id="cdTitle" placeholder="টাইমারের নাম দিন (যেমন: কুইজ, ব্রেক)" class="w-full p-2 border rounded-lg text-center font-semibold dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:ring-2 focus:ring-blue-500">
+            </div>
+            
+            <!-- ইনপুট গ্রিড (দিন, ঘণ্টা, মিনিট, সেকেন্ড) - ঘরগুলো বড় করা হয়েছে -->
+            <div class="grid grid-cols-4 gap-2 mb-4">
+                <div class="flex flex-col">
+                    <input type="number" id="cdDays" placeholder="0" min="0" class="w-full p-3 text-center text-xl font-bold border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                    <span class="text-xs text-center mt-1 dark:text-gray-300 font-semibold">দিন</span>
+                </div>
+                <div class="flex flex-col">
+                    <input type="number" id="cdHours" placeholder="0" min="0" class="w-full p-3 text-center text-xl font-bold border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                    <span class="text-xs text-center mt-1 dark:text-gray-300 font-semibold">ঘণ্টা</span>
+                </div>
+                <div class="flex flex-col">
+                    <input type="number" id="cdMinutes" placeholder="0" min="0" max="59" class="w-full p-3 text-center text-xl font-bold border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                    <span class="text-xs text-center mt-1 dark:text-gray-300 font-semibold">মিনিট</span>
+                </div>
+                <div class="flex flex-col">
+                    <input type="number" id="cdSeconds" placeholder="0" min="0" max="59" class="w-full p-3 text-center text-xl font-bold border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                    <span class="text-xs text-center mt-1 dark:text-gray-300 font-semibold">সেকেন্ড</span>
+                </div>
+            </div>
+
+            <!-- ডিসপ্লে (Bornomala ফন্ট ব্যবহার করা হয়েছে) -->
+            <div id="countdownDisplay" class="stopwatch-display" style="font-family: 'Bornomala', sans-serif;">00 : 00 : 00 : 00</div>
+            
+            <div class="stopwatch-controls">
+                <button id="startCountdown" class="control-btn start-btn">শুরু</button>
+                <button id="pauseCountdown" class="control-btn stop-btn hidden">থামান</button>
+                <button id="resetCountdown" class="control-btn reset-btn">রিসেট</button>
             </div>
         </div>
     </div>
@@ -17955,7 +17992,242 @@ function initializeClockTab() {
         if (globalActiveAlarmSound && stopAlarmBtn) stopAlarmBtn.classList.remove('hidden');
     }
     loadCustomAlarmSoundUI();
+	
+// --- কাউন্টডাউন টাইমার লজিক শুরু (আপডেটেড: দিন, ঘন্টা, মিনিট, সেকেন্ড ফরম্যাট) ---
+    const cdTitleInput = document.getElementById('cdTitle');
+    const cdDaysInput = document.getElementById('cdDays'); // নতুন: দিনের ইনপুট
+    const cdHoursInput = document.getElementById('cdHours');
+    const cdMinutesInput = document.getElementById('cdMinutes');
+    const cdSecondsInput = document.getElementById('cdSeconds');
+    const countdownDisplay = document.getElementById('countdownDisplay');
+    const startCountBtn = document.getElementById('startCountdown');
+    const pauseCountBtn = document.getElementById('pauseCountdown');
+    const resetCountBtn = document.getElementById('resetCountdown');
 
+    let countdownInterval = null;
+    let endTime = 0;
+    let remainingTime = 0;
+    let isCountdownRunning = false;
+
+    // সংখ্যা বাংলায় দেখানোর হেল্পার ফাংশন (অপশনাল, যদি ফন্ট অটোমেটিক না করে)
+    const toBengaliDigits = (num) => {
+        const numbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        return String(num).split('').map(digit => !isNaN(parseInt(digit)) ? numbers[parseInt(digit)] : digit).join('');
+    };
+
+    // লোড স্টেট
+    function loadCountdownState() {
+        const savedState = JSON.parse(localStorage.getItem('countdownState'));
+        if (savedState) {
+            if (cdTitleInput) cdTitleInput.value = savedState.title || '';
+            
+            if (savedState.isRunning) {
+                const now = Date.now();
+                const timeLeft = Math.ceil((savedState.endTime - now) / 1000);
+                
+                if (timeLeft > 0) {
+                    endTime = savedState.endTime;
+                    remainingTime = timeLeft;
+                    isCountdownRunning = true;
+                    
+                    if(savedState.inputs) {
+                        if(cdDaysInput) cdDaysInput.value = savedState.inputs.d || '';
+                        cdHoursInput.value = savedState.inputs.h;
+                        cdMinutesInput.value = savedState.inputs.m;
+                        cdSecondsInput.value = savedState.inputs.s;
+                    }
+                    
+                    disableInputs(true);
+                    updateButtons(true);
+                    startInterval();
+                } else {
+                    resetCountdown();
+                    countdownDisplay.textContent = "সময় শেষ!";
+                }
+            } else if (savedState.remaining > 0) {
+                remainingTime = savedState.remaining;
+                if(savedState.inputs) {
+                    if(cdDaysInput) cdDaysInput.value = savedState.inputs.d || '';
+                    cdHoursInput.value = savedState.inputs.h;
+                    cdMinutesInput.value = savedState.inputs.m;
+                    cdSecondsInput.value = savedState.inputs.s;
+                }
+                updateDisplay(remainingTime);
+                disableInputs(true);
+                startCountBtn.textContent = 'চালিয়ে যান';
+                startCountBtn.classList.remove('hidden');
+                pauseCountBtn.classList.add('hidden');
+            }
+        }
+    }
+
+    // সেভ স্টেট
+    function saveCountdownState() {
+        const state = {
+            title: cdTitleInput.value,
+            isRunning: isCountdownRunning,
+            endTime: endTime,
+            remaining: remainingTime,
+            inputs: {
+                d: cdDaysInput ? cdDaysInput.value : '',
+                h: cdHoursInput.value,
+                m: cdMinutesInput.value,
+                s: cdSecondsInput.value
+            }
+        };
+        localStorage.setItem('countdownState', JSON.stringify(state));
+    }
+
+    // আপডেটেড ডিসপ্লে ফাংশন (Bornomala ফন্টে দিন, ঘণ্টা, মিনিট, সেকেন্ড সহ প্রদর্শন)
+    function updateDisplay(seconds) {
+        const d = Math.floor(seconds / (3600 * 24));
+        const h = Math.floor((seconds % (3600 * 24)) / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+
+        let displayStr = "";
+        
+        // দিন থাকলে ফরম্যাট: দিন ঘণ্টা মিনিট সেকেন্ড
+        // না থাকলে ফরম্যাট: ঘণ্টা মিনিট সেকেন্ড
+        if (d > 0) {
+             displayStr = `${String(d).padStart(2, '0')} দিন ${String(h).padStart(2, '0')} ঘণ্টা ${String(m).padStart(2, '0')} মিনিট ${String(s).padStart(2, '0')} সেকেন্ড`;
+             // লেখা বড় হলে ফন্ট সাইজ একটু ছোট করা যাতে এক লাইনে ধরে
+             countdownDisplay.style.fontSize = "1.8rem";
+        } else {
+             displayStr = `${String(h).padStart(2, '0')} ঘণ্টা ${String(m).padStart(2, '0')} মিনিট ${String(s).padStart(2, '0')} সেকেন্ড`;
+             countdownDisplay.style.fontSize = "2.2rem";
+        }
+        
+        // Bornomala ফন্ট CSS এ সেট করা আছে, তাই এখানে ইংরেজি সংখ্যা দিলেও সেটা স্টাইলিশ দেখাবে
+        countdownDisplay.textContent = displayStr;
+    }
+
+    function startInterval() {
+        clearInterval(countdownInterval);
+        
+        const tick = () => {
+            const now = Date.now();
+            const left = Math.ceil((endTime - now) / 1000);
+            
+            if (left <= 0) {
+                clearInterval(countdownInterval);
+                isCountdownRunning = false;
+                remainingTime = 0;
+                updateDisplay(0);
+                playGlobalAlarmSound();
+                showCustomAlert(`⏳ ${cdTitleInput.value || 'কাউন্টডাউন'} শেষ!`);
+                
+                startCountBtn.classList.remove('hidden');
+                startCountBtn.textContent = "শুরু";
+                pauseCountBtn.classList.add('hidden');
+                disableInputs(false);
+                
+                localStorage.removeItem('countdownState');
+                localStorage.setItem('countdownState', JSON.stringify({ title: cdTitleInput.value }));
+                
+            } else {
+                remainingTime = left;
+                updateDisplay(remainingTime);
+            }
+        };
+
+        tick();
+        countdownInterval = setInterval(tick, 1000);
+    }
+
+    function startCountdown() {
+        if (isCountdownRunning) return;
+
+        if (remainingTime > 0 && startCountBtn.textContent === 'চালিয়ে যান') {
+            endTime = Date.now() + remainingTime * 1000;
+        } else {
+            const d = parseInt(cdDaysInput.value) || 0; // দিন যোগ করা হয়েছে
+            const h = parseInt(cdHoursInput.value) || 0;
+            const m = parseInt(cdMinutesInput.value) || 0;
+            const s = parseInt(cdSecondsInput.value) || 0;
+            
+            // মোট সেকেন্ড গণনা (দিন * ৮৬৪০০ + ঘন্টা * ৩৬০০ + ...)
+            const totalSec = (d * 86400) + (h * 3600) + (m * 60) + s;
+
+            if (totalSec <= 0) {
+                showCustomAlert('অনুগ্রহ করে সময় সেট করুন।');
+                return;
+            }
+            remainingTime = totalSec;
+            endTime = Date.now() + remainingTime * 1000;
+        }
+
+        isCountdownRunning = true;
+        disableInputs(true);
+        updateButtons(true);
+        startInterval();
+        saveCountdownState();
+    }
+
+    function pauseCountdown() {
+        clearInterval(countdownInterval);
+        isCountdownRunning = false;
+        updateButtons(false);
+        startCountBtn.textContent = 'চালিয়ে যান';
+        saveCountdownState();
+    }
+
+    function resetCountdown() {
+        clearInterval(countdownInterval);
+        isCountdownRunning = false;
+        remainingTime = 0;
+        endTime = 0;
+        
+        if(cdDaysInput) cdDaysInput.value = '';
+        cdHoursInput.value = '';
+        cdMinutesInput.value = '';
+        cdSecondsInput.value = '';
+        
+        // ডিসপ্লে রিসেট (দিন সহ)
+        countdownDisplay.textContent = "00 দিন 00 ঘণ্টা 00 মিনিট 00 সেকেন্ড";
+        countdownDisplay.style.fontSize = "1.8rem";
+        
+        disableInputs(false);
+        updateButtons(false);
+        startCountBtn.textContent = 'শুরু';
+        
+        localStorage.setItem('countdownState', JSON.stringify({ title: cdTitleInput.value }));
+    }
+
+    function disableInputs(disabled) {
+        if(cdDaysInput) cdDaysInput.disabled = disabled;
+        cdHoursInput.disabled = disabled;
+        cdMinutesInput.disabled = disabled;
+        cdSecondsInput.disabled = disabled;
+    }
+
+    function updateButtons(running) {
+        if (running) {
+            startCountBtn.classList.add('hidden');
+            pauseCountBtn.classList.remove('hidden');
+        } else {
+            startCountBtn.classList.remove('hidden');
+            pauseCountBtn.classList.add('hidden');
+        }
+    }
+
+    if (startCountBtn) startCountBtn.onclick = startCountdown;
+    if (pauseCountBtn) pauseCountBtn.onclick = pauseCountdown;
+    if (resetCountBtn) resetCountBtn.onclick = resetCountdown;
+    
+    if (cdTitleInput) {
+        cdTitleInput.addEventListener('input', () => {
+            if (!isCountdownRunning && remainingTime === 0) {
+                 localStorage.setItem('countdownState', JSON.stringify({ title: cdTitleInput.value }));
+            } else {
+                saveCountdownState();
+            }
+        });
+    }
+
+    loadCountdownState();
+    // --- কাউন্টডাউন টাইমার লজিক শেষ ---
+	
     // ওয়ার্ল্ড ক্লক ইনিশিয়ালাইজেশন
     initializeWorldClock();
 }
