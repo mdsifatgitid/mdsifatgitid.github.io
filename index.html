@@ -7091,6 +7091,37 @@ body.sidebar-open #sidebarOverlay {
 /* END: Voice Command & PWA Styles */
 /* ========================================= */
 
+/* কীবোর্ড ড্রপডাউন এনিমেশন */
+#keyboardLayoutDropdown {
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+}
+#keyboardLayoutDropdown.hidden {
+    opacity: 0;
+    transform: scale(0.95);
+    pointer-events: none;
+}
+#keyboardLayoutDropdown:not(.hidden) {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+/* অ্যাক্টিভ লেআউটের জন্য স্টাইল */
+.layout-option.active {
+    background-color: #e0e7ff; /* light indigo */
+    color: #4338ca; /* dark indigo */
+    font-weight: 600;
+}
+.dark .layout-option.active {
+    background-color: #374151;
+    color: #818cf8;
+}
+.layout-option.active .check-icon {
+    display: block;
+}
+/* কীবোর্ড ড্রপডাউন এনিমেশন */
+
+
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -7173,6 +7204,40 @@ body.sidebar-open #sidebarOverlay {
                 <button id="pwaInstallBtn" type="button" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm" title="অ্যাপটি ইন্সটল করুন" style="display: none;">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                 </button>
+			<!-- Keyboard Layout Toggle (Voice Icon এর ডানে বসান) -->
+<div class="relative inline-block text-left ml-1" id="keyboard-layout-container">
+    <button id="keyboardLayoutBtn" type="button" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm has-tooltip" data-tooltip="কীবোর্ড লেআউট (Ctrl+K)">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        </svg>
+        <!-- Indicator Dot -->
+        <span id="currentLayoutIndicator" class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-gray-400 ring-2 ring-white transform translate-x-1/4 -translate-y-1/4 hidden"></span>
+    </button>
+
+    <!-- Dropdown Menu -->
+    <div id="keyboardLayoutDropdown" class="hidden absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none z-50 origin-top-right transform transition-all duration-200 border border-gray-200 dark:border-gray-600">
+        <div class="py-1" role="menu">
+            <div class="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b dark:border-gray-600">
+                লেআউট নির্বাচন করুন
+            </div>
+            <button class="layout-option w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between group active" data-layout="english">
+                <span>English (Default)</span>
+                <svg class="w-4 h-4 text-indigo-600 check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            </button>
+            <button class="layout-option w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between group" data-layout="bijoy_unicode">
+                <span>বিজয় ইউনিকোড</span>
+                <svg class="w-4 h-4 text-indigo-600 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            </button>
+            <button class="layout-option w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between group" data-layout="bijoy_ansi">
+                <span>বিজয় আনসি (ANSI)</span>
+                <svg class="w-4 h-4 text-indigo-600 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            </button>
+            <!-- Placeholders -->
+            <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled>অভ্র ফোনেটিক (শীঘ্রই)</button>
+            <button class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed" disabled>জাতীয় লেআউট (শীঘ্রই)</button>
+        </div>
+    </div>
+</div>
             </div>
         </div>
         <!-- টাইটেল এবং ভয়েস কমান্ড বাটন এরিয়া শেষ -->
@@ -27645,6 +27710,200 @@ function initializeTextEncryption() {
 // ========================================================
 // END: Text Encryption Function
 // ========================================================
+
+// ====================================================================
+// START: KEYBOARD LAYOUT MANAGER SCRIPT
+// ====================================================================
+function initializeKeyboardLayoutManager() {
+    const layoutBtn = document.getElementById('keyboardLayoutBtn');
+    const layoutDropdown = document.getElementById('keyboardLayoutDropdown');
+    const layoutOptions = document.querySelectorAll('.layout-option');
+    const indicator = document.getElementById('currentLayoutIndicator');
+    
+    // ১. ডিফল্ট লেআউট 'english' সেট করা হয়েছে (রিফ্রেশে রিসেট হবে)
+    let currentLayout = 'english';
+    
+    // লেআউট ম্যাপ (বিজয় কীম্যাপ)
+    const bijoyKeyMap = {
+        'a': ['ৃ', 'র্'], 'b': ['ন', 'ণ'], 'c': ['ে', 'ষ'], 'd': ['ি', 'ী'], 'e': ['া', 'আ'],
+        'f': ['ব', 'ভ'], 'g': ['হ', 'ঃ'], 'h': ['ব', 'ভ'], 'i': ['হ', 'ঞ'], 'j': ['ক', 'খ'], 
+        'k': ['ত', 'থ'], 'l': ['দ', 'ধ'], 'm': ['ম', 'শ'], 'n': ['স', 'ষ'], 'o': ['গ', 'ঘ'],
+        'p': ['ড়', 'ঢ়'], 'q': ['ঙ', 'ং'], 'r': ['প', 'ফ'], 's': ['ু', 'ূ'], 't': ['ট', 'ঠ'],
+        'u': ['জ', 'ঝ'], 'v': ['র', 'ল'], 'w': ['য', 'য়'], 'x': ['ও', 'ঔ'], 'y': ['চ', 'ছ'],
+        'z': ['্র', '্য'], 
+        '\\': ['ৎ', 'ঃ'], 'g': ['্', '।'], '&': ['ঁ', 'ঁ'] 
+    };
+
+    // ড্রপডাউন টগল (আইকনে ক্লিক করলে)
+    if (layoutBtn) {
+        layoutBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            layoutDropdown.classList.toggle('hidden');
+        });
+    }
+
+    // ২. ড্রপডাউন খোলার পর অন্য কোথাও ক্লিক করলে বন্ধ করার লজিক
+    window.addEventListener('click', (e) => {
+        if (layoutDropdown && !layoutDropdown.classList.contains('hidden')) {
+            if (!layoutDropdown.contains(e.target) && !layoutBtn.contains(e.target)) {
+                layoutDropdown.classList.add('hidden');
+            }
+        }
+    });
+
+    // লেআউট পরিবর্তন হ্যান্ডলার
+    layoutOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            const selectedLayout = option.dataset.layout;
+            setKeyboardLayout(selectedLayout, true); // true = শুধুমাত্র ইউজার সিলেক্ট করলে অ্যালার্ট দেখাবে
+            layoutDropdown.classList.add('hidden');
+        });
+    });
+
+    // UI আপডেট ফাংশন
+    function updateLayoutUI(notify = false) {
+        layoutOptions.forEach(opt => {
+            const checkIcon = opt.querySelector('.check-icon');
+            if (opt.dataset.layout === currentLayout) {
+                // Active Styles
+                opt.classList.add('active', 'bg-indigo-50', 'dark:bg-gray-600', 'text-indigo-700', 'dark:text-indigo-300');
+                if(checkIcon) checkIcon.classList.remove('hidden');
+            } else {
+                // Inactive Styles
+                opt.classList.remove('active', 'bg-indigo-50', 'dark:bg-gray-600', 'text-indigo-700', 'dark:text-indigo-300');
+                if(checkIcon) checkIcon.classList.add('hidden');
+            }
+        });
+
+        // ইন্ডিকেটর এবং টুলটিপ আপডেট
+        if (indicator && layoutBtn) {
+            indicator.classList.remove('hidden');
+            if (currentLayout === 'english') {
+                indicator.className = "absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-gray-400 ring-2 ring-white transform translate-x-1/4 -translate-y-1/4";
+                layoutBtn.setAttribute('data-tooltip', 'English (Ctrl+K)');
+            } else if (currentLayout === 'bijoy_unicode') {
+                indicator.className = "absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white transform translate-x-1/4 -translate-y-1/4";
+                layoutBtn.setAttribute('data-tooltip', 'বিজয় ইউনিকোড (Ctrl+K)');
+            } else if (currentLayout === 'bijoy_ansi') {
+                indicator.className = "absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-blue-500 ring-2 ring-white transform translate-x-1/4 -translate-y-1/4";
+                layoutBtn.setAttribute('data-tooltip', 'বিজয় আনসি (Ctrl+K)');
+            }
+        }
+        
+        // ৩. পেজ লোড/রিফ্রেশের সময় অ্যালার্ট দেখাবে না, শুধুমাত্র পরিবর্তনের সময় দেখাবে
+        if (notify) {
+            const layoutNames = {
+                'english': 'English',
+                'bijoy_unicode': 'বিজয় ইউনিকোড',
+                'bijoy_ansi': 'বিজয় আনসি'
+            };
+            showCustomAlert(`কীবোর্ড লেআউট: ${layoutNames[currentLayout]}`);
+        }
+    }
+
+    function setKeyboardLayout(layout, notify = false) {
+        currentLayout = layout;
+        // localStorage.setItem... লাইনটি বাদ দেওয়া হয়েছে যাতে রিফ্রেশে সেভ না থাকে
+        updateLayoutUI(notify);
+    }
+
+    // কীবোর্ড ইন্টারসেপশন লজিক
+    document.addEventListener('keydown', function(e) {
+        const target = e.target;
+        // শুধুমাত্র ইনপুট ফিল্ড এবং টেক্সটএরিয়াতে কাজ করবে
+        const validTargets = ['TEXTAREA', 'INPUT'];
+        
+        // ইংলিশ লেআউট বা কন্ট্রোল কি চাপা থাকলে কিছু করবে না
+        if (currentLayout === 'english' || e.ctrlKey || e.altKey || e.metaKey || !validTargets.includes(target.tagName)) return;
+        
+        if (e.key.length > 1) return; // F1-F12, Arrows ইত্যাদি বাদ
+
+        e.preventDefault(); 
+
+        let charToInsert = '';
+        const key = e.key;
+
+        // বিজয় ক্যারেক্টার ম্যাপার
+        const getBijoyChar = (k) => {
+            if (k === 'a') return 'ৃ'; if (k === 'A') return 'র্'; 
+            if (k === 'd') return 'ি'; if (k === 'D') return 'ী';
+            if (k === 's') return 'ু'; if (k === 'S') return 'ূ';
+            if (k === 'f') return 'া'; if (k === 'F') return 'অ';
+            if (k === 'g') return '্'; if (k === 'G') return '।';
+            if (k === 'h') return 'ব'; if (k === 'H') return 'ভ';
+            if (k === 'j') return 'ক'; if (k === 'J') return 'খ';
+            if (k === 'k') return 'ত'; if (k === 'K') return 'থ';
+            if (k === 'l') return 'দ'; if (k === 'L') return 'ধ';
+            if (k === 'z') return '্র'; if (k === 'Z') return '্য'; 
+            if (k === 'x') return 'ও'; if (k === 'X') return 'ঔ';
+            if (k === 'c') return 'ে'; if (k === 'C') return 'ৈ';
+            if (k === 'v') return 'র'; if (k === 'V') return 'ল';
+            if (k === 'b') return 'ন'; if (k === 'B') return 'ণ';
+            if (k === 'n') return 'স'; if (k === 'N') return 'ষ';
+            if (k === 'm') return 'ম'; if (k === 'M') return 'শ';
+            if (k === 'q') return 'ঙ'; if (k === 'Q') return 'ং';
+            if (k === 'w') return 'য'; if (k === 'W') return 'য়';
+            if (k === 'e') return 'ড'; if (k === 'E') return 'ঢ';
+            if (k === 'r') return 'প'; if (k === 'R') return 'ফ';
+            if (k === 't') return 'ট'; if (k === 'T') return 'ঠ';
+            if (k === 'y') return 'চ'; if (k === 'Y') return 'ছ';
+            if (k === 'u') return 'জ'; if (k === 'U') return 'ঝ';
+            if (k === 'i') return 'হ'; if (k === 'I') return 'ঞ';
+            if (k === 'o') return 'গ'; if (k === 'O') return 'ঘ';
+            if (k === 'p') return 'ড়'; if (k === 'P') return 'ঢ়';
+            if (k === '\\') return 'ৎ'; if (k === '|') return 'ঃ';
+            if (k === '&') return 'ঁ'; 
+            return k; 
+        };
+
+        if (currentLayout === 'bijoy_unicode') {
+            const mappedChar = getBijoyChar(key);
+            charToInsert = mappedChar;
+        } else if (currentLayout === 'bijoy_ansi') {
+            // বিজয় আনসির জন্য সাধারণ ম্যাপ ব্যবহার করা হচ্ছে
+            // যদি ইনপুট ফিল্ডে সুতন্নি ফন্ট থাকে তবে এটি কাজ করবে
+            // অথবা যদি ম্যাপিং প্রয়োজন হয় (যেমন ফন্ট কনভার্টার লজিক), তবে সেটি এখানে ব্যবহার করা যেতে পারে
+            const unicodeChar = getBijoyChar(key);
+            if (typeof unicodeToBijoyMap !== 'undefined' && unicodeToBijoyMap[unicodeChar]) {
+                charToInsert = unicodeToBijoyMap[unicodeChar];
+            } else {
+                charToInsert = unicodeChar; 
+            }
+        }
+
+        // ইনসার্ট লজিক
+        const start = target.selectionStart;
+        const end = target.selectionEnd;
+        const text = target.value;
+        target.value = text.substring(0, start) + charToInsert + text.substring(end);
+        
+        target.selectionStart = target.selectionEnd = start + charToInsert.length;
+        
+        target.dispatchEvent(new Event('input'));
+    });
+
+    // শর্টকাট (Ctrl + K)
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            const layouts = ['english', 'bijoy_unicode', 'bijoy_ansi'];
+            const currentIndex = layouts.indexOf(currentLayout);
+            const nextLayout = layouts[(currentIndex + 1) % layouts.length];
+            setKeyboardLayout(nextLayout, true); // শর্টকাটে অ্যালার্ট দেখাবে
+        }
+    });
+
+    // পেজ লোডের সময় ইংলিশ সেট হবে এবং কোনো অ্যালার্ট দেখাবে না (notify = false)
+    updateLayoutUI(false);
+}
+
+// লোড হওয়ার সাথে সাথে কল করুন
+document.addEventListener('DOMContentLoaded', initializeKeyboardLayoutManager);
+// ====================================================================
+// END: KEYBOARD LAYOUT MANAGER SCRIPT
+// ====================================================================
+
+
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
         window.onload = function() {
