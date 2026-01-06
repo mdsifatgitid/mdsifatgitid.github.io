@@ -27717,10 +27717,8 @@ function initializeKeyboardLayoutManager() {
     const layoutOptions = document.querySelectorAll('.layout-option');
     const indicator = document.getElementById('currentLayoutIndicator');
     
-    // ১. ডিফল্ট লেআউট 'english' সেট করা হয়েছে (রিফ্রেশে রিসেট হবে)
     let currentLayout = 'english';
     
-    // ড্রপডাউন টগল (আইকনে ক্লিক করলে)
     if (layoutBtn) {
         layoutBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -27728,7 +27726,6 @@ function initializeKeyboardLayoutManager() {
         });
     }
 
-    // ২. ড্রপডাউন খোলার পর অন্য কোথাও ক্লিক করলে বন্ধ করার লজিক
     window.addEventListener('click', (e) => {
         if (layoutDropdown && !layoutDropdown.classList.contains('hidden')) {
             if (!layoutDropdown.contains(e.target) && !layoutBtn.contains(e.target)) {
@@ -27737,31 +27734,26 @@ function initializeKeyboardLayoutManager() {
         }
     });
 
-    // লেআউট পরিবর্তন হ্যান্ডলার
     layoutOptions.forEach(option => {
         option.addEventListener('click', () => {
             const selectedLayout = option.dataset.layout;
-            setKeyboardLayout(selectedLayout, true); // true = শুধুমাত্র ইউজার সিলেক্ট করলে অ্যালার্ট দেখাবে
+            setKeyboardLayout(selectedLayout, true);
             layoutDropdown.classList.add('hidden');
         });
     });
 
-    // UI আপডেট ফাংশন
     function updateLayoutUI(notify = false) {
         layoutOptions.forEach(opt => {
             const checkIcon = opt.querySelector('.check-icon');
             if (opt.dataset.layout === currentLayout) {
-                // Active Styles
                 opt.classList.add('active', 'bg-indigo-50', 'dark:bg-gray-600', 'text-indigo-700', 'dark:text-indigo-300');
                 if(checkIcon) checkIcon.classList.remove('hidden');
             } else {
-                // Inactive Styles
                 opt.classList.remove('active', 'bg-indigo-50', 'dark:bg-gray-600', 'text-indigo-700', 'dark:text-indigo-300');
                 if(checkIcon) checkIcon.classList.add('hidden');
             }
         });
 
-        // ইন্ডিকেটর এবং টুলটিপ আপডেট
         if (indicator && layoutBtn) {
             indicator.classList.remove('hidden');
             if (currentLayout === 'english') {
@@ -27776,7 +27768,6 @@ function initializeKeyboardLayoutManager() {
             }
         }
         
-        // ৩. পেজ লোড/রিফ্রেশের সময় অ্যালার্ট দেখাবে না, শুধুমাত্র পরিবর্তনের সময় দেখাবে
         if (notify) {
             const layoutNames = {
                 'english': 'English',
@@ -27789,160 +27780,164 @@ function initializeKeyboardLayoutManager() {
 
     function setKeyboardLayout(layout, notify = false) {
         currentLayout = layout;
-        // localStorage.setItem... লাইনটি বাদ দেওয়া হয়েছে যাতে রিফ্রেশে সেভ না থাকে
         updateLayoutUI(notify);
     }
 
-    // কীবোর্ড ইন্টারসেপশন লজিক (আপডেটেড: সব ইনপুট ও contenteditable সাপোর্ট এবং অটোমেটিক রিঅর্ডারিং)
     document.addEventListener('keydown', function(e) {
         const target = e.target;
+        const isEditable = target.tagName === 'TEXTAREA' || target.tagName === 'INPUT' || target.isContentEditable;
         
-        // চেক করুন টার্গেটটি এডিটেবল কিনা (Input, Textarea বা ContentEditable)
-        const isEditable = target.tagName === 'TEXTAREA' || 
-                           target.tagName === 'INPUT' || 
-                           target.isContentEditable;
-        
-        // ইংলিশ লেআউট বা কন্ট্রোল কি চাপা থাকলে বা এডিটেবল না হলে কিছু করবে না
         if (currentLayout === 'english' || e.ctrlKey || e.altKey || e.metaKey || !isEditable) return;
         
-        // ইনপুট টাইপ চেক (বাটন, চেকবক্স ইত্যাদিতে টাইপ করা যায় না)
         if (target.tagName === 'INPUT') {
             const type = target.type.toLowerCase();
-            if (['button', 'checkbox', 'radio', 'range', 'color', 'file', 'submit', 'reset', 'image', 'hidden'].includes(type)) {
-                return;
-            }
+            if (['button', 'checkbox', 'radio', 'range', 'color', 'file', 'submit', 'reset', 'image', 'hidden'].includes(type)) return;
         }
 
-        if (e.key.length > 1) return; // F1-F12, Arrows ইত্যাদি বাদ
-
+        if (e.key.length > 1) return;
         e.preventDefault(); 
 
         let charToInsert = '';
         const key = e.key;
 
-        // বিজয় ক্যারেক্টার ম্যাপার
         const getBijoyChar = (k) => {
-            if (k === 'a') return 'ৃ'; if (k === 'A') return 'র্'; 
-            if (k === 'd') return 'ি'; if (k === 'D') return 'ী';
-            if (k === 's') return 'ু'; if (k === 'S') return 'ূ';
-            if (k === 'f') return 'া'; if (k === 'F') return 'অ';
-            if (k === 'g') return '্'; if (k === 'G') return '।';
-            if (k === 'h') return 'ব'; if (k === 'H') return 'ভ';
-            if (k === 'j') return 'ক'; if (k === 'J') return 'খ';
-            if (k === 'k') return 'ত'; if (k === 'K') return 'থ';
-            if (k === 'l') return 'দ'; if (k === 'L') return 'ধ';
-            if (k === 'z') return '্র'; if (k === 'Z') return '্য'; 
-            if (k === 'x') return 'ও'; if (k === 'X') return 'ঔ';
-            if (k === 'c') return 'ে'; if (k === 'C') return 'ৈ';
-            if (k === 'v') return 'র'; if (k === 'V') return 'ল';
-            if (k === 'b') return 'ন'; if (k === 'B') return 'ণ';
-            if (k === 'n') return 'স'; if (k === 'N') return 'ষ';
-            if (k === 'm') return 'ম'; if (k === 'M') return 'শ';
-            if (k === 'q') return 'ঙ'; if (k === 'Q') return 'ং';
-            if (k === 'w') return 'য'; if (k === 'W') return 'য়';
-            if (k === 'e') return 'ড'; if (k === 'E') return 'ঢ';
-            if (k === 'r') return 'প'; if (k === 'R') return 'ফ';
-            if (k === 't') return 'ট'; if (k === 'T') return 'ঠ';
-            if (k === 'y') return 'চ'; if (k === 'Y') return 'ছ';
-            if (k === 'u') return 'জ'; if (k === 'U') return 'ঝ';
-            if (k === 'i') return 'হ'; if (k === 'I') return 'ঞ';
-            if (k === 'o') return 'গ'; if (k === 'O') return 'ঘ';
-            if (k === 'p') return 'ড়'; if (k === 'P') return 'ঢ়';
-            if (k === '\\') return 'ৎ'; if (k === '|') return 'ঃ';
-            if (k === '&') return 'ঁ'; 
-            return k; 
+            const map = {
+                'a':'ৃ', 'A':'র্', 'd':'ি', 'D':'ী', 's':'ু', 'S':'ূ', 'f':'া', 'F':'অ',
+                'g':'্', 'G':'।', 'h':'ব', 'H':'ভ', 'j':'ক', 'J':'খ', 'k':'ত', 'K':'থ',
+                'l':'দ', 'L':'ধ', 'z':'্র', 'Z':'্য', 'x':'ও', 'X':'ঔ', 'c':'ে', 'C':'ৈ',
+                'v':'র', 'V':'ল', 'b':'ন', 'B':'ণ', 'n':'স', 'N':'ষ', 'm':'ম', 'M':'শ',
+                'q':'ঙ', 'Q':'ং', 'w':'য', 'W':'য়', 'e':'ড', 'E':'ঢ', 'r':'প', 'R':'ফ',
+                't':'ট', 'T':'ঠ', 'y':'চ', 'Y':'ছ', 'u':'জ', 'U':'ঝ', 'i':'হ', 'I':'ঞ',
+                'o':'গ', 'O':'ঘ', 'p':'ড়', 'P':'ঢ়', '\\':'ৎ', '|':'ঃ', '&':'ঁ'
+            };
+            return map[k] || k;
         };
 
         if (currentLayout === 'bijoy_unicode') {
             const mappedChar = getBijoyChar(key);
-            
-            // --- অটোমেটিক রিঅর্ডারিং লজিক (Auto Reorder for Preceding Vowels) ---
-            // যদি কার্সরের আগের অক্ষরটি 'ি', 'ে', বা 'ৈ' হয় এবং বর্তমান অক্ষরটি ব্যাঞ্জনবর্ণ বা হসন্ত হয়,
-            // তবে বর্তমান অক্ষরটিকে আগের অক্ষরের আগে বসানো হবে।
-            
-            const precedingVowels = ['ি', 'ে', 'ৈ']; // Preceding Vowels
+            const precedingVowels = ['ি', 'ে', 'ৈ'];
+            const vowelToNoun = { 'ি':'ই', 'ে':'এ', 'ৈ':'ঐ', 'া':'আ', 'ু':'উ', 'ূ':'ঊ', 'ৃ':'ঋ' };
+            const zwnj = '\u200C';
             const unicodeHasanta = '্';
             
-            // ইনপুট বা টেক্সটএরিয়া থেকে কার্সরের অবস্থান এবং টেক্সট নেওয়া
             let start, end, value;
             if (target.isContentEditable) {
-                // ContentEditable (যেমন নোটপ্যাড) এর জন্য সিলেকশন হ্যান্ডলিং একটু জটিল, তাই আপাতত বেসিক ইনসার্ট
-                // নোট: ContentEditable-এ সম্পূর্ণ রিঅর্ডারিং লজিক যোগ করতে হলে আরও কোড লাগবে।
-                // এখানে ইনপুট/টেক্সটএরিয়া এর জন্য ফোকাস করা হয়েছে।
+                // Focus based insert
             } else {
                 start = target.selectionStart;
                 end = target.selectionEnd;
                 value = target.value;
             }
 
-            if (typeof start === 'number') { // শুধুমাত্র ইনপুট/টেক্সটএরিয়া হলে
-                const prevChar = value.substring(start - 1, start);
-                
-                // ব্যাঞ্জনবর্ণ রেঞ্জ (Consonant Range) এবং হসন্ত চেক
-                const isConsonantOrHasanta = (ch) => /^[\u0995-\u09B9\u09DC-\u09DF\u09CD]/.test(ch);
-
-                if (precedingVowels.includes(prevChar) && isConsonantOrHasanta(mappedChar)) {
-                    // Swap Logic: [Previous: Vowel] [Current: Consonant] -> [Consonant] [Vowel]
-                    // উদাহরণ: 'ে' + 'ক' -> 'কে'
-                    // উদাহরণ: 'ি' + '্' (Conjunct typing) -> '্' + 'ি' (Reordered for next consonant)
-                    
-                    const preText = value.substring(0, start - 1);
-                    const postText = value.substring(end);
-                    
-                    target.value = preText + mappedChar + prevChar + postText;
-                    
-                    // কার্সরকে ভাওয়েলের পরে রাখা (অর্থাৎ সোয়াপের পর যেখানে ছিল সেখানেই)
-                    target.selectionStart = target.selectionEnd = start + mappedChar.length;
-                    
-                    target.dispatchEvent(new Event('input'));
-                    return; // ডিফল্ট ইনসার্ট বন্ধ করা হলো কারণ আমরা ম্যানুয়ালি ইনসার্ট করেছি
+            if (typeof start === 'number') {
+                // ১. হসন্ত + কার = স্বরবর্ণ
+                if (vowelToNoun[mappedChar] && start > 0) {
+                    const prevChar = value.substring(start - 1, start);
+                    if (prevChar === unicodeHasanta) {
+                        const preText = value.substring(0, start - 1);
+                        const postText = value.substring(end);
+                        target.value = preText + vowelToNoun[mappedChar] + postText;
+                        target.selectionStart = target.selectionEnd = start;
+                        target.dispatchEvent(new Event('input'));
+                        return;
+                    }
                 }
-            }
-            
-            charToInsert = mappedChar;
 
+                // ২. অ + া = আ (বিশেষ ক্ষেত্র)
+                if (mappedChar === 'া' && start > 0 && value.substring(start - 1, start) === 'অ') {
+                    target.value = value.substring(0, start - 1) + 'আ' + value.substring(end);
+                    target.selectionStart = target.selectionEnd = start;
+                    target.dispatchEvent(new Event('input'));
+                    return;
+                }
+
+                // ৩. র-ফলা (্র) বা য-ফলা (্য) রিঅর্ডারিং (ইকার বা একারের আগে পাঠাতে)
+                if ((mappedChar === '্র' || mappedChar === '্য') && start > 0) {
+                    const prevChar = value.substring(start - 1, start);
+                    if (precedingVowels.includes(prevChar)) {
+                        // Swap: Vowel + RaPhola -> RaPhola + Vowel
+                        target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
+                        target.selectionStart = target.selectionEnd = start + mappedChar.length;
+                        target.dispatchEvent(new Event('input'));
+                        return;
+                    }
+                }
+
+                // ৪. হসন্ত (্) টাইপ করলে যদি আগে কার থাকে (Cluster Extension)
+                if (mappedChar === unicodeHasanta && start > 0) {
+                    const prevChar = value.substring(start - 1, start);
+                    if (precedingVowels.includes(prevChar)) {
+                        const prevPrev = start >= 2 ? value.substring(start-2, start-1) : '';
+                        if (prevPrev !== zwnj) {
+                            target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
+                            target.selectionStart = target.selectionEnd = start + mappedChar.length;
+                            target.dispatchEvent(new Event('input'));
+                            return;
+                        }
+                    }
+                }
+
+                // ৫. ব্যঞ্জনবর্ণ টাইপ করলে যদি আগে (হসন্ত/র-ফলা + কার) থাকে
+                const isConsonant = (ch) => /^[\u0995-\u09B9\u09DC-\u09DF]/.test(ch);
+                if (isConsonant(mappedChar) && start >= 2) {
+                    const prevChar = value.substring(start - 1, start);
+                    const prevPrev = value.substring(start - 2, start - 1);
+                    if (precedingVowels.includes(prevChar) && (prevPrev === unicodeHasanta || prevPrev === '্র' || prevPrev === '্য')) {
+                        target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
+                        target.selectionStart = target.selectionEnd = start + mappedChar.length;
+                        target.dispatchEvent(new Event('input'));
+                        return;
+                    }
+                }
+
+                // ৬. প্রি-সিডিং ভাওয়েল টাইপ করলে ZWNJ সহ দেখানো
+                if (precedingVowels.includes(mappedChar)) {
+                    charToInsert = zwnj + mappedChar;
+                } else {
+                    // কনসোনেন্ট বা অন্য কিছু টাইপ করলে ZWNJ ভাওয়েল সোয়াপ করা
+                    if (start >= 2) {
+                        const prevTwo = value.substring(start - 2, start);
+                        if (prevTwo[0] === zwnj && precedingVowels.includes(prevTwo[1])) {
+                            const vowel = prevTwo[1];
+                            target.value = value.substring(0, start - 2) + mappedChar + vowel + value.substring(end);
+                            target.selectionStart = target.selectionEnd = start;
+                            target.dispatchEvent(new Event('input'));
+                            return;
+                        }
+                    }
+                    charToInsert = mappedChar;
+                }
+            } else {
+                charToInsert = mappedChar;
+            }
         } else if (currentLayout === 'bijoy_ansi') {
             const unicodeChar = getBijoyChar(key);
-            if (typeof unicodeToBijoyMap !== 'undefined' && unicodeToBijoyMap[unicodeChar]) {
-                charToInsert = unicodeToBijoyMap[unicodeChar];
-            } else {
-                charToInsert = unicodeChar; 
-            }
+            charToInsert = (typeof unicodeToBijoyMap !== 'undefined' && unicodeToBijoyMap[unicodeChar]) ? unicodeToBijoyMap[unicodeChar] : unicodeChar;
         }
 
-        // ইনসার্ট লজিক
         if (target.isContentEditable) {
-            // ContentEditable এলিমেন্টের জন্য (যেমন নোটপ্যাড)
             document.execCommand('insertText', false, charToInsert);
         } else {
-            // Input এবং Textarea এর জন্য
-            const start = target.selectionStart;
-            const end = target.selectionEnd;
-            const text = target.value;
-            target.value = text.substring(0, start) + charToInsert + text.substring(end);
-            
-            target.selectionStart = target.selectionEnd = start + charToInsert.length;
-            
+            const s = target.selectionStart;
+            const e_pos = target.selectionEnd;
+            target.value = target.value.substring(0, s) + charToInsert + target.value.substring(e_pos);
+            target.selectionStart = target.selectionEnd = s + charToInsert.length;
             target.dispatchEvent(new Event('input'));
         }
     });
 
-    // শর্টকাট (Ctrl + K)
     document.addEventListener('keydown', (e) => {
         if (e.ctrlKey && e.key.toLowerCase() === 'k') {
             e.preventDefault();
             const layouts = ['english', 'bijoy_unicode', 'bijoy_ansi'];
-            const currentIndex = layouts.indexOf(currentLayout);
-            const nextLayout = layouts[(currentIndex + 1) % layouts.length];
-            setKeyboardLayout(nextLayout, true); // শর্টকাটে অ্যালার্ট দেখাবে
+            const nextLayout = layouts[(layouts.indexOf(currentLayout) + 1) % layouts.length];
+            setKeyboardLayout(nextLayout, true);
         }
     });
 
-    // পেজ লোডের সময় ইংলিশ সেট হবে এবং কোনো অ্যালার্ট দেখাবে না
     updateLayoutUI(false);
 }
 
-// লোড হওয়ার সাথে সাথে কল করুন
 document.addEventListener('DOMContentLoaded', initializeKeyboardLayoutManager);
 // ====================================================================
 // END: KEYBOARD LAYOUT MANAGER SCRIPT
