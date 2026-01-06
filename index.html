@@ -27793,7 +27793,7 @@ function initializeKeyboardLayoutManager() {
         updateLayoutUI(notify);
     }
 
-    // কীবোর্ড ইন্টারসেপশন লজিক (আপডেটেড: সব ইনপুট ও contenteditable সাপোর্ট)
+    // কীবোর্ড ইন্টারসেপশন লজিক (আপডেটেড: সব ইনপুট ও contenteditable সাপোর্ট এবং অটোমেটিক রিঅর্ডারিং)
     document.addEventListener('keydown', function(e) {
         const target = e.target;
         
@@ -27855,7 +27855,52 @@ function initializeKeyboardLayoutManager() {
 
         if (currentLayout === 'bijoy_unicode') {
             const mappedChar = getBijoyChar(key);
+            
+            // --- অটোমেটিক রিঅর্ডারিং লজিক (Auto Reorder for Preceding Vowels) ---
+            // যদি কার্সরের আগের অক্ষরটি 'ি', 'ে', বা 'ৈ' হয় এবং বর্তমান অক্ষরটি ব্যাঞ্জনবর্ণ বা হসন্ত হয়,
+            // তবে বর্তমান অক্ষরটিকে আগের অক্ষরের আগে বসানো হবে।
+            
+            const precedingVowels = ['ি', 'ে', 'ৈ']; // Preceding Vowels
+            const unicodeHasanta = '্';
+            
+            // ইনপুট বা টেক্সটএরিয়া থেকে কার্সরের অবস্থান এবং টেক্সট নেওয়া
+            let start, end, value;
+            if (target.isContentEditable) {
+                // ContentEditable (যেমন নোটপ্যাড) এর জন্য সিলেকশন হ্যান্ডলিং একটু জটিল, তাই আপাতত বেসিক ইনসার্ট
+                // নোট: ContentEditable-এ সম্পূর্ণ রিঅর্ডারিং লজিক যোগ করতে হলে আরও কোড লাগবে।
+                // এখানে ইনপুট/টেক্সটএরিয়া এর জন্য ফোকাস করা হয়েছে।
+            } else {
+                start = target.selectionStart;
+                end = target.selectionEnd;
+                value = target.value;
+            }
+
+            if (typeof start === 'number') { // শুধুমাত্র ইনপুট/টেক্সটএরিয়া হলে
+                const prevChar = value.substring(start - 1, start);
+                
+                // ব্যাঞ্জনবর্ণ রেঞ্জ (Consonant Range) এবং হসন্ত চেক
+                const isConsonantOrHasanta = (ch) => /^[\u0995-\u09B9\u09DC-\u09DF\u09CD]/.test(ch);
+
+                if (precedingVowels.includes(prevChar) && isConsonantOrHasanta(mappedChar)) {
+                    // Swap Logic: [Previous: Vowel] [Current: Consonant] -> [Consonant] [Vowel]
+                    // উদাহরণ: 'ে' + 'ক' -> 'কে'
+                    // উদাহরণ: 'ি' + '্' (Conjunct typing) -> '্' + 'ি' (Reordered for next consonant)
+                    
+                    const preText = value.substring(0, start - 1);
+                    const postText = value.substring(end);
+                    
+                    target.value = preText + mappedChar + prevChar + postText;
+                    
+                    // কার্সরকে ভাওয়েলের পরে রাখা (অর্থাৎ সোয়াপের পর যেখানে ছিল সেখানেই)
+                    target.selectionStart = target.selectionEnd = start + mappedChar.length;
+                    
+                    target.dispatchEvent(new Event('input'));
+                    return; // ডিফল্ট ইনসার্ট বন্ধ করা হলো কারণ আমরা ম্যানুয়ালি ইনসার্ট করেছি
+                }
+            }
+            
             charToInsert = mappedChar;
+
         } else if (currentLayout === 'bijoy_ansi') {
             const unicodeChar = getBijoyChar(key);
             if (typeof unicodeToBijoyMap !== 'undefined' && unicodeToBijoyMap[unicodeChar]) {
