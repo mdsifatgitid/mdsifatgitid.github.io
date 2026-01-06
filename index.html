@@ -27819,10 +27819,16 @@ function initializeKeyboardLayoutManager() {
             const vowelToNoun = { 'ি':'ই', 'ে':'এ', 'ৈ':'ঐ', 'া':'আ', 'ু':'উ', 'ূ':'ঊ', 'ৃ':'ঋ' };
             const zwnj = '\u200C';
             const unicodeHasanta = '্';
+            const unicodeRa = 'র';
+            const unicodeYaPhala = '্য';
+            const unicodeRef = 'র্';
             
             let start, end, value;
             if (target.isContentEditable) {
-                // Focus based insert
+                // Focus based insert handling could be added here for contentEditable div
+                // For simplicity, we fallback to insertText which handles cursor
+                document.execCommand('insertText', false, mappedChar);
+                return;
             } else {
                 start = target.selectionStart;
                 end = target.selectionEnd;
@@ -27830,59 +27836,92 @@ function initializeKeyboardLayoutManager() {
             }
 
             if (typeof start === 'number') {
-                // ১. হসন্ত + কার = স্বরবর্ণ
+                const prevChar = start > 0 ? value.substring(start - 1, start) : '';
+                const prevPrevChar = start >= 2 ? value.substring(start - 2, start - 1) : '';
+                const isConsonant = (ch) => /^[\u0995-\u09B9\u09DC-\u09DF]/.test(ch);
+
+                // ১. কার্সর শব্দের মাঝে থাকলে Preceding Vowel (ি, ে, ৈ) পরের বর্ণের সাথে যুক্ত হওয়া (Smart Insert)
+                if (precedingVowels.includes(mappedChar) && start < value.length) {
+                    const nextText = value.substring(start);
+                    // পরের বর্ণ বা যুক্তবর্ণ খুঁজে বের করা
+                    const clusterMatch = nextText.match(/^([ক-হড়ঢ়য়](?:্[ক-হড়ঢ়য়])*)(.*)/s);
+                    
+                    if (clusterMatch) {
+                        const cluster = clusterMatch[1];
+                        
+                        // লজিক: পরের বর্ণটি (cluster) নিয়ে তার পরে কার-চিহ্নটি বসানো
+                        // এবং কার্সরটিকে ওই কার-চিহ্নের পরে নিয়ে যাওয়া
+                        target.value = value.substring(0, start) + cluster + mappedChar + value.substring(start + cluster.length);
+                        
+                        const newPos = start + cluster.length + mappedChar.length;
+                        target.selectionStart = target.selectionEnd = newPos;
+                        target.dispatchEvent(new Event('input'));
+                        return;
+                    }
+                }
+
+                // ২. হসন্ত + কার = স্বরবর্ণ (স্বাভাবিক নিয়ম)
                 if (vowelToNoun[mappedChar] && start > 0) {
-                    const prevChar = value.substring(start - 1, start);
                     if (prevChar === unicodeHasanta) {
-                        const preText = value.substring(0, start - 1);
-                        const postText = value.substring(end);
-                        target.value = preText + vowelToNoun[mappedChar] + postText;
-                        target.selectionStart = target.selectionEnd = start;
-                        target.dispatchEvent(new Event('input'));
-                        return;
-                    }
-                }
-
-                // ২. অ + া = আ (বিশেষ ক্ষেত্র)
-                if (mappedChar === 'া' && start > 0 && value.substring(start - 1, start) === 'অ') {
-                    target.value = value.substring(0, start - 1) + 'আ' + value.substring(end);
-                    target.selectionStart = target.selectionEnd = start;
-                    target.dispatchEvent(new Event('input'));
-                    return;
-                }
-
-                // ৩. র-ফলা (্র) বা য-ফলা (্য) রিঅর্ডারিং (ইকার বা একারের আগে পাঠাতে)
-                if ((mappedChar === '্র' || mappedChar === '্য') && start > 0) {
-                    const prevChar = value.substring(start - 1, start);
-                    if (precedingVowels.includes(prevChar)) {
-                        // Swap: Vowel + RaPhola -> RaPhola + Vowel
-                        target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
-                        target.selectionStart = target.selectionEnd = start + mappedChar.length;
-                        target.dispatchEvent(new Event('input'));
-                        return;
-                    }
-                }
-
-                // ৪. হসন্ত (্) টাইপ করলে যদি আগে কার থাকে (Cluster Extension)
-                if (mappedChar === unicodeHasanta && start > 0) {
-                    const prevChar = value.substring(start - 1, start);
-                    if (precedingVowels.includes(prevChar)) {
-                        const prevPrev = start >= 2 ? value.substring(start-2, start-1) : '';
-                        if (prevPrev !== zwnj) {
-                            target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
-                            target.selectionStart = target.selectionEnd = start + mappedChar.length;
+                        // বিশেষ চেক: যদি হসন্তটি কোনো একার/ইকার/ঐকার এর পরে বসে থাকে (নিচের রুল ৪ অনুযায়ী ZWNJ রিমুভ করার কেস)
+                        // তাহলে এটি স্বরবর্ণ হবে না।
+                        if (!(precedingVowels.includes(prevPrevChar) && value.substring(start-3, start-2) !== zwnj)) {
+                            const preText = value.substring(0, start - 1);
+                            const postText = value.substring(end);
+                            target.value = preText + vowelToNoun[mappedChar] + postText;
+                            target.selectionStart = target.selectionEnd = start;
                             target.dispatchEvent(new Event('input'));
                             return;
                         }
                     }
                 }
 
-                // ৫. ব্যঞ্জনবর্ণ টাইপ করলে যদি আগে (হসন্ত/র-ফলা + কার) থাকে
-                const isConsonant = (ch) => /^[\u0995-\u09B9\u09DC-\u09DF]/.test(ch);
-                if (isConsonant(mappedChar) && start >= 2) {
-                    const prevChar = value.substring(start - 1, start);
-                    const prevPrev = value.substring(start - 2, start - 1);
-                    if (precedingVowels.includes(prevChar) && (prevPrev === unicodeHasanta || prevPrev === '্র' || prevPrev === '্য')) {
+                // ৩. অ + া = আ
+                if (mappedChar === 'া' && start > 0 && prevChar === 'অ') {
+                    target.value = value.substring(0, start - 1) + 'আ' + value.substring(end);
+                    target.selectionStart = target.selectionEnd = start;
+                    target.dispatchEvent(new Event('input'));
+                    return;
+                }
+
+                // ৪. হসন্ত (্) টাইপ করলে যদি আগে একার/ইকার/ঐকার থাকে (ZWNJ রিমুভ করা + প্লেসমেন্ট ফিক্স - হসন্ত আগে যাবে)
+                if (mappedChar === unicodeHasanta && start > 0) {
+                    if (precedingVowels.includes(prevChar)) {
+                        // আগে ZWNJ থাকলে সেটি রিমুভ করে Swap
+                        // উদাহরণ: 'd' (ি) -> ZWNJ+ি. 'g' (্) -> ্+ি (ZWNJ removed, Hasanta inserted before Vowel)
+                        if (prevPrevChar === zwnj) {
+                             target.value = value.substring(0, start - 2) + mappedChar + prevChar + value.substring(end);
+                             target.selectionStart = target.selectionEnd = start; // Length same (ZWNJ removed, Hasanta added)
+                        } else {
+                             // ZWNJ না থাকলে শুধু অদলবদল (Swap)
+                             target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
+                             target.selectionStart = target.selectionEnd = start + 1; // Length increases
+                        }
+                        target.dispatchEvent(new Event('input'));
+                        return;
+                    }
+                }
+
+                // ৫. 'র' এর পর য-ফলা (্য) দিলে 'র‌্য' (Ra+ZWNJ+YaPhala) হওয়া
+                if (mappedChar === unicodeYaPhala && start > 0 && prevChar === unicodeRa) {
+                    target.value = value.substring(0, start) + zwnj + mappedChar + value.substring(end);
+                    target.selectionStart = target.selectionEnd = start + 1 + mappedChar.length;
+                    target.dispatchEvent(new Event('input'));
+                    return;
+                }
+
+                // ৬. বর্ণের পরে রেফ (র্) টাইপ করলে বর্ণের আগে চলে যাওয়া (ম + র্ = র্ম)
+                if (mappedChar === unicodeRef && start > 0 && isConsonant(prevChar)) {
+                    // আগের বর্ণ এবং রেফ এর স্থান পরিবর্তন
+                    target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
+                    target.selectionStart = target.selectionEnd = start + mappedChar.length; 
+                    target.dispatchEvent(new Event('input'));
+                    return;
+                }
+
+                // ৭. র-ফলা (্র) বা য-ফলা (্য) রিঅর্ডারিং (ইকার বা একারের আগে পাঠাতে - স্বাভাবিক নিয়ম)
+                if ((mappedChar === '্র' || mappedChar === '্য') && start > 0) {
+                    if (precedingVowels.includes(prevChar)) {
                         target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
                         target.selectionStart = target.selectionEnd = start + mappedChar.length;
                         target.dispatchEvent(new Event('input'));
@@ -27890,7 +27929,17 @@ function initializeKeyboardLayoutManager() {
                     }
                 }
 
-                // ৬. প্রি-সিডিং ভাওয়েল টাইপ করলে ZWNJ সহ দেখানো
+                // ৮. ব্যঞ্জনবর্ণ টাইপ করলে যদি আগে (হসন্ত/র-ফলা + কার) থাকে (স্বাভাবিক নিয়ম)
+                if (isConsonant(mappedChar) && start >= 2) {
+                    if (precedingVowels.includes(prevChar) && (prevPrevChar === unicodeHasanta || prevPrevChar === '্র' || prevPrevChar === '্য')) {
+                        target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
+                        target.selectionStart = target.selectionEnd = start + mappedChar.length;
+                        target.dispatchEvent(new Event('input'));
+                        return;
+                    }
+                }
+
+                // ৯. প্রি-সিডিং ভাওয়েল টাইপ করলে ZWNJ সহ দেখানো (স্বাভাবিক নিয়ম - শব্দের শেষে বা শুরুতে)
                 if (precedingVowels.includes(mappedChar)) {
                     charToInsert = zwnj + mappedChar;
                 } else {
