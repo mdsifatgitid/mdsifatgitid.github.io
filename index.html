@@ -27756,15 +27756,16 @@ function initializeKeyboardLayoutManager() {
 
         if (indicator && layoutBtn) {
             indicator.classList.remove('hidden');
+            const shortcutHint = '(Ctrl+Space / Ctrl+K)';
             if (currentLayout === 'english') {
                 indicator.className = "absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-gray-400 ring-2 ring-white transform translate-x-1/4 -translate-y-1/4";
-                layoutBtn.setAttribute('data-tooltip', 'English (Ctrl+K)');
+                layoutBtn.setAttribute('data-tooltip', `English ${shortcutHint}`);
             } else if (currentLayout === 'bijoy_unicode') {
                 indicator.className = "absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white transform translate-x-1/4 -translate-y-1/4";
-                layoutBtn.setAttribute('data-tooltip', 'বিজয় ইউনিকোড (Ctrl+K)');
+                layoutBtn.setAttribute('data-tooltip', `বিজয় ইউনিকোড ${shortcutHint}`);
             } else if (currentLayout === 'bijoy_ansi') {
                 indicator.className = "absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-blue-500 ring-2 ring-white transform translate-x-1/4 -translate-y-1/4";
-                layoutBtn.setAttribute('data-tooltip', 'বিজয় আনসি (Ctrl+K)');
+                layoutBtn.setAttribute('data-tooltip', `বিজয় আনসি ${shortcutHint}`);
             }
         }
         
@@ -27787,6 +27788,17 @@ function initializeKeyboardLayoutManager() {
         const target = e.target;
         const isEditable = target.tagName === 'TEXTAREA' || target.tagName === 'INPUT' || target.isContentEditable;
         
+        // শর্টকাট হ্যান্ডলার: Ctrl + Space অথবা Ctrl + K
+        const isToggleShortcut = e.ctrlKey && (e.code === 'Space' || e.key.toLowerCase() === 'k');
+        
+        if (isToggleShortcut) {
+            e.preventDefault();
+            const layouts = ['english', 'bijoy_unicode', 'bijoy_ansi'];
+            const nextLayout = layouts[(layouts.indexOf(currentLayout) + 1) % layouts.length];
+            setKeyboardLayout(nextLayout, true);
+            return;
+        }
+
         if (currentLayout === 'english' || e.ctrlKey || e.altKey || e.metaKey || !isEditable) return;
         
         if (target.tagName === 'INPUT') {
@@ -27809,7 +27821,6 @@ function initializeKeyboardLayoutManager() {
                 'q':'ঙ', 'Q':'ং', 'w':'য', 'W':'য়', 'e':'ড', 'E':'ঢ', 'r':'প', 'R':'ফ',
                 't':'ট', 'T':'ঠ', 'y':'চ', 'Y':'ছ', 'u':'জ', 'U':'ঝ', 'i':'হ', 'I':'ঞ',
                 'o':'গ', 'O':'ঘ', 'p':'ড়', 'P':'ঢ়', '\\':'ৎ', '|':'ঃ', '&':'ঁ',
-                // ইংরেজি নম্বর থেকে বাংলা নম্বর ম্যাপিং
                 '0':'০', '1':'১', '2':'২', '3':'৩', '4':'৪', 
                 '5':'৫', '6':'৬', '7':'৭', '8':'৮', '9':'৯'
             };
@@ -27841,19 +27852,12 @@ function initializeKeyboardLayoutManager() {
                 const prevPrevChar = start >= 2 ? value.substring(start - 2, start - 1) : '';
                 const isConsonant = (ch) => /^[\u0995-\u09B9\u09DC-\u09DF]/.test(ch);
 
-                // ১. কার্সর শব্দের মাঝে থাকলে Preceding Vowel (ি, ে, ৈ) পরের বর্ণের সাথে যুক্ত হওয়া (Smart Insert)
                 if (precedingVowels.includes(mappedChar) && start < value.length) {
                     const nextText = value.substring(start);
-                    // পরের বর্ণ বা যুক্তবর্ণ খুঁজে বের করা
                     const clusterMatch = nextText.match(/^([ক-হড়ঢ়য়](?:্[ক-হড়ঢ়য়])*)(.*)/s);
-                    
                     if (clusterMatch) {
                         const cluster = clusterMatch[1];
-                        
-                        // লজিক: পরের বর্ণটি (cluster) নিয়ে তার পরে কার-চিহ্নটি বসানো
-                        // এবং কার্সরটিকে ওই কার-চিহ্নের পরে নিয়ে যাওয়া
                         target.value = value.substring(0, start) + cluster + mappedChar + value.substring(start + cluster.length);
-                        
                         const newPos = start + cluster.length + mappedChar.length;
                         target.selectionStart = target.selectionEnd = newPos;
                         target.dispatchEvent(new Event('input'));
@@ -27861,10 +27865,8 @@ function initializeKeyboardLayoutManager() {
                     }
                 }
 
-                // ২. হসন্ত + কার = স্বরবর্ণ (স্বাভাবিক নিয়ম)
                 if (vowelToNoun[mappedChar] && start > 0) {
                     if (prevChar === unicodeHasanta) {
-                        // বিশেষ চেক: যদি হসন্তটি কোনো একার/ইকার/ঐকার এর পরে বসে থাকে
                         if (!(precedingVowels.includes(prevPrevChar) && value.substring(start-3, start-2) !== zwnj)) {
                             const preText = value.substring(0, start - 1);
                             const postText = value.substring(end);
@@ -27876,7 +27878,6 @@ function initializeKeyboardLayoutManager() {
                     }
                 }
 
-                // ৩. অ + া = আ
                 if (mappedChar === 'া' && start > 0 && prevChar === 'অ') {
                     target.value = value.substring(0, start - 1) + 'আ' + value.substring(end);
                     target.selectionStart = target.selectionEnd = start;
@@ -27884,7 +27885,6 @@ function initializeKeyboardLayoutManager() {
                     return;
                 }
 
-                // ৪. হসন্ত (্) টাইপ করলে যদি আগে একার/ইকার/ঐকার থাকে (ZWNJ রিমুভ করা + প্লেসমেন্ট ফিক্স - হসন্ত আগে যাবে)
                 if (mappedChar === unicodeHasanta && start > 0) {
                     if (precedingVowels.includes(prevChar)) {
                         if (prevPrevChar === zwnj) {
@@ -27899,7 +27899,6 @@ function initializeKeyboardLayoutManager() {
                     }
                 }
 
-                // ৫. 'র' এর পর য-ফলা (্য) দিলে 'র‌্য' হওয়া
                 if (mappedChar === unicodeYaPhala && start > 0 && prevChar === unicodeRa) {
                     target.value = value.substring(0, start) + zwnj + mappedChar + value.substring(end);
                     target.selectionStart = target.selectionEnd = start + 1 + mappedChar.length;
@@ -27907,7 +27906,6 @@ function initializeKeyboardLayoutManager() {
                     return;
                 }
 
-                // ৬. বর্ণের পরে রেফ (র্) টাইপ করলে বর্ণের আগে চলে যাওয়া (ম + র্ = র্ম)
                 if (mappedChar === unicodeRef && start > 0 && isConsonant(prevChar)) {
                     target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
                     target.selectionStart = target.selectionEnd = start + mappedChar.length; 
@@ -27915,7 +27913,6 @@ function initializeKeyboardLayoutManager() {
                     return;
                 }
 
-                // ৭. র-ফলা (্র) বা য-ফলা (্য) রিঅর্ডারিং
                 if ((mappedChar === '্র' || mappedChar === '্য') && start > 0) {
                     if (precedingVowels.includes(prevChar)) {
                         target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
@@ -27925,7 +27922,6 @@ function initializeKeyboardLayoutManager() {
                     }
                 }
 
-                // ৮. ব্যঞ্জনবর্ণ টাইপ করলে যদি আগে (হসন্ত/র-ফলা + কার) থাকে
                 if (isConsonant(mappedChar) && start >= 2) {
                     if (precedingVowels.includes(prevChar) && (prevPrevChar === unicodeHasanta || prevPrevChar === '্র' || prevPrevChar === '্য')) {
                         target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
@@ -27935,7 +27931,6 @@ function initializeKeyboardLayoutManager() {
                     }
                 }
 
-                // ৯. প্রি-সিডিং ভাওয়েল টাইপ করলে ZWNJ সহ দেখানো
                 if (precedingVowels.includes(mappedChar)) {
                     charToInsert = zwnj + mappedChar;
                 } else {
@@ -27968,13 +27963,10 @@ function initializeKeyboardLayoutManager() {
             let before = val.substring(0, s);
             let after = val.substring(e_pos);
             
-            // প্রাথমিক অক্ষর বসানো (Initial Insert)
             let tempValueBeforeCursor = before + charToInsert;
             
-            // --- বিজ়য় আনসি রিপ্লেসমেন্ট লজিক (Manual ANSI Map Replacement) ---
             if (currentLayout === 'bijoy_ansi' && typeof manualAnsiReplacements !== 'undefined') {
                 let bestMatch = null;
-                // কার্সরের আগের টেক্সটের সাথে মিল খুঁজে বের করা (Longest Match)
                 for (const pattern in manualAnsiReplacements) {
                     if (tempValueBeforeCursor.endsWith(pattern)) {
                         if (!bestMatch || pattern.length > bestMatch.length) {
@@ -27982,10 +27974,8 @@ function initializeKeyboardLayoutManager() {
                         }
                     }
                 }
-                
                 if (bestMatch) {
                     const replacement = manualAnsiReplacements[bestMatch];
-                    // প্যাটার্নটি রিপ্লেস করা
                     tempValueBeforeCursor = tempValueBeforeCursor.slice(0, -bestMatch.length) + replacement;
                 }
             }
@@ -27993,15 +27983,6 @@ function initializeKeyboardLayoutManager() {
             target.value = tempValueBeforeCursor + after;
             target.selectionStart = target.selectionEnd = tempValueBeforeCursor.length;
             target.dispatchEvent(new Event('input'));
-        }
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.key.toLowerCase() === 'k') {
-            e.preventDefault();
-            const layouts = ['english', 'bijoy_unicode', 'bijoy_ansi'];
-            const nextLayout = layouts[(layouts.indexOf(currentLayout) + 1) % layouts.length];
-            setKeyboardLayout(nextLayout, true);
         }
     });
 
