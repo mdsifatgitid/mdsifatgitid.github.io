@@ -27784,11 +27784,27 @@ function initializeKeyboardLayoutManager() {
         updateLayoutUI(notify);
     }
 
+    // Helper function to set cursor position in ContentEditable
+    function setContentEditableCursor(element, offset) {
+        const range = document.createRange();
+        const sel = window.getSelection();
+        if (element.childNodes.length > 0) {
+            // Find the correct text node if there are multiple or nested (simple version)
+            const textNode = element.childNodes[0];
+            if (textNode.nodeType === 3) { // Text node
+                const safeOffset = Math.min(offset, textNode.length);
+                range.setStart(textNode, safeOffset);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        }
+    }
+
     document.addEventListener('keydown', function(e) {
         const target = e.target;
         const isEditable = target.tagName === 'TEXTAREA' || target.tagName === 'INPUT' || target.isContentEditable;
         
-        // শর্টকাট হ্যান্ডলার: Ctrl + Space অথবা Ctrl + K
         const isToggleShortcut = e.ctrlKey && (e.code === 'Space' || e.key.toLowerCase() === 'k');
         
         if (isToggleShortcut) {
@@ -27837,14 +27853,16 @@ function initializeKeyboardLayoutManager() {
             const unicodeYaPhala = '্য';
             const unicodeRef = 'র্';
             const chandrabindhu = 'ঁ'; 
-            
-            // চন্দ্রবিন্দুর প্লেসমেন্ট ঠিক রাখার জন্য কার চিহ্নের তালিকা
             const swapWithChandrabindhu = ['া', 'ু', 'ূ', 'ৃ', 'ে', 'ৈ', 'ো', 'ৌ', 'ৗ'];
             
             let start, end, value;
             if (target.isContentEditable) {
-                document.execCommand('insertText', false, mappedChar);
-                return;
+                const selection = window.getSelection();
+                if (!selection.rangeCount) return;
+                const range = selection.getRangeAt(0);
+                value = target.innerText || "";
+                start = range.startOffset;
+                end = range.endOffset;
             } else {
                 start = target.selectionStart;
                 end = target.selectionEnd;
@@ -27856,114 +27874,175 @@ function initializeKeyboardLayoutManager() {
                 const prevPrevChar = start >= 2 ? value.substring(start - 2, start - 1) : '';
                 const isConsonant = (ch) => /^[\u0995-\u09B9\u09DC-\u09DF]/.test(ch);
 
-                // ১. চন্দ্রবিন্দু ফিক্স: চন্দ্রবিন্দুর পরে কার চিহ্ন দিলে স্থান পরিবর্তন (যেমন: চ+ঁ+া = চাঁ)
-                if (swapWithChandrabindhu.includes(mappedChar) && start > 0) {
-                    if (prevChar === chandrabindhu) {
-                         target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
-                         target.selectionStart = target.selectionEnd = start + mappedChar.length;
-                         target.dispatchEvent(new Event('input'));
-                         return;
+                // চন্দ্রবিন্দু ফিক্স
+                if (swapWithChandrabindhu.includes(mappedChar) && start > 0 && prevChar === chandrabindhu) {
+                    const newVal = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(start);
+                    if (target.isContentEditable) {
+                        target.innerText = newVal;
+                        setContentEditableCursor(target, start + mappedChar.length);
+                    } else {
+                        target.value = newVal;
+                        target.selectionStart = target.selectionEnd = start + mappedChar.length;
                     }
-                }
-
-                // ২. য-ফলা (Z) ফিক্স: উকার বা ঊকার এর পরে য-ফলা আসলে সোয়াপ করা (যেমন: ু+্য = ্যু)
-                if (mappedChar === unicodeYaPhala && start > 0) {
-                     if (prevChar === 'ু' || prevChar === 'ূ') {
-                         target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
-                         target.selectionStart = target.selectionEnd = start + mappedChar.length;
-                         target.dispatchEvent(new Event('input'));
-                         return;
-                     }
-                }
-
-                if (precedingVowels.includes(mappedChar) && start < value.length) {
-                    const nextText = value.substring(start);
-                    const clusterMatch = nextText.match(/^([ক-হড়ঢ়য়](?:্[ক-হড়ঢ়য়])*)(.*)/s);
-                    if (clusterMatch) {
-                        const cluster = clusterMatch[1];
-                        target.value = value.substring(0, start) + cluster + mappedChar + value.substring(start + cluster.length);
-                        const newPos = start + cluster.length + mappedChar.length;
-                        target.selectionStart = target.selectionEnd = newPos;
-                        target.dispatchEvent(new Event('input'));
-                        return;
-                    }
-                }
-
-                if (vowelToNoun[mappedChar] && start > 0) {
-                    if (prevChar === unicodeHasanta) {
-                        if (!(precedingVowels.includes(prevPrevChar) && value.substring(start-3, start-2) !== zwnj)) {
-                            const preText = value.substring(0, start - 1);
-                            const postText = value.substring(end);
-                            target.value = preText + vowelToNoun[mappedChar] + postText;
-                            target.selectionStart = target.selectionEnd = start;
-                            target.dispatchEvent(new Event('input'));
-                            return;
-                        }
-                    }
-                }
-
-                if (mappedChar === 'া' && start > 0 && prevChar === 'অ') {
-                    target.value = value.substring(0, start - 1) + 'আ' + value.substring(end);
-                    target.selectionStart = target.selectionEnd = start;
                     target.dispatchEvent(new Event('input'));
                     return;
                 }
 
-                if (mappedChar === unicodeHasanta && start > 0) {
-                    if (precedingVowels.includes(prevChar)) {
-                        if (prevPrevChar === zwnj) {
-                             target.value = value.substring(0, start - 2) + mappedChar + prevChar + value.substring(end);
-                             target.selectionStart = target.selectionEnd = start;
+                // য-ফলা ফিক্স
+                if (mappedChar === unicodeYaPhala && start > 0 && (prevChar === 'ু' || prevChar === 'ূ')) {
+                    const newVal = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(start);
+                    if (target.isContentEditable) {
+                        target.innerText = newVal;
+                        setContentEditableCursor(target, start + mappedChar.length);
+                    } else {
+                        target.value = newVal;
+                        target.selectionStart = target.selectionEnd = start + mappedChar.length;
+                    }
+                    target.dispatchEvent(new Event('input'));
+                    return;
+                }
+
+                // অ + া = আ ফিক্স (স্পেস রক্ষা করা হয়েছে)
+                if (mappedChar === 'া' && start > 0 && (prevChar === 'অ' || prevChar === unicodeHasanta)) {
+                    const newVal = value.substring(0, start - 1) + 'আ' + value.substring(start);
+                    if (target.isContentEditable) {
+                        target.innerText = newVal;
+                        setContentEditableCursor(target, start);
+                    } else {
+                        target.value = newVal;
+                        target.selectionStart = target.selectionEnd = start;
+                    }
+                    target.dispatchEvent(new Event('input'));
+                    return;
+                }
+
+                // একার/ইকার/ঐকার এর ক্লাস্টার ফিক্স (Notepad friendly)
+                if (precedingVowels.includes(mappedChar) && start < value.length) {
+                    const nextText = value.substring(start);
+                    const clusterMatch = nextText.match(/^([ক-হড়ঢ়য়](?:্[ক-হড়ঢ়য়])*)(.*)/s);
+                    if (clusterMatch && clusterMatch[1] !== "") {
+                        const cluster = clusterMatch[1];
+                        const newVal = value.substring(0, start) + cluster + mappedChar + value.substring(start + cluster.length);
+                        if (target.isContentEditable) {
+                             target.innerText = newVal;
+                             setContentEditableCursor(target, start + cluster.length + mappedChar.length);
                         } else {
-                             target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
-                             target.selectionStart = target.selectionEnd = start + 1;
+                            target.value = newVal;
+                            target.selectionStart = target.selectionEnd = start + cluster.length + mappedChar.length;
                         }
                         target.dispatchEvent(new Event('input'));
                         return;
                     }
                 }
 
+                if (vowelToNoun[mappedChar] && start > 0 && prevChar === unicodeHasanta) {
+                    if (!(precedingVowels.includes(prevPrevChar) && value.substring(start-3, start-2) !== zwnj)) {
+                        const newVal = value.substring(0, start - 1) + vowelToNoun[mappedChar] + value.substring(start);
+                        if (target.isContentEditable) {
+                            target.innerText = newVal;
+                            setContentEditableCursor(target, start);
+                        } else {
+                            target.value = newVal;
+                            target.selectionStart = target.selectionEnd = start;
+                        }
+                        target.dispatchEvent(new Event('input'));
+                        return;
+                    }
+                }
+
+                if (mappedChar === unicodeHasanta && start > 0 && precedingVowels.includes(prevChar)) {
+                    let newVal;
+                    let cursorOffset;
+                    if (prevPrevChar === zwnj) {
+                         newVal = value.substring(0, start - 2) + mappedChar + prevChar + value.substring(start);
+                         cursorOffset = start;
+                    } else {
+                         newVal = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(start);
+                         cursorOffset = start + 1;
+                    }
+                    if (target.isContentEditable) {
+                        target.innerText = newVal;
+                        setContentEditableCursor(target, cursorOffset);
+                    } else {
+                        target.value = newVal;
+                        target.selectionStart = target.selectionEnd = cursorOffset;
+                    }
+                    target.dispatchEvent(new Event('input'));
+                    return;
+                }
+
                 if (mappedChar === unicodeYaPhala && start > 0 && prevChar === unicodeRa) {
-                    target.value = value.substring(0, start) + zwnj + mappedChar + value.substring(end);
-                    target.selectionStart = target.selectionEnd = start + 1 + mappedChar.length;
+                    const newVal = value.substring(0, start) + zwnj + mappedChar + value.substring(start);
+                    if (target.isContentEditable) {
+                        target.innerText = newVal;
+                        setContentEditableCursor(target, start + 1 + mappedChar.length);
+                    } else {
+                        target.value = newVal;
+                        target.selectionStart = target.selectionEnd = start + 1 + mappedChar.length;
+                    }
                     target.dispatchEvent(new Event('input'));
                     return;
                 }
 
                 if (mappedChar === unicodeRef && start > 0 && isConsonant(prevChar)) {
-                    target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
-                    target.selectionStart = target.selectionEnd = start + mappedChar.length; 
+                    const newVal = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(start);
+                    if (target.isContentEditable) {
+                        target.innerText = newVal;
+                        setContentEditableCursor(target, start + mappedChar.length);
+                    } else {
+                        target.value = newVal;
+                        target.selectionStart = target.selectionEnd = start + mappedChar.length; 
+                    }
                     target.dispatchEvent(new Event('input'));
                     return;
                 }
 
-                if ((mappedChar === '্র' || mappedChar === '্য') && start > 0) {
-                    if (precedingVowels.includes(prevChar)) {
-                        target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
+                if ((mappedChar === '্র' || mappedChar === '্য') && start > 0 && precedingVowels.includes(prevChar)) {
+                    const newVal = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(start);
+                    if (target.isContentEditable) {
+                        target.innerText = newVal;
+                        setContentEditableCursor(target, start + mappedChar.length);
+                    } else {
+                        target.value = newVal;
                         target.selectionStart = target.selectionEnd = start + mappedChar.length;
-                        target.dispatchEvent(new Event('input'));
-                        return;
                     }
+                    target.dispatchEvent(new Event('input'));
+                    return;
                 }
 
-                if (isConsonant(mappedChar) && start >= 2) {
-                    if (precedingVowels.includes(prevChar) && (prevPrevChar === unicodeHasanta || prevPrevChar === '্র' || prevPrevChar === '্য')) {
-                        target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
+                if (isConsonant(mappedChar) && start >= 2 && precedingVowels.includes(prevChar) && (prevPrevChar === unicodeHasanta || prevPrevChar === '্র' || prevPrevChar === '্য')) {
+                    const newVal = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(start);
+                    if (target.isContentEditable) {
+                        target.innerText = newVal;
+                        setContentEditableCursor(target, start + mappedChar.length);
+                    } else {
+                        target.value = newVal;
                         target.selectionStart = target.selectionEnd = start + mappedChar.length;
-                        target.dispatchEvent(new Event('input'));
-                        return;
                     }
+                    target.dispatchEvent(new Event('input'));
+                    return;
                 }
 
                 if (precedingVowels.includes(mappedChar)) {
-                    charToInsert = zwnj + mappedChar;
+                    // যদি সামনে কার্সরের পরে কোনো অক্ষর না থাকে, তবেই ZWNJ যোগ হবে
+                    if (start === value.length || value[start] === " " || value[start] === "\n") {
+                        charToInsert = zwnj + mappedChar;
+                    } else {
+                        charToInsert = mappedChar;
+                    }
                 } else {
                     if (start >= 2) {
                         const prevTwo = value.substring(start - 2, start);
                         if (prevTwo[0] === zwnj && precedingVowels.includes(prevTwo[1])) {
                             const vowel = prevTwo[1];
-                            target.value = value.substring(0, start - 2) + mappedChar + vowel + value.substring(end);
-                            target.selectionStart = target.selectionEnd = start;
+                            const newVal = value.substring(0, start - 2) + mappedChar + vowel + value.substring(start);
+                            if (target.isContentEditable) {
+                                target.innerText = newVal;
+                                setContentEditableCursor(target, start);
+                            } else {
+                                target.value = newVal;
+                                target.selectionStart = target.selectionEnd = start;
+                            }
                             target.dispatchEvent(new Event('input'));
                             return;
                         }
