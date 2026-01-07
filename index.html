@@ -27836,6 +27836,10 @@ function initializeKeyboardLayoutManager() {
             const unicodeRa = 'র';
             const unicodeYaPhala = '্য';
             const unicodeRef = 'র্';
+            const chandrabindhu = 'ঁ'; 
+            
+            // চন্দ্রবিন্দুর প্লেসমেন্ট ঠিক রাখার জন্য কার চিহ্নের তালিকা
+            const swapWithChandrabindhu = ['া', 'ু', 'ূ', 'ৃ', 'ে', 'ৈ', 'ো', 'ৌ', 'ৗ'];
             
             let start, end, value;
             if (target.isContentEditable) {
@@ -27851,6 +27855,26 @@ function initializeKeyboardLayoutManager() {
                 const prevChar = start > 0 ? value.substring(start - 1, start) : '';
                 const prevPrevChar = start >= 2 ? value.substring(start - 2, start - 1) : '';
                 const isConsonant = (ch) => /^[\u0995-\u09B9\u09DC-\u09DF]/.test(ch);
+
+                // ১. চন্দ্রবিন্দু ফিক্স: চন্দ্রবিন্দুর পরে কার চিহ্ন দিলে স্থান পরিবর্তন (যেমন: চ+ঁ+া = চাঁ)
+                if (swapWithChandrabindhu.includes(mappedChar) && start > 0) {
+                    if (prevChar === chandrabindhu) {
+                         target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
+                         target.selectionStart = target.selectionEnd = start + mappedChar.length;
+                         target.dispatchEvent(new Event('input'));
+                         return;
+                    }
+                }
+
+                // ২. য-ফলা (Z) ফিক্স: উকার বা ঊকার এর পরে য-ফলা আসলে সোয়াপ করা (যেমন: ু+্য = ্যু)
+                if (mappedChar === unicodeYaPhala && start > 0) {
+                     if (prevChar === 'ু' || prevChar === 'ূ') {
+                         target.value = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(end);
+                         target.selectionStart = target.selectionEnd = start + mappedChar.length;
+                         target.dispatchEvent(new Event('input'));
+                         return;
+                     }
+                }
 
                 if (precedingVowels.includes(mappedChar) && start < value.length) {
                     const nextText = value.substring(start);
