@@ -9012,6 +9012,13 @@ body.sidebar-open #sidebarOverlay {
                 <div class="player-input-area">
                     <label for="videoInput" class="custom-file-upload">ভিডিও ফাইল বাছাই করুন</label>
                     <input type="file" id="videoInput" accept="video/*">
+                    
+                    <!-- নতুন: মুভ টু অডিও বাটন -->
+                    <button id="moveToAudioBtn" class="hidden ml-2 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold transition-colors flex items-center gap-1" title="ভিডিওটি অডিও প্লেয়ারে বাজান">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                       অডিওতে নিন
+                    </button>
+
                      <!-- ভিডিওর জন্য নতুন লুপ টগল সুইচ -->
                     <div class="flex items-center gap-2 ml-auto">
                         <span class="font-semibold text-gray-700 dark:text-gray-300 text-sm">লুপ</span>
@@ -20535,196 +20542,224 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 
 // ====================================================================
-// START: PLAYER TAB SCRIPT (অডিও প্লেয়িং ফিক্সড)
+// START: PLAYER TAB SCRIPT (প্লেব্যাক রিসেট ও মেমোরি ম্যানেজমেন্ট ফিক্সড)
 // ====================================================================
 function initializePlayerTab() {
-    // --- ফিক্স: প্লেয়ার ট্যাব যেন একবারই ইনিশিয়ালাইজ হয় ---
-    // এটি চেক করে যে প্লেয়ারটি আগে লোড হয়েছে কিনা। লোড হয়ে থাকলে ফাংশনটি থামিয়ে দেয়।
-    // ফলে অডিও রিসেট হয় না এবং বাজতে থাকে।
     const playerContentDiv = document.getElementById('playerContent');
     if (playerContentDiv.getAttribute('data-player-initialized') === 'true') {
         return; 
     }
     playerContentDiv.setAttribute('data-player-initialized', 'true');
 
-    // অডিও এলিমেন্ট
     const audioInput = document.getElementById('audioInput');
     const audioPlayer = document.getElementById('audioPlayer');
     const audioFileName = document.getElementById('audioFileName');
     const audioDropZone = audioInput?.closest('.player-section');
     const audioLoopToggle = document.getElementById('audioLoopToggle');
 
-    // ছবি এলিমেন্ট
     const imageInput = document.getElementById('imageInput');
     const imagePreview = document.getElementById('imagePreview');
     const imageDropZone = imageInput?.closest('.player-section');
 
-    // ভিডিও এলিমেন্ট
     const videoInput = document.getElementById('videoInput');
     const videoPlayer = document.getElementById('videoPlayer');
     const videoDropZone = videoInput?.closest('.player-section');
     const videoLoopToggle = document.getElementById('videoLoopToggle');
+    
+    const moveToAudioBtn = document.getElementById('moveToAudioBtn');
+    let currentVideoFile = null;
 
-    // মেমোরি লিক এড়াতে বর্তমান অডিও URL ট্র্যাক করার ভেরিয়েবল
+    // URL ট্র্যাক করার জন্য গ্লোবাল ভেরিয়েবল (যাতে নতুন ফাইল আসার আগে পুরনোটা ডিলিট না হয়)
     let currentAudioUrl = null;
+    let currentVideoUrl = null;
 
-    // --- ফাইল হ্যান্ডেল করার ফাংশন ---
+    // --- MediaSession সেটআপ ---
+    function setupMediaSession(fileName, playerType) {
+        if ('mediaSession' in navigator) {
+            const player = playerType === 'video' ? videoPlayer : audioPlayer;
+            const artIcon = playerType === 'video' 
+                ? 'https://placehold.co/128x128/e0e7ff/3f51b5?text=Video' 
+                : 'https://placehold.co/128x128/e0e7ff/3f51b5?text=Audio';
+
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: fileName,
+                artist: 'Bangla Toolbox Player',
+                album: 'Local Media',
+                artwork: [{ src: artIcon, sizes: '128x128', type: 'image/png' }]
+            });
+
+            navigator.mediaSession.setActionHandler('play', () => player.play());
+            navigator.mediaSession.setActionHandler('pause', () => player.pause());
+            navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+                player.currentTime = Math.max(player.currentTime - (details.seekOffset || 10), 0);
+            });
+            navigator.mediaSession.setActionHandler('seekforward', (details) => {
+                player.currentTime = Math.min(player.currentTime + (details.seekOffset || 10), player.duration);
+            });
+        }
+    }
 
     // ১. অডিও হ্যান্ডলার
     async function handleAudioFile(file) {
         if (!file || !audioPlayer || !audioFileName) return;
 
-        // আগের URL থাকলে মেমোরি থেকে মুছে ফেলা
-        if (currentAudioUrl) {
-            URL.revokeObjectURL(currentAudioUrl);
-        }
+        if (videoPlayer && !videoPlayer.paused) videoPlayer.pause();
 
-        // প্লেয়ারে সেট করা
+        // পুরনো অডিও URL ডিলিট করা
+        if (currentAudioUrl) URL.revokeObjectURL(currentAudioUrl);
+
         currentAudioUrl = URL.createObjectURL(file);
         audioPlayer.src = currentAudioUrl;
-        audioPlayer.play(); // নতুন ফাইল সিলেক্ট করলে অটো প্লে হবে
         audioFileName.textContent = file.name;
+        
+        audioPlayer.onloadedmetadata = () => {
+             audioPlayer.play()
+                .then(() => setupMediaSession(file.name, 'audio'))
+                .catch(err => console.log("Auto-play blocked"));
+        };
 
-        // IndexedDB তে অডিও ডেটা সেভ করা (যাতে রিফ্রেশ করলেও থাকে)
-        try {
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const audioData = {
-                    name: file.name,
-                    type: file.type,
-                    content: e.target.result // ArrayBuffer হিসেবে সেভ হবে
+        // IndexedDB সেভ (বড় ফাইল ইগনোর)
+        if (file.size < 100 * 1024 * 1024) {
+            try {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    await idbSet('persistedPlayerAudio', {
+                        name: file.name,
+                        type: file.type,
+                        content: e.target.result
+                    });
                 };
-                // 'persistedPlayerAudio' কী-তে সেভ করা হচ্ছে
-                await idbSet('persistedPlayerAudio', audioData);
-                console.log('Audio file persisted to database.');
-            };
-            reader.readAsArrayBuffer(file);
-        } catch (err) {
-            console.error('Audio save failed:', err);
+                reader.readAsArrayBuffer(file);
+            } catch (err) {}
         }
     }
 
-    // ২. ছবি হ্যান্ডলার
+    // ২. ভিডিও হ্যান্ডলার
+    function handleVideoFile(file) {
+        if (!file || !videoPlayer) return;
+        
+        if (audioPlayer && !audioPlayer.paused) audioPlayer.pause();
+
+        // পুরনো ভিডিও URL ডিলিট করা (শুধুমাত্র নতুন ফাইল সিলেক্ট করলে)
+        if (currentVideoUrl) URL.revokeObjectURL(currentVideoUrl);
+
+        currentVideoFile = file;
+        currentVideoUrl = URL.createObjectURL(file);
+        
+        videoPlayer.src = currentVideoUrl;
+        videoPlayer.load(); // ভিডিও ডেটা রিলোড নিশ্চিত করা
+        
+        videoPlayer.onloadedmetadata = () => {
+            videoPlayer.play()
+               .then(() => setupMediaSession(file.name, 'video'))
+               .catch(err => console.log("Video Play blocked"));
+       };
+        
+        if (moveToAudioBtn) moveToAudioBtn.classList.remove('hidden');
+
+        // গুরুত্বপূর্ণ: এখানে onended এ revokeObjectURL সরানো হয়েছে যাতে পুনরায় প্লে করা যায়
+        videoPlayer.onerror = () => {
+            console.error("Video loading error");
+            if(currentVideoUrl) URL.revokeObjectURL(currentVideoUrl);
+        };
+    }
+
+    // ৩. ছবি হ্যান্ডলার
     function handleImageFile(file) {
         if (!file || !imagePreview) return;
         const objectURL = URL.createObjectURL(file);
         imagePreview.src = objectURL;
-        const revoke = () => URL.revokeObjectURL(objectURL);
-        imagePreview.onload = revoke;
-        imagePreview.onerror = revoke;
+        imagePreview.onload = () => URL.revokeObjectURL(objectURL);
     }
 
-    // ৩. ভিডিও হ্যান্ডলার
-    function handleVideoFile(file) {
-        if (!file || !videoPlayer) return;
-        const objectURL = URL.createObjectURL(file);
-        videoPlayer.src = objectURL;
-        videoPlayer.play();
-        const revoke = () => URL.revokeObjectURL(objectURL);
-        videoPlayer.onended = revoke;
-        videoPlayer.onerror = revoke;
-    }
-
-    // --- ড্র্যাগ অ্যান্ড ড্রপ সেটআপ ফাংশন ---
-    function setupDragAndDrop(dropZone, acceptedFileType, fileHandler) {
-        if (!dropZone) return;
-
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, e => {
-                e.preventDefault();
-                e.stopPropagation();
-            }, false);
-        });
-
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
-        });
-
-        dropZone.addEventListener('drop', e => {
-            const file = e.dataTransfer?.files[0];
-            if (file) {
-                if (file.type.startsWith(acceptedFileType)) {
-                    fileHandler(file);
-                } else {
-                    showCustomAlert(`অনুগ্রহ করে একটি ${acceptedFileType.split('/')[0]} ফাইল ড্রপ করুন।`);
-                }
-            }
-        }, false);
-    }
-
-    // --- ইভেন্ট লিসেনার যুক্ত করুন ---
-
-    // ফাইল ইনপুট লিসেনার
+    // ইনপুট লিসেনার
     if (audioInput) {
-        audioInput.addEventListener('change', e => handleAudioFile(e.target.files[0]));
+        audioInput.addEventListener('change', e => {
+            if (e.target.files[0]) {
+                handleAudioFile(e.target.files[0]);
+                e.target.value = ''; 
+            }
+        });
     }
     if (imageInput) {
-        imageInput.addEventListener('change', e => handleImageFile(e.target.files[0]));
+        imageInput.addEventListener('change', e => {
+            if (e.target.files[0]) {
+                handleImageFile(e.target.files[0]);
+                e.target.value = '';
+            }
+        });
     }
     if (videoInput) {
-        videoInput.addEventListener('change', e => handleVideoFile(e.target.files[0]));
-    }
-
-    // লুপ টগল লিসেনার
-    if (audioLoopToggle && audioPlayer) {
-        // লোড হওয়ার সময় বর্তমান অবস্থা চেক করা
-        audioPlayer.loop = audioLoopToggle.checked;
-        audioLoopToggle.addEventListener('change', () => {
-            audioPlayer.loop = audioLoopToggle.checked;
+        videoInput.addEventListener('change', e => {
+            if (e.target.files[0]) {
+                handleVideoFile(e.target.files[0]);
+                e.target.value = '';
+            }
         });
     }
 
+    // মুভ টু অডিও
+    if (moveToAudioBtn) {
+        moveToAudioBtn.addEventListener('click', () => {
+            if (currentVideoFile) {
+                if (videoPlayer) videoPlayer.pause();
+                handleAudioFile(currentVideoFile);
+                const audioSection = document.querySelector('.player-section');
+                if (audioSection) {
+                    audioSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    audioSection.classList.add('ring-4', 'ring-indigo-500');
+                    setTimeout(() => audioSection.classList.remove('ring-4', 'ring-indigo-500'), 1500);
+                }
+            }
+        });
+    }
+
+    // লুপ সেটিংস
+    if (audioLoopToggle && audioPlayer) {
+        audioPlayer.loop = audioLoopToggle.checked;
+        audioLoopToggle.addEventListener('change', () => audioPlayer.loop = audioLoopToggle.checked);
+    }
     if (videoLoopToggle && videoPlayer) {
         videoPlayer.loop = videoLoopToggle.checked;
-        videoLoopToggle.addEventListener('change', () => {
-            videoPlayer.loop = videoLoopToggle.checked;
+        videoLoopToggle.addEventListener('change', () => videoPlayer.loop = videoLoopToggle.checked);
+    }
+
+    // ড্র্যাগ অ্যান্ড ড্রপ
+    function setupDragAndDrop(dropZone, type, handler) {
+        if (!dropZone) return;
+        dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const file = e.dataTransfer?.files[0];
+            if (file && file.type.startsWith(type)) handler(file);
         });
     }
 
-    // ড্র্যাগ অ্যান্ড ড্রপ লিসেনার
     setupDragAndDrop(audioDropZone, 'audio/', handleAudioFile);
     setupDragAndDrop(imageDropZone, 'image/', handleImageFile);
     setupDragAndDrop(videoDropZone, 'video/', handleVideoFile);
 
-    // --- পেজ লোড বা রিফ্রেশ হলে সেভ করা অডিও লোড করার ফাংশন ---
+    // রিফ্রেশে অডিও লোড
     async function loadPersistedAudio() {
-        if (!audioPlayer || !audioFileName) return;
-
+        if (!audioPlayer) return;
         try {
             const savedData = await idbGet('persistedPlayerAudio');
             if (savedData && savedData.content) {
-                // আগের URL থাকলে পরিষ্কার করা
-                if (currentAudioUrl) URL.revokeObjectURL(currentAudioUrl);
-
-                // Blob তৈরি করে প্লেয়ারে সেট করা
                 const blob = new Blob([savedData.content], { type: savedData.type });
                 currentAudioUrl = URL.createObjectURL(blob);
-                
                 audioPlayer.src = currentAudioUrl;
-                audioFileName.textContent = savedData.name + " (সেভ করা)";
-                
-                // দ্রষ্টব্য: রিফ্রেশের পর অটো-প্লে হবে না।
+                audioFileName.textContent = savedData.name + " (সংরক্ষিত)";
+                setupMediaSession(savedData.name, 'audio');
             }
-        } catch (err) {
-            console.error("Failed to load persisted audio:", err);
-        }
+        } catch (err) {}
     }
-
-    // প্রথমবার লোড হওয়ার সাথে সাথে সেভ করা অডিও লোড করুন
     loadPersistedAudio();
 }
 
-// যখন প্লেয়ার ট্যাবটি দেখানো হবে তখন ফাংশনটি কল করুন
 document.addEventListener('DOMContentLoaded', () => {
-    // যদি ট্যাবটি ডিফল্টভাবে সক্রিয় থাকে
-    if (document.getElementById('playerContent')?.classList.contains('active')) {
-        initializePlayerTab();
-    }
-    // অথবা যখন ট্যাবে ক্লিক করা হয়
+    if (document.getElementById('playerContent')?.classList.contains('active')) initializePlayerTab();
     document.getElementById('playerTab')?.addEventListener('click', initializePlayerTab);
 });
 // ====================================================================
