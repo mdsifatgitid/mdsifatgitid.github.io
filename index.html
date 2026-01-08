@@ -27558,13 +27558,18 @@ function initializeGlobalShortcuts() {
 
         // সকল ইনপুট এলিমেন্ট সংগ্রহ করুন (দৃশ্যমান এবং এনাবলড)
         // textarea, select, এবং contenteditable সহ
-        const inputs = Array.from(activeContent.querySelectorAll('input, textarea, [contenteditable="true"], select'))
+        // আপডেট: div[contenteditable="true"] স্পষ্টভাবে সিলেক্ট করা হয়েছে
+        const inputs = Array.from(activeContent.querySelectorAll('input, textarea, div[contenteditable="true"], select'))
             .filter(el => {
                 const style = window.getComputedStyle(el);
+                // ফিল্টার আপডেট: কালার পিকার, ফাইল ইনপুট এবং অদৃশ্য এলিমেন্ট বাদ দেওয়া হয়েছে
                 return style.display !== 'none' && 
                        style.visibility !== 'hidden' && 
+                       style.opacity !== '0' && // অপাসিটি ০ হলে বাদ (যেমন টুলবারের কালার পিকার)
                        !el.disabled && 
-                       el.type !== 'hidden';
+                       el.type !== 'hidden' &&
+                       el.type !== 'color' && // কালার পিকার বাদ
+                       el.type !== 'file';    // ফাইল আপলোড বাদ
             });
         
         if (inputs.length === 0) return;
@@ -27581,9 +27586,11 @@ function initializeGlobalShortcuts() {
         } else {
             // ফোকাসড আছে -> পরেরটিতে যান (লুপ করবে)
             const nextIndex = (currentIndex + 1) % inputs.length;
-            inputs[nextIndex].focus({ preventScroll: false });
-            inputs[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
-            moveCursorToEnd(inputs[nextIndex]);
+            const nextInput = inputs[nextIndex];
+
+            nextInput.focus({ preventScroll: false });
+            nextInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            moveCursorToEnd(nextInput);
         }
     }
 
