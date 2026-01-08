@@ -27826,14 +27826,12 @@ function initializeKeyboardLayoutManager() {
         updateLayoutUI(notify);
     }
 
-    // Helper function to set cursor position in ContentEditable
     function setContentEditableCursor(element, offset) {
         const range = document.createRange();
         const sel = window.getSelection();
         if (element.childNodes.length > 0) {
-            // Find the correct text node if there are multiple or nested (simple version)
             const textNode = element.childNodes[0];
-            if (textNode.nodeType === 3) { // Text node
+            if (textNode.nodeType === 3) {
                 const safeOffset = Math.min(offset, textNode.length);
                 range.setStart(textNode, safeOffset);
                 range.collapse(true);
@@ -27870,7 +27868,8 @@ function initializeKeyboardLayoutManager() {
         let charToInsert = '';
         const key = e.key;
 
-		const getBijoyChar = (k) => {
+        // গেট বিজয় চার ম্যাপ (ইউনিকোড ভিত্তিক)
+        const getBijoyChar = (k) => {
             const map = {
                 'a':'ৃ', 'A':'র্', 'd':'ি', 'D':'ী', 's':'ু', 'S':'ূ', 'f':'া', 'F':'অ',
                 'g':'্', 'G':'।', 'h':'ব', 'H':'ভ', 'j':'ক', 'J':'খ', 'k':'ত', 'K':'থ',
@@ -27880,13 +27879,38 @@ function initializeKeyboardLayoutManager() {
                 't':'ট', 'T':'ঠ', 'y':'চ', 'Y':'ছ', 'u':'জ', 'U':'ঝ', 'i':'হ', 'I':'ঞ',
                 'o':'গ', 'O':'ঘ', 'p':'ড়', 'P':'ঢ়', '\\':'ৎ', '|':'ঃ', '&':'ঁ',
                 '0':'০', '1':'১', '2':'২', '3':'৩', '4':'৪', 
-                '5':'৫', '6':'৬', '7':'৭', '8':'৮', '9':'৯'
+                '5':'৫', '6':'৬', '7':'৭', '8':'৮', '9':'৯',
+                '`': '‘', '~': '“', '\'': '’', '"': '”' // ডিফল্ট কোটেশন
             };
             return map[k] || k;
         };
 
+        let start, end, value;
+        if (target.isContentEditable) {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            const range = selection.getRangeAt(0);
+            value = target.innerText || "";
+            start = range.startOffset;
+            end = range.endOffset;
+        } else {
+            start = target.selectionStart;
+            end = target.selectionEnd;
+            value = target.value;
+        }
+
+        const prevChar = start > 0 ? value.substring(start - 1, start) : '';
+
         if (currentLayout === 'bijoy_unicode') {
-            const mappedChar = getBijoyChar(key);
+            let mappedChar = getBijoyChar(key);
+
+            // স্পেসের পর সিঙ্গেল বা ডাবল কোট লজিক
+            if (key === '\'' && (start === 0 || prevChar === ' ' || prevChar === '\n' || prevChar === '\t')) {
+                mappedChar = '‘';
+            } else if (key === '"' && (start === 0 || prevChar === ' ' || prevChar === '\n' || prevChar === '\t')) {
+                mappedChar = '“';
+            }
+
             const precedingVowels = ['ি', 'ে', 'ৈ'];
             const vowelToNoun = { 'ি':'ই', 'ে':'এ', 'ৈ':'ঐ', 'া':'আ', 'ু':'উ', 'ূ':'ঊ','ী':'ঈ', 'ৗ':'ঔ', 'ৃ':'ঋ' };
             const zwnj = '\u200C';
@@ -27897,22 +27921,7 @@ function initializeKeyboardLayoutManager() {
             const chandrabindhu = 'ঁ'; 
             const swapWithChandrabindhu = ['া', 'ু', 'ূ', 'ৃ', 'ে', 'ৈ', 'ো', 'ৌ', 'ৗ'];
             
-            let start, end, value;
-            if (target.isContentEditable) {
-                const selection = window.getSelection();
-                if (!selection.rangeCount) return;
-                const range = selection.getRangeAt(0);
-                value = target.innerText || "";
-                start = range.startOffset;
-                end = range.endOffset;
-            } else {
-                start = target.selectionStart;
-                end = target.selectionEnd;
-                value = target.value;
-            }
-
             if (typeof start === 'number') {
-                const prevChar = start > 0 ? value.substring(start - 1, start) : '';
                 const prevPrevChar = start >= 2 ? value.substring(start - 2, start - 1) : '';
                 const isConsonant = (ch) => /^[\u0995-\u09B9\u09DC-\u09DF]/.test(ch);
 
@@ -27944,7 +27953,7 @@ function initializeKeyboardLayoutManager() {
                     return;
                 }
 
-                // অ + া = আ ফিক্স (স্পেস রক্ষা করা হয়েছে)
+                // অ + া = আ ফিক্স
                 if (mappedChar === 'া' && start > 0 && (prevChar === 'অ' || prevChar === unicodeHasanta)) {
                     const newVal = value.substring(0, start - 1) + 'আ' + value.substring(start);
                     if (target.isContentEditable) {
@@ -27958,7 +27967,7 @@ function initializeKeyboardLayoutManager() {
                     return;
                 }
 
-                // একার/ইকার/ঐকার এর ক্লাস্টার ফিক্স (Notepad friendly)
+                // একার/ইকার/ঐকার ক্লাস্টার ফিক্স
                 if (precedingVowels.includes(mappedChar) && start < value.length) {
                     const nextText = value.substring(start);
                     const clusterMatch = nextText.match(/^([ক-হড়ঢ়য়](?:্[ক-হড়ঢ়য়])*)(.*)/s);
@@ -28066,7 +28075,6 @@ function initializeKeyboardLayoutManager() {
                 }
 
                 if (precedingVowels.includes(mappedChar)) {
-                    // যদি সামনে কার্সরের পরে কোনো অক্ষর না থাকে, তবেই ZWNJ যোগ হবে
                     if (start === value.length || value[start] === " " || value[start] === "\n") {
                         charToInsert = zwnj + mappedChar;
                     } else {
@@ -28095,7 +28103,17 @@ function initializeKeyboardLayoutManager() {
                 charToInsert = mappedChar;
             }
         } else if (currentLayout === 'bijoy_ansi') {
-            const unicodeChar = getBijoyChar(key);
+            let unicodeChar = getBijoyChar(key);
+
+            // আনসিতে স্পেসের পর কোটেশন এবং একসেন্ট লজিক
+            if (key === '`') unicodeChar = 'Ô';
+            else if (key === '~') unicodeChar = 'Ò';
+            else if (key === '\'' && (start === 0 || prevChar === ' ' || prevChar === '\n' || prevChar === '\t')) {
+                unicodeChar = 'Ô';
+            } else if (key === '"' && (start === 0 || prevChar === ' ' || prevChar === '\n' || prevChar === '\t')) {
+                unicodeChar = 'Ò';
+            }
+
             charToInsert = (typeof unicodeToBijoyMap !== 'undefined' && unicodeToBijoyMap[unicodeChar]) ? unicodeToBijoyMap[unicodeChar] : unicodeChar;
         }
 
