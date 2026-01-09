@@ -13554,8 +13554,8 @@ function showCustomAlert(message) {
         const banner = document.getElementById('currentDateTimeBanner');
         
         let topPosition = '20px'; // ডিফল্ট পজিশন
-        let setHeight = 'auto';   // ডিফল্ট হাইট
         let minHeight = '50px';   // ডিফল্ট মিনিমাম হাইট
+        let maxWidth = '90%';     // ডিফল্ট সর্বোচ্চ প্রস্থ (মোবাইলের জন্য)
 
         // ব্যানারের পজিশন এবং হাইট ডায়নামিকালি ক্যালকুলেট করা
         if (banner && banner.offsetParent !== null) { 
@@ -13564,13 +13564,13 @@ function showCustomAlert(message) {
             // যদি ব্যানারটি স্ক্রিনের টপে দৃশ্যমান থাকে (নেগেটিভ টপ না হয়)
             if (rect.top >= 0) {
                 topPosition = `${rect.top}px`;
-                setHeight = `${rect.height}px`; // ব্যানারের বর্তমান হাইট (এক বা দুই লাইন যাই হোক)
-                minHeight = `${rect.height}px`; // হাইট ফিক্সড রাখার জন্য
+                minHeight = `${rect.height}px`; // ব্যানারের হাইটকে মিনিমাম হাইট হিসেবে সেট করা হলো
+                maxWidth = `${rect.width}px`;   // সর্বোচ্চ প্রস্থ ব্যানারের প্রস্থের সমান হবে
             } else {
                 // ব্যানার স্ক্রল করে উপরে চলে গেলে টোস্টটি স্ট্যান্ডার্ড পজিশনে দেখাবে
                 topPosition = '20px';
-                setHeight = 'auto'; 
-                minHeight = '50px'; // স্ট্যান্ডার্ড হাইট
+                minHeight = '50px'; 
+                maxWidth = '90%';
             }
         }
 
@@ -13580,7 +13580,7 @@ function showCustomAlert(message) {
             'fixed', 'left-1/2', 'transform', '-translate-x-1/2', // পজিশন
             'bg-gray-900', 'dark:bg-gray-100', // ব্যাকগ্রাউন্ড
             'text-white', 'dark:text-gray-900', // টেক্সট
-            'px-6', // ডানে-বামে প্যাডিং
+            'px-6', 'py-1', // ডানে-বামে প্যাডিং এবং উপরে-নিচে সামান্য প্যাডিং (পরিবর্তিত: py-2 থেকে py-1 করা হয়েছে যাতে ছোট ব্যানারে হাইট ঠিক থাকে)
             'rounded-full', // সম্পূর্ণ রাউন্ডেড
             'shadow-2xl', 'border', 'border-gray-700', 'dark:border-gray-300',
             'z-[100]',
@@ -13592,15 +13592,17 @@ function showCustomAlert(message) {
 
         // ডায়নামিক স্টাইল অ্যাপ্লাই
         alertBox.style.top = topPosition;
-        alertBox.style.height = setHeight;
-        alertBox.style.minHeight = minHeight;
+        alertBox.style.minHeight = minHeight; // হাইট ফিক্সড না রেখে মিনিমাম রাখা হলো যাতে বড় টেক্সটে হাইট বাড়তে পারে
+        alertBox.style.maxWidth = maxWidth;   // সর্বোচ্চ প্রস্থ সেট করা হলো
+        alertBox.style.width = 'fit-content'; // কন্টেন্ট অনুযায়ী প্রস্থ হবে (তবে ম্যাক্স উইডথ এর বেশি হবে না)
 
         // আইকন এবং মেসেজ সেট করা
+        // টেক্সট র‍্যাপ করার জন্য 'white-space: nowrap' সরিয়ে 'word-break' এবং 'text-align' যোগ করা হয়েছে
         alertBox.innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-400 dark:text-green-600 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
             </svg>
-            <span style="white-space: nowrap;">${message}</span>
+            <span style="word-break: break-word; text-align: center; line-height: 1.4;">${message}</span>
         `;
 
         document.body.appendChild(alertBox);
