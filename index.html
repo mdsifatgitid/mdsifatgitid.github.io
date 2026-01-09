@@ -13541,32 +13541,61 @@ initializeTimeConverter();
 // ====================================================================
 
 // ====================================================================
-// START: CUSTOM POPUP MESSAGE বার্তা দেখানোর স্ক্রিপ্ট
+// START: CUSTOM POPUP MESSAGE বার্তা দেখানোর স্ক্রিপ্ট (আপডেটেড: টোস্ট স্টাইল)
 // ====================================================================
-		// কাস্টম অ্যালার্ট বক্স বাস্তবায়ন New
-		function showCustomAlert(message) {
-		const alertBox = document.createElement('div');
-		alertBox.classList.add(
-        'fixed', 'top-1/2', 'left-1/2', 'transform', '-translate-x-1/2', '-translate-y-1/2',
-        'bg-gray-800', 'text-white', 'p-4', 'rounded-lg', 'shadow-2xl',
-        'z-50', 'text-lg', 'transition-all', 'duration-100', 'ease-in-out',
-        'scale-75', 'opacity-0'
-    );
-		alertBox.textContent = message;
-		document.body.appendChild(alertBox);
+	// কাস্টম অ্যালার্ট বক্স বাস্তবায়ন New
+    // কাস্টম টোস্ট অ্যালার্ট (উপরে ব্যানারের ওপর দেখাবে)
+    function showCustomAlert(message) {
+        // আগের কোনো অ্যালার্ট থাকলে সরিয়ে ফেলুন (যাতে একটার ওপর একটা না আসে)
+        const existingAlert = document.querySelector('.custom-toast-alert');
+        if (existingAlert) existingAlert.remove();
 
-    // ফেড-ইন এবং স্কেল-ইন
-		setTimeout(() => {
-        alertBox.classList.remove('scale-75', 'opacity-0');
-        alertBox.classList.add('scale-100', 'opacity-100');
-		}, 10);
+        const alertBox = document.createElement('div');
+        
+        // টোস্ট স্টাইলিং ক্লাস
+        alertBox.classList.add(
+            'custom-toast-alert', // শনাক্তকরণের জন্য ক্লাস
+            'fixed', 'top-5', 'left-1/2', 'transform', '-translate-x-1/2', // পজিশন: উপরে মাঝখানে
+            'bg-gray-900', 'dark:bg-gray-100', // ব্যাকগ্রাউন্ড (লাইট/ডার্ক বিপরীত)
+            'text-white', 'dark:text-gray-900', // টেক্সট কালার
+            'px-6', 'py-3', 'rounded-full', // প্যাডিং ও গোলাকার ভাব
+            'shadow-2xl', 'border', 'border-gray-700', 'dark:border-gray-300', // শ্যাডো ও বর্ডার
+            'z-[100]', // সবকিছুর ওপরে থাকার জন্য হাই Z-Index
+            'text-sm', 'font-semibold', 'tracking-wide', // ফন্ট স্টাইল
+            'flex', 'items-center', 'gap-3', // আইকন ও টেক্সট সাজানো
+            'transition-all', 'duration-300', 'ease-out', // অ্যানিমেশন টাইমিং
+            'opacity-0', '-translate-y-full' // প্রাথমিক অবস্থা (লুকানো ও উপরে)
+        );
 
-    // 3 সেকেন্ড পর ফেড-আউট এবং সরান
-		setTimeout(() => {
-        alertBox.classList.remove('scale-100', 'opacity-100');
-        setTimeout(() => alertBox.remove(), 100);
-		}, 2000);
-	}
+        // আইকন এবং মেসেজ সেট করা
+        alertBox.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-400 dark:text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <span>${message}</span>
+        `;
+
+        document.body.appendChild(alertBox);
+
+        // অ্যানিমেশন: উপর থেকে নিচে নামবে
+        requestAnimationFrame(() => {
+            alertBox.classList.remove('opacity-0', '-translate-y-full');
+            alertBox.classList.add('opacity-100', 'translate-y-0');
+        });
+
+        // ৩ সেকেন্ড পর অটোমেটিক চলে যাবে
+        setTimeout(() => {
+            // অ্যানিমেশন: আবার উপরে চলে যাবে
+            alertBox.classList.remove('opacity-100', 'translate-y-0');
+            alertBox.classList.add('opacity-0', '-translate-y-full');
+            
+            // অ্যানিমেশন শেষ হলে এলিমেন্ট রিমুভ হবে
+            setTimeout(() => {
+                if (alertBox.parentNode) alertBox.parentNode.removeChild(alertBox);
+            }, 300);
+        }, 3000);
+    }
+
 // ====================================================================
 // END: CUSTOM POPUP MESSAGE বার্তা দেখানোর স্ক্রিপ্ট
 // ====================================================================
