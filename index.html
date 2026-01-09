@@ -13553,21 +13553,24 @@ function showCustomAlert(message) {
         const alertBox = document.createElement('div');
         const banner = document.getElementById('currentDateTimeBanner');
         
-        let topPosition = '20px'; // ডিফল্ট পজিশন (যদি ব্যানার না থাকে বা দেখা না যায়)
+        let topPosition = '20px'; // ডিফল্ট পজিশন
         let setHeight = 'auto';   // ডিফল্ট হাইট
+        let minHeight = '50px';   // ডিফল্ট মিনিমাম হাইট
 
         // ব্যানারের পজিশন এবং হাইট ডায়নামিকালি ক্যালকুলেট করা
         if (banner && banner.offsetParent !== null) { 
             const rect = banner.getBoundingClientRect();
             
-            // যদি ব্যানারটি স্ক্রিনের ভেতরে থাকে (নেগেটিভ টপ না হয়)
+            // যদি ব্যানারটি স্ক্রিনের টপে দৃশ্যমান থাকে (নেগেটিভ টপ না হয়)
             if (rect.top >= 0) {
                 topPosition = `${rect.top}px`;
-                setHeight = `${rect.height}px`; // ব্যানারের সমান হাইট সেট করা হলো
+                setHeight = `${rect.height}px`; // ব্যানারের বর্তমান হাইট (এক বা দুই লাইন যাই হোক)
+                minHeight = `${rect.height}px`; // হাইট ফিক্সড রাখার জন্য
             } else {
-                // ব্যানার স্ক্রল করে উপরে চলে গেলে টোস্টটি স্ক্রিনের টপে ফিক্সড থাকবে
+                // ব্যানার স্ক্রল করে উপরে চলে গেলে টোস্টটি স্ট্যান্ডার্ড পজিশনে দেখাবে
                 topPosition = '20px';
-                setHeight = '50px'; // স্ট্যান্ডার্ড হাইট
+                setHeight = 'auto'; 
+                minHeight = '50px'; // স্ট্যান্ডার্ড হাইট
             }
         }
 
@@ -13577,7 +13580,7 @@ function showCustomAlert(message) {
             'fixed', 'left-1/2', 'transform', '-translate-x-1/2', // পজিশন
             'bg-gray-900', 'dark:bg-gray-100', // ব্যাকগ্রাউন্ড
             'text-white', 'dark:text-gray-900', // টেক্সট
-            'px-6', // শুধু ডানে-বামে প্যাডিং (উপরে-নিচে হাইট দিয়ে কন্ট্রোল হবে)
+            'px-6', // ডানে-বামে প্যাডিং
             'rounded-full', // সম্পূর্ণ রাউন্ডেড
             'shadow-2xl', 'border', 'border-gray-700', 'dark:border-gray-300',
             'z-[100]',
@@ -13589,8 +13592,8 @@ function showCustomAlert(message) {
 
         // ডায়নামিক স্টাইল অ্যাপ্লাই
         alertBox.style.top = topPosition;
-        alertBox.style.height = setHeight; // ফিক্সড হাইট অ্যাপ্লাই
-        alertBox.style.minHeight = '40px'; // মিনিমাম হাইট সেফটি
+        alertBox.style.height = setHeight;
+        alertBox.style.minHeight = minHeight;
 
         // আইকন এবং মেসেজ সেট করা
         alertBox.innerHTML = `
