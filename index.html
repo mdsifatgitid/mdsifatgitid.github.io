@@ -13545,51 +13545,74 @@ initializeTimeConverter();
 // ====================================================================
 	// কাস্টম অ্যালার্ট বক্স বাস্তবায়ন New
     // কাস্টম টোস্ট অ্যালার্ট (উপরে ব্যানারের ওপর দেখাবে)
-    function showCustomAlert(message) {
-        // আগের কোনো অ্যালার্ট থাকলে সরিয়ে ফেলুন (যাতে একটার ওপর একটা না আসে)
+function showCustomAlert(message) {
+        // আগের কোনো অ্যালার্ট থাকলে সরিয়ে ফেলুন
         const existingAlert = document.querySelector('.custom-toast-alert');
         if (existingAlert) existingAlert.remove();
 
         const alertBox = document.createElement('div');
+        const banner = document.getElementById('currentDateTimeBanner');
         
-        // টোস্ট স্টাইলিং ক্লাস
+        let topPosition = '20px'; // ডিফল্ট পজিশন (যদি ব্যানার না থাকে বা দেখা না যায়)
+        let setHeight = 'auto';   // ডিফল্ট হাইট
+
+        // ব্যানারের পজিশন এবং হাইট ডায়নামিকালি ক্যালকুলেট করা
+        if (banner && banner.offsetParent !== null) { 
+            const rect = banner.getBoundingClientRect();
+            
+            // যদি ব্যানারটি স্ক্রিনের ভেতরে থাকে (নেগেটিভ টপ না হয়)
+            if (rect.top >= 0) {
+                topPosition = `${rect.top}px`;
+                setHeight = `${rect.height}px`; // ব্যানারের সমান হাইট সেট করা হলো
+            } else {
+                // ব্যানার স্ক্রল করে উপরে চলে গেলে টোস্টটি স্ক্রিনের টপে ফিক্সড থাকবে
+                topPosition = '20px';
+                setHeight = '50px'; // স্ট্যান্ডার্ড হাইট
+            }
+        }
+
+        // টোস্ট স্টাইলিং
         alertBox.classList.add(
-            'custom-toast-alert', // শনাক্তকরণের জন্য ক্লাস
-            'fixed', 'top-5', 'left-1/2', 'transform', '-translate-x-1/2', // পজিশন: উপরে মাঝখানে
-            'bg-gray-900', 'dark:bg-gray-100', // ব্যাকগ্রাউন্ড (লাইট/ডার্ক বিপরীত)
-            'text-white', 'dark:text-gray-900', // টেক্সট কালার
-            'px-6', 'py-3', 'rounded-full', // প্যাডিং ও গোলাকার ভাব
-            'shadow-2xl', 'border', 'border-gray-700', 'dark:border-gray-300', // শ্যাডো ও বর্ডার
-            'z-[100]', // সবকিছুর ওপরে থাকার জন্য হাই Z-Index
-            'text-sm', 'font-semibold', 'tracking-wide', // ফন্ট স্টাইল
-            'flex', 'items-center', 'gap-3', // আইকন ও টেক্সট সাজানো
-            'transition-all', 'duration-300', 'ease-out', // অ্যানিমেশন টাইমিং
-            'opacity-0', '-translate-y-full' // প্রাথমিক অবস্থা (লুকানো ও উপরে)
+            'custom-toast-alert',
+            'fixed', 'left-1/2', 'transform', '-translate-x-1/2', // পজিশন
+            'bg-gray-900', 'dark:bg-gray-100', // ব্যাকগ্রাউন্ড
+            'text-white', 'dark:text-gray-900', // টেক্সট
+            'px-6', // শুধু ডানে-বামে প্যাডিং (উপরে-নিচে হাইট দিয়ে কন্ট্রোল হবে)
+            'rounded-full', // সম্পূর্ণ রাউন্ডেড
+            'shadow-2xl', 'border', 'border-gray-700', 'dark:border-gray-300',
+            'z-[100]',
+            'text-sm', 'font-semibold', 'tracking-wide',
+            'flex', 'items-center', 'justify-center', 'gap-3', // ফ্লেক্সবক্স দিয়ে ভার্টিক্যাল সেন্টার
+            'transition-all', 'duration-300', 'ease-out',
+            'opacity-0', '-translate-y-4' // অ্যানিমেশনের শুরুর অবস্থা
         );
+
+        // ডায়নামিক স্টাইল অ্যাপ্লাই
+        alertBox.style.top = topPosition;
+        alertBox.style.height = setHeight; // ফিক্সড হাইট অ্যাপ্লাই
+        alertBox.style.minHeight = '40px'; // মিনিমাম হাইট সেফটি
 
         // আইকন এবং মেসেজ সেট করা
         alertBox.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-400 dark:text-green-600" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-400 dark:text-green-600 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
             </svg>
-            <span>${message}</span>
+            <span style="white-space: nowrap;">${message}</span>
         `;
 
         document.body.appendChild(alertBox);
 
-        // অ্যানিমেশন: উপর থেকে নিচে নামবে
+        // স্লাইড ডাউন অ্যানিমেশন
         requestAnimationFrame(() => {
-            alertBox.classList.remove('opacity-0', '-translate-y-full');
+            alertBox.classList.remove('opacity-0', '-translate-y-4');
             alertBox.classList.add('opacity-100', 'translate-y-0');
         });
 
-        // ৩ সেকেন্ড পর অটোমেটিক চলে যাবে
+        // ৩ সেকেন্ড পর অটোমেটিক রিমুভ
         setTimeout(() => {
-            // অ্যানিমেশন: আবার উপরে চলে যাবে
             alertBox.classList.remove('opacity-100', 'translate-y-0');
-            alertBox.classList.add('opacity-0', '-translate-y-full');
+            alertBox.classList.add('opacity-0', '-translate-y-4');
             
-            // অ্যানিমেশন শেষ হলে এলিমেন্ট রিমুভ হবে
             setTimeout(() => {
                 if (alertBox.parentNode) alertBox.parentNode.removeChild(alertBox);
             }, 300);
