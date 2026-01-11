@@ -13594,7 +13594,8 @@ function showCustomAlert(message) {
         alertBox.style.top = topPosition;
         alertBox.style.minHeight = minHeight; // হাইট ফিক্সড না রেখে মিনিমাম রাখা হলো যাতে বড় টেক্সটে হাইট বাড়তে পারে
         alertBox.style.maxWidth = maxWidth;   // সর্বোচ্চ প্রস্থ সেট করা হলো
-        alertBox.style.width = 'fit-content'; // কন্টেন্ট অনুযায়ী প্রস্থ হবে (তবে ম্যাক্স উইডথ এর বেশি হবে না)
+        // ফিক্স: fit-content এর পরিবর্তে max-content ব্যবহার করা হয়েছে যাতে টেক্সট পুরো জায়গা না নেওয়া পর্যন্ত লাইন ব্রেক না করে
+        alertBox.style.width = 'max-content'; 
 
         // আইকন এবং মেসেজ সেট করা
         // টেক্সট র‍্যাপ করার জন্য 'white-space: nowrap' সরিয়ে 'word-break' এবং 'text-align' যোগ করা হয়েছে
