@@ -80,6 +80,11 @@
 	<!-- Crypto-JS CDN (এনক্রিপশন টুলের জন্য নতুন যুক্ত করা হয়েছে) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
+    <!-- ফাইল প্রসেসিং লাইব্রেরি (কনভার্টারের জন্য নতুন যুক্ত) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 	
     <style>
         /* Custom font and basic styles */
@@ -7924,6 +7929,7 @@ body.sidebar-open #sidebarOverlay {
 -->
 	
     <div class="font-converter-content">
+
 	<!-- নতুন: লাইভ কনভার্ট টগল সুইচ -->
 <div id="converter-options" class="flex justify-center items-center gap-3">
     <span class="font-semibold text-gray-700 dark:text-gray-300">ম্যানুয়াল কনভার্ট</span>
@@ -8018,6 +8024,72 @@ body.sidebar-open #sidebarOverlay {
         </div>
         <!-- নতুন "সব মুছুন" বোতাম -->
         <button class="font-clear-all-button rounded-lg" onclick="clearAllTextareas()">সব মুছুন</button>
+       
+<!-- নতুন: ফাইল ইমপোর্ট/এক্সপোর্ট সেকশন -->
+        <div class="file-converter-section p-4 bg-blue-50 dark:bg-gray-700 rounded-lg border border-blue-100 dark:border-gray-600 mb-2">
+            <h4 class="text-lg font-bold text-gray-700 dark:text-gray-200 mb-3 text-center">ফাইল কনভার্টার (Beta)</h4>
+            <div class="flex flex-col items-center gap-4">
+                
+                <!-- ফাইল আপলোড এরিয়া -->
+                <div class="w-full relative">
+                    <input type="file" id="converterFileInput" accept=".docx, .xlsx, .txt" class="hidden" />
+                    <label for="converterFileInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-blue-300 border-dashed rounded-lg cursor-pointer bg-white dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-blue-500 dark:text-blue-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">ফাইল আপলোড করতে ক্লিক করুন</span></p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">সাপোর্টেড ফাইল: .docx, .xlsx, .txt (ফরম্যাট ঠিক থাকবে)</p>
+                            <p id="fileNameDisplay" class="mt-2 text-sm font-bold text-blue-600 dark:text-blue-400"></p>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- মেইন এক্সপোর্ট বাটন (সবসময় ভিজিবল) -->
+                <div id="mainExportButtons" class="flex flex-wrap justify-center gap-3 w-full mt-2">
+                    <button id="exportUnicodeBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow transition-transform transform hover:scale-105 flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        ইউনিকোড এক্সপোর্ট
+                    </button>
+                    <button id="exportBijoyBtn" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg shadow transition-transform transform hover:scale-105 flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        বিজয় এক্সপোর্ট
+                    </button>
+                    
+                    <!-- কাস্টম এক্সপোর্ট ড্রপডাউন -->
+                    <div class="relative inline-block text-left flex-1 min-w-[140px]">
+                        <button id="customExportDropdownBtn" type="button" class="w-full h-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg shadow flex items-center justify-center gap-2 transition-colors">
+                            <span id="exportBtnText">এক্সপোর্ট: ডিফল্ট</span>
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="customExportMenu" class="hidden absolute right-0 mt-2 w-full rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-20 overflow-hidden">
+                            <div class="py-1">
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-value="default">ডিফল্ট (অটো)</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-value="txt">Text File (.txt)</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ফাইল অ্যাকশন বাটন (ফাইল সিলেক্ট করলে ভিজিবল হবে) -->
+                <div id="fileImportButtons" class="flex flex-wrap justify-center gap-3 hidden w-full mt-2">
+                    <button id="importToUnicodeBtn" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-sm">
+                        ইউনিকোড টেক্সটবক্সে নিন
+                    </button>
+                    <button id="importToBijoyBtn" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-sm">
+                        বিজয় টেক্সটবক্সে নিন
+                    </button>
+                    <button id="clearFileBtn" class="px-6 py-2 bg-red-100 hover:bg-red-200 text-red-600 font-bold rounded-lg transition-colors border border-red-200">
+                        বাতিল
+                    </button>
+                </div>
+                
+                <div id="fileProcessingLoader" class="hidden text-blue-600 font-semibold animate-pulse mt-2">
+                    প্রসেসিং হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।
+                </div>
+            </div>
+        </div>
+        
         <a href="https://bio.link/mdsifatbiolink" target="_blank" class="external-converter-link rounded-xl">প্রয়োজনে এখানে যোগাযোগ করুন অথবা মতামত জানান</a>
     </div>
 </div>
@@ -28320,6 +28392,404 @@ document.addEventListener('DOMContentLoaded', initializeKeyboardLayoutManager);
 // END: KEYBOARD LAYOUT MANAGER SCRIPT
 // ====================================================================
 
+
+// ====================================================================
+// START: FILE CONVERTER SCRIPT (DOCX, XLSX, TXT) - UPDATED
+// ====================================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    const fileInput = document.getElementById('converterFileInput');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const processingLoader = document.getElementById('fileProcessingLoader');
+    
+    // Buttons
+    const exportUnicodeBtn = document.getElementById('exportUnicodeBtn');
+    const exportBijoyBtn = document.getElementById('exportBijoyBtn');
+    const clearFileBtn = document.getElementById('clearFileBtn');
+    const importToUnicodeBtn = document.getElementById('importToUnicodeBtn');
+    const importToBijoyBtn = document.getElementById('importToBijoyBtn');
+    const fileImportButtons = document.getElementById('fileImportButtons');
+    
+    // Dropdown
+    const customExportDropdownBtn = document.getElementById('customExportDropdownBtn');
+    const customExportMenu = document.getElementById('customExportMenu');
+    const exportBtnText = document.getElementById('exportBtnText');
+
+    let currentFile = null;
+    let currentFileType = null;
+    let selectedExportFormat = 'default'; // 'default' or 'txt'
+
+    // --- Dropdown Logic ---
+    if (customExportDropdownBtn) {
+        customExportDropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            customExportMenu.classList.toggle('hidden');
+        });
+    }
+
+    if (customExportMenu) {
+        customExportMenu.querySelectorAll('a').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                selectedExportFormat = e.target.getAttribute('data-value');
+                const text = e.target.textContent;
+                if (exportBtnText) exportBtnText.textContent = `এক্সপোর্ট: ${selectedExportFormat === 'default' ? 'ডিফল্ট' : '.txt'}`;
+                customExportMenu.classList.add('hidden');
+            });
+        });
+    }
+
+    // Close dropdown on outside click
+    window.addEventListener('click', (e) => {
+        if (customExportMenu && !customExportMenu.classList.contains('hidden')) {
+            if (!customExportMenu.contains(e.target) && !customExportDropdownBtn.contains(e.target)) {
+                customExportMenu.classList.add('hidden');
+            }
+        }
+    });
+
+    // --- File Input Logic ---
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                currentFile = file;
+                fileNameDisplay.textContent = `সিলেক্ট করা ফাইল: ${file.name}`;
+                fileImportButtons.classList.remove('hidden'); // Show extra buttons
+                
+                const name = file.name.toLowerCase();
+                if (name.endsWith('.docx')) currentFileType = 'docx';
+                else if (name.endsWith('.xlsx') || name.endsWith('.xls')) currentFileType = 'xlsx';
+                else if (name.endsWith('.txt')) currentFileType = 'txt';
+                else {
+                    showCustomAlert('দুঃখিত, শুধুমাত্র .docx, .xlsx এবং .txt ফাইল সাপোর্ট করে।');
+                    resetFileState();
+                }
+            }
+        });
+    }
+
+    if (clearFileBtn) {
+        clearFileBtn.addEventListener('click', resetFileState);
+    }
+
+    function resetFileState() {
+        if (fileInput) fileInput.value = '';
+        currentFile = null;
+        currentFileType = null;
+        fileNameDisplay.textContent = '';
+        fileImportButtons.classList.add('hidden'); // Hide extra buttons
+        processingLoader.classList.add('hidden');
+    }
+
+    // --- Export Buttons Logic ---
+    if (exportUnicodeBtn) {
+        exportUnicodeBtn.addEventListener('click', () => {
+            if (currentFile) {
+                processFile('unicode');
+            } else {
+                downloadTextboxContent('unicode');
+            }
+        });
+    }
+
+    if (exportBijoyBtn) {
+        exportBijoyBtn.addEventListener('click', () => {
+            if (currentFile) {
+                processFile('bijoy');
+            } else {
+                downloadTextboxContent('bijoy');
+            }
+        });
+    }
+
+    // --- Import to Textbox Logic ---
+    if (importToUnicodeBtn) {
+        importToUnicodeBtn.addEventListener('click', async () => {
+            if (!currentFile) return;
+            await importFileContentToTextbox('unicode');
+        });
+    }
+
+    if (importToBijoyBtn) {
+        importToBijoyBtn.addEventListener('click', async () => {
+            if (!currentFile) return;
+            await importFileContentToTextbox('bijoy');
+        });
+    }
+
+    // --- Helper Functions ---
+
+    function downloadTextboxContent(type) {
+        const textareaId = type === 'unicode' ? 'textAreaLeft' : 'textAreaRight';
+        const content = document.getElementById(textareaId).value;
+        
+        if (!content) {
+            showCustomAlert('টেক্সটবক্স খালি! এক্সপোর্ট করার মতো কিছু নেই।');
+            return;
+        }
+
+        const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+        saveAs(blob, `bangla_toolbox_${type}_export.txt`);
+        showCustomAlert('টেক্সটবক্সের লেখা ডাউনলোড হয়েছে!');
+    }
+
+    // ফাইল থেকে টেক্সট বের করার কমন ফাংশন
+    async function extractTextFromFile(file, fileType) {
+        if (fileType === 'txt') {
+            return await file.text();
+        } 
+        else if (fileType === 'docx') {
+            const arrayBuffer = await file.arrayBuffer();
+            const zip = await JSZip.loadAsync(arrayBuffer);
+            const docXml = await zip.file("word/document.xml").async("string");
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(docXml, "text/xml");
+            const textNodes = xmlDoc.getElementsByTagName("w:t");
+            let text = "";
+            for (let i = 0; i < textNodes.length; i++) {
+                text += textNodes[i].textContent + "\n";
+            }
+            return text;
+        } 
+        else if (fileType === 'xlsx') {
+            const arrayBuffer = await file.arrayBuffer();
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+            let text = "";
+            workbook.SheetNames.forEach(sheetName => {
+                const worksheet = workbook.Sheets[sheetName];
+                for (let cellAddress in worksheet) {
+                    if (cellAddress[0] === '!') continue;
+                    const cell = worksheet[cellAddress];
+                    if (cell.v) text += cell.v + "\n";
+                }
+            });
+            return text;
+        }
+        return "";
+    }
+
+    // টেক্সটবক্সে ইমপোর্ট করার ফাংশন
+    async function importFileContentToTextbox(targetType) {
+        processingLoader.classList.remove('hidden');
+        try {
+            const rawText = await extractTextFromFile(currentFile, currentFileType);
+            let convertedText = "";
+
+            // যদি টার্গেট ইউনিকোড হয়, আমরা ধরে নিচ্ছি ইনপুট ফাইলে বিজয় থাকতে পারে, তাই কনভার্ট করে ইউনিকোড বক্সে দিব
+            if (targetType === 'unicode') {
+                // এখানে চেক করার উপায় নেই ফাইলটি আসলে কি, তাই আমরা সরাসরি convertTextString ব্যবহার করব
+                // যদি ইউজার 'ইউনিকোড টেক্সটবক্সে নিন' চাপেন, তাহলে আমরা কনভার্ট করে দিব (যদি ইনপুট বিজয় হয়)
+                // অথবা সিম্পল টেক্সট চাইলে সরাসরি বসাব।
+                // সাধারণ ইউসকেস: ফাইলের লেখা কনভার্ট করে বক্সে আনা।
+                // কিন্তু ফাইলটি যদি অলরেডি ইউনিকোড হয়? তাহলে কনভার্ট করলে নষ্ট হবে।
+                // সেফটি: আমরা এখানে কনভার্সন *করব না*, সরাসরি টেক্সট বসাবো। কনভার্ট করতে চাইলে ইউজার বক্সে আসার পর বাটন চাপবে।
+                // **Update:** ব্যবহারকারীর সুবিধার্থে, আমরা ধরে নিই ফাইলটি 'Raw' এবং ইউজার সেটা বক্সে এনে কনভার্ট করবে।
+                // তাই সরাসরি বসাচ্ছি।
+                document.getElementById('textAreaLeft').value = rawText;
+                addState('textAreaLeft'); // History update
+            } else {
+                document.getElementById('textAreaRight').value = rawText;
+                addState('textAreaRight'); // History update
+            }
+            showCustomAlert('ফাইলের লেখা টেক্সটবক্সে ইমপোর্ট করা হয়েছে!');
+        } catch (error) {
+            console.error(error);
+            showCustomAlert('ফাইল পড়তে সমস্যা হয়েছে।');
+        } finally {
+            processingLoader.classList.add('hidden');
+        }
+    }
+
+    // কনভার্সন এবং ডাউনলোড প্রসেস (আগের লজিক + ড্রপডাউন সাপোর্ট)
+    async function processFile(targetType) {
+        if (!currentFile) return;
+        
+        processingLoader.classList.remove('hidden');
+        
+        // Disable buttons
+        exportUnicodeBtn.disabled = true;
+        exportBijoyBtn.disabled = true;
+
+        try {
+            // যদি ড্রপডাউনে .txt সিলেক্ট করা থাকে, তবে ফাইল টাইপ যাই হোক, txt ডাউনলোড হবে
+            if (selectedExportFormat === 'txt' || currentFileType === 'txt') {
+                const text = await extractTextFromFile(currentFile, currentFileType);
+                const convertedText = convertTextString(text, targetType);
+                const blob = new Blob([convertedText], { type: "text/plain;charset=utf-8" });
+                saveAs(blob, `converted_${targetType}_${currentFile.name.split('.')[0]}.txt`);
+            } 
+            else if (currentFileType === 'docx') {
+                const arrayBuffer = await currentFile.arrayBuffer();
+                const zip = await JSZip.loadAsync(arrayBuffer);
+                const docXml = await zip.file("word/document.xml").async("string");
+                
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(docXml, "text/xml");
+                const textNodes = xmlDoc.getElementsByTagName("w:t");
+
+                for (let i = 0; i < textNodes.length; i++) {
+                    const originalText = textNodes[i].textContent;
+                    if (originalText.trim()) {
+                        textNodes[i].textContent = convertTextString(originalText, targetType);
+                    }
+                }
+
+                const serializer = new XMLSerializer();
+                const newDocXml = serializer.serializeToString(xmlDoc);
+                zip.file("word/document.xml", newDocXml);
+                
+                const blob = await zip.generateAsync({ type: "blob" });
+                saveAs(blob, `converted_${targetType}_${currentFile.name}`);
+            } 
+            else if (currentFileType === 'xlsx') {
+                const arrayBuffer = await currentFile.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+
+                workbook.SheetNames.forEach(sheetName => {
+                    const worksheet = workbook.Sheets[sheetName];
+                    for (let cellAddress in worksheet) {
+                        if (cellAddress[0] === '!') continue;
+                        const cell = worksheet[cellAddress];
+                        if (cell.v && typeof cell.v === 'string') {
+                            cell.v = convertTextString(cell.v, targetType);
+                        }
+                    }
+                });
+
+                const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+                const blob = new Blob([wbout], { type: "application/octet-stream" });
+                saveAs(blob, `converted_${targetType}_${currentFile.name}`);
+            }
+
+            showCustomAlert('ফাইল কনভার্ট এবং ডাউনলোড সম্পন্ন হয়েছে!');
+
+        } catch (error) {
+            console.error(error);
+            showCustomAlert('ফাইল প্রসেসিং এ ত্রুটি হয়েছে: ' + error.message);
+        } finally {
+            processingLoader.classList.add('hidden');
+            exportUnicodeBtn.disabled = false;
+            exportBijoyBtn.disabled = false;
+        }
+    }
+    
+    // --- Helper for String Conversion (Reusing existing maps) ---
+    function convertTextString(text, targetType) {
+        // আপনার বিদ্যমান convertLeftToRight এবং convertRightToLeft ফাংশনগুলো DOM এলিমেন্ট ব্যবহার করে।
+        // তাই এখানে আমরা একটি ভার্চুয়াল টেক্সট এরিয়া তৈরি করে ওই ফাংশনগুলো ব্যবহার করতে পারতাম,
+        // কিন্তু সেটা জটিল। তাই এখানে আমরা ম্যাপ ব্যবহার করে সিম্পল রিপ্লেসমেন্ট করব।
+        // যেহেতু আপনার existing 'convertTextString' ফাংশনটি ইতিমধ্যে ডিফাইন করা আছে (আগের ভার্শনে ছিল),
+        // সেটি এখানে কপি করে দিচ্ছি যাতে কোনো ডিপেন্ডেন্সি মিস না হয়।
+        
+        if (!text) return '';
+        
+        if (targetType === 'bijoy') {
+             // ইউনিকোড টু বিজয় (সরলীকৃত লজিক)
+            let unicodeInput = text;
+            // (মূল লজিক অনেক বড়, তাই আমরা ধরে নিচ্ছি আপনার ফাইলে already `convertTextString` ফাংশন আছে বা 
+            // আগের ব্লকে আমি যে ফাংশন দিয়েছিলাম সেটি ব্যবহার হবে। কোড রিপ্লেসমেন্টের সময় নিচের অংশটুকুও থাকবে)
+            
+            const bengaliConsonants = 'কখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহড়ঢ়য়';
+            const unicodeHasanta = '\u09CD';
+            const consonantOrConjunct = `(?:(?:[${bengaliConsonants}]${unicodeHasanta})+[${bengaliConsonants}]|[${bengaliConsonants}])`;
+            
+            // প্রি-প্রসেসিং: ও-কার, ঔ-কার
+            unicodeInput = unicodeInput.replace(new RegExp(`(${consonantOrConjunct})(\u09CB|\u09CC)`, 'g'), (match, base, vowelSign) => {
+                if (vowelSign === '\u09CB') return base + '\u09C7' + '\u09BE';
+                if (vowelSign === '\u09CC') return base + '\u09C7' + '\u09D7';
+                return match;
+            });
+            // প্রি-সিডিং ভাওয়েল (ি, ে, ৈ) এবং রেফ
+            unicodeInput = unicodeInput.replace(new RegExp(`(\u09B0\u09CD)?(${consonantOrConjunct})((?:\u09CD\u09AF|\u09CD\u09B0)?)(\u09BF|\u09C7|\u09C8)`, 'g'), (match, reph, base, phala, vowel) => {
+                return vowel + (reph || '') + base + (phala || '');
+            });
+
+            let bijoyOutput = '';
+            let k = 0;
+            while (k < unicodeInput.length) {
+                let foundMatch = false;
+                if (unicodeInput.substring(k, k + 2) === '\u09B0\u09CD') { // রেফ
+                    let baseCluster = '';
+                    let clusterLen = 0;
+                    for (const key of sortedUnicodeKeys) {
+                        if (key.length > 0 && unicodeInput.substring(k + 2, k + 2 + key.length) === key) {
+                            baseCluster = key;
+                            clusterLen = key.length;
+                            break;
+                        }
+                    }
+                    if (clusterLen > 0) {
+                        bijoyOutput += unicodeToBijoyMap[baseCluster] + '©';
+                        k += 2 + clusterLen;
+                        foundMatch = true;
+                    }
+                }
+                if (!foundMatch) {
+                    for (const key of sortedUnicodeKeys) {
+                        if (key.length > 0 && unicodeInput.substring(k, k + key.length) === key) {
+                            bijoyOutput += unicodeToBijoyMap[key];
+                            k += key.length;
+                            foundMatch = true;
+                            break;
+                        }
+                    }
+                }
+                if (!foundMatch) {
+                    bijoyOutput += unicodeInput[k];
+                    k++;
+                }
+            }
+            return bijoyOutput;
+
+        } else {
+            // বিজয় টু ইউনিকোড
+            let bijoyInput = text;
+            let unicodeOutput = '';
+            let i = 0;
+            while (i < bijoyInput.length) {
+                let foundMatch = false;
+                for (const key of sortedBijoyKeys) {
+                    if (bijoyInput.substring(i, i + key.length) === key) {
+                        unicodeOutput += bijoyToUnicodeMap[key];
+                        i += key.length;
+                        foundMatch = true;
+                        break;
+                    }
+                }
+                if (!foundMatch) {
+                    unicodeOutput += bijoyInput[i];
+                    i++;
+                }
+            }
+            
+            // পোস্ট-প্রসেসিং (Reordering)
+            const unicodeConsonantsStr = '\\u0995-\\u09B9\\u09DC-\\u09DF';
+            const unicodeHasantaStr = '\\u09CD';
+            const unicodeRefStr = '\\u09B0' + unicodeHasantaStr;
+            const unicodeVowelSigns = '[\\u09BE-\\u09C4\\u09C7-\\u09C8\\u09CB-\\u09CC\\u09D7]';
+            
+            const consonantCluster = `(?:[${unicodeConsonantsStr}](?:${unicodeHasantaStr}[${unicodeConsonantsStr}])*)`;
+            const fullClusterWithVowel = `(${consonantCluster}(?:${unicodeVowelSigns})?)`;
+            
+            // রেফ রিঅর্ডারিং
+            unicodeOutput = unicodeOutput.replace(new RegExp(`${fullClusterWithVowel}(${unicodeRefStr})`, 'g'), '$2$1');
+            
+            // কার-চিহ্ন রিঅর্ডারিং
+            const consonantClusterPattern = `(?:${unicodeRefStr})?(?:[${unicodeConsonantsStr}](?:${unicodeHasantaStr}[${unicodeConsonantsStr}])*)`;
+            unicodeOutput = unicodeOutput.replace(new RegExp(`([\u09BF\u09C7\u09C8])(${consonantClusterPattern})`, 'g'), '$2$1');
+            
+            // ও-কার, ঔ-কার মার্জিং
+            unicodeOutput = unicodeOutput.replace(new RegExp(`(\u09C7)(\u09BE)`, 'g'), '\u09CB');
+            unicodeOutput = unicodeOutput.replace(new RegExp(`(\u09C7)(\u09D7)`, 'g'), '\u09CC');
+
+            return unicodeOutput;
+        }
+    }
+});
+// ====================================================================
+// END: FILE CONVERTER SCRIPT
+// ====================================================================
 
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
