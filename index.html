@@ -28579,7 +28579,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Helper Functions ---
 
-    // নতুন: JSZip ব্যবহার করে ভ্যালিড .docx তৈরি করার ফাংশন
+    // নতুন: JSZip ব্যবহার করে ভ্যালিড .docx তৈরি করার ফাংশন (আপডেট করা হয়েছে: ১৪ ফন্ট ও জাস্টিফাই)
     async function createSimpleDocx(text) {
         const zip = new JSZip();
         
@@ -28614,10 +28614,22 @@ document.addEventListener('DOMContentLoaded', () => {
         zip.folder("word/_rels").file("document.xml.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`);
 
-        // 4. word/document.xml (The Content)
-        // Split text by newlines to create paragraphs
+        // 4. word/document.xml (The Content with Formatting)
+        // w:jc val="both" = Justify Alignment
+        // w:sz val="28" = Font Size 14pt (Word uses half-points, so 14 * 2 = 28)
         const paragraphs = text.split('\n').map(line => {
-            return `<w:p><w:r><w:t>${escapeXml(line)}</w:t></w:r></w:p>`;
+            return `<w:p>
+                        <w:pPr>
+                            <w:jc w:val="both"/>
+                        </w:pPr>
+                        <w:r>
+                            <w:rPr>
+                                <w:sz w:val="28"/>
+                                <w:szCs w:val="28"/>
+                            </w:rPr>
+                            <w:t>${escapeXml(line)}</w:t>
+                        </w:r>
+                    </w:p>`;
         }).join('');
 
         const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -28634,7 +28646,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // টেক্সটবক্স থেকে এক্সপোর্ট (আপডেট করা হয়েছে)
+    // টেক্সটবক্স থেকে এক্সপোর্ট (আপডেট করা হয়েছে: ১৪ ফন্ট ও জাস্টিফাই)
     async function downloadTextboxContent(type) {
         const textareaId = type === 'unicode' ? 'textAreaLeft' : 'textAreaRight';
         const content = document.getElementById(textareaId).value;
@@ -28654,7 +28666,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showCustomAlert('TXT ফাইল ডাউনলোড হয়েছে!');
         } 
         else if (format === 'docx') {
-            // নতুন: JSZip ব্যবহার করে ভ্যালিড .docx তৈরি
+            // নতুন: JSZip ব্যবহার করে ভ্যালিড .docx তৈরি (With formatting)
             try {
                 const blob = await createSimpleDocx(content);
                 saveAs(blob, fileName);
@@ -28665,7 +28677,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         else if (format === 'doc') {
-            // পুরাতন: HTML মেথড (এটি .doc এর জন্য ভালো কাজ করে এবং পুরনো ওয়ার্ডে ওপেন হয়)
+            // পুরাতন: HTML মেথড (এটি .doc এর জন্য ভালো কাজ করে)
+            // আপডেট: ফন্ট সাইজ ১৪ এবং জাস্টিফাই এলাইনমেন্ট নিশ্চিত করা হয়েছে
             const paragraphs = content.split('\n').map(line => {
                 if(line.trim() === '') return '<p>&nbsp;</p>';
                 return `<p style="text-align: justify; text-justify: inter-word; font-size: 14pt; margin-bottom: 0px; font-family: 'SutonnyMJ', 'Kalpurush', sans-serif;">${line}</p>`;
@@ -28678,7 +28691,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <title>Export</title>
                     <style>
                         body { font-family: 'SutonnyMJ', 'Kalpurush', sans-serif; font-size: 14pt; }
-                        p { margin: 0; padding: 0; }
+                        p { margin: 0; padding: 0; text-align: justify; }
                     </style>
                 </head>
                 <body>
@@ -28846,13 +28859,13 @@ document.addEventListener('DOMContentLoaded', () => {
                  const convertedText = convertTextString(rawText, targetType);
                  
                  if (finalFormat === 'docx') {
-                     // নতুন: এখানেও ভ্যালিড docx জেনারেটর ব্যবহার করা হলো
+                     // নতুন: এখানেও ভ্যালিড docx জেনারেটর ব্যবহার করা হলো (14pt, Justify)
                      const blob = await createSimpleDocx(convertedText);
                      saveAs(blob, outputFileName);
                  } 
                  else if (finalFormat === 'doc') {
-                     // HTML to Doc (Legacy)
-                     const htmlContent = `<html><body><pre style="font-family: 'SutonnyMJ', 'Kalpurush', sans-serif;">${convertedText}</pre></body></html>`;
+                     // HTML to Doc (Legacy) - 14pt, Justify
+                     const htmlContent = `<html><head><style>body { font-family: 'SutonnyMJ', 'Kalpurush', sans-serif; font-size: 14pt; } p { text-align: justify; margin: 0; padding: 0; }</style></head><body><pre style="font-family: 'SutonnyMJ', 'Kalpurush', sans-serif; white-space: pre-wrap;">${convertedText}</pre></body></html>`;
                      const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
                      saveAs(blob, outputFileName);
                  } 
