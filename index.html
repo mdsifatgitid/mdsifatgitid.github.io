@@ -28421,10 +28421,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentFile = null;
     let currentFileType = null;
-    let selectedExportFormat = 'default';
+    // পরিবর্তন: ডিফল্ট ফরম্যাট এখন 'doc' করা হয়েছে যাতে পুরানো ওয়ার্ডে সমস্যা না হয়
+    let selectedExportFormat = 'doc'; 
 
     // --- Dropdown Logic ---
     if (customExportDropdownBtn) {
+        // শুরুতে বাটন টেক্সট আপডেট করা
+        if (exportBtnText) exportBtnText.textContent = `ফরম্যাট: Default (DOC)`;
+
         customExportDropdownBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             customExportMenu.classList.toggle('hidden');
@@ -28435,16 +28439,22 @@ document.addEventListener('DOMContentLoaded', () => {
         customExportMenu.querySelectorAll('a').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
-                selectedExportFormat = e.target.getAttribute('data-value');
+                const value = e.target.getAttribute('data-value');
+                // 'default' সিলেক্ট করলে আমরা 'doc' কে ডিফল্ট হিসেবে ধরব
+                selectedExportFormat = value === 'default' ? 'doc' : value;
+                
                 // বাটন টেক্সট আপডেট
                 const formatLabels = {
-                    'default': 'অটো',
+                    'default': 'Default (DOC)',
                     'docx': 'DOCX',
-                    'doc': 'DOC',
+                    'doc': 'DOC (Legacy)',
                     'xlsx': 'Excel',
                     'txt': 'TXT'
                 };
-                if (exportBtnText) exportBtnText.textContent = `ফরম্যাট: ${formatLabels[selectedExportFormat]}`;
+                // ভ্যালু যদি লিস্টে না থাকে (যেমন default এর আসল মান)
+                const label = formatLabels[value] || formatLabels[selectedExportFormat] || 'DOC';
+                
+                if (exportBtnText) exportBtnText.textContent = `ফরম্যাট: ${label}`;
                 customExportMenu.classList.add('hidden');
             });
         });
@@ -28569,8 +28579,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Helper Functions ---
 
-    // টেক্সটবক্স থেকে এক্সপোর্ট (ফরম্যাটিং সহ)
-    function downloadTextboxContent(type) {
+    // নতুন: JSZip ব্যবহার করে ভ্যালিড .docx তৈরি করার ফাংশন
+    async function createSimpleDocx(text) {
+        const zip = new JSZip();
+        
+        // Escape XML characters
+        const escapeXml = (unsafe) => {
+            return unsafe.replace(/[<>&'"]/g, function (c) {
+                switch (c) {
+                    case '<': return '&lt;';
+                    case '>': return '&gt;';
+                    case '&': return '&amp;';
+                    case '\'': return '&apos;';
+                    case '"': return '&quot;';
+                }
+            });
+        };
+
+        // 1. [Content_Types].xml
+        zip.file("[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+<Default Extension="xml" ContentType="application/xml"/>
+<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>`);
+
+        // 2. _rels/.rels
+        zip.file("_rels/.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`);
+
+        // 3. word/_rels/document.xml.rels
+        zip.folder("word/_rels").file("document.xml.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`);
+
+        // 4. word/document.xml (The Content)
+        // Split text by newlines to create paragraphs
+        const paragraphs = text.split('\n').map(line => {
+            return `<w:p><w:r><w:t>${escapeXml(line)}</w:t></w:r></w:p>`;
+        }).join('');
+
+        const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:body>${paragraphs}</w:body>
+</w:document>`;
+
+        zip.file("word/document.xml", documentXml);
+
+        // Generate the blob
+        return await zip.generateAsync({
+            type: "blob",
+            mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        });
+    }
+
+    // টেক্সটবক্স থেকে এক্সপোর্ট (আপডেট করা হয়েছে)
+    async function downloadTextboxContent(type) {
         const textareaId = type === 'unicode' ? 'textAreaLeft' : 'textAreaRight';
         const content = document.getElementById(textareaId).value;
         
@@ -28579,7 +28644,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const format = selectedExportFormat === 'default' ? 'docx' : selectedExportFormat;
+        // ডিফল্ট ফরম্যাট 'doc' সেট করা হয়েছে, যদি ড্রপডাউন থেকে চেঞ্জ না করা হয়
+        const format = selectedExportFormat;
         const fileName = `bangla_toolbox_${type}_export.${format}`;
 
         if (format === 'txt') {
@@ -28587,13 +28653,21 @@ document.addEventListener('DOMContentLoaded', () => {
             saveAs(blob, fileName);
             showCustomAlert('TXT ফাইল ডাউনলোড হয়েছে!');
         } 
-        else if (format === 'doc' || format === 'docx') {
-            // বিশেষ ফরম্যাটিং: ফন্ট সাইজ ১৪, জাস্টিফাই (শেষ লাইন বাদে)
-            // HTML এর মাধ্যমে DOC/DOCX জেনারেশন
+        else if (format === 'docx') {
+            // নতুন: JSZip ব্যবহার করে ভ্যালিড .docx তৈরি
+            try {
+                const blob = await createSimpleDocx(content);
+                saveAs(blob, fileName);
+                showCustomAlert('DOCX ফাইল ডাউনলোড হয়েছে (Valid XML)!');
+            } catch (e) {
+                console.error(e);
+                showCustomAlert('DOCX তৈরিতে সমস্যা হয়েছে।');
+            }
+        }
+        else if (format === 'doc') {
+            // পুরাতন: HTML মেথড (এটি .doc এর জন্য ভালো কাজ করে এবং পুরনো ওয়ার্ডে ওপেন হয়)
             const paragraphs = content.split('\n').map(line => {
                 if(line.trim() === '') return '<p>&nbsp;</p>';
-                // text-align: justify ব্যবহার করলে ব্রাউজার/ওয়ার্ড সাধারণত শেষ লাইনটি বামেই রাখে (default behavior)
-                // তবে পুরনো ভার্সনের ওয়ার্ডের জন্য mso-text-justify প্রপার্টি যোগ করা হলো
                 return `<p style="text-align: justify; text-justify: inter-word; font-size: 14pt; margin-bottom: 0px; font-family: 'SutonnyMJ', 'Kalpurush', sans-serif;">${line}</p>`;
             }).join('');
 
@@ -28617,10 +28691,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 type: 'application/msword'
             });
             saveAs(blob, fileName);
-            showCustomAlert(`${format.toUpperCase()} ফাইল ডাউনলোড হয়েছে (ফরম্যাটিং সহ)!`);
+            showCustomAlert('DOC ফাইল ডাউনলোড হয়েছে (লিগ্যাসি সাপোর্ট)!');
         }
         else if (format === 'xlsx') {
-            // টেক্সটকে এক্সেলে নেওয়া (প্রতি লাইন এক রো)
+            // টেক্সটকে এক্সেলে নেওয়া
             const rows = content.split('\n').map(line => [line]);
             const ws = XLSX.utils.aoa_to_sheet(rows);
             const wb = XLSX.utils.book_new();
@@ -28660,8 +28734,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } 
         else if (fileType === 'doc') {
-             // ব্রাউজারে বাইনারি .doc পড়া কঠিন। এখানে ওয়ার্নিং এবং আংশিক টেক্সট পড়ার চেষ্টা করা হবে না।
-             // কারণ .doc এর টেক্সট এনকোডিং জটিল।
              throw new Error("পুরাতন .doc ফাইল ব্রাউজারে সরাসরি এডিট করা সম্ভব নয়। দয়া করে এটিকে .docx এ সেভ করে আপলোড করুন অথবা টেক্সট কপি করে পেস্ট করুন।");
         }
         else if (fileType === 'xlsx') {
@@ -28670,7 +28742,6 @@ document.addEventListener('DOMContentLoaded', () => {
             let text = "";
             workbook.SheetNames.forEach(sheetName => {
                 const worksheet = workbook.Sheets[sheetName];
-                // simple extraction
                 const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
                 jsonData.forEach(row => {
                     text += row.join("\t") + "\n";
@@ -28703,7 +28774,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // কনভার্সন এবং ডাউনলোড প্রসেস (অরিজিনাল ফরম্যাট বজায় রাখা)
+    // কনভার্সন এবং ডাউনলোড প্রসেস (আপডেট করা হয়েছে)
     async function processFile(targetType) {
         if (!currentFile) return;
         
@@ -28712,20 +28783,23 @@ document.addEventListener('DOMContentLoaded', () => {
         exportBijoyBtn.disabled = true;
 
         try {
-            let finalFormat = selectedExportFormat === 'default' ? currentFileType : selectedExportFormat;
-            if (finalFormat === 'doc') finalFormat = 'doc'; // doc সিলেকশন থাকলে doc নামেই সেভ হবে
+            let finalFormat = selectedExportFormat;
+            // ডিফল্ট সিলেকশন হলে এবং ইনপুট ফাইল docx হলে আউটপুট docx হবে, অন্যথায় doc (safe default)
+            if (finalFormat === 'default') {
+                 finalFormat = currentFileType === 'docx' ? 'docx' : 'doc';
+            }
             
             const outputFileName = `converted_${targetType}_${currentFile.name.split('.')[0]}.${finalFormat}`;
 
-            // Case 1: TXT Export (Simple)
+            // Case 1: TXT Export
             if (finalFormat === 'txt') {
                 const text = await extractTextFromFile(currentFile, currentFileType);
                 const convertedText = convertTextString(text, targetType);
                 const blob = new Blob([convertedText], { type: "text/plain;charset=utf-8" });
                 saveAs(blob, outputFileName);
             }
-            // Case 2: DOCX to DOCX/DOC (Structure Preserving attempt)
-            else if (currentFileType === 'docx' && (finalFormat === 'docx' || finalFormat === 'doc')) {
+            // Case 2: DOCX to DOCX (Structure Preserving)
+            else if (currentFileType === 'docx' && finalFormat === 'docx') {
                 const arrayBuffer = await currentFile.arrayBuffer();
                 const zip = await JSZip.loadAsync(arrayBuffer);
                 const docXml = await zip.file("word/document.xml").async("string");
@@ -28735,7 +28809,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const textNodes = xmlDoc.getElementsByTagName("w:t");
 
                 for (let i = 0; i < textNodes.length; i++) {
-                    // শুধুমাত্র টেক্সট নোড পরিবর্তন হবে, টেবিল বা স্ট্রাকচার ঠিক থাকবে
                     const originalText = textNodes[i].textContent;
                     if (originalText.trim()) {
                         textNodes[i].textContent = convertTextString(originalText, targetType);
@@ -28767,18 +28840,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 XLSX.writeFile(workbook, outputFileName);
             }
-            // Case 4: Cross format (e.g. DOCX -> Excel, Excel -> DOCX) or Fallback
+            // Case 4: Cross format or Fallback (e.g. TXT -> DOCX, DOCX -> DOC)
             else {
-                 // যদি ফরম্যাট ম্যাচ না করে, তবে প্লেইন টেক্সট বের করে নতুন ফরম্যাটে জেনারেট করা হবে
                  const rawText = await extractTextFromFile(currentFile, currentFileType);
                  const convertedText = convertTextString(rawText, targetType);
                  
-                 if (finalFormat === 'docx' || finalFormat === 'doc') {
-                     // Simple HTML to Doc method for layout preservation from text
-                     const htmlContent = `<html><body><pre>${convertedText}</pre></body></html>`;
+                 if (finalFormat === 'docx') {
+                     // নতুন: এখানেও ভ্যালিড docx জেনারেটর ব্যবহার করা হলো
+                     const blob = await createSimpleDocx(convertedText);
+                     saveAs(blob, outputFileName);
+                 } 
+                 else if (finalFormat === 'doc') {
+                     // HTML to Doc (Legacy)
+                     const htmlContent = `<html><body><pre style="font-family: 'SutonnyMJ', 'Kalpurush', sans-serif;">${convertedText}</pre></body></html>`;
                      const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
                      saveAs(blob, outputFileName);
-                 } else if (finalFormat === 'xlsx') {
+                 } 
+                 else if (finalFormat === 'xlsx') {
                      const rows = convertedText.split('\n').map(line => [line]);
                      const ws = XLSX.utils.aoa_to_sheet(rows);
                      const wb = XLSX.utils.book_new();
@@ -28804,7 +28882,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!text) return '';
         
         if (targetType === 'bijoy') {
-            // Unicode to Bijoy Logic (Simplified for brevity, full logic assumed present)
+            // Unicode to Bijoy Logic (Simplified copy of existing logic)
             let unicodeInput = text;
             const bengaliConsonants = 'কখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহড়ঢ়য়';
             const unicodeHasanta = '\u09CD';
