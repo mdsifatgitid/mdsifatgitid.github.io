@@ -28547,8 +28547,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (exportUnicodeBtn) {
         exportUnicodeBtn.addEventListener('click', () => {
             if (currentFile) {
+                // ফাইল সিলেক্ট থাকলে: ইউনিকোড -> আন্সি -> ইউনিকোড -> এক্সপোর্ট
                 processFile('unicode');
             } else {
+                // ফাইল না থাকলে: টেক্সটবক্স থেকে সরাসরি এক্সপোর্ট
                 downloadTextboxContent('unicode');
             }
         });
@@ -28557,8 +28559,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (exportBijoyBtn) {
         exportBijoyBtn.addEventListener('click', () => {
             if (currentFile) {
+                // ফাইল সিলেক্ট থাকলে: ইউনিকোড -> আন্সি -> এক্সপোর্ট
                 processFile('bijoy');
             } else {
+                // ফাইল না থাকলে: টেক্সটবক্স থেকে সরাসরি এক্সপোর্ট
                 downloadTextboxContent('bijoy');
             }
         });
@@ -28850,13 +28854,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // কনভার্সন এবং ডাউনলোড প্রসেস (আপডেট করা হয়েছে: টেবিল সাপোর্ট)
+    // কনভার্সন এবং ডাউনলোড প্রসেস (আপডেট করা হয়েছে: ব্যবহারকারীর অনুরোধ অনুযায়ী লজিক)
     async function processFile(targetType) {
         if (!currentFile) return;
         
         processingLoader.classList.remove('hidden');
         exportUnicodeBtn.disabled = true;
         exportBijoyBtn.disabled = true;
+
+        // ব্যবহারকারীর অনুরোধ অনুযায়ী কাস্টম কনভার্সন লজিক
+        const performUserRequestedConversion = (text) => {
+            if (!text) return '';
+            
+            if (targetType === 'unicode') {
+                // ফাইল সিলেক্ট থাকলে (ইউনিকোড এক্সপোর্ট): ইউনিকোড -> আন্সি -> ইউনিকোড
+                const ansiText = convertTextString(text, 'bijoy'); // Unicode to Bijoy
+                return convertTextString(ansiText, 'unicode');     // Bijoy to Unicode
+            } else {
+                // ফাইল সিলেক্ট থাকলে (আন্সি এক্সপোর্ট): ইউনিকোড -> আন্সি
+                return convertTextString(text, 'bijoy'); // Unicode to Bijoy
+            }
+        };
 
         try {
             let finalFormat = selectedExportFormat;
@@ -28871,22 +28889,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 // ১. DOCX থেকে স্ট্রাকচার্ড HTML বের করা (টেবিল সহ)
                 let htmlContentBody = await convertDocxToSimpleHtml(currentFile);
                 
-                // ২. টেক্সট কনভার্সন (বিজয়/ইউনিকোড) HTML এর ভেতরে করা
-                // তবে HTML ট্যাগগুলো বাদ দিয়ে শুধু টেক্সট কনভার্ট করা একটু জটিল।
-                // সহজ সমাধানের জন্য আমরা পুরো HTML স্ট্রিং এর টেক্সট পার্টগুলো রিপ্লেস করার চেষ্টা করতে পারি
-                // অথবা সিম্পল ফাইলের জন্য সরাসরি স্ট্রিং রিপ্লেস (সাবধানতা অবলম্বন করে)
-                
-                // এখানে আমরা সিম্পল অ্যাপ্রোচ নিচ্ছি: ট্যাগ বাদে টেক্সট কনভার্ট
-                // এটি পারফেক্ট নাও হতে পারে যদি ট্যাগ এর নাম বাংলা অক্ষরের সাথে মিলে যায় (তবে সম্ভাবনা কম)
-                
-                // নিরাপদ পদ্ধতি: HTML পার্স করে টেক্সট নোডগুলো কনভার্ট করা
+                // ২. টেক্সট কনভার্সন HTML এর ভেতরে করা
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = htmlContentBody;
                 
                 const walk = document.createTreeWalker(tempDiv, NodeFilter.SHOW_TEXT, null, false);
                 let node;
                 while(node = walk.nextNode()) {
-                    node.nodeValue = convertTextString(node.nodeValue, targetType);
+                    // লজিক প্রয়োগ
+                    node.nodeValue = performUserRequestedConversion(node.nodeValue);
                 }
                 
                 htmlContentBody = tempDiv.innerHTML;
@@ -28916,7 +28927,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Case 2: TXT Export
             else if (finalFormat === 'txt') {
                 const text = await extractTextFromFile(currentFile, currentFileType);
-                const convertedText = convertTextString(text, targetType);
+                // লজিক প্রয়োগ
+                const convertedText = performUserRequestedConversion(text);
                 const blob = new Blob([convertedText], { type: "text/plain;charset=utf-8" });
                 saveAs(blob, outputFileName);
             }
@@ -28933,7 +28945,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (let i = 0; i < textNodes.length; i++) {
                     const originalText = textNodes[i].textContent;
                     if (originalText.trim()) {
-                        textNodes[i].textContent = convertTextString(originalText, targetType);
+                        // লজিক প্রয়োগ
+                        textNodes[i].textContent = performUserRequestedConversion(originalText);
                     }
                 }
 
@@ -28955,7 +28968,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (cellAddress[0] === '!') continue;
                         const cell = worksheet[cellAddress];
                         if (cell.v && typeof cell.v === 'string') {
-                            cell.v = convertTextString(cell.v, targetType);
+                            // লজিক প্রয়োগ
+                            cell.v = performUserRequestedConversion(cell.v);
                         }
                     }
                 });
@@ -28965,7 +28979,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Case 5: Fallback (TXT -> DOCX, etc - No Table support here yet)
             else {
                  const rawText = await extractTextFromFile(currentFile, currentFileType);
-                 const convertedText = convertTextString(rawText, targetType);
+                 // লজিক প্রয়োগ
+                 const convertedText = performUserRequestedConversion(rawText);
                  
                  if (finalFormat === 'docx') {
                      const blob = await createSimpleDocx(convertedText);
@@ -28997,12 +29012,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // --- Text Conversion Helper (Existing Maps) ---
+    // --- Text Conversion Helper (Updated for Bijoy Output Processing) ---
     function convertTextString(text, targetType) {
         if (!text) return '';
         
         if (targetType === 'bijoy') {
-            // Unicode to Bijoy Logic (Simplified copy of existing logic)
+            // Unicode to Bijoy Logic (Full logic with pre-processing)
             let unicodeInput = text;
             const bengaliConsonants = 'কখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহড়ঢ়য়';
             const unicodeHasanta = '\u09CD';
@@ -29053,6 +29068,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     k++;
                 }
             }
+
+            // --- Post-processing (Added as per user request to match main converter) ---
+            
+            // ম্যানুয়াল আনসি রিপ্লেসমেন্ট প্রয়োগ (Global variable from main script)
+            if (typeof manualAnsiReplacements !== 'undefined') {
+                for (const [wrong, correct] of Object.entries(manualAnsiReplacements)) {
+                    if (wrong) {
+                        const regex = new RegExp(wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                        bijoyOutput = bijoyOutput.replace(regex, correct);
+                    }
+                }
+            }
+
+            // লাইনের শুরু এবং দাড়ির পর ফিক্স
+            bijoyOutput = bijoyOutput.replace(/^‡/gm, '†'); // লাইনের শুরুতে
+            bijoyOutput = bijoyOutput.replace(/\|‡/g, '|†');   // দাড়ির পরে
+            bijoyOutput = bijoyOutput.replace(/^‰/gm, 'ˆ'); // লাইনের শুরুতে
+            bijoyOutput = bijoyOutput.replace(/\|‰/g, '|ˆ');   // দাড়ির পরে
+
             return bijoyOutput;
 
         } else {
@@ -29092,6 +29126,16 @@ document.addEventListener('DOMContentLoaded', () => {
             
             unicodeOutput = unicodeOutput.replace(new RegExp(`(\u09C7)(\u09BE)`, 'g'), '\u09CB');
             unicodeOutput = unicodeOutput.replace(new RegExp(`(\u09C7)(\u09D7)`, 'g'), '\u09CC');
+
+            // ম্যানুয়াল ইউনিকোড রিপ্লেসমেন্ট (যদি গ্লোবাল ভেরিয়েবল থাকে)
+            if (typeof manualUnicodeReplacements !== 'undefined') {
+                for (const [wrong, correct] of Object.entries(manualUnicodeReplacements)) {
+                    if (wrong) {
+                        const regex = new RegExp(wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                        unicodeOutput = unicodeOutput.replace(regex, correct);
+                    }
+                }
+            }
 
             return unicodeOutput;
         }
