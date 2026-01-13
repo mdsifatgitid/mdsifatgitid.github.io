@@ -28797,7 +28797,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const docXml = await zip.file("word/document.xml").async("string");
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(docXml, "text/xml");
-                // প্লেইন টেক্সট এক্সট্রাকশন (টেবিল ছাড়া) - শুধুমাত্র টেক্সটবক্সে দেখানোর জন্য
+                // প্লেইন টেক্সট এক্সট্রাকশন (টেবিল ছাড়া) - শুধুমাত্র টেক্সটবক্সে দেখানোর জন্য 
                 let text = "";
                 const paragraphs = xmlDoc.getElementsByTagName("w:p");
                 for (let i = 0; i < paragraphs.length; i++) {
