@@ -7174,12 +7174,21 @@ body.sidebar-open #sidebarOverlay {
     </div>
 
     <!-- News Summary Overlay (Hidden by default) -->
-    <div id="news-summary-view" class="hidden absolute top-0 left-0 w-full h-full bg-white/95 dark:bg-gray-800/95 z-20 backdrop-blur-sm overflow-y-auto rounded-lg p-4 custom-scrollbar">
-         <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4 border-b pb-2 dark:border-gray-600 sticky top-0 bg-white/95 dark:bg-gray-800/95 z-10 flex items-center gap-2">
+    <div id="news-summary-view" class="hidden absolute top-0 left-0 w-full h-full bg-white/95 dark:bg-gray-800/95 z-20 backdrop-blur-sm overflow-y-auto rounded-lg custom-scrollbar">
+         <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4 border-b pb-2 dark:border-gray-600 sticky top-0 bg-white/95 dark:bg-gray-800/95 z-10 flex items-center gap-2 p-4">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-indigo-600"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
             সংবাদ সারসংক্ষেপ (AI)
          </h3>
          
+         <!-- NEW: Start View Button Container -->
+         <div id="news-summary-start-view" class="absolute inset-0 flex flex-col items-center justify-center bg-white/95 dark:bg-gray-800/95 z-30 pt-10">
+            <button id="btn-load-summary" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full shadow-lg transition-transform transform hover:scale-105 flex items-center gap-2 animate-bounce">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                নিউজ সামারি দেখুন
+            </button>
+            <p class="mt-4 text-xs text-gray-500 dark:text-gray-400">এআই এর মাধ্যমে সংবাদের সারসংক্ষেপ</p>
+         </div>
+
          <!-- Loading State -->
          <div id="news-summary-loading" class="hidden flex flex-col items-center justify-center py-10">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 dark:border-indigo-400 mb-2"></div>
@@ -7187,7 +7196,7 @@ body.sidebar-open #sidebarOverlay {
          </div>
 
          <!-- Content List -->
-         <div id="news-summary-list" class="space-y-4 pb-2">
+         <div id="news-summary-list" class="space-y-4 pb-2 p-4 hidden">
             <!-- Summary items will be injected here via JS -->
          </div>
     </div>
@@ -21619,11 +21628,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Summary & Headlines Elements
     const summaryBtn = document.getElementById('summary-news-btn');
     const refreshSummaryBtn = document.getElementById('refresh-summary-btn'); 
-    const viewHeadlinesBtn = document.getElementById('view-headlines-btn'); // নতুন বাটন
+    const viewHeadlinesBtn = document.getElementById('view-headlines-btn'); 
     const summaryView = document.getElementById('news-summary-view');
-    const headlinesView = document.getElementById('news-headlines-view'); // নতুন ভিউ
+    const summaryStartView = document.getElementById('news-summary-start-view'); // New Start View
+    const btnLoadSummary = document.getElementById('btn-load-summary'); // New Button
+    const headlinesView = document.getElementById('news-headlines-view'); 
     const summaryList = document.getElementById('news-summary-list');
-    const headlinesList = document.getElementById('news-headlines-list'); // নতুন লিস্ট
+    const headlinesList = document.getElementById('news-headlines-list'); 
     const summaryLoading = document.getElementById('news-summary-loading');
     const iconSummary = document.getElementById('icon-summary');
     const iconClose = document.getElementById('icon-close');
@@ -21895,22 +21906,26 @@ document.addEventListener('DOMContentLoaded', () => {
             summaryView.classList.remove('hidden');
             headlinesView.classList.add('hidden');
             if (refreshSummaryBtn) refreshSummaryBtn.classList.remove('hidden');
-            if (viewHeadlinesBtn) viewHeadlinesBtn.classList.remove('hidden'); // Show Headlines button
+            if (viewHeadlinesBtn) viewHeadlinesBtn.classList.remove('hidden'); 
             
-            if (Date.now() - summaryGeneratedTime > SUMMARY_CACHE_DURATION || summaryList.children.length === 0) {
-                generateNewsSummary();
-            }
+            // Start View Logic: Show button initially
+            if (summaryStartView) summaryStartView.classList.remove('hidden');
+            if (summaryList) summaryList.classList.add('hidden');
+            if (summaryLoading) summaryLoading.classList.add('hidden');
+            
+            // Check cache but DO NOT auto-load, wait for button click (handled in btn listener)
+            
         } else if (activeView === 'headlines') {
             headlinesView.classList.remove('hidden');
             summaryView.classList.add('hidden');
             if (refreshSummaryBtn) refreshSummaryBtn.classList.add('hidden');
-            if (viewHeadlinesBtn) viewHeadlinesBtn.classList.add('hidden'); // Hide Headlines button
+            if (viewHeadlinesBtn) viewHeadlinesBtn.classList.add('hidden'); 
             renderHeadlinesList();
         } else {
             summaryView.classList.add('hidden');
             headlinesView.classList.add('hidden');
             if (refreshSummaryBtn) refreshSummaryBtn.classList.add('hidden');
-            if (viewHeadlinesBtn) viewHeadlinesBtn.classList.add('hidden'); // Hide Headlines button
+            if (viewHeadlinesBtn) viewHeadlinesBtn.classList.add('hidden'); 
         }
     }
 
@@ -21946,6 +21961,21 @@ document.addEventListener('DOMContentLoaded', () => {
             updateViewUI();
         });
     }
+    
+    // NEW: Load Summary Button Click Listener
+    if (btnLoadSummary) {
+        btnLoadSummary.addEventListener('click', () => {
+            // Hide the start view
+            if (summaryStartView) summaryStartView.classList.add('hidden');
+            
+            // Show loading or list based on cache
+            if (Date.now() - summaryGeneratedTime > SUMMARY_CACHE_DURATION || summaryList.children.length === 0) {
+                generateNewsSummary();
+            } else {
+                if (summaryList) summaryList.classList.remove('hidden');
+            }
+        });
+    }
 
     if (viewHeadlinesBtn) {
         viewHeadlinesBtn.addEventListener('click', () => {
@@ -21960,6 +21990,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (refreshSummaryBtn) {
         refreshSummaryBtn.addEventListener('click', () => {
+            if (summaryStartView) summaryStartView.classList.add('hidden'); // Ensure start view is hidden on refresh
             generateNewsSummary();
         });
     }
@@ -21968,10 +21999,12 @@ document.addEventListener('DOMContentLoaded', () => {
     async function generateNewsSummary() {
         if (!allMessages || allMessages.length === 0) {
             summaryList.innerHTML = '<p class="text-center text-gray-500">কোনো সংবাদ পাওয়া যায়নি।</p>';
+            if(summaryList) summaryList.classList.remove('hidden');
             return;
         }
 
         summaryLoading.classList.remove('hidden');
+        summaryList.classList.add('hidden'); // Hide list while loading
         summaryList.innerHTML = '';
         
         const headlines = allMessages.slice(0, 10).map(m => `- ${m.title} (${m.source})`).join('\n');
@@ -22036,6 +22069,7 @@ document.addEventListener('DOMContentLoaded', () => {
              summaryList.innerHTML += fallbackHTML;
         } finally {
             summaryLoading.classList.add('hidden');
+            summaryList.classList.remove('hidden'); // Show list after done
         }
     }
 
@@ -22077,7 +22111,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 // END: Animated News Ticker Script
 // ====================================================================
-
 
 // ====================================================================
 // START: HEALTH & LIFESTYLE TAB SCRIPT
