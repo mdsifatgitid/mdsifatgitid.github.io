@@ -1,15 +1,17 @@
-const CACHE_NAME = 'bangla-toolbox-v8'; // ভার্সন আপডেট করা হয়েছে
+const CACHE_NAME = 'bangla-toolbox-v13'; // ১. ভার্সন আপডেট করা হয়েছে (v12 থেকে v13)
 const urlsToCache = [
     './', 
     './index.html', 
     './manifest.json',
-    // শুধুমাত্র প্রয়োজনীয় এবং নির্ভরযোগ্য CDN লিংকগুলো রাখা হলো
-    '[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)',
-    '[https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js](https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js)',
-    '[https://cdn.jsdelivr.net/npm/chart.js](https://cdn.jsdelivr.net/npm/chart.js)',
-    '[https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css](https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css)',
-    '[https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js](https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js)',
-    '[https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js](https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js)'
+    // ২. নিচে Tailwind এর পুরনো লিংক সরিয়ে  নতুন গিটহাব লিংক বসানো হয়েছে
+    'https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io@main/tailwind.js',
+    
+    // বাকি লাইব্রেরিগুলো আগের মতোই আছে
+    'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
+    'https://cdn.jsdelivr.net/npm/chart.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css',
+    'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
 ];
 
 // ১. ইনস্টল ইভেন্ট: ফাইলগুলো ক্যাশ করা হবে
