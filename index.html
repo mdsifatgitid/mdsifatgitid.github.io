@@ -21760,7 +21760,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             
                             // ফিল্টারিং লজিক: ৮ ঘণ্টার মধ্যে প্রকাশিত হতে হবে
                             if (pubDate >= eightHoursAgo && pubDate <= new Date(now + 60000)) { 
-                                const timeStr = pubDate.toLocaleTimeString('bn-BD', { 
+                                // আপডেট: তারিখ ও সময় একসাথে দেখানোর জন্য পরিবর্তন করা হয়েছে
+                                const timeStr = pubDate.toLocaleString('bn-BD', { 
+                                    day: 'numeric',
+                                    month: 'short',
                                     hour: '2-digit', 
                                     minute: '2-digit',
                                     timeZone: 'Asia/Dhaka' 
