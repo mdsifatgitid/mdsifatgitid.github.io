@@ -7175,13 +7175,11 @@ body.sidebar-open #sidebarOverlay {
 
     <!-- News Summary Overlay (Hidden by default) -->
     <div id="news-summary-view" class="hidden absolute top-0 left-0 w-full h-full bg-white dark:bg-gray-800 z-20 overflow-y-auto rounded-lg custom-scrollbar">
-         <!-- ফিক্স: ব্যাকগ্রাউন্ড কালার সলিড করা হয়েছে (bg-white/95 থেকে bg-white) -->
          <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4 border-b pb-2 dark:border-gray-600 sticky top-0 bg-white dark:bg-gray-800 z-10 flex items-center gap-2 p-4 shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-indigo-600"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
             সংবাদ সারসংক্ষেপ (AI)
          </h3>
          
-         <!-- NEW: Start View Button Container -->
          <div id="news-summary-start-view" class="absolute inset-0 flex flex-col items-center justify-center bg-white dark:bg-gray-800 z-30 pt-10">
             <button id="btn-load-summary" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full shadow-lg transition-transform transform hover:scale-105 flex items-center gap-2 animate-bounce">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
@@ -7190,41 +7188,35 @@ body.sidebar-open #sidebarOverlay {
             <p class="mt-4 text-xs text-gray-500 dark:text-gray-400">এআই এর মাধ্যমে সংবাদের সারসংক্ষেপ</p>
          </div>
 
-         <!-- Loading State -->
          <div id="news-summary-loading" class="hidden flex flex-col items-center justify-center py-10">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 dark:border-indigo-400 mb-2"></div>
             <p class="text-sm text-gray-500 dark:text-gray-400 animate-pulse">সংবাদ বিশ্লেষণ করা হচ্ছে...</p>
          </div>
 
-         <!-- Content List -->
-         <div id="news-summary-list" class="space-y-4 pb-2 p-4 hidden">
-            <!-- Summary items will be injected here via JS -->
-         </div>
+         <div id="news-summary-list" class="space-y-4 pb-2 p-4 hidden"></div>
     </div>
 
     <!-- NEW: Headlines List Overlay (Hidden by default) -->
     <div id="news-headlines-view" class="hidden absolute top-0 left-0 w-full h-full bg-white dark:bg-gray-800 z-20 overflow-y-auto rounded-lg p-0 custom-scrollbar">
-         <!-- ফিক্স: ব্যাকগ্রাউন্ড কালার সলিড করা হয়েছে এবং প্যাডিং ঠিক করা হয়েছে -->
-         <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-0 border-b pb-2 dark:border-gray-600 sticky top-0 bg-white dark:bg-gray-800 z-10 flex items-center gap-2 p-4 shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-green-600"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16" /></svg>
-            সকল সংবাদ শিরোনাম
+         <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-0 border-b pb-2 dark:border-gray-600 sticky top-0 bg-white dark:bg-gray-800 z-10 flex items-center justify-between gap-2 p-4 shadow-sm">
+            <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-green-600"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16" /></svg>
+                সকল সংবাদ শিরোনাম
+            </div>
+            <!-- Manual Refresh Button removed from header injection, now in controls -->
          </h3>
-         <div id="news-headlines-list" class="space-y-2 pb-2 p-4">
-            <!-- Headlines will be injected here via JS -->
-         </div>
+         <div id="news-headlines-list" class="space-y-2 pb-2 p-4"></div>
     </div>
 
     <!-- Navigation Buttons -->
-    
-    <!-- Previous Button (বাম পাশে ফিক্সড) -->
     <button id="prev-news" class="news-nav-icon absolute left-1 top-1/2 transform -translate-y-1/2 z-30" title="পূর্ববর্তী সংবাদ">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
     </button>
 
-    <!-- Right Controls Group (নেক্সট বাটন, রিফ্রেশ বাটন এবং সামারি বাটন একসাথে ডান পাশে) -->
+    <!-- Right Controls Group -->
     <div id="ticker-right-controls" class="absolute right-1 top-1/2 transform -translate-y-1/2 flex gap-1 z-30 transition-all duration-300">
         
-        <!-- NEW: View All Headlines Button (Initially HIDDEN) -->
+        <!-- View All Headlines Button (Hidden by default, shown in Summary View) -->
         <button id="view-headlines-btn" class="hidden news-nav-icon static transform-none bg-green-100 dark:bg-gray-600 text-green-600 dark:text-green-300 hover:bg-green-200 dark:hover:bg-gray-500" title="সকল শিরোনাম দেখুন">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5z"/>
@@ -7232,8 +7224,16 @@ body.sidebar-open #sidebarOverlay {
             </svg>
         </button>
 
-        <!-- Refresh Button (Hidden until summary is active) -->
+        <!-- Refresh Button (Summary) -->
         <button id="refresh-summary-btn" class="hidden news-nav-icon static transform-none bg-blue-100 dark:bg-gray-600 text-blue-600 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-gray-500" title="সামারি রিফ্রেশ করুন">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+            </svg>
+        </button>
+        
+        <!-- NEW: Refresh Button (Headlines) - Placed with other icons -->
+        <button id="refresh-headlines-btn" class="hidden news-nav-icon static transform-none bg-green-100 dark:bg-gray-600 text-green-600 dark:text-green-300 hover:bg-green-200 dark:hover:bg-gray-500" title="শিরোনাম রিফ্রেশ করুন">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
                 <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
@@ -7246,12 +7246,10 @@ body.sidebar-open #sidebarOverlay {
         
         <!-- Summary Toggle Button (Acts as Close button when expanded) -->
         <button id="summary-news-btn" class="news-nav-icon static transform-none bg-indigo-200 dark:bg-gray-600 text-indigo-800 dark:text-white hover:bg-indigo-300 dark:hover:bg-gray-500" title="সংবাদ সারসংক্ষেপ দেখুন">
-             <!-- Summary Icon (List) -->
             <svg id="icon-summary" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                  <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
                  <path d="M4.5 10a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
             </svg>
-            <!-- Close Icon (Cross) -->
             <svg id="icon-close" class="hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
             </svg>
@@ -21618,7 +21616,7 @@ if (mainHeading) {
 // ====================================================================
 
 // ====================================================================
-// START: Animated News Ticker Script (Updated with AI Summary & Headline List)
+// START: Animated News Ticker Script (Updated: 1h/8h Tiles, 5min Refresh & Manual Refresh)
 // ====================================================================
 document.addEventListener('DOMContentLoaded', () => {
     const tickerContainer = document.getElementById('news-ticker-container');
@@ -21630,10 +21628,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Summary & Headlines Elements
     const summaryBtn = document.getElementById('summary-news-btn');
     const refreshSummaryBtn = document.getElementById('refresh-summary-btn'); 
+    const refreshHeadlinesBtn = document.getElementById('refresh-headlines-btn'); // নতুন বাটন
     const viewHeadlinesBtn = document.getElementById('view-headlines-btn'); 
     const summaryView = document.getElementById('news-summary-view');
-    const summaryStartView = document.getElementById('news-summary-start-view'); // New Start View
-    const btnLoadSummary = document.getElementById('btn-load-summary'); // New Button
+    const summaryStartView = document.getElementById('news-summary-start-view');
+    const btnLoadSummary = document.getElementById('btn-load-summary');
     const headlinesView = document.getElementById('news-headlines-view'); 
     const summaryList = document.getElementById('news-summary-list');
     const headlinesList = document.getElementById('news-headlines-list'); 
@@ -21683,7 +21682,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { title: "যেকোনো মতামতের জন্য আমাদের সাথে যোগাযোগ করুন।", link: "https://bio.link/mdsifatbiolink", source: "Developer", time: null }
     ];
 
-    let allMessages = [];
+    let allMessages = [];    // ৮ ঘন্টার সব নিউজ (লিস্টের জন্য)
+    let tickerMessages = []; // ১ ঘন্টার নিউজ (টিকারের জন্য)
     let messageIndex = 0;
     let autoPlayInterval = null;
     let transitionTimeout = null; 
@@ -21691,95 +21691,142 @@ document.addEventListener('DOMContentLoaded', () => {
     const ANIMATION_DURATION = 500; 
     const AUTO_PLAY_INTERVAL = useTypingAnimation ? 10000 : 5000;
     
+    // Cache Constants
+    const NEWS_CACHE_KEY = 'bangla_toolbox_news_cache';
+    const NEWS_LAST_FETCH_KEY = 'bangla_toolbox_news_last_fetch';
+    const REFRESH_INTERVAL = 5 * 60 * 1000; // 5 Minutes Refresh & Cache Time
+    
     // View States
     let activeView = 'none'; // 'none', 'summary', 'headlines'
     let summaryGeneratedTime = 0;
-    const SUMMARY_CACHE_DURATION = 30 * 60 * 1000; // 30 Minutes Cache
+    const SUMMARY_CACHE_DURATION = 30 * 60 * 1000; // 30 Minutes Cache for Summary
 
-// --- Fetch News Function (Updated with Timezone Fix) ---
+// --- Fetch News Function (Direct XML Parsing & 8 Hours Filter with Caching) ---
     async function fetchNewsHeadlines() {
-        const feeds = {
-            'বাংলাদেশ প্রতিদিন': 'https://www.bd-pratidin.com/rss.xml',
-            'কালের কণ্ঠ': 'https://www.kalerkantho.com/rss.xml',
-            'প্রথম আলো': 'https://www.prothomalo.com/feed/',
-            'সময়ের কণ্ঠস্বর': 'https://somoyerkonthosor.com/feed',
-			'BBC বাংলা': 'https://feeds.bbci.co.uk/bengali/rss.xml',
-            'আজকের পত্রিকা': 'https://www.ajkerpatrika.com/feed'
-        };
-        // ৮ ঘণ্টা আগের খবর পর্যন্ত ফিল্টার করার জন্য
-        const eightHoursAgo = new Date(Date.now() - 8 * 60 * 60 * 1000);
+        const now = new Date().getTime();
+        const lastFetch = localStorage.getItem(NEWS_LAST_FETCH_KEY);
+        const cachedData = localStorage.getItem(NEWS_CACHE_KEY);
 
-        function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[array[i], array[j]] = [array[j], array[i]]; } return array; }
+        // ১. ক্যাশ চেক করা (৫ মিনিটের মধ্যে হলে ক্যাশ থেকে রিটার্ন করবে)
+        if (cachedData && lastFetch && (now - parseInt(lastFetch) < REFRESH_INTERVAL)) {
+            // console.log("Serving news from cache...");
+            try {
+                return JSON.parse(cachedData);
+            } catch (e) {
+                console.error("Cache parse error", e);
+            }
+        }
+
+        // সরাসরি XML ফিড লিংক (CORS প্রক্সির মাধ্যমে ব্যবহার করা হবে)
+        const feeds = [
+            { name: 'বাংলাদেশ প্রতিদিন', url: 'https://www.bd-pratidin.com/rss.xml' },
+            { name: 'কালের কণ্ঠ', url: 'https://www.kalerkantho.com/rss.xml' },
+			{ name: 'সময়ের কণ্ঠস্বর', url: 'https://somoyerkonthosor.com/feed' },
+			{ name: 'আজকের পত্রিকা', url: 'https://www.ajkerpatrika.com/feed' },
+			{ name: 'প্রথম আলো', url: 'https://www.prothomalo.com/feed/' },
+			{ name: 'বিবিসি বাংলা', url: 'https://feeds.bbci.co.uk/bengali/rss.xml' },
+            { name: 'চ্যানেল আই', url: 'https://www.channelionline.com/feed' },
+            { name: 'বাংলা ট্রিবিউন', url: 'https://www.banglatribune.com/feed/' }
+        ];
+
+        // সময়সীমা নির্ধারণ: বর্তমান সময় থেকে ৮ ঘণ্টা আগে (লিস্টের জন্য)
+        const timeLimit = 8 * 60 * 60 * 1000; // ৮ ঘণ্টা মিলিসেকেন্ডে
+        const eightHoursAgo = new Date(now - timeLimit);
 
         try {
-            const promises = Object.entries(feeds).map(async ([source, url]) => {
+            // সব ফিড থেকে প্যারালাল ফেচিং
+            const promises = feeds.map(async (feed) => {
                 try {
-                    const cacheBuster = `&_=${new Date().getTime()}`;
-                    const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}${cacheBuster}`);
-                    if (!response.ok) throw new Error(`Fetch failed`);
-                    const data = await response.json();
-                    if (data.status !== 'ok') throw new Error(`API error`);
-                    return { source, items: data.items };
-                } catch (err) { return null; }
-            });
-            const results = await Promise.all(promises);
-            let allHeadlines = [];
-            results.forEach(result => { 
-                if (result && result.items) { 
-                    const { source, items } = result; 
-                    items.forEach(item => { 
-                        const { title, link, pubDate } = item; 
-                        if (title && link && pubDate) { 
-                            try { 
-                                const publicationDate = new Date(pubDate); 
+                    // CORS বাইপাস করার জন্য Proxy ব্যবহার
+                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(feed.url)}&t=${now}`;
+                    
+                    const response = await fetch(proxyUrl);
+                    if (!response.ok) return null;
+                    
+                    const xmlText = await response.text();
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+                    const items = xmlDoc.querySelectorAll("item");
+                    
+                    let feedNews = [];
+
+                    items.forEach(item => {
+                        const title = item.querySelector("title")?.textContent;
+                        const link = item.querySelector("link")?.textContent;
+                        const pubDateStr = item.querySelector("pubDate")?.textContent;
+
+                        if (title && link && pubDateStr) {
+                            const pubDate = new Date(pubDateStr);
+                            
+                            // ফিল্টারিং লজিক: ৮ ঘণ্টার মধ্যে প্রকাশিত হতে হবে
+                            if (pubDate >= eightHoursAgo && pubDate <= new Date(now + 60000)) { 
+                                const timeStr = pubDate.toLocaleTimeString('bn-BD', { 
+                                    hour: '2-digit', 
+                                    minute: '2-digit',
+                                    timeZone: 'Asia/Dhaka' 
+                                });
                                 
-                                if (publicationDate > eightHoursAgo) { 
-                                    // ফিক্স: এখানে টাইমজোন 'Asia/Dhaka' নির্দিষ্ট করে দেওয়া হয়েছে।
-                                    const timeStr = publicationDate.toLocaleTimeString('bn-BD', { 
-                                        hour: '2-digit', 
-                                        minute: '2-digit',
-                                        timeZone: 'Asia/Dhaka' // Force Bangladesh Time
-                                    });
-                                    const dateStr = publicationDate.toLocaleDateString('bn-BD', { 
-                                        day: 'numeric', 
-                                        month: 'short',
-                                        timeZone: 'Asia/Dhaka'
-                                    });
-                                    
-                                    allHeadlines.push({ 
-                                        title: title.trim(), 
-                                        link: link.trim(), 
-                                        source: source,
-                                        time: `${dateStr}, ${timeStr}`,
-                                        timestamp: publicationDate
-                                    }); 
-                                } 
-                            } catch (e) {} 
+                                feedNews.push({ 
+                                    title: title.trim(), 
+                                    link: link.trim(), 
+                                    source: feed.name,
+                                    time: `${timeStr}`, 
+                                    timestamp: pubDate.getTime() // টাইমস্ট্যাম্প রাখা হলো ফিল্টারিংয়ের জন্য
+                                }); 
+                            } 
                         } 
                     }); 
-                } 
+                    return feedNews;
+                } catch (err) {
+                    console.warn(`Error fetching ${feed.name}:`, err);
+                    return null; 
+                }
             });
-            if (allHeadlines.length === 0) return customMessages;
-            const uniqueHeadlines = [...new Map(allHeadlines.map(item => [item.title, item])).values()];
-            return shuffleArray(uniqueHeadlines);
-        } catch (error) { console.error('Error fetching news:', error); return customMessages; }
+
+            const results = await Promise.all(promises);
+            // সব রেজাল্ট একত্রিত করা
+            let allHeadlines = results.flat().filter(item => item !== null);
+            
+            // যদি ৮ ঘণ্টার মধ্যে কোনো খবর না থাকে
+            if (allHeadlines.length === 0) {
+                 return [
+                    { title: "গত ৮ ঘণ্টার মধ্যে কোনো ব্রেকিং নিউজ পাওয়া যায়নি।", link: "#", source: "আপডেট", time: null, timestamp: Date.now() },
+                    ...customMessages.map(m => ({...m, timestamp: 0}))
+                ];
+            }
+
+            // একদম নতুন খবর সবার আগে দেখানোর জন্য সর্টিং
+            allHeadlines.sort((a, b) => b.timestamp - a.timestamp);
+            
+            // ২. নতুন ডেটা ক্যাশ করা
+            localStorage.setItem(NEWS_CACHE_KEY, JSON.stringify(allHeadlines));
+            localStorage.setItem(NEWS_LAST_FETCH_KEY, now.toString());
+            
+            return allHeadlines;
+
+        } catch (error) { 
+            console.error('Error fetching news:', error); 
+            return customMessages.map(m => ({...m, timestamp: 0})); 
+        }
     }
 
-    // --- Display Headline Logic ---
+    // --- Display Headline Logic (Modified for Ticker Messages) ---
     function displayCurrentHeadline(direction = 'up') {
         clearTimeout(transitionTimeout); 
         isTransitioning = true; 
 
-        if (allMessages.length === 0) {
-            tickerTextElement.textContent = "বার্তা লোড হচ্ছে...";
+        // টিকারের জন্য যদি মেসেজ না থাকে (ফলব্যাক)
+        if (tickerMessages.length === 0) {
+            tickerTextElement.textContent = "কোনো ব্রেকিং নিউজ নেই (১ ঘণ্টা)";
             return;
         }
 
-        if (messageIndex < 0) messageIndex = allMessages.length - 1;
-        if (messageIndex >= allMessages.length) messageIndex = 0;
+        if (messageIndex < 0) messageIndex = tickerMessages.length - 1;
+        if (messageIndex >= tickerMessages.length) messageIndex = 0;
 
-        const currentMessage = allMessages[messageIndex];
-        const displayText = ` ● ${currentMessage.title} - <span class="news-source text-indigo-600 dark:text-indigo-400 italic">${currentMessage.source}</span>`;
+        const currentMessage = tickerMessages[messageIndex];
+        const timeBadge = currentMessage.time ? `<span class="bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 text-xs px-1 rounded ml-1">${currentMessage.time}</span>` : '';
+        const displayText = ` ● ${currentMessage.title} - <span class="news-source text-indigo-600 dark:text-indigo-400 italic">${currentMessage.source}</span> ${timeBadge}`;
 
         if (useTypingAnimation) {
             tickerTextElement.className = `news-ticker-text typing-animation text-indigo-800 dark:!text-white font-semibold`;
@@ -21885,7 +21932,7 @@ document.addEventListener('DOMContentLoaded', () => {
         autoPlayInterval = null;
     }
 
-    // --- View State Management ---
+    // --- View State Management (Updated to manage button visibility) ---
     function updateViewUI() {
         if (activeView !== 'none') {
             stopAutoPlay();
@@ -21920,69 +21967,101 @@ document.addEventListener('DOMContentLoaded', () => {
             summaryView.classList.remove('hidden');
             headlinesView.classList.add('hidden');
             if (refreshSummaryBtn) refreshSummaryBtn.classList.remove('hidden');
+            if (refreshHeadlinesBtn) refreshHeadlinesBtn.classList.add('hidden'); // Ensure hidden
             if (viewHeadlinesBtn) viewHeadlinesBtn.classList.remove('hidden'); 
             
-            // Start View Logic: Show button initially
             if (summaryStartView) summaryStartView.classList.remove('hidden');
             if (summaryList) summaryList.classList.add('hidden');
             if (summaryLoading) summaryLoading.classList.add('hidden');
-            
-            // Check cache but DO NOT auto-load, wait for button click (handled in btn listener)
             
         } else if (activeView === 'headlines') {
             headlinesView.classList.remove('hidden');
             summaryView.classList.add('hidden');
             if (refreshSummaryBtn) refreshSummaryBtn.classList.add('hidden');
+            if (refreshHeadlinesBtn) refreshHeadlinesBtn.classList.remove('hidden'); // Show this
             if (viewHeadlinesBtn) viewHeadlinesBtn.classList.add('hidden'); 
             renderHeadlinesList();
         } else {
+            // None
             summaryView.classList.add('hidden');
             headlinesView.classList.add('hidden');
             if (refreshSummaryBtn) refreshSummaryBtn.classList.add('hidden');
-            if (viewHeadlinesBtn) viewHeadlinesBtn.classList.add('hidden'); 
+            if (refreshHeadlinesBtn) refreshHeadlinesBtn.classList.add('hidden');
+            if (viewHeadlinesBtn) viewHeadlinesBtn.classList.add('hidden'); // HIDE THIS (User request)
         }
     }
 
-    // --- Headlines View Logic ---
+    // --- Headlines View Logic (Updated: 1h & 8h Tiles) ---
     function renderHeadlinesList() {
-        if (!allMessages || allMessages.length === 0) {
+        // ১ ঘন্টার টাইম ক্যালকুলেশন
+        const oneHourAgo = new Date().getTime() - (60 * 60 * 1000);
+
+        // দুই ভাগে ফিল্টার করা
+        const recentNews = allMessages.filter(msg => msg.timestamp >= oneHourAgo);
+        const olderNews = allMessages.filter(msg => msg.timestamp < oneHourAgo);
+
+        let htmlContent = '';
+
+        if (allMessages.length === 0) {
             headlinesList.innerHTML = '<p class="text-center text-gray-500">কোনো সংবাদ পাওয়া যায়নি।</p>';
             return;
         }
 
-        headlinesList.innerHTML = allMessages.map(m => {
-            const timeDisplay = m.time ? `<span class="flex items-center gap-1 text-xs text-gray-400"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ${m.time}</span>` : '';
-            return `
-            <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-                <a href="${m.link}" target="_blank" class="text-base font-bold text-indigo-700 dark:text-indigo-300 hover:underline block mb-1">${m.title}</a>
-                <div class="flex justify-between items-center">
-                    <span class="text-xs bg-indigo-100 dark:bg-indigo-900/50 text-indigo-800 dark:text-indigo-200 px-2 py-0.5 rounded font-semibold">${m.source}</span>
+        // ১. সর্বশেষ ১ ঘণ্টা টাইল
+        if (recentNews.length > 0) {
+            htmlContent += `
+                <div class="sticky top-0 z-10 bg-indigo-50 dark:bg-gray-700 py-2 px-3 mb-2 rounded-md font-bold text-indigo-800 dark:text-indigo-200 shadow-sm border border-indigo-100 dark:border-gray-600 text-sm flex items-center gap-2">
+                    <span class="animate-pulse">🔥</span> সর্বশেষ ১ ঘণ্টা
+                    <span class="ml-auto bg-indigo-200 dark:bg-gray-600 text-xs px-2 py-0.5 rounded-full">${recentNews.length}টি</span>
+                </div>
+            `;
+            htmlContent += recentNews.map(m => generateNewsItemHTML(m)).join('');
+        }
+
+        // ২. সর্বশেষ ৮ ঘণ্টা টাইল (যদি থাকে)
+        if (olderNews.length > 0) {
+            const marginTop = recentNews.length > 0 ? 'mt-6' : ''; // গ্যাপ বাড়ানোর জন্য
+            htmlContent += `
+                <div class="sticky top-0 z-10 bg-gray-100 dark:bg-gray-700 py-2 px-3 mb-2 ${marginTop} rounded-md font-bold text-gray-700 dark:text-gray-300 shadow-sm border border-gray-200 dark:border-gray-600 text-sm flex items-center gap-2">
+                    <span>🕒</span> সর্বশেষ ৮ ঘণ্টা
+                     <span class="ml-auto bg-gray-200 dark:bg-gray-600 text-xs px-2 py-0.5 rounded-full">${olderNews.length}টি</span>
+                </div>
+            `;
+            htmlContent += olderNews.map(m => generateNewsItemHTML(m)).join('');
+        }
+
+        headlinesList.innerHTML = htmlContent;
+    }
+
+    // নিউজ আইটেম HTML জেনারেটর হেল্পার
+    function generateNewsItemHTML(m) {
+        const timeDisplay = m.time ? `<span class="flex items-center gap-1 text-xs text-gray-400"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ${m.time}</span>` : '';
+        return `
+            <div class="bg-white dark:bg-gray-800 p-3 rounded border border-gray-200 dark:border-gray-600 hover:bg-indigo-50 dark:hover:bg-gray-700 transition-colors mb-2 shadow-sm">
+                <a href="${m.link}" target="_blank" class="text-base font-bold text-gray-800 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline block mb-1 leading-snug">${m.title}</a>
+                <div class="flex justify-between items-center mt-2">
+                    <span class="text-xs bg-indigo-100 dark:bg-indigo-900/50 text-indigo-800 dark:text-indigo-200 px-2 py-0.5 rounded font-semibold border border-indigo-100 dark:border-indigo-800">${m.source}</span>
                     ${timeDisplay}
                 </div>
             </div>
-            `;
-        }).join('');
+        `;
     }
 
     // --- Buttons Event Listeners ---
     if (summaryBtn) {
         summaryBtn.addEventListener('click', () => {
             if (activeView !== 'none') {
-                activeView = 'none'; // Close everything
+                activeView = 'none'; 
             } else {
-                activeView = 'summary'; // Open summary
+                activeView = 'summary'; 
             }
             updateViewUI();
         });
     }
     
-    // NEW: Load Summary Button Click Listener
     if (btnLoadSummary) {
         btnLoadSummary.addEventListener('click', () => {
-            // Hide the start view
             if (summaryStartView) summaryStartView.classList.add('hidden');
-            
-            // Show loading or list based on cache
             if (Date.now() - summaryGeneratedTime > SUMMARY_CACHE_DURATION || summaryList.children.length === 0) {
                 generateNewsSummary();
             } else {
@@ -21994,9 +22073,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (viewHeadlinesBtn) {
         viewHeadlinesBtn.addEventListener('click', () => {
             if (activeView === 'headlines') {
-                activeView = 'none'; // Close if already open
+                activeView = 'none'; 
             } else {
-                activeView = 'headlines'; // Switch/Open headlines
+                activeView = 'headlines'; 
             }
             updateViewUI();
         });
@@ -22004,12 +22083,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (refreshSummaryBtn) {
         refreshSummaryBtn.addEventListener('click', () => {
-            if (summaryStartView) summaryStartView.classList.add('hidden'); // Ensure start view is hidden on refresh
+            if (summaryStartView) summaryStartView.classList.add('hidden'); 
             generateNewsSummary();
         });
     }
 
-    // --- Gemini Summary Generation ---
+    // NEW: Refresh Headlines Button Listener
+    if (refreshHeadlinesBtn) {
+        refreshHeadlinesBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            refreshHeadlinesBtn.querySelector('svg').classList.add('animate-spin'); // স্পিন এনিমেশন
+            showCustomAlert('সংবাদ রিফ্রেশ করা হচ্ছে...');
+            
+            // ক্যাশ ক্লিয়ার করে ফোর্স রিফ্রেশ
+            localStorage.removeItem(NEWS_LAST_FETCH_KEY);
+            initializeTicker().then(() => {
+                setTimeout(() => {
+                    refreshHeadlinesBtn.querySelector('svg').classList.remove('animate-spin'); // এনিমেশন বন্ধ
+                    showCustomAlert('সংবাদ সফলভাবে আপডেট হয়েছে!');
+                }, 1000);
+            });
+        });
+    }
+
+    // --- Gemini Summary Generation (Uses allMessages) ---
     async function generateNewsSummary() {
         if (!allMessages || allMessages.length === 0) {
             summaryList.innerHTML = '<p class="text-center text-gray-500">কোনো সংবাদ পাওয়া যায়নি।</p>';
@@ -22018,9 +22115,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         summaryLoading.classList.remove('hidden');
-        summaryList.classList.add('hidden'); // Hide list while loading
+        summaryList.classList.add('hidden'); 
         summaryList.innerHTML = '';
         
+        // টপ ১০ টি খবর সামারির জন্য পাঠানো হচ্ছে
         const headlines = allMessages.slice(0, 10).map(m => `- ${m.title} (${m.source})`).join('\n');
         
         const prompt = `
@@ -22078,25 +22176,52 @@ document.addEventListener('DOMContentLoaded', () => {
             const errorMsg = apiKeyMissing ? 'API কী সেট করা নেই।' : 'নেটওয়ার্ক সমস্যা বা জেমিনি রেসপন্স করেনি।';
             
             summaryList.innerHTML = `<div class="p-4 bg-red-100 text-red-700 rounded mb-4 text-center text-sm font-semibold">${errorMsg} নিচে সাধারণ তালিকা দেখানো হলো:</div>`;
-             renderHeadlinesList(); // Fallback to list
+             renderHeadlinesList(); 
              const fallbackHTML = headlinesList.innerHTML;
              summaryList.innerHTML += fallbackHTML;
         } finally {
             summaryLoading.classList.add('hidden');
-            summaryList.classList.remove('hidden'); // Show list after done
+            summaryList.classList.remove('hidden'); 
         }
     }
 
 
-    // --- Initialization ---
+    // --- Initialization & Logic Update ---
     async function initializeTicker() {
         if (isNewsTickerEnabled) {
+             // ১. সব সংবাদ (৮ ঘণ্টার) আনুন
              allMessages = await fetchNewsHeadlines();
+             
+             // ২. টিকারের জন্য আলাদা করে গত ১ ঘণ্টার (৬০ মিনিট) নিউজ ফিল্টার করুন
+             const oneHourAgo = new Date().getTime() - (60 * 60 * 1000);
+             tickerMessages = allMessages.filter(msg => msg.timestamp >= oneHourAgo);
+
+             // যদি ১ ঘণ্টার মধ্যে কোনো নিউজ না থাকে, তবে একটি কাস্টম মেসেজ দেখান
+             if (tickerMessages.length === 0) {
+                 // যদি ৮ ঘণ্টার নিউজ থাকে, কিন্তু ১ ঘণ্টার নেই
+                 if (allMessages.length > 0) {
+                     tickerMessages = [{ 
+                         title: "গত ১ ঘণ্টার মধ্যে কোনো ব্রেকিং নিউজ পাওয়া যায়নি। গত ৮ ঘণ্টার খবর দেখতে 'সকল সংবাদ শিরোনাম' এ ক্লিক করুন।", 
+                         link: "#", source: "আপডেট", time: null 
+                     }];
+                 } else {
+                     // কোনো নিউজই নেই
+                     tickerMessages = customMessages;
+                 }
+             }
+
         } else {
              allMessages = customMessages;
+             tickerMessages = customMessages;
         }
+        
         displayCurrentHeadline(); 
         startAutoPlay();
+        
+        // লিস্ট ভিউ খোলা থাকলে সেটিও আপডেট করুন
+        if (activeView === 'headlines') {
+            renderHeadlinesList();
+        }
     }
 
     nextBtn.addEventListener('click', () => { showNextHeadline(); startAutoPlay(); });
@@ -22109,18 +22234,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeTicker();
 
-    // Background news update every 5 mins
+    // Background news update every 5 mins (Refresh Interval)
     setInterval(async () => {
+        // ক্যাশ ক্লিয়ার না করে কল করা হবে, কিন্তু fetchNewsHeadlines ক্যাশ এক্সপায়ার হলে নতুন ডেটা আনবে
         if (isNewsTickerEnabled) {
+            // ৫ মিনিট পর পর অটোমেটিক নতুন ডেটা চেক করার জন্য ক্যাশ ভ্যালিডেশন fetchNewsHeadlines এর ভেতরেই আছে
             const news = await fetchNewsHeadlines();
-            if (news && news.length > 0 && JSON.stringify(news) !== JSON.stringify(allMessages)) {
-                allMessages = news;
-                if (!isTransitioning && activeView === 'none') {
-                    displayCurrentHeadline();
+            
+            if (news && news.length > 0) {
+                // Check if new content is different
+                const currentTitles = allMessages.map(m => m.title).join();
+                const newTitles = news.map(m => m.title).join();
+                
+                if (currentTitles !== newTitles) {
+                    allMessages = news;
+                    
+                    // আপডেট হলে টিকারও রিফ্রেশ করুন (১ ঘণ্টার লজিক সহ)
+                    const oneHourAgo = new Date().getTime() - (60 * 60 * 1000);
+                    tickerMessages = allMessages.filter(msg => msg.timestamp >= oneHourAgo);
+                    if (tickerMessages.length === 0 && allMessages.length > 0) {
+                         tickerMessages = [{ title: "গত ১ ঘণ্টার মধ্যে কোনো ব্রেকিং নিউজ পাওয়া যায়নি।", link: "#", source: "আপডেট", time: null }];
+                    } else if (tickerMessages.length === 0) {
+                         tickerMessages = customMessages;
+                    }
+
+                    if (!isTransitioning && activeView === 'none') {
+                        messageIndex = 0; 
+                        displayCurrentHeadline();
+                    }
+                    
+                    // লিস্ট ভিউ আপডেট
+                    if (activeView === 'headlines') {
+                        renderHeadlinesList();
+                    }
                 }
             }
         }
-    }, 5 * 60 * 1000); 
+    }, REFRESH_INTERVAL); 
 });
 // ====================================================================
 // END: Animated News Ticker Script
