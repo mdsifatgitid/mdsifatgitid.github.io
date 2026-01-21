@@ -10599,7 +10599,7 @@ body.sidebar-open #sidebarOverlay {
         <div class="setting-item">
             <div class="setting-text" style="flex-grow: 1; margin-right: 15px;">
                 <label for="hijriDateAdjustInput" class="font-semibold text-gray-700 dark:text-gray-300">হিজরি তারিখ অ্যাডজাস্টার</label>
-                <p class="text-sm text-gray-500 dark:text-gray-400">হিজরি তারিখ ১-২ দিন কম/বেশি করতে এখানে সংখ্যা লিখুন (যেমন: -1 বা 1)। ডিফল্ট: -1</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">হিজরি তারিখ ১-২ দিন কম/বেশি করতে এখানে সংখ্যা লিখুন (যেমন: -1 বা 1)। ডিফল্ট: -2</p>
                 <div class="flex gap-2 mt-2">
                     <input type="number" id="hijriDateAdjustInput" placeholder="-2" class="flex-grow p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-indigo-500 text-sm">
                     <button id="saveHijriAdjustBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded text-sm">সেভ</button>
@@ -11401,7 +11401,7 @@ async function clearExpiredItems() {
 // হিজরি তারিখ অ্যাডজাস্টমেন্টের জন্য সেন্ট্রাল ফাংশন
 function getGlobalHijriAdjustment() {
     // যদি সেটিংসে ইউজার কিছু সেট না করে থাকে, তবে এই ভ্যালুটি কাজ করবে।
-    const defaultValue = '-1'; 
+    const defaultValue = '-2'; 
     
     return parseInt(localStorage.getItem('hijriDateAdjustment') || defaultValue, 10);
 }
