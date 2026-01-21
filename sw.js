@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bangla-toolbox-v14';
+const CACHE_NAME = 'bangla-toolbox-v15';
 const urlsToCache = [
     './', 
     './index.html', 
@@ -11,7 +11,11 @@ const urlsToCache = [
     'https://cdn.jsdelivr.net/npm/chart.js',
     'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css',
     'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js',
-    'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
+    'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+
+    // ফন্টসমূহ ক্যাশ করা হলো
+    'https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/Bornomala-Regular.ttf',
+    'https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/SUTONNYMJ.TTF'
 ];
 
 // ১. ইনস্টল ইভেন্ট: ফাইলগুলো ক্যাশ করা হবে
