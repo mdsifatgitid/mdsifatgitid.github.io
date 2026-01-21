@@ -22191,7 +22191,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // --- Initialization & Logic Update ---
+// --- Initialization & Logic Update ---
     async function initializeTicker() {
         if (isNewsTickerEnabled) {
              // ১. সব সংবাদ (৮ ঘণ্টার) আনুন
@@ -22201,9 +22201,13 @@ document.addEventListener('DOMContentLoaded', () => {
              const oneHourAgo = new Date().getTime() - (60 * 60 * 1000);
              tickerMessages = allMessages.filter(msg => msg.timestamp >= oneHourAgo);
 
-             // যদি ১ ঘণ্টার মধ্যে কোনো নিউজ না থাকে, তবে কাস্টম মেসেজ দেখান
+             // পরিবর্তন: ১ ঘণ্টার নিউজ না থাকলে ৮ ঘণ্টার নিউজ, তাও না থাকলে কাস্টম মেসেজ
              if (tickerMessages.length === 0) {
-                 tickerMessages = customMessages;
+                 if (allMessages.length > 0) {
+                     tickerMessages = allMessages; // ৮ ঘণ্টার নিউজ ব্যবহার করুন
+                 } else {
+                     tickerMessages = customMessages; // তাও না থাকলে কাস্টম মেসেজ
+                 }
              }
 
         } else {
@@ -22249,8 +22253,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     const oneHourAgo = new Date().getTime() - (60 * 60 * 1000);
                     tickerMessages = allMessages.filter(msg => msg.timestamp >= oneHourAgo);
                     
+                    // পরিবর্তন: আপডেট লজিকেও একই পরিবর্তন আনা হয়েছে
                     if (tickerMessages.length === 0) {
-                         tickerMessages = customMessages;
+                        if (allMessages.length > 0) {
+                             tickerMessages = allMessages;
+                        } else {
+                             tickerMessages = customMessages;
+                        }
                     }
 
                     if (!isTransitioning && activeView === 'none') {
