@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bangla-toolbox-v13'; // ১. ভার্সন আপডেট করা হয়েছে (v12 থেকে v13)
+const CACHE_NAME = 'bangla-toolbox-v14';
 const urlsToCache = [
     './', 
     './index.html', 
