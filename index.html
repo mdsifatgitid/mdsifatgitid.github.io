@@ -21628,7 +21628,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Summary & Headlines Elements
     const summaryBtn = document.getElementById('summary-news-btn');
     const refreshSummaryBtn = document.getElementById('refresh-summary-btn'); 
-    const refreshHeadlinesBtn = document.getElementById('refresh-headlines-btn'); // নতুন বাটন
+    const refreshHeadlinesBtn = document.getElementById('refresh-headlines-btn'); 
     const viewHeadlinesBtn = document.getElementById('view-headlines-btn'); 
     const summaryView = document.getElementById('news-summary-view');
     const summaryStartView = document.getElementById('news-summary-start-view');
@@ -21709,7 +21709,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ১. ক্যাশ চেক করা (৫ মিনিটের মধ্যে হলে ক্যাশ থেকে রিটার্ন করবে)
         if (cachedData && lastFetch && (now - parseInt(lastFetch) < REFRESH_INTERVAL)) {
-            // console.log("Serving news from cache...");
             try {
                 return JSON.parse(cachedData);
             } catch (e) {
@@ -21790,12 +21789,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // সব রেজাল্ট একত্রিত করা
             let allHeadlines = results.flat().filter(item => item !== null);
             
-            // যদি ৮ ঘণ্টার মধ্যে কোনো খবর না থাকে
+            // যদি ৮ ঘণ্টার মধ্যে কোনো খবর না থাকে, তবে শুধু কাস্টম মেসেজ রিটার্ন করবে
             if (allHeadlines.length === 0) {
-                 return [
-                    { title: "গত ৮ ঘণ্টার মধ্যে কোনো ব্রেকিং নিউজ পাওয়া যায়নি।", link: "#", source: "আপডেট", time: null, timestamp: Date.now() },
-                    ...customMessages.map(m => ({...m, timestamp: 0}))
-                ];
+                 return customMessages.map(m => ({...m, timestamp: 0}));
             }
 
             // একদম নতুন খবর সবার আগে দেখানোর জন্য সর্টিং
@@ -21820,7 +21816,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // টিকারের জন্য যদি মেসেজ না থাকে (ফলব্যাক)
         if (tickerMessages.length === 0) {
-            tickerTextElement.textContent = "কোনো ব্রেকিং নিউজ নেই (১ ঘণ্টা)";
+            tickerTextElement.textContent = "Bangla Toolbox";
             return;
         }
 
@@ -22000,8 +21996,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const oneHourAgo = new Date().getTime() - (60 * 60 * 1000);
 
         // দুই ভাগে ফিল্টার করা
-        const recentNews = allMessages.filter(msg => msg.timestamp >= oneHourAgo);
-        const olderNews = allMessages.filter(msg => msg.timestamp < oneHourAgo);
+        let recentNews = allMessages.filter(msg => msg.timestamp >= oneHourAgo);
+        // কাস্টম মেসেজ (timestamp 0) এবং পুরনো নিউজ আলাদা করা
+        const olderNews = allMessages.filter(msg => msg.timestamp < oneHourAgo && msg.timestamp > 0);
+
+        // যদি ১ ঘণ্টার মধ্যে কোনো নিউজ না থাকে, তবে কাস্টম মেসেজগুলো সাম্প্রতিক হিসেবে দেখান
+        if (recentNews.length === 0) {
+            recentNews = customMessages;
+        }
 
         let htmlContent = '';
 
@@ -22010,7 +22012,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // ১. সর্বশেষ ১ ঘণ্টা টাইল
+        // ১. সর্বশেষ ১ ঘণ্টা টাইল (এখন কাস্টম মেসেজ দেখাতে পারে)
         if (recentNews.length > 0) {
             htmlContent += `
                 <div class="sticky top-0 z-10 bg-indigo-50 dark:bg-gray-700 py-2 px-3 mb-2 rounded-md font-bold text-indigo-800 dark:text-indigo-200 shadow-sm border border-indigo-100 dark:border-gray-600 text-sm flex items-center gap-2">
@@ -22199,18 +22201,9 @@ document.addEventListener('DOMContentLoaded', () => {
              const oneHourAgo = new Date().getTime() - (60 * 60 * 1000);
              tickerMessages = allMessages.filter(msg => msg.timestamp >= oneHourAgo);
 
-             // যদি ১ ঘণ্টার মধ্যে কোনো নিউজ না থাকে, তবে একটি কাস্টম মেসেজ দেখান
+             // যদি ১ ঘণ্টার মধ্যে কোনো নিউজ না থাকে, তবে কাস্টম মেসেজ দেখান
              if (tickerMessages.length === 0) {
-                 // যদি ৮ ঘণ্টার নিউজ থাকে, কিন্তু ১ ঘণ্টার নেই
-                 if (allMessages.length > 0) {
-                     tickerMessages = [{ 
-                         title: "গত ১ ঘণ্টার মধ্যে কোনো ব্রেকিং নিউজ পাওয়া যায়নি। গত ৮ ঘণ্টার খবর দেখতে 'সকল সংবাদ শিরোনাম' এ ক্লিক করুন।", 
-                         link: "#", source: "আপডেট", time: null 
-                     }];
-                 } else {
-                     // কোনো নিউজই নেই
-                     tickerMessages = customMessages;
-                 }
+                 tickerMessages = customMessages;
              }
 
         } else {
@@ -22255,9 +22248,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     // আপডেট হলে টিকারও রিফ্রেশ করুন (১ ঘণ্টার লজিক সহ)
                     const oneHourAgo = new Date().getTime() - (60 * 60 * 1000);
                     tickerMessages = allMessages.filter(msg => msg.timestamp >= oneHourAgo);
-                    if (tickerMessages.length === 0 && allMessages.length > 0) {
-                         tickerMessages = [{ title: "গত ১ ঘণ্টার মধ্যে কোনো ব্রেকিং নিউজ পাওয়া যায়নি।", link: "#", source: "আপডেট", time: null }];
-                    } else if (tickerMessages.length === 0) {
+                    
+                    if (tickerMessages.length === 0) {
                          tickerMessages = customMessages;
                     }
 
