@@ -21707,7 +21707,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const lastFetch = localStorage.getItem(NEWS_LAST_FETCH_KEY);
         const cachedData = localStorage.getItem(NEWS_CACHE_KEY);
 
-        // ১. ক্যাশ চেক করা (৫ মিনিটের মধ্যে হলে ক্যাশ থেকে রিটার্ন করবে)
+        // ১. ক্যাশ চেক করা (৫ মিনিটের মধ্যে হলে সরাসরি ক্যাশ থেকে রিটার্ন করবে)
         if (cachedData && lastFetch && (now - parseInt(lastFetch) < REFRESH_INTERVAL)) {
             try {
                 return JSON.parse(cachedData);
@@ -21789,22 +21789,42 @@ document.addEventListener('DOMContentLoaded', () => {
             // সব রেজাল্ট একত্রিত করা
             let allHeadlines = results.flat().filter(item => item !== null);
             
-            // যদি ৮ ঘণ্টার মধ্যে কোনো খবর না থাকে, তবে শুধু কাস্টম মেসেজ রিটার্ন করবে
-            if (allHeadlines.length === 0) {
-                 return customMessages.map(m => ({...m, timestamp: 0}));
+            // --- নতুন লজিক: ক্যাশ হ্যান্ডলিং ---
+            
+            // যদি নতুন কোনো সংবাদ পাওয়া যায় (> ০)
+            if (allHeadlines.length > 0) {
+                 // একদম নতুন খবর সবার আগে দেখানোর জন্য সর্টিং
+                allHeadlines.sort((a, b) => b.timestamp - a.timestamp);
+                
+                // ২. নতুন ডেটা দিয়ে ক্যাশ আপডেট করা (পুরাতন ক্যাশ মুছে যাবে)
+                localStorage.setItem(NEWS_CACHE_KEY, JSON.stringify(allHeadlines));
+                localStorage.setItem(NEWS_LAST_FETCH_KEY, now.toString());
+                
+                return allHeadlines;
+            } 
+            else {
+                // যদি ফেচ করে কোনো সংবাদ না পাওয়া যায় (নেটওয়ার্ক থাকলেও নিউজ নেই, অথবা সব ফেইল)
+                // ৩. পুরাতন ক্যাশ আছে কিনা চেক করা
+                if (cachedData) {
+                    console.log("No new news fetched, serving from cache.");
+                    return JSON.parse(cachedData); // ক্যাশ থেকে দেখাবে
+                } else {
+                    // ৪. ক্যাশও নেই, নতুন নিউজও নেই -> কাস্টম মেসেজ
+                    return customMessages.map(m => ({...m, timestamp: 0}));
+                }
             }
 
-            // একদম নতুন খবর সবার আগে দেখানোর জন্য সর্টিং
-            allHeadlines.sort((a, b) => b.timestamp - a.timestamp);
-            
-            // ২. নতুন ডেটা ক্যাশ করা
-            localStorage.setItem(NEWS_CACHE_KEY, JSON.stringify(allHeadlines));
-            localStorage.setItem(NEWS_LAST_FETCH_KEY, now.toString());
-            
-            return allHeadlines;
-
         } catch (error) { 
-            console.error('Error fetching news:', error); 
+            console.error('Error fetching news:', error);
+            
+            // কোনো এরর হলে (যেমন নেটওয়ার্ক ফেইল)
+            // ৩. পুরাতন ক্যাশ আছে কিনা চেক করা
+            if (cachedData) {
+                console.log("Fetch error, serving from cache.");
+                return JSON.parse(cachedData); // ক্যাশ থেকে দেখাবে
+            }
+            
+            // ৪. ক্যাশ না থাকলে কাস্টম মেসেজ
             return customMessages.map(m => ({...m, timestamp: 0})); 
         }
     }
@@ -22001,8 +22021,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const olderNews = allMessages.filter(msg => msg.timestamp < oneHourAgo && msg.timestamp > 0);
 
         // যদি ১ ঘণ্টার মধ্যে কোনো নিউজ না থাকে, তবে কাস্টম মেসেজগুলো সাম্প্রতিক হিসেবে দেখান
-        if (recentNews.length === 0) {
-            recentNews = customMessages;
+        // (যদি allMessages এ কাস্টম মেসেজ লোড হয়ে থাকে)
+        if (recentNews.length === 0 && olderNews.length === 0 && allMessages.length > 0 && allMessages[0].timestamp === 0) {
+            recentNews = allMessages; // Custom messages
         }
 
         let htmlContent = '';
@@ -22012,11 +22033,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // ১. সর্বশেষ ১ ঘণ্টা টাইল (এখন কাস্টম মেসেজ দেখাতে পারে)
+        // ১. সর্বশেষ ১ ঘণ্টা টাইল
         if (recentNews.length > 0) {
+            const title = (recentNews[0].timestamp === 0) ? "বিজ্ঞপ্তি" : "সর্বশেষ ১ ঘণ্টা";
+            const icon = (recentNews[0].timestamp === 0) ? "📢" : "🔥";
+            
             htmlContent += `
                 <div class="sticky top-0 z-10 bg-indigo-50 dark:bg-gray-700 py-2 px-3 mb-2 rounded-md font-bold text-indigo-800 dark:text-indigo-200 shadow-sm border border-indigo-100 dark:border-gray-600 text-sm flex items-center gap-2">
-                    <span class="animate-pulse">🔥</span> সর্বশেষ ১ ঘণ্টা
+                    <span class="animate-pulse">${icon}</span> ${title}
                     <span class="ml-auto bg-indigo-200 dark:bg-gray-600 text-xs px-2 py-0.5 rounded-full">${recentNews.length}টি</span>
                 </div>
             `;
@@ -22105,7 +22129,7 @@ document.addEventListener('DOMContentLoaded', () => {
             initializeTicker().then(() => {
                 setTimeout(() => {
                     refreshHeadlinesBtn.querySelector('svg').classList.remove('animate-spin'); // এনিমেশন বন্ধ
-                    showCustomAlert('সংবাদ সফলভাবে আপডেট হয়েছে!');
+                    showCustomAlert('সংবাদ আপডেট হয়েছে!');
                 }, 1000);
             });
         });
@@ -22191,7 +22215,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-// --- Initialization & Logic Update ---
+    // --- Initialization & Logic Update ---
     async function initializeTicker() {
         if (isNewsTickerEnabled) {
              // ১. সব সংবাদ (৮ ঘণ্টার) আনুন
@@ -22204,7 +22228,7 @@ document.addEventListener('DOMContentLoaded', () => {
              // পরিবর্তন: ১ ঘণ্টার নিউজ না থাকলে ৮ ঘণ্টার নিউজ, তাও না থাকলে কাস্টম মেসেজ
              if (tickerMessages.length === 0) {
                  if (allMessages.length > 0) {
-                     tickerMessages = allMessages; // ৮ ঘণ্টার নিউজ ব্যবহার করুন
+                     tickerMessages = allMessages; // ৮ ঘণ্টার নিউজ ব্যবহার করুন (বা ক্যাশড ডেটা)
                  } else {
                      tickerMessages = customMessages; // তাও না থাকলে কাস্টম মেসেজ
                  }
@@ -22253,7 +22277,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const oneHourAgo = new Date().getTime() - (60 * 60 * 1000);
                     tickerMessages = allMessages.filter(msg => msg.timestamp >= oneHourAgo);
                     
-                    // পরিবর্তন: আপডেট লজিকেও একই পরিবর্তন আনা হয়েছে
+                    // পরিবর্তন: আপডেট লজিকেও ফলব্যাক হ্যান্ডেল করা হয়েছে
                     if (tickerMessages.length === 0) {
                         if (allMessages.length > 0) {
                              tickerMessages = allMessages;
