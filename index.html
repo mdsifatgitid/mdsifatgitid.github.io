@@ -22215,7 +22215,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // --- Initialization & Logic Update ---
+// --- Initialization & Logic Update ---
+
+    // হেল্পার: আপডেট মেসেজ তৈরি করা
+    const getUpdateMessage = () => {
+        const timeStr = new Date().toLocaleTimeString('bn-BD', { 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            hour12: true,
+            timeZone: 'Asia/Dhaka' 
+        });
+        return { 
+            title: "সাম্প্রতিক সংবাদ", 
+            link: "#", 
+            source: "লাইভ", 
+            time: timeStr,
+            timestamp: Date.now() // সর্টিংয়ের জন্য, তবে আমরা ম্যানুয়ালি সবার উপরে রাখব
+        };
+    };
+
     async function initializeTicker() {
         if (isNewsTickerEnabled) {
              // ১. সব সংবাদ (৮ ঘণ্টার) আনুন
@@ -22228,17 +22246,24 @@ document.addEventListener('DOMContentLoaded', () => {
              // পরিবর্তন: ১ ঘণ্টার নিউজ না থাকলে ৮ ঘণ্টার নিউজ, তাও না থাকলে কাস্টম মেসেজ
              if (tickerMessages.length === 0) {
                  if (allMessages.length > 0) {
-                     tickerMessages = allMessages; // ৮ ঘণ্টার নিউজ ব্যবহার করুন (বা ক্যাশড ডেটা)
+                     tickerMessages = [...allMessages]; // ৮ ঘণ্টার নিউজ ব্যবহার করুন (Reference break করতে spread operator)
                  } else {
-                     tickerMessages = customMessages; // তাও না থাকলে কাস্টম মেসেজ
+                     tickerMessages = [...customMessages]; // তাও না থাকলে কাস্টম মেসেজ
                  }
              }
 
+             // ৩. "সাম্প্রতিক খবর- আপডেট" মেসেজ সবার শুরুতে যুক্ত করুন (যদি আসল নিউজ থাকে)
+             // customMessages থাকলে আপডেট মেসেজ দেখানোর প্রয়োজন নেই
+             if (tickerMessages.length > 0 && tickerMessages[0].timestamp !== 0) {
+                 tickerMessages.unshift(getUpdateMessage());
+             }
+
         } else {
-             allMessages = customMessages;
-             tickerMessages = customMessages;
+             allMessages = [...customMessages];
+             tickerMessages = [...customMessages];
         }
         
+        messageIndex = 0; // রিসেট: যাতে আপডেট মেসেজটি প্রথমে দেখায়
         displayCurrentHeadline(); 
         startAutoPlay();
         
@@ -22280,14 +22305,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     // পরিবর্তন: আপডেট লজিকেও ফলব্যাক হ্যান্ডেল করা হয়েছে
                     if (tickerMessages.length === 0) {
                         if (allMessages.length > 0) {
-                             tickerMessages = allMessages;
+                             tickerMessages = [...allMessages];
                         } else {
-                             tickerMessages = customMessages;
+                             tickerMessages = [...customMessages];
                         }
                     }
 
+                    // আপডেট মেসেজ যোগ করা (যদি আসল নিউজ থাকে)
+                    if (tickerMessages.length > 0 && tickerMessages[0].timestamp !== 0) {
+                        tickerMessages.unshift(getUpdateMessage());
+                    }
+
                     if (!isTransitioning && activeView === 'none') {
-                        messageIndex = 0; 
+                        messageIndex = 0; // আপডেট হলে শুরুতে নিয়ে যান (আপডেট মেসেজ দেখাবে)
                         displayCurrentHeadline();
                     }
                     
