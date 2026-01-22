@@ -21736,8 +21736,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // সব ফিড থেকে প্যারালাল ফেচিং
             const promises = feeds.map(async (feed) => {
                 try {
-                    // CORS বাইপাস করার জন্য Proxy ব্যবহার
-                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(feed.url)}&t=${now}`;
+					// CORS বাইপাস করার জন্য আপনার Cloudflare Worker ব্যবহার (আপডেট করা হয়েছে)
+                    const proxyUrl = `https://news.banglatoolbox.workers.dev/?url=${encodeURIComponent(feed.url)}`;
                     
                     const response = await fetch(proxyUrl);
                     if (!response.ok) return null;
