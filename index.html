@@ -21720,10 +21720,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const feeds = [
             { name: 'বাংলাদেশ প্রতিদিন', url: 'https://www.bd-pratidin.com/rss.xml' },
             { name: 'কালের কণ্ঠ', url: 'https://www.kalerkantho.com/rss.xml' },
-			{ name: 'সময়ের কণ্ঠস্বর', url: 'https://somoyerkonthosor.com/feed' },
-			{ name: 'আজকের পত্রিকা', url: 'https://www.ajkerpatrika.com/feed' },
-			{ name: 'প্রথম আলো', url: 'https://www.prothomalo.com/feed/' },
-			{ name: 'বিবিসি বাংলা', url: 'https://feeds.bbci.co.uk/bengali/rss.xml' },
+            { name: 'সময়ের কণ্ঠস্বর', url: 'https://somoyerkonthosor.com/feed' },
+            { name: 'আজকের পত্রিকা', url: 'https://www.ajkerpatrika.com/feed' },
+            { name: 'প্রথম আলো', url: 'https://www.prothomalo.com/feed/' },
+            { name: 'বিবিসি বাংলা', url: 'https://feeds.bbci.co.uk/bengali/rss.xml' },
             { name: 'চ্যানেল আই', url: 'https://www.channelionline.com/feed' },
             { name: 'বাংলা ট্রিবিউন', url: 'https://www.banglatribune.com/feed/' }
         ];
@@ -21736,7 +21736,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // সব ফিড থেকে প্যারালাল ফেচিং
             const promises = feeds.map(async (feed) => {
                 try {
-					// CORS বাইপাস করার জন্য আপনার Cloudflare Worker ব্যবহার (আপডেট করা হয়েছে)
+                    // CORS বাইপাস করার জন্য আপনার Cloudflare Worker ব্যবহার
                     const proxyUrl = `https://news.banglatoolbox.workers.dev/?url=${encodeURIComponent(feed.url)}`;
                     
                     const response = await fetch(proxyUrl);
@@ -21745,17 +21745,44 @@ document.addEventListener('DOMContentLoaded', () => {
                     const xmlText = await response.text();
                     const parser = new DOMParser();
                     const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-                    const items = xmlDoc.querySelectorAll("item");
+                    
+                    // RSS (item) এবং Atom (entry) উভয় সাপোর্ট করার লজিক
+                    let items = Array.from(xmlDoc.querySelectorAll("item"));
+                    let isAtom = false;
+                    
+                    // যদি item না পাওয়া যায়, তবে entry (Atom Feed) চেক করুন - প্রথম আলোর জন্য ফিক্স
+                    if (items.length === 0) {
+                        items = Array.from(xmlDoc.querySelectorAll("entry"));
+                        isAtom = true;
+                    }
                     
                     let feedNews = [];
 
                     items.forEach(item => {
                         const title = item.querySelector("title")?.textContent;
-                        const link = item.querySelector("link")?.textContent;
-                        const pubDateStr = item.querySelector("pubDate")?.textContent;
+                        
+                        // লিংক বের করা (RSS vs Atom)
+                        let link = item.querySelector("link")?.textContent;
+                        if (isAtom) {
+                            const linkNode = item.querySelector("link");
+                            if (linkNode && linkNode.getAttribute("href")) {
+                                link = linkNode.getAttribute("href");
+                            }
+                        }
+
+                        // তারিখ বের করা (RSS: pubDate, Atom: published/updated)
+                        const pubDateStr = item.querySelector("pubDate")?.textContent || 
+                                           item.querySelector("published")?.textContent || 
+                                           item.querySelector("updated")?.textContent;
 
                         if (title && link && pubDateStr) {
-                            const pubDate = new Date(pubDateStr);
+                            let pubDate = new Date(pubDateStr);
+
+                            // *** ফিক্স: বাংলাদেশ প্রতিদিন ও কালের কণ্ঠের ৬ ঘণ্টা সময়ের সমস্যা সমাধান ***
+                            // এই পত্রিকাগুলোর আরএসএস ফিড মাঝে মাঝে ভুল টাইমজোন ফরম্যাট দেয়, তাই ম্যানুয়ালি ৬ ঘণ্টা কমানো হলো
+                            if (feed.name === 'বাংলাদেশ প্রতিদিন' || feed.name === 'কালের কণ্ঠ') {
+                                pubDate = new Date(pubDate.getTime() - (6 * 60 * 60 * 1000));
+                            }
                             
                             // ফিল্টারিং লজিক: ৮ ঘণ্টার মধ্যে প্রকাশিত হতে হবে
                             if (pubDate >= eightHoursAgo && pubDate <= new Date(now + 60000)) { 
