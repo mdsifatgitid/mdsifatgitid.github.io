@@ -7128,6 +7128,31 @@ body.sidebar-open #sidebarOverlay {
 }
 /* কীবোর্ড ড্রপডাউন এনিমেশন */
 
+/* --- Live Cricket Ticker Styles (New) --- */
+#cricket-ticker-container {
+    transition: all 0.5s ease;
+    animation: fadeIn 0.5s ease-out;
+}
+.ball-run {
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: bold;
+    color: #1e3a8a; /* Dark Blue */
+    background-color: #f3f4f6; /* Gray-100 */
+    margin-left: 3px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.ball-run.four { background-color: #22c55e; color: white; border: 1px solid #166534; } /* Green */
+.ball-run.six { background-color: #8b5cf6; color: white; border: 1px solid #5b21b6; } /* Purple */
+.ball-run.wicket { background-color: #ef4444; color: white; border: 1px solid #b91c1c; } /* Red */
+.ball-run.dot { color: #6b7280; } /* Gray Text */
+
+/* --- end Live Cricket Card Styles --- */
 
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
@@ -7165,7 +7190,36 @@ body.sidebar-open #sidebarOverlay {
         <div id="currentDateTimeBanner" class="text-center text-lg font-semibold mb-0 mt-0 p-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-lg shadow-md">
             <!-- JavaScript দ্বারা তারিখ ও সময় এখানে আপডেট হবে -->
         </div>
-	
+
+        <!-- NEW: Live Cricket Ticker Section -->
+        <div id="cricket-ticker-container" class="hidden relative w-full max-w-4xl mx-auto mt-2 mb-1 bg-gradient-to-r from-blue-800 to-indigo-900 text-white p-2 rounded-lg shadow-md border border-blue-600 flex flex-wrap items-center justify-between gap-2 text-sm z-10">
+            <!-- Teams & Scores -->
+            <div class="flex items-center gap-3 flex-grow justify-center sm:justify-start min-w-0">
+                <div class="flex items-center gap-1.5">
+                    <img id="ctTeam1Flag" src="" class="w-5 h-5 rounded-full bg-white p-0.5 object-cover hidden">
+                    <span id="ctTeam1Name" class="font-bold uppercase text-blue-100 tracking-wider"></span>
+                    <span id="ctTeam1Score" class="font-mono font-bold text-white text-base shadow-sm"></span>
+                </div>
+                
+                <span class="text-yellow-400 font-black text-xs px-1 italic">VS</span>
+                
+                <div class="flex items-center gap-1.5">
+                    <img id="ctTeam2Flag" src="" class="w-5 h-5 rounded-full bg-white p-0.5 object-cover hidden">
+                    <span id="ctTeam2Name" class="font-bold uppercase text-blue-100 tracking-wider"></span>
+                    <span id="ctTeam2Score" class="font-mono font-bold text-white text-base shadow-sm"></span>
+                </div>
+            </div>
+
+            <!-- Match Status / Result / Countdown -->
+            <div id="ctMatchStatus" class="font-semibold text-yellow-300 text-xs sm:text-sm text-center flex-shrink-0 animate-pulse px-2"></div>
+
+            <!-- Recent Balls (Last Over) -->
+            <div id="ctLastOver" class="flex items-center bg-black/30 rounded-full px-3 py-1 hidden sm:flex gap-1">
+                <span class="text-[10px] text-gray-300 mr-1 uppercase">Recent:</span>
+                <!-- Balls will be injected here via JS -->
+            </div>
+        </div>
+		
 <!-- Animated News Ticker Start (Updated) -->
 <div id="news-ticker-container" class="relative w-full max-w-2xl mx-auto mt-3 mb-1 overflow-hidden bg-indigo-100 dark:bg-gray-700 p-1 rounded-lg shadow-inner transition-[height] duration-500 ease-in-out">
     <!-- Ticker Content Area -->
@@ -10519,6 +10573,23 @@ body.sidebar-open #sidebarOverlay {
     <div class="settings-page-container">
         <h3 class="text-xl font-bold text-gray-700 mb-6 dark:text-gray-200">সেটিংস সমূহ</h3> 
 
+<!-- লাইভ ক্রিকেট লিংক বক্স (আপডেটেড) -->
+        <div class="setting-item mb-4">
+            <div class="w-full">
+                <label for="cricketUrlInput" class="font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                    🏏 লাইভ ক্রিকেট স্কোর সেটআপ
+                    <span class="text-xs font-normal text-gray-500 bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded">Beta</span>
+                </label>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">হোমপেজের টিকার চালু করতে Crex.com এর ম্যাচ লিংক এখানে পেস্ট করে 'সেভ করুন' চাপুন। লিংক মুছে দিলে টিকার বন্ধ হয়ে যাবে।</p>
+                <div class="flex gap-2">
+                    <input type="text" id="cricketUrlInput" placeholder="https://crex.live/scoreboard/..." class="flex-grow p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-indigo-500 text-sm">
+                    <button id="saveCricketBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors">
+                        সেভ করুন
+                    </button>
+                </div>
+            </div>
+        </div>
+		
         <!-- জেমিনি API কী সেটিং -->
         <div class="setting-item">
             <div class="setting-text" style="flex-grow: 1; margin-right: 15px;">
@@ -25584,7 +25655,205 @@ function initializeImageResizer() {
 // ====================================================================
 // START: আরও সেটিংস (More Settings) TAB SCRIPT (Updated)
 // ====================================================================
+
+// --- গ্লোবাল ক্রিকেট টিকার ফাংশন (আপডেটেড) ---
+let cricketTickerInterval = null;
+
+function initCricketTicker() {
+    const tickerContainer = document.getElementById('cricket-ticker-container');
+    const ctTeam1Flag = document.getElementById('ctTeam1Flag');
+    const ctTeam1Name = document.getElementById('ctTeam1Name');
+    const ctTeam1Score = document.getElementById('ctTeam1Score');
+    const ctTeam2Flag = document.getElementById('ctTeam2Flag');
+    const ctTeam2Name = document.getElementById('ctTeam2Name');
+    const ctTeam2Score = document.getElementById('ctTeam2Score');
+    const ctMatchStatus = document.getElementById('ctMatchStatus');
+    const ctLastOver = document.getElementById('ctLastOver');
+    const ctLiveDot = document.getElementById('ctLiveDot');
+
+    if (!tickerContainer) return;
+
+    const savedUrl = localStorage.getItem('crexMatchUrl');
+
+    // ১. লিংক না থাকলে বা ক্লিয়ার করা হলে সেকশনটি হাইড করুন এবং লজিক বন্ধ করুন
+    if (!savedUrl || savedUrl.trim() === '') {
+        tickerContainer.classList.add('hidden'); // Tailwind 'hidden' class hides display
+        tickerContainer.style.display = 'none'; // Fallback force hide
+        if (cricketTickerInterval) clearInterval(cricketTickerInterval);
+        return;
+    }
+
+    // ২. লিংক থাকলে সেকশন দেখান
+    tickerContainer.classList.remove('hidden');
+    tickerContainer.style.display = 'flex'; // Restore flex display
+    
+    // প্রথমবার ডেটা ফেচ
+    fetchTickerData(savedUrl);
+
+    // অটো আপডেট (৩০ সেকেন্ড পর পর)
+    if (cricketTickerInterval) clearInterval(cricketTickerInterval);
+    cricketTickerInterval = setInterval(() => fetchTickerData(savedUrl), 30000);
+
+    async function fetchTickerData(url) {
+        try {
+            const proxyUrl = `https://news.banglatoolbox.workers.dev/?url=${encodeURIComponent(url)}`;
+            const response = await fetch(proxyUrl);
+            const htmlText = await response.text();
+            
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, "text/html");
+
+            // --- তথ্য সংগ্রহের চেষ্টা ---
+            let team1 = "Team A", team2 = "Team B";
+            let score1 = "", score2 = "";
+            let status = "আপডেট হচ্ছে...";
+            let isLive = false;
+            let foundData = false;
+
+            // ১. টাইটেল থেকে ডেটা বের করার চেষ্টা (সবচেয়ে নির্ভরযোগ্য সোর্স)
+            // সাধারণ টাইটেল ফরম্যাট: "IND 120/2 (15) vs PAK 100/10 (19.5) Live Score..."
+            const pageTitle = doc.querySelector('title')?.innerText || "";
+            const metaDesc = doc.querySelector('meta[name="description"]')?.content || "";
+            
+            // টাইটেল থেকে নাম এবং স্কোর আলাদা করা
+            if (pageTitle.includes('vs')) {
+                const parts = pageTitle.split('vs');
+                const leftPart = parts[0].trim();
+                const rightPart = parts[1].split('Live')[0].trim(); // "Live" এর আগের অংশ
+
+                // টিম ১
+                const t1Match = leftPart.match(/^([A-Za-z\s]+)\s*(\d+\/\d+|\d+-\d+)?\s*(\(.*\))?/);
+                if (t1Match) {
+                    team1 = t1Match[1].trim();
+                    score1 = (t1Match[2] || "") + " " + (t1Match[3] || "");
+                }
+
+                // টিম ২
+                const t2Match = rightPart.match(/^([A-Za-z\s]+)\s*(\d+\/\d+|\d+-\d+)?\s*(\(.*\))?/);
+                if (t2Match) {
+                    team2 = t2Match[1].trim();
+                    score2 = (t2Match[2] || "") + " " + (t2Match[3] || "");
+                }
+                foundData = true;
+            }
+
+            // ২. JSON-LD থেকে ফ্ল্যাগ এবং ফুল নেম নেওয়ার চেষ্টা (সাপোর্ট হিসেবে)
+            const jsonLdScript = doc.querySelector('script[type="application/ld+json"]');
+            if (jsonLdScript) {
+                try {
+                    const json = JSON.parse(jsonLdScript.innerText);
+                    if (json['@type'] === 'SportsEvent' || json['@type'] === 'CricketMatch') {
+                        const competitors = json.competitor || [];
+                        if (competitors.length >= 2) {
+                            // যদি টাইটেল থেকে নাম ছোট/অসম্পূর্ণ থাকে, এখান থেকে নিন
+                            if (team1.length < 2) team1 = competitors[0].name;
+                            if (team2.length < 2) team2 = competitors[1].name;
+                            
+                            // ছবি সেট করা
+                            if(competitors[0].image) { 
+                                ctTeam1Flag.src = competitors[0].image; 
+                                ctTeam1Flag.classList.remove('hidden'); 
+                            }
+                            if(competitors[1].image) { 
+                                ctTeam2Flag.src = competitors[1].image; 
+                                ctTeam2Flag.classList.remove('hidden'); 
+                            }
+                        }
+                        
+                        // স্ট্যাটাস চেক
+                        if (json.eventStatus === 'Live') isLive = true;
+                    }
+                } catch(e) { console.error("JSON Error", e); }
+            }
+
+            // ৩. স্ট্যাটাস টেক্সট আপডেট
+            if (pageTitle.includes('Won') || metaDesc.includes('Won')) {
+                const resultMatch = metaDesc.match(/([A-Za-z\s]+) won by .*/);
+                status = resultMatch ? resultMatch[0] : "ম্যাচ সমাপ্ত";
+                isLive = false;
+            } else if (pageTitle.includes('Live') || metaDesc.includes('Live')) {
+                status = "খেলা চলছে";
+                isLive = true;
+            } else {
+                status = "অপেক্ষমান / বিরতি";
+            }
+
+            // --- UI আপডেট ---
+            if (foundData) {
+                // নাম ছোট করা (যদি অনেক বড় হয়)
+                ctTeam1Name.innerText = team1.length > 10 ? team1.substring(0, 3).toUpperCase() : team1;
+                ctTeam2Name.innerText = team2.length > 10 ? team2.substring(0, 3).toUpperCase() : team2;
+                
+                ctTeam1Score.innerText = score1 || "";
+                ctTeam2Score.innerText = score2 || "";
+                
+                ctMatchStatus.innerText = status;
+                
+                // লাইভ ইন্ডিকেটর
+                if (isLive) {
+                    ctLiveDot.classList.remove('hidden');
+                    ctMatchStatus.classList.add('text-red-600', 'dark:text-red-400');
+                } else {
+                    ctLiveDot.classList.add('hidden');
+                    ctMatchStatus.classList.remove('text-red-600', 'dark:text-red-400');
+                }
+
+                // বল বাই বল (ডামি - ডিজাইনের জন্য)
+                if (isLive) {
+                    ctLastOver.classList.remove('hidden');
+                    // রিয়েল বল ডেটা API ছাড়া পাওয়া কঠিন, তাই UI ঠিক আছে কিনা দেখার জন্য স্ট্যাটিক বা রেন্ডম রাখা হলো
+                    // আপনি চাইলে এটি বন্ধ রাখতে পারেন ctLastOver.classList.add('hidden'); দিয়ে
+                    ctLastOver.innerHTML = `
+                        <span class="text-[10px] text-gray-400 uppercase font-bold mr-1">Over:</span>
+                        <span class="ball-run dot">.</span>
+                        <span class="ball-run">1</span>
+                        <span class="ball-run four">4</span>
+                        <span class="ball-run six">6</span>
+                    `;
+                } else {
+                    ctLastOver.classList.add('hidden');
+                }
+            } else {
+                // ডেটা না পেলে
+                ctMatchStatus.innerText = "লিংক চেক করুন";
+            }
+
+        } catch (e) {
+            console.error("Ticker fetch error", e);
+            ctMatchStatus.innerText = "সংযোগ ত্রুটি";
+        }
+    }
+}
+// Document Ready তে কল করুন
+document.addEventListener('DOMContentLoaded', () => {
+    initCricketTicker(); // পেজ লোড হলে টিকার চালু হবে
+});
+
+// অন্যান্য সকল সেটিংস ও ফাংশন
 function initializeMoreSettings() {
+
+     // ক্রিকেট সেটিংস লজিক
+    const cricketUrlInput = document.getElementById('cricketUrlInput');
+    const saveCricketBtn = document.getElementById('saveCricketBtn');
+
+    if (saveCricketBtn && cricketUrlInput) {
+        // লোড হলে সেভ করা URL দেখান
+        cricketUrlInput.value = localStorage.getItem('crexMatchUrl') || '';
+
+        saveCricketBtn.addEventListener('click', () => {
+            const url = cricketUrlInput.value.trim();
+            
+            if (url && !url.includes('crex.com') && !url.includes('crex.live')) {
+                return showCustomAlert('শুধুমাত্র Crex এর লিংক সাপোর্ট করে।');
+            }
+            
+            localStorage.setItem('crexMatchUrl', url);
+            showCustomAlert('লিংক সেভ করা হয়েছে! হোমপেজে টিকার চেক করুন।');
+            
+            // সাথে সাথে টিকার আপডেট করুন
+            initCricketTicker();
+        });
+    }  
 
         // ০. জেমিনি API কী ইনপুট লজিক (নতুন যুক্ত করা হয়েছে)
         const settingsApiKeyInput = document.getElementById('settingsApiKeyInput');
