@@ -11496,6 +11496,17 @@ function getGlobalHijriAdjustment() {
 // ====================================================================
 
 // ====================================================================
+// START: DEVELOPER CRICKET TICKER SETTING
+// ====================================================================
+// ডেভেলপার হিসেবে এখানে লিংক বসালে সেটি ডিফল্ট হিসেবে কাজ করবে।
+// তবে ব্যবহারকারী যদি সেটিংসে অন্য লিংক বসায়, তবে ব্যবহারকারীরটি প্রাধান্য পাবে।
+// লিংক না দিতে চাইলে খালি রাখুন: const DEVELOPER_CRICKET_URL = "";
+const DEVELOPER_CRICKET_URL = ""; 
+// ====================================================================
+// END: DEVELOPER CRICKET TICKER SETTING
+// ====================================================================
+
+// ====================================================================
 // START: PEST PRESET SCRIPT FOR FONT CONVERTER PART
 // ====================================================================	
 	// Paste Preset Functionality Variables
@@ -25700,7 +25711,17 @@ function initCricketTicker() {
     }
     if (ctMatchStatus) ctMatchStatus.style.fontFamily = "'Bornomala', sans-serif";
 
-    const savedUrl = localStorage.getItem('crexMatchUrl');
+    // --- লজিক পরিবর্তন শুরু ---
+    // ১. প্রথমে ব্যবহারকারীর সেভ করা লিংক চেক করা হবে
+    let savedUrl = localStorage.getItem('crexMatchUrl');
+
+    // ২. যদি ব্যবহারকারী লিংক না দেয়, তবে ডেভেলপারের লিংক চেক করা হবে
+    if (!savedUrl || savedUrl.trim() === '') {
+        if (typeof DEVELOPER_CRICKET_URL !== 'undefined' && DEVELOPER_CRICKET_URL.trim() !== '') {
+            savedUrl = DEVELOPER_CRICKET_URL;
+        }
+    }
+    // --- লজিক পরিবর্তন শেষ ---
 
     // ১. লিংক না থাকলে সেকশনটি হাইড করুন
     if (!savedUrl || savedUrl.trim() === '') {
@@ -25714,6 +25735,7 @@ function initCricketTicker() {
     tickerContainer.classList.remove('hidden');
     tickerContainer.style.display = 'flex';
     
+    // বাকি কোড অপরিবর্তিত থাকবে...
     // লোডিং বা প্রাথমিক অবস্থা (প্রথমবার)
     if (!lastCricketState.isInitialized) {
         ctMatchStatus.innerText = ""; // লাইভ লেখা সরানো হয়েছে
@@ -25731,7 +25753,11 @@ function initCricketTicker() {
     if (closeTickerBtn) {
         closeTickerBtn.onclick = (e) => {
             e.stopPropagation();
+            // ক্রস বাটনে ক্লিক করলে ইউজারের লোকাল স্টোরেজ ক্লিয়ার হবে
+            // কিন্তু ডেভেলপার লিংক কোডে থাকলে পেজ রিফ্রেশ দিলে আবার চলে আসবে (এটাই স্বাভাবিক আচরণ হওয়া উচিত)
             localStorage.removeItem('crexMatchUrl');
+            
+            // যদি ডেভেলপার লিংক থাকে, তবে সাময়িকভাবে হাইড করা হবে
             tickerContainer.classList.add('hidden');
             tickerContainer.style.display = 'none';
             if (cricketTickerInterval) clearInterval(cricketTickerInterval);
@@ -25739,7 +25765,7 @@ function initCricketTicker() {
             const cricketUrlInput = document.getElementById('cricketUrlInput');
             if (cricketUrlInput) cricketUrlInput.value = '';
             
-            showCustomAlert('লিংক মুছে ফেলা হয়েছে এবং টিকার বন্ধ করা হয়েছে।');
+            showCustomAlert('টিকার বন্ধ করা হয়েছে।');
         };
     }
 
