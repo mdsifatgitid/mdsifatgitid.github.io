@@ -7191,8 +7191,16 @@ body.sidebar-open #sidebarOverlay {
             <!-- JavaScript দ্বারা তারিখ ও সময় এখানে আপডেট হবে -->
         </div>
 
-        <!-- NEW: Live Cricket Ticker Section -->
-        <div id="cricket-ticker-container" class="hidden relative w-full max-w-4xl mx-auto mt-2 mb-1 bg-gradient-to-r from-blue-800 to-indigo-900 text-white p-2 rounded-lg shadow-md border border-blue-600 flex flex-wrap items-center justify-between gap-2 text-sm z-10">
+<!-- NEW: Live Cricket Ticker Section -->
+        <div id="cricket-ticker-container" class="hidden relative group w-full max-w-4xl mx-auto mt-2 mb-1 bg-gradient-to-r from-blue-800 to-indigo-900 text-white p-2 rounded-lg shadow-md border border-blue-600 flex flex-wrap items-center justify-between gap-2 text-sm z-10 transition-all duration-300">
+            
+            <!-- Close Button (Hidden by default, shown on hover) -->
+            <button id="closeTickerBtn" class="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 cursor-pointer" title="টিকার মুছুন">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
             <!-- Teams & Scores -->
             <div class="flex items-center gap-3 flex-grow justify-center sm:justify-start min-w-0">
                 <div class="flex items-center gap-1.5">
@@ -10585,6 +10593,10 @@ body.sidebar-open #sidebarOverlay {
                     <input type="text" id="cricketUrlInput" placeholder="https://crex.live/scoreboard/..." class="flex-grow p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-indigo-500 text-sm">
                     <button id="saveCricketBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors">
                         সেভ করুন
+                    </button>
+                    <!-- নতুন: মুছুন বাটন -->
+                    <button id="clearCricketBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors">
+                        মুছুন
                     </button>
                 </div>
             </div>
@@ -25669,22 +25681,20 @@ let isWaitingForNextOver = true; // শুরুতে অপেক্ষা ক
 
 function initCricketTicker() {
     const tickerContainer = document.getElementById('cricket-ticker-container');
-    const ctTeam1Flag = document.getElementById('ctTeam1Flag');
     const ctTeam1Name = document.getElementById('ctTeam1Name');
     const ctTeam1Score = document.getElementById('ctTeam1Score');
-    const ctTeam2Flag = document.getElementById('ctTeam2Flag');
     const ctTeam2Name = document.getElementById('ctTeam2Name');
     const ctTeam2Score = document.getElementById('ctTeam2Score');
     const ctMatchStatus = document.getElementById('ctMatchStatus');
     const ctLastOver = document.getElementById('ctLastOver');
-    const ctLiveDot = document.getElementById('ctLiveDot');
+    const closeTickerBtn = document.getElementById('closeTickerBtn');
 
     if (!tickerContainer) return;
 
     // বর্ণমালা ফন্ট এবং স্টাইল সেট করা
     if (ctLastOver) {
         ctLastOver.style.fontFamily = "'Bornomala', sans-serif";
-        ctLastOver.style.minWidth = "120px"; 
+        ctLastOver.style.minWidth = "80px"; // কমানো হয়েছে কারণ টেক্সট নেই
     }
     if (ctMatchStatus) ctMatchStatus.style.fontFamily = "'Bornomala', sans-serif";
 
@@ -25704,7 +25714,7 @@ function initCricketTicker() {
     
     // লোডিং বা প্রাথমিক অবস্থা (প্রথমবার)
     if (!lastCricketState.isInitialized) {
-        ctMatchStatus.innerHTML = `<span class="flex items-center gap-1"><span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span></span> লাইভ</span>`;
+        ctMatchStatus.innerText = ""; // লাইভ লেখা সরানো হয়েছে
         updateBallsUI(true); 
     }
 
@@ -25714,6 +25724,22 @@ function initCricketTicker() {
     // অটো আপডেট (৫ সেকেন্ড পর পর)
     if (cricketTickerInterval) clearInterval(cricketTickerInterval);
     cricketTickerInterval = setInterval(() => fetchTickerData(savedUrl), 5000);
+
+    // টিকারের ক্রস বাটনের লজিক
+    if (closeTickerBtn) {
+        closeTickerBtn.onclick = (e) => {
+            e.stopPropagation();
+            localStorage.removeItem('crexMatchUrl');
+            tickerContainer.classList.add('hidden');
+            tickerContainer.style.display = 'none';
+            if (cricketTickerInterval) clearInterval(cricketTickerInterval);
+            
+            const cricketUrlInput = document.getElementById('cricketUrlInput');
+            if (cricketUrlInput) cricketUrlInput.value = '';
+            
+            showCustomAlert('লিংক মুছে ফেলা হয়েছে এবং টিকার বন্ধ করা হয়েছে।');
+        };
+    }
 
     async function fetchTickerData(url) {
         try {
@@ -25725,8 +25751,7 @@ function initCricketTicker() {
             const parser = new DOMParser();
             const doc = parser.parseFromString(htmlText, "text/html");
 
-            // --- তথ্য সংগ্রহের চেষ্টা ---
-            let team1 = "Team A", team2 = "Team B";
+            let team1 = "T1", team2 = "T2";
             let score1 = "", score2 = "";
             let status = "";
             let isLive = false;
@@ -25735,31 +25760,56 @@ function initCricketTicker() {
             const pageTitle = doc.querySelector('title')?.innerText || "";
             const metaDesc = doc.querySelector('meta[name="description"]')?.content || "";
             
-            // টাইটেল থেকে ডেটা বের করা
-            if (pageTitle.includes('vs')) {
-                const parts = pageTitle.split('vs');
+            // টাইটেল থেকে ডেটা বের করা (আপডেটেড লজিক)
+            const vsMatch = pageTitle.match(/\s(vs|v)\s/i);
+            if (vsMatch) {
+                const separator = vsMatch[0];
+                const parts = pageTitle.split(separator);
                 const leftPart = parts[0].trim();
-                const rightParts = parts[1].split('Live'); 
-                const rightPart = rightParts[0].trim();
-
-                const scoreRegex = /^([A-Za-z\s]+)\s*(\d+[\/-]\d+|\d+)?\s*(\(.*\))?/;
-
-                const t1Match = leftPart.match(scoreRegex);
-                if (t1Match) {
-                    team1 = t1Match[1].trim();
-                    score1 = (t1Match[2] || "") + " " + (t1Match[3] || "");
+                
+                let rightPart = parts[1];
+                const suffixMatch = rightPart.match(/\s*(\||Live|Scorecard)/i);
+                if (suffixMatch) {
+                    rightPart = rightPart.substring(0, suffixMatch.index).trim();
                 }
-                const t2Match = rightPart.match(scoreRegex);
-                if (t2Match) {
-                    team2 = t2Match[1].trim();
-                    score2 = (t2Match[2] || "") + " " + (t2Match[3] || "");
-                }
+
+                // স্কোর পার্সিং লজিক (উন্নত: ৩ অক্ষরের নাম ও স্কোর ফরম্যাট)
+                const extractScore = (text) => {
+                    // নাম এবং স্কোর আলাদা করা: "BHU-W 126/4 (20)" -> Name: BHU-W, Score: 126/4 (20)
+                    // নামের শেষের স্পেস বাদে বাকিটুকু স্কোর হিসেবে ধরা হবে
+                    const lastSpaceIndex = text.search(/\s\d/); // যেখানে স্কোরের সংখ্যা শুরু হয়
+                    
+                    if (lastSpaceIndex !== -1) {
+                        const rawName = text.substring(0, lastSpaceIndex).trim();
+                        // স্কোর ফরম্যাট ঠিক রাখা (ওভার সহ)
+                        const rawScore = text.substring(lastSpaceIndex).trim(); 
+                        return { 
+                            // নাম থেকে প্রথম ৩ অক্ষর নেওয়া (হাইফেন থাকলে তা বাদ দিয়ে বা প্রথম অংশ নিয়ে)
+                            name: rawName.split(/[\s-]/)[0].substring(0, 3).toUpperCase(), 
+                            score: rawScore 
+                        };
+                    }
+                    // যদি স্কোর না থাকে, শুধু নাম
+                    return { 
+                        name: text.split(/[\s-]/)[0].substring(0, 3).toUpperCase(), 
+                        score: "" 
+                    };
+                };
+
+                const t1Data = extractScore(leftPart);
+                team1 = t1Data.name;
+                score1 = t1Data.score;
+
+                const t2Data = extractScore(rightPart);
+                team2 = t2Data.name;
+                score2 = t2Data.score;
+                
                 foundData = true;
             }
 
             // স্ট্যাটাস চেক
             if (pageTitle.toLowerCase().includes('live') || metaDesc.toLowerCase().includes('live score')) {
-                status = "লাইভ"; 
+                status = ""; // লাইভ লেখা সরিয়ে ফেলা হলো
                 isLive = true;
             } else if (pageTitle.toLowerCase().includes('won') || metaDesc.toLowerCase().includes('won')) {
                 const resultMatch = metaDesc.match(/([A-Za-z\s]+) won by .*/);
@@ -25769,24 +25819,30 @@ function initCricketTicker() {
                 status = "অপেক্ষমান";
             }
 
-            // --- UI আপডেট ---
+            // UI আপডেট
             if (foundData) {
-                ctTeam1Name.innerText = team1.length > 10 ? team1.substring(0, 3).toUpperCase() : team1;
-                ctTeam2Name.innerText = team2.length > 10 ? team2.substring(0, 3).toUpperCase() : team2;
-                ctTeam1Score.innerText = score1 || "";
-                ctTeam2Score.innerText = score2 || "";
+                ctTeam1Name.innerText = team1;
+                ctTeam2Name.innerText = team2;
+                ctTeam1Score.innerText = score1;
+                ctTeam2Score.innerText = score2;
                 
                 if (isLive) {
-                    ctMatchStatus.innerHTML = `<span class="flex items-center gap-1 text-red-500 font-bold"><span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span></span> ${status}</span>`;
+                    ctMatchStatus.innerHTML = ""; // মাঝখানের স্ট্যাটাস খালি রাখা হলো
                     
                     // বর্তমান ব্যাটিং স্কোর থেকে রান ও বল বের করা
                     let currentBattingString = score1.includes('(') ? score1 : (score2.includes('(') ? score2 : "");
+                    // যদি কোনো টিমের স্কোর ব্র্যাকেট না থাকে, তবে শেষ আপডেট হওয়া স্কোর চেক করুন
+                    if (!currentBattingString) {
+                         if (score2) currentBattingString = score2; 
+                         else if (score1) currentBattingString = score1;
+                    }
+
                     if(currentBattingString) {
                         calculateRecentBalls(team1, score1, team2, score2, currentBattingString);
                     }
                 } else {
-                    ctMatchStatus.innerText = status;
-                    ctMatchStatus.classList.remove('text-red-600');
+                    ctMatchStatus.innerText = status; // রেজাল্ট বা অন্যান্য স্ট্যাটাস দেখাবে
+                    ctMatchStatus.classList.remove('text-red-500', 'font-bold');
                     ctMatchStatus.classList.add('text-yellow-400');
                     ctLastOver.classList.add('hidden');
                 }
@@ -25795,12 +25851,13 @@ function initCricketTicker() {
             }
         } catch (e) {
             console.error("Ticker fetch error", e);
-            ctMatchStatus.innerHTML = `<span class="flex items-center gap-1 text-red-500 font-bold"><span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span></span> লাইভ</span>`;
+            ctMatchStatus.innerText = "";
         }
     }
 
     // বল-বাই-বল ক্যালকুলেশন লজিক
     function calculateRecentBalls(team1, score1, team2, score2, battingStr) {
+        // রিজেক্স আপডেট: 126/4 (19.2) ফরম্যাট হ্যান্ডেল করার জন্য
         const match = battingStr.match(/(\d+)[\/-](\d+)\s*\((\d+)\.(\d+)\)/) || battingStr.match(/(\d+)[\/-](\d+)\s*\((\d+)\)/);
         
         let currentRuns = 0;
@@ -25812,7 +25869,7 @@ function initCricketTicker() {
             currentRuns = parseInt(match[1]) || 0;
             currentWickets = parseInt(match[2]) || 0;
             currentOvers = parseInt(match[3]) || 0;
-            currentBallInOver = parseInt(match[4]) || 0;
+            currentBallInOver = parseInt(match[4]) || 0; 
         }
         
         const currentTotalBalls = (currentOvers * 6) + currentBallInOver;
@@ -25833,7 +25890,7 @@ function initCricketTicker() {
             return;
         }
 
-        // প্রথমবার লোড (ব্রাউজার রিফ্রেশ)
+        // প্রথমবার লোড
         if (!lastCricketState.isInitialized) {
             lastCricketState = {
                 runs: currentRuns,
@@ -25855,7 +25912,6 @@ function initCricketTicker() {
         // নতুন বল বা রান আপডেট হয়েছে কিনা চেক
         if (deltaBalls > 0 || deltaRuns > 0 || deltaWickets > 0) {
             
-            // নতুন ওভার শুরু হলে লিস্ট ক্লিয়ার করুন
             if (isWaitingForNextOver) {
                 recentBallHistory = [];
                 isWaitingForNextOver = false;
@@ -25864,17 +25920,14 @@ function initCricketTicker() {
             let ballResult = "";
 
             if (deltaBalls > 0) {
-                // ভ্যালিড বল
                 if (deltaWickets > 0) {
-                    ballResult = "W"; // উইকেট
+                    ballResult = "W";
                 } else {
-                    ballResult = deltaRuns.toString(); // রান (0, 1, 4, 6...)
+                    ballResult = deltaRuns.toString();
                 }
                 recentBallHistory.push(ballResult);
             } 
             else if (deltaRuns > 0 && deltaBalls === 0) {
-                // বল বাড়েনি কিন্তু রান বেড়েছে (Extra: Wide/No Ball)
-                // এখানে রানের সাথে "Ex" যোগ করা হলো (যেমন: Ex1, Ex2)
                 ballResult = "Ex" + deltaRuns; 
                 recentBallHistory.push(ballResult);
             }
@@ -25884,14 +25937,11 @@ function initCricketTicker() {
             lastCricketState.wickets = currentWickets;
             lastCricketState.totalBalls = currentTotalBalls;
             
-            // UI আপডেট
             updateBallsUI(false);
             
-            // যদি ওভার শেষ হয়
+            // ওভার শেষ হলে
             if (currentTotalBalls > 0 && currentTotalBalls % 6 === 0) {
                 isWaitingForNextOver = true; 
-                
-                // ৩ সেকেন্ড পর "অপেক্ষা করুন" দেখান
                 setTimeout(() => {
                     if (isWaitingForNextOver) updateBallsUI(true);
                 }, 3000);
@@ -25908,20 +25958,34 @@ function initCricketTicker() {
         ctLastOver.classList.remove('hidden');
 
         if (showWaiting) {
-            ctLastOver.innerHTML = `<span class="text-[14px] text-yellow-300 font-bold animate-pulse" style="font-family: 'Bornomala', sans-serif;">অপেক্ষা করুন...</span>`;
+            // পরিবর্তন: শুধুমাত্র এনিমেশন (কোনো টেক্সট নেই)
+            ctLastOver.innerHTML = `
+                <div class="flex items-center justify-center w-full">
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                    </span>
+                </div>`;
             return;
         }
 
         if (recentBallHistory.length === 0) {
-            ctLastOver.innerHTML = `<span class="text-[12px] text-gray-300 font-bold mr-1" style="font-family: 'Bornomala', sans-serif;">নতুন ওভার...</span>`;
+             // হিস্টোরি না থাকলে ফাঁকা এনিমেশন
+            ctLastOver.innerHTML = `
+                <div class="flex items-center justify-center w-full">
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                    </span>
+                </div>`;
             return;
         }
 
-        let ballsHtml = `<span class="text-[12px] text-gray-300 font-bold mr-2 uppercase" style="font-family: 'Bornomala', sans-serif;">RUNS:</span>`;
+        // রানস লেবেল ছোট করা হয়েছে
+        let ballsHtml = `<span class="text-[10px] text-gray-300 font-bold mr-1 uppercase" style="font-family: 'Bornomala', sans-serif;">RUNS:</span>`;
         
         recentBallHistory.forEach(ball => {
             let colorClass = "";
-            // এক্সট্রা রানের জন্য ফন্ট সাইজ ছোট রাখার স্টাইল
             let customStyle = "font-family: 'Bornomala', sans-serif;";
             
             if (ball === "4") colorClass = "four";
@@ -25929,8 +25993,8 @@ function initCricketTicker() {
             else if (ball === "W") colorClass = "wicket";
             else if (ball === "0") colorClass = "dot";
             else if (String(ball).startsWith("Ex")) {
-                colorClass = "extra bg-gray-600 text-white border border-gray-500"; // এক্সট্রার জন্য আলাদা ক্লাস বা ডিফল্ট স্টাইল
-                customStyle += " font-size: 9px;"; // Ex1, Ex2 যাতে বৃত্তে ধরে সেজন্য ছোট ফন্ট
+                colorClass = "extra bg-gray-600 text-white border border-gray-500";
+                customStyle += " font-size: 9px;";
             }
 
             ballsHtml += `<span class="ball-run ${colorClass} mx-0.5" style="${customStyle}">${ball}</span>`;
@@ -25950,7 +26014,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
     
 // ====================================================================
 // START: আরও সেটিংস (More Settings) TAB SCRIPT (Updated)
@@ -25960,6 +26023,7 @@ function initializeMoreSettings() {
      // ক্রিকেট সেটিংস লজিক
     const cricketUrlInput = document.getElementById('cricketUrlInput');
     const saveCricketBtn = document.getElementById('saveCricketBtn');
+    const clearCricketBtn = document.getElementById('clearCricketBtn'); // নতুন
 
     if (saveCricketBtn && cricketUrlInput) {
         // লোড হলে সেভ করা URL দেখান
@@ -25978,6 +26042,17 @@ function initializeMoreSettings() {
             // সাথে সাথে টিকার আপডেট করুন
             initCricketTicker();
         });
+
+        // নতুন: মুছুন বাটনের লজিক
+        if (clearCricketBtn) {
+            clearCricketBtn.addEventListener('click', () => {
+                cricketUrlInput.value = '';
+                localStorage.removeItem('crexMatchUrl');
+                showCustomAlert('লিংক মুছে ফেলা হয়েছে এবং টিকার বন্ধ করা হয়েছে।');
+                // টিকার আপডেট করে বন্ধ করা
+                initCricketTicker();
+            });
+        }
     }  
 
         // ০. জেমিনি API কী ইনপুট লজিক (নতুন যুক্ত করা হয়েছে)
