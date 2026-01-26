@@ -7678,6 +7678,36 @@ body.sidebar-open #sidebarOverlay {
         <p id="convertedEnglishFromHijriDate"></p>
         <p id="convertedEnglishFromHijriDayDisplay"></p>
     </div>
+	
+	                <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">সময়ের ব্যবধান ক্যালকুলেটর</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">দুটি সময়ের মধ্যবর্তী ব্যবধান বের করুন। তারিখ না দিলে শুধু সময়ের ব্যবধান দেখাবে।</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="input-group">
+                        <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-300">শুরুর সময়</label>
+                        <div class="flex flex-col gap-2">
+                            <input type="date" id="diffStartDate" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <input type="time" id="diffStartTime" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-300">শেষ সময়</label>
+                        <div class="flex flex-col gap-2">
+                            <input type="date" id="diffEndDate" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <input type="time" id="diffEndTime" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="calcTimeDiffBtn" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors">
+                    ব্যবধান হিসাব করুন
+                </button>
+                
+                <div id="timeDiffResult" class="result-area mt-6 hidden bg-indigo-50 dark:bg-gray-800 p-4 rounded-lg border border-indigo-200 dark:border-gray-600 text-left">
+                    <h4 class="font-bold text-indigo-700 dark:text-indigo-300 mb-3 text-lg border-b border-indigo-200 dark:border-gray-600 pb-2">ফলাফল:</h4>
+                    <div id="diffOutputContent" class="text-gray-800 dark:text-gray-200 space-y-2"></div>
+                </div>
+				
                 <!-- নতুন বোতাম এবং লিংক -->
                 <a href="https://ajkertarikh.com" target="_blank" class="show-date-button rounded-xl mt-4 block mx-auto text-center">প্রয়োজনে এখানে তারিখ দেখুন</a>
 				<a href="https://www.bangladatetoday.com/" target="_blank" class="show-date-button rounded-xl mt-4 block mx-auto text-center">অথবা এখানে তারিখ দেখুন</a>
@@ -9125,16 +9155,29 @@ body.sidebar-open #sidebarOverlay {
             </div>
         </div>
 
-<!-- কাউন্টডাউন টাইমার সেকশন (আপডেটেড: দিন, ঘন্টা, মিনিট, সেকেন্ড ফরম্যাট) -->
+<!-- কাউন্টডাউন টাইমার সেকশন (আপডেটেড) -->
         <div class="clock-section countdown">
             <h3 class="section-title">কাউন্টডাউন টাইমার</h3>
+            
             <!-- টাইটেল ইনপুট -->
             <div class="mb-4">
-                 <input type="text" id="cdTitle" placeholder="টাইমারের নাম দিন (যেমন: কুইজ, ব্রেক)" class="w-full p-2 border rounded-lg text-center font-semibold dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:ring-2 focus:ring-blue-500">
+                 <input type="text" id="cdTitle" placeholder="টাইমারের নাম দিন (যেমন: কুইজ, ইফতার)" class="w-full p-2 border rounded-lg text-center font-semibold dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:ring-2 focus:ring-blue-500">
             </div>
             
-            <!-- ইনপুট গ্রিড (দিন, ঘণ্টা, মিনিট, সেকেন্ড) - ঘরগুলো বড় করা হয়েছে -->
-            <div class="grid grid-cols-4 gap-2 mb-4">
+            <!-- মোড সিলেকশন -->
+            <div class="flex justify-center gap-6 mb-4 p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="radio" name="cdMode" value="duration" checked class="form-radio text-indigo-600 h-4 w-4">
+                    <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium text-sm">সময়কাল (Duration)</span>
+                </label>
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="radio" name="cdMode" value="datetime" class="form-radio text-indigo-600 h-4 w-4">
+                    <span class="ml-2 text-gray-700 dark:text-gray-300 font-medium text-sm">নির্দিষ্ট তারিখ ও সময়</span>
+                </label>
+            </div>
+
+            <!-- ইনপুট গ্রিড (Duration) -->
+            <div id="cdDurationInputs" class="grid grid-cols-4 gap-2 mb-4 transition-all">
                 <div class="flex flex-col">
                     <input type="number" id="cdDays" placeholder="0" min="0" class="w-full p-3 text-center text-xl font-bold border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600">
                     <span class="text-xs text-center mt-1 dark:text-gray-300 font-semibold">দিন</span>
@@ -9152,8 +9195,14 @@ body.sidebar-open #sidebarOverlay {
                     <span class="text-xs text-center mt-1 dark:text-gray-300 font-semibold">সেকেন্ড</span>
                 </div>
             </div>
+            
+            <!-- ইনপুট গ্রিড (DateTime) - নতুন -->
+            <div id="cdDateTimeInputs" class="hidden mb-4">
+                <input type="datetime-local" id="cdTargetDateTime" class="w-full p-3 text-center text-lg font-bold border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:ring-2 focus:ring-indigo-500">
+                <p class="text-xs text-center mt-1 text-gray-500 dark:text-gray-400">কাঙ্ক্ষিত তারিখ ও সময় নির্বাচন করুন</p>
+            </div>
 
-            <!-- ডিসপ্লে (Bornomala ফন্ট ব্যবহার করা হয়েছে) -->
+            <!-- ডিসপ্লে -->
             <div id="countdownDisplay" class="stopwatch-display" style="font-family: 'Bornomala', sans-serif;">00 : 00 : 00 : 00</div>
             
             <div class="stopwatch-controls">
@@ -15893,6 +15942,112 @@ if (expenseTrackerTab) expenseTrackerTab.addEventListener('click', () => {    sh
             convertedEnglishFromHijriDayDisplay.innerHTML = `<strong>বার:</strong> ${dayOfWeek}`;
         });
     }
+	   // --- নতুন: সময়ের ব্যবধান ক্যালকুলেটর লজিক (NEW) ---
+    const calcTimeDiffBtn = document.getElementById('calcTimeDiffBtn');
+    const timeDiffResultArea = document.getElementById('timeDiffResult');
+    const diffOutputContent = document.getElementById('diffOutputContent');
+
+    if (calcTimeDiffBtn) {
+        // সংখ্যা বাংলায় রূপান্তর করার হেল্পার
+        const toBanglaNum = (n) => n.toString().replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[d]);
+
+        calcTimeDiffBtn.addEventListener('click', () => {
+            const startDateVal = document.getElementById('diffStartDate').value;
+            const startTimeVal = document.getElementById('diffStartTime').value;
+            const endDateVal = document.getElementById('diffEndDate').value;
+            const endTimeVal = document.getElementById('diffEndTime').value;
+
+            // ইনপুট ভ্যালিডেশন: সময় অটোমেটিক ১২ ঘণ্টা থেকে ২৪ ঘণ্টায় কনভার্ট হবে ব্রাউজারের ইনপুট টাইপ 'time' এর কারণে।
+            // ব্যবহারকারী যদি ম্যানুয়ালি ২৪ ঘণ্টা ইনপুট দেয়, তাও ঠিক আছে।
+
+            // শুধু সময়ের ব্যবধান (তারিখ ছাড়া)
+            if (!startDateVal && !endDateVal) {
+                if (!startTimeVal || !endTimeVal) {
+                    showCustomAlert('অনুগ্রহ করে অন্তত দুটি সময় নির্বাচন করুন।');
+                    return;
+                }
+                
+                const today = new Date().toISOString().split('T')[0];
+                let startObj = new Date(`${today}T${startTimeVal}`);
+                let endObj = new Date(`${today}T${endTimeVal}`);
+
+                if (endObj < startObj) {
+                    endObj.setDate(endObj.getDate() + 1); // পরের দিন ধরে নেওয়া
+                }
+
+                const diffMs = endObj - startObj;
+                const hours = Math.floor(diffMs / 3600000);
+                const minutes = Math.floor((diffMs % 3600000) / 60000);
+                const seconds = Math.floor((diffMs % 60000) / 1000);
+
+                timeDiffResultArea.classList.remove('hidden');
+                diffOutputContent.innerHTML = `<p class="text-lg">⏲️ সময়ের ব্যবধান: <strong>${toBanglaNum(hours)} ঘণ্টা, ${toBanglaNum(minutes)} মিনিট, ${toBanglaNum(seconds)} সেকেন্ড</strong></p>`;
+                return;
+            }
+
+            // তারিখ ও সময়ের ব্যবধান (বছর, মাস সহ)
+            if (!startDateVal || !endDateVal) {
+                showCustomAlert('পুরো হিসাবের জন্য শুরুর এবং শেষের তারিখ নির্বাচন করুন।');
+                return;
+            }
+
+            let startObj = new Date(`${startDateVal}T${startTimeVal || '00:00'}`);
+            let endObj = new Date(`${endDateVal}T${endTimeVal || '00:00'}`);
+
+            if (endObj < startObj) {
+                [startObj, endObj] = [endObj, startObj]; // Swap
+            }
+
+            // ১. মোট ব্যবধান
+            const totalDiffMs = endObj - startObj;
+            const totalSeconds = Math.floor(totalDiffMs / 1000);
+            const totalMinutes = Math.floor(totalSeconds / 60);
+            const totalHours = Math.floor(totalMinutes / 60);
+            const totalDays = Math.floor(totalHours / 24);
+
+            // ২. বছর, মাস, দিন ক্যালকুলেশন
+            let y = endObj.getFullYear() - startObj.getFullYear();
+            let m = endObj.getMonth() - startObj.getMonth();
+            let d = endObj.getDate() - startObj.getDate();
+            
+            let h = endObj.getHours() - startObj.getHours();
+            let min = endObj.getMinutes() - startObj.getMinutes();
+            let sec = endObj.getSeconds() - startObj.getSeconds();
+
+            if (sec < 0) { sec += 60; min--; }
+            if (min < 0) { min += 60; h--; }
+            if (h < 0) { h += 24; d--; }
+
+            if (d < 0) {
+                m--;
+                const prevMonthDate = new Date(endObj.getFullYear(), endObj.getMonth(), 0);
+                d += prevMonthDate.getDate();
+            }
+            if (m < 0) {
+                y--;
+                m += 12;
+            }
+
+            // আউটপুট তৈরি
+            timeDiffResultArea.classList.remove('hidden');
+            diffOutputContent.innerHTML = `
+                <div class="mb-4">
+                    <p class="font-bold text-lg text-blue-600 dark:text-blue-400">বিস্তারিত হিসাব:</p>
+                    <p class="text-xl">📅 ${toBanglaNum(y)} বছর, ${toBanglaNum(m)} মাস, ${toBanglaNum(d)} দিন</p>
+                    <p class="text-lg">⏰ ${toBanglaNum(h)} ঘণ্টা, ${toBanglaNum(min)} মিনিট, ${toBanglaNum(sec)} সেকেন্ড</p>
+                </div>
+                <div class="border-t border-gray-300 dark:border-gray-600 pt-2">
+                    <p class="font-bold text-sm text-gray-500 dark:text-gray-400">মোট হিসাব (বিকল্প):</p>
+                    <ul class="list-disc list-inside text-sm">
+                        <li>মোট দিন: ${toBanglaNum(totalDays)}</li>
+                        <li>মোট ঘণ্টা: ${toBanglaNum(totalHours)}</li>
+                        <li>মোট মিনিট: ${toBanglaNum(totalMinutes)}</li>
+                        <li>মোট সেকেন্ড: ${toBanglaNum(totalSeconds)}</li>
+                    </ul>
+                </div>
+            `;
+        });
+    }
 // ====================================================================
 // END:  তারিখ ও সময় ক্যালকুলেটর লজিক
 // ====================================================================
@@ -18477,28 +18632,58 @@ function initializeClockTab() {
     }
     loadCustomAlarmSoundUI();
 	
-// --- কাউন্টডাউন টাইমার লজিক শুরু (আপডেটেড: গ্লোবাল টাইমার ব্যবহার) ---
+    // --- কাউন্টডাউন টাইমার লজিক (আপডেটেড) ---
     const cdTitleInput = document.getElementById('cdTitle');
     const cdDaysInput = document.getElementById('cdDays');
     const cdHoursInput = document.getElementById('cdHours');
     const cdMinutesInput = document.getElementById('cdMinutes');
     const cdSecondsInput = document.getElementById('cdSeconds');
+    const cdTargetDateTime = document.getElementById('cdTargetDateTime');
     const countdownDisplay = document.getElementById('countdownDisplay');
     const startCountBtn = document.getElementById('startCountdown');
     const pauseCountBtn = document.getElementById('pauseCountdown');
     const resetCountBtn = document.getElementById('resetCountdown');
+    
+    // মোড সিলেকশন রেডিও বাটন
+    const cdModeRadios = document.getElementsByName('cdMode');
+    const durationInputsDiv = document.getElementById('cdDurationInputs');
+    const targetInputsDiv = document.getElementById('cdDateTimeInputs');
 
-    // let countdownInterval = null; // রিমুভড, গ্লোবাল ব্যবহার করা হবে
     let endTime = 0;
     let remainingTime = 0;
     let isCountdownRunning = false;
+    let currentMode = 'duration'; // 'duration' or 'datetime'
 
-    // লোড স্টেট
+    // মোড চেঞ্জ লজিক
+    cdModeRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            currentMode = e.target.value;
+            if (currentMode === 'duration') {
+                durationInputsDiv.classList.remove('hidden');
+                targetInputsDiv.classList.add('hidden');
+                durationInputsDiv.style.display = 'grid'; 
+            } else {
+                durationInputsDiv.classList.add('hidden');
+                durationInputsDiv.style.display = 'none'; 
+                targetInputsDiv.classList.remove('hidden');
+            }
+        });
+    });
+
+// লোড স্টেট
     function loadCountdownState() {
         const savedState = JSON.parse(localStorage.getItem('countdownState'));
         if (savedState) {
             if (cdTitleInput) cdTitleInput.value = savedState.title || '';
+            currentMode = savedState.mode || 'duration';
             
+            // রেডিও বাটন আপডেট
+            const radioToSelect = document.querySelector(`input[name="cdMode"][value="${currentMode}"]`);
+            if (radioToSelect) {
+                radioToSelect.checked = true;
+                radioToSelect.dispatchEvent(new Event('change'));
+            }
+
             if (savedState.isRunning) {
                 const now = Date.now();
                 const timeLeft = Math.ceil((savedState.endTime - now) / 1000);
@@ -18513,12 +18698,27 @@ function initializeClockTab() {
                         cdHoursInput.value = savedState.inputs.h;
                         cdMinutesInput.value = savedState.inputs.m;
                         cdSecondsInput.value = savedState.inputs.s;
+                        if(cdTargetDateTime) cdTargetDateTime.value = savedState.inputs.target || '';
                     }
                     
                     disableInputs(true);
                     updateButtons(true);
                     startInterval();
                 } else {
+                    // --- পরিবর্তন: রিফ্রেশ বা অন্য ট্যাবে থাকা অবস্থায় সময় শেষ হলে অ্যালার্ম বাজানো ---
+                    
+                    // ১. অ্যালার্ম বাজান
+                    if(typeof playGlobalAlarmSound === 'function') playGlobalAlarmSound();
+                
+                    // ২. অ্যালার্ম স্টপ বাটন দৃশ্যমান করা (যাতে সাইডবার হাইলাইট হয়)
+                    const stopAlarmBtn = document.getElementById('stopAlarmBtn');
+                    if (stopAlarmBtn) stopAlarmBtn.classList.remove('hidden');
+
+                    // ৩. পপআপ অ্যালার্ট দেখানো
+                    const title = savedState.title || 'কাউন্টডাউন';
+                    showCustomAlert(`⏳ ${title} শেষ!`);
+
+                    // ৪. রিসেট করা
                     resetCountdown();
                     countdownDisplay.textContent = "সময় শেষ!";
                 }
@@ -18529,6 +18729,7 @@ function initializeClockTab() {
                     cdHoursInput.value = savedState.inputs.h;
                     cdMinutesInput.value = savedState.inputs.m;
                     cdSecondsInput.value = savedState.inputs.s;
+                    if(cdTargetDateTime) cdTargetDateTime.value = savedState.inputs.target || '';
                 }
                 updateDisplay(remainingTime);
                 disableInputs(true);
@@ -18546,11 +18747,13 @@ function initializeClockTab() {
             isRunning: isCountdownRunning,
             endTime: endTime,
             remaining: remainingTime,
+            mode: currentMode,
             inputs: {
                 d: cdDaysInput ? cdDaysInput.value : '',
                 h: cdHoursInput.value,
                 m: cdMinutesInput.value,
-                s: cdSecondsInput.value
+                s: cdSecondsInput.value,
+                target: cdTargetDateTime ? cdTargetDateTime.value : ''
             }
         };
         localStorage.setItem('countdownState', JSON.stringify(state));
@@ -18563,21 +18766,21 @@ function initializeClockTab() {
         const s = seconds % 60;
 
         let displayStr = "";
+        const toBanglaNum = (n) => n.toString().replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[d]);
         
         if (d > 0) {
-             displayStr = `${String(d).padStart(2, '0')} দিন ${String(h).padStart(2, '0')} ঘণ্টা ${String(m).padStart(2, '0')} মিনিট ${String(s).padStart(2, '0')} সেকেন্ড`;
+             displayStr = `${toBanglaNum(String(d).padStart(2, '0'))} দিন ${toBanglaNum(String(h).padStart(2, '0'))} : ${toBanglaNum(String(m).padStart(2, '0'))} : ${toBanglaNum(String(s).padStart(2, '0'))}`;
              countdownDisplay.style.fontSize = "1.8rem";
         } else {
-             displayStr = `${String(h).padStart(2, '0')} ঘণ্টা ${String(m).padStart(2, '0')} মিনিট ${String(s).padStart(2, '0')} সেকেন্ড`;
-             countdownDisplay.style.fontSize = "2.2rem";
+             displayStr = `${toBanglaNum(String(h).padStart(2, '0'))} : ${toBanglaNum(String(m).padStart(2, '0'))} : ${toBanglaNum(String(s).padStart(2, '0'))}`;
+             countdownDisplay.style.fontSize = "2.5rem";
         }
         
         countdownDisplay.textContent = displayStr;
-        forceUpdateBanner(); 
+        if(typeof forceUpdateBanner === 'function') forceUpdateBanner(); 
     }
 
-    function startInterval() {
-        // ফিক্স: গ্লোবাল টাইমার ক্লিয়ার
+function startInterval() {
         clearInterval(globalCountdownInterval);
         
         const tick = () => {
@@ -18589,7 +18792,12 @@ function initializeClockTab() {
                 isCountdownRunning = false;
                 remainingTime = 0;
                 updateDisplay(0);
-                playGlobalAlarmSound();
+                if(typeof playGlobalAlarmSound === 'function') playGlobalAlarmSound();
+                
+                // নতুন: কাউন্টডাউন শেষ হলে অ্যালার্ম স্টপ বাটন দৃশ্যমান করা (এর ফলে সাইডবার হাইলাইট হবে)
+                const stopAlarmBtn = document.getElementById('stopAlarmBtn');
+                if (stopAlarmBtn) stopAlarmBtn.classList.remove('hidden');
+
                 showCustomAlert(`⏳ ${cdTitleInput.value || 'কাউন্টডাউন'} শেষ!`);
                 
                 startCountBtn.classList.remove('hidden');
@@ -18598,8 +18806,7 @@ function initializeClockTab() {
                 disableInputs(false);
                 
                 localStorage.removeItem('countdownState');
-                localStorage.setItem('countdownState', JSON.stringify({ title: cdTitleInput.value }));
-                forceUpdateBanner();
+                if(typeof forceUpdateBanner === 'function') forceUpdateBanner();
                 
             } else {
                 remainingTime = left;
@@ -18608,7 +18815,6 @@ function initializeClockTab() {
         };
 
         tick();
-        // ফিক্স: গ্লোবাল টাইমার সেট
         globalCountdownInterval = setInterval(tick, 1000);
     }
 
@@ -18618,19 +18824,33 @@ function initializeClockTab() {
         if (remainingTime > 0 && startCountBtn.textContent === 'চালিয়ে যান') {
             endTime = Date.now() + remainingTime * 1000;
         } else {
-            const d = parseInt(cdDaysInput.value) || 0;
-            const h = parseInt(cdHoursInput.value) || 0;
-            const m = parseInt(cdMinutesInput.value) || 0;
-            const s = parseInt(cdSecondsInput.value) || 0;
-            
-            const totalSec = (d * 86400) + (h * 3600) + (m * 60) + s;
+            let totalSec = 0;
+
+            if (currentMode === 'duration') {
+                const d = parseInt(cdDaysInput.value) || 0;
+                const h = parseInt(cdHoursInput.value) || 0;
+                const m = parseInt(cdMinutesInput.value) || 0;
+                const s = parseInt(cdSecondsInput.value) || 0;
+                totalSec = (d * 86400) + (h * 3600) + (m * 60) + s;
+                endTime = Date.now() + totalSec * 1000;
+            } else {
+                // Target Date Mode
+                const targetVal = cdTargetDateTime.value;
+                if (!targetVal) {
+                    showCustomAlert('অনুগ্রহ করে তারিখ ও সময় নির্বাচন করুন।');
+                    return;
+                }
+                const targetTime = new Date(targetVal).getTime();
+                const now = Date.now();
+                totalSec = Math.floor((targetTime - now) / 1000);
+                endTime = targetTime;
+            }
 
             if (totalSec <= 0) {
-                showCustomAlert('অনুগ্রহ করে সময় সেট করুন।');
+                showCustomAlert('অনুগ্রহ করে ভবিষ্যতের কোনো সময় সেট করুন।');
                 return;
             }
             remainingTime = totalSec;
-            endTime = Date.now() + remainingTime * 1000;
         }
 
         isCountdownRunning = true;
@@ -18646,11 +18866,10 @@ function initializeClockTab() {
         updateButtons(false);
         startCountBtn.textContent = 'চালিয়ে যান';
         saveCountdownState();
-        forceUpdateBanner();
+        if(typeof forceUpdateBanner === 'function') forceUpdateBanner();
     }
 
     function resetCountdown() {
-        // ফিক্স: নিশ্চিতভাবে গ্লোবাল টাইমার বন্ধ করা
         clearInterval(globalCountdownInterval);
         isCountdownRunning = false;
         remainingTime = 0;
@@ -18660,16 +18879,16 @@ function initializeClockTab() {
         cdHoursInput.value = '';
         cdMinutesInput.value = '';
         cdSecondsInput.value = '';
+        if(cdTargetDateTime) cdTargetDateTime.value = '';
         
-        countdownDisplay.textContent = "00 দিন 00 ঘণ্টা 00 মিনিট 00 সেকেন্ড";
-        countdownDisplay.style.fontSize = "1.8rem";
+        countdownDisplay.textContent = "০০ : ০০ : ০০ : ০০";
         
         disableInputs(false);
         updateButtons(false);
         startCountBtn.textContent = 'শুরু';
         
-        localStorage.setItem('countdownState', JSON.stringify({ title: cdTitleInput.value }));
-        forceUpdateBanner();
+        localStorage.removeItem('countdownState');
+        if(typeof forceUpdateBanner === 'function') forceUpdateBanner();
     }
 
     function disableInputs(disabled) {
@@ -18677,6 +18896,8 @@ function initializeClockTab() {
         cdHoursInput.disabled = disabled;
         cdMinutesInput.disabled = disabled;
         cdSecondsInput.disabled = disabled;
+        if(cdTargetDateTime) cdTargetDateTime.disabled = disabled;
+        cdModeRadios.forEach(r => r.disabled = disabled);
     }
 
     function updateButtons(running) {
