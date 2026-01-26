@@ -12662,10 +12662,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const sortedUnicodeKeys = Object.keys(unicodeToBijoyMap).sort((a, b) => b.length - a.length);
         const sortedBijoyKeys = Object.keys(bijoyToUnicodeMap).sort((a, b) => b.length - a.length);
 
-        function convertLeftToRight() {
+	function convertLeftToRight() {
             const textAreaLeft = document.getElementById('textAreaLeft');
             const textAreaRight = document.getElementById('textAreaRight');
             let unicodeInput = textAreaLeft ? textAreaLeft.value : '';
+
+            // --- নরমালাইজেশন (Normalization) [নতুন যুক্ত করা হয়েছে] ---
+            // ইনপুট থেকে ডিকম্পোজড অক্ষরগুলো (যেমন: য়, ড়, ঢ়) সঠিক ইউনিকোড ক্যারেক্টারে রূপান্তর
+            unicodeInput = unicodeInput
+                .replace(/য়/g, 'য়')
+                .replace(/ড়/g, 'ড়')
+                .replace(/ঢ়/g, 'ঢ়');
 
             // --- ক্যারেক্টার ডেফিনিশন ---
             const bengaliConsonants = 'কখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহড়ঢ়য়';
@@ -12684,8 +12691,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- প্রি-প্রসেসিং ধাপ ---
 
             // ধাপ ১: ও-কার এবং ঔ-কারকে তাদের উপাদান অংশে বিভক্ত করুন
-            // এটি করা হয় যাতে 'ে' কারকে সঠিকভাবে আগে আনা যায়।
-            // যেমন: কো -> ক + ে + া
             const consonantOrConjunct = `(?:(?:[${bengaliConsonants}]${unicodeHasanta})+[${bengaliConsonants}]|[${bengaliConsonants}])`;
             const o_ou_kar_regex = new RegExp(`(${consonantOrConjunct})(${unicodeOkar}|${unicodeOukar})`, 'g');
             unicodeInput = unicodeInput.replace(o_ou_kar_regex, (match, base, vowelSign) => {
@@ -12695,10 +12700,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // ধাপ ২: বিজয় লেআউটের জন্য কার-চিহ্ন (ি, ে, ৈ) আগে আনুন
-            // এই অংশটি রেফ, র-ফলা, য-ফলা সহ সকল যুক্তবর্ণের জন্য কাজ করবে।
-            // যেমন: ক + ি -> ি + ক
-            // যেমন: র্ + ক + ি -> ি + র্ + ক
-            // যেমন: ক + ্র + ি -> ি + ক + ্র
             const precedingVowelRegex = new RegExp(`(${unicodeRefChar})?(${consonantOrConjunct})((?:${unicodeJaPhala}|${unicodeRaPhala})?)(${unicodeIkar}|${unicodeEkar}|${unicodeOikar})`, 'g');
             unicodeInput = unicodeInput.replace(precedingVowelRegex, (match, reph, base, phala, vowel) => {
                 return vowel + (reph || '') + base + (phala || '');
@@ -12758,12 +12759,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // ধাপ ৫: ব্যবহারকারীর অনুরোধ অনুযায়ী অতিরিক্ত রিপ্লেসমেন্ট (লাইনের শুরু এবং দাড়ির পর)
-            // এটি শব্দের শুরুতে ভুল কার-চিহ্নকে সঠিক স্বরবর্ণে পরিবর্তন করে।
-            // যেমন, একটি লাইন 'ে' (‡) দিয়ে শুরু হতে পারে না, এটি 'এ' (†) হওয়া উচিত।
             bijoyOutput = bijoyOutput.replace(/^‡/gm, '†'); // লাইনের শুরুতে
             bijoyOutput = bijoyOutput.replace(/\|‡/g, '|†');   // দাড়ির পরে
-
-            // একই নিয়ম 'ৈ' (‰) এর ক্ষেত্রেও প্রযোজ্য, যা 'ঐ' (ˆ) হওয়া উচিত।
             bijoyOutput = bijoyOutput.replace(/^‰/gm, 'ˆ'); // লাইনের শুরুতে
             bijoyOutput = bijoyOutput.replace(/\|‰/g, '|ˆ');   // দাড়ির পরে
 
@@ -12772,8 +12769,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 addState('textAreaRight');
             }
             
-            // *** নতুন সংযোজন: স্বয়ংক্রিয়ভাবে ফিক্স ফাংশন কল করুন ***
-            // showAlert প্যারামিটার false পাঠানো হয়েছে যাতে কোনো পপ-আপ বার্তা না আসে।
+            // স্বয়ংক্রিয়ভাবে ফিক্স ফাংশন কল করুন
             fixAnsiText(false);
         }
 
@@ -20342,11 +20338,17 @@ async function pasteFromClipboard(textareaId) {
     if (!textarea) return;
 
     try {
-        const clipboardText = await navigator.clipboard.readText();
+        let clipboardText = await navigator.clipboard.readText();
         if (!clipboardText) {
             showCustomAlert('ক্লিপবোর্ডে কোনো টেক্সট নেই।');
             return;
         }
+        
+        // --- নতুন: পেস্ট করার সময়ই নরমালাইজেশন ---
+        clipboardText = clipboardText
+            .replace(/য়/g, 'য়')
+            .replace(/ড়/g, 'ড়')
+            .replace(/ঢ়/g, 'ঢ়');
 
         let textToInsert = '';
         let preset, customValue, serialCounter, updateSerialCounter, resetSerialCounter;
@@ -20416,7 +20418,7 @@ async function pasteFromClipboard(textareaId) {
             }
         }
         
-        // কার্সরের বর্তমান পজিশন (যদি দরকার হয়)
+        // কার্সরের বর্তমান পজিশন
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
         const currentValue = textarea.value;
@@ -20424,13 +20426,13 @@ async function pasteFromClipboard(textareaId) {
         // টেক্সট ইনসার্ট করা
         textarea.value = currentValue.substring(0, start) + textToInsert + currentValue.substring(end);
         
-        // --- নতুন: কার্সরকে একদম শেষে নিয়ে যাওয়া (বর্তমান বক্স) ---
+        // কার্সরকে একদম শেষে নিয়ে যাওয়া
         const newCursorPosition = textarea.value.length;
         textarea.selectionStart = newCursorPosition;
         textarea.selectionEnd = newCursorPosition;
         textarea.focus();
 
-        // --- নতুন: স্ক্রোলবার নিচে নামানোর লজিক (বর্তমান বক্স) ---
+        // স্ক্রোলবার নিচে নামানো
         setTimeout(() => {
             textarea.scrollTop = textarea.scrollHeight;
         }, 10);
@@ -20439,13 +20441,12 @@ async function pasteFromClipboard(textareaId) {
         addState(textareaId);
         showCustomAlert('টেক্সট পেস্ট করা হয়েছে!');
 
-        // লাইভ কনভার্ট ট্রিগার এবং বিপরীত বক্সের স্ক্রোল ফিক্স
+        // লাইভ কনভার্ট ট্রিগার
         const liveConvertToggle = document.getElementById('live-convert-toggle');
         if (liveConvertToggle && liveConvertToggle.checked) {
             if (textareaId === 'textAreaLeft') {
                 setTimeout(() => {
                     convertLeftToRight();
-                    // ডানদিকের বক্সের স্ক্রোল নিচে নামানো
                     const rightArea = document.getElementById('textAreaRight');
                     if (rightArea) {
                         rightArea.scrollTop = rightArea.scrollHeight;
@@ -20454,7 +20455,6 @@ async function pasteFromClipboard(textareaId) {
             } else if (textareaId === 'textAreaRight') {
                 setTimeout(() => {
                     convertRightToLeft();
-                    // বামদিকের বক্সের স্ক্রোল নিচে নামানো
                     const leftArea = document.getElementById('textAreaLeft');
                     if (leftArea) {
                         leftArea.scrollTop = leftArea.scrollHeight;
