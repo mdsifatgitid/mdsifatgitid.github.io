@@ -7550,18 +7550,39 @@ body.sidebar-open #sidebarOverlay {
                 <!-- Divider -->
                 <hr class="my-8 border-gray-300">
 
-                <!-- New Year Calculator Feature -->
-                <h3 class="text-xl font-bold text-gray-700 mb-4">বছর ক্যালকুলেটর</h3>
-                <p class="text-gray-600 mb-4">যেকোনো তারিখ থেকে নির্দিষ্ট বছর আগে ও পরের তারিখ খুঁজুন।</p>
-                <div class="input-group">
-                    <label for="yearCalcDateInput">একটি তারিখ নির্বাচন করুন (খালি রাখলে আজকের তারিখ ব্যবহৃত হবে)</label>
-                    <input type="date" id="yearCalcDateInput" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+<!-- New Year Calculator Feature (Updated) -->
+                <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200 mt-8 border-t pt-6 dark:border-gray-600">তারিখ ও সময় যোগ/বিয়োগ</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">যেকোনো তারিখ ও সময়ের সাথে বছর, মাস, দিন, ঘণ্টা বা মিনিট যোগ বা বিয়োগ করে নতুন সময় বের করুন।</p>
+                
+                <div class="input-group mb-4">
+                    <label for="yearCalcDateInput" class="block mb-2 font-semibold text-gray-700 dark:text-gray-300">তারিখ ও সময় নির্বাচন করুন (খালি রাখলে বর্তমান সময়)</label>
+                    <input type="datetime-local" id="yearCalcDateInput" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600">
                 </div>
-                <div class="input-group">
-                    <label for="yearCalcYearsInput">বছরের সংখ্যা লিখুন</label>
-                    <input type="number" id="yearCalcYearsInput" value="10" placeholder="যেমন: ১০" class="rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-semibold mb-1 text-gray-700 dark:text-gray-300">বছর</label>
+                        <input type="number" id="calcYears" placeholder="0" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1 text-gray-700 dark:text-gray-300">মাস</label>
+                        <input type="number" id="calcMonths" placeholder="0" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1 text-gray-700 dark:text-gray-300">দিন</label>
+                        <input type="number" id="calcDays" placeholder="0" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1 text-gray-700 dark:text-gray-300">ঘণ্টা</label>
+                        <input type="number" id="calcHours" placeholder="0" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1 text-gray-700 dark:text-gray-300">মিনিট</label>
+                        <input type="number" id="calcMinutes" placeholder="0" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                    </div>
                 </div>
-                <button id="calculateYearsBtn" class="calculate-button rounded-xl">হিসাব করুন</button>
+
+                <button id="calculateYearsBtn" class="calculate-button rounded-xl w-full mb-4">হিসাব করুন</button>
                 <div id="yearCalcResult" class="result-area">
                     <!-- Results will be injected here -->
                 </div>
@@ -15501,66 +15522,87 @@ if (expenseTrackerTab) expenseTrackerTab.addEventListener('click', () => {    sh
 
                     if (ageResult) ageResult.innerText = `আপনার বয়স: ${years} বছর, ${months} মাস, ${days} দিন।`;
                 }
-                // --- বছর ক্যালকুলেটর লজিক ---
+// --- বছর/তারিখ ক্যালকুলেটর লজিক (আপডেটেড) ---
                 const yearCalcDateInput = document.getElementById('yearCalcDateInput');
-                const yearCalcYearsInput = document.getElementById('yearCalcYearsInput');
+                const calcYearsInput = document.getElementById('calcYears');
+                const calcMonthsInput = document.getElementById('calcMonths');
+                const calcDaysInput = document.getElementById('calcDays');
+                const calcHoursInput = document.getElementById('calcHours');
+                const calcMinutesInput = document.getElementById('calcMinutes');
+                
                 const calculateYearsBtn = document.getElementById('calculateYearsBtn');
                 const yearCalcResult = document.getElementById('yearCalcResult');
 
                 if (calculateYearsBtn) {
                     calculateYearsBtn.addEventListener('click', () => {
-                        console.log('বছর ক্যালকুলেটর বোতামে ক্লিক করা হয়েছে।');
-                        calculateAndDisplayYears();
+                        console.log('তারিখ ক্যালকুলেটর বোতামে ক্লিক করা হয়েছে।');
+                        calculateAndDisplayDateDiff();
                     });
                 }
 
-                function calculateAndDisplayYears() {
+                function calculateAndDisplayDateDiff() {
                     const startDateValue = yearCalcDateInput.value;
-                    const yearsToCalc = parseInt(yearCalcYearsInput.value, 10);
+                    
+                    const years = parseInt(calcYearsInput.value) || 0;
+                    const months = parseInt(calcMonthsInput.value) || 0;
+                    const days = parseInt(calcDaysInput.value) || 0;
+                    const hours = parseInt(calcHoursInput.value) || 0;
+                    const minutes = parseInt(calcMinutesInput.value) || 0;
 
-                    // আগের ফলাফল মুছে ফেলুন
                     yearCalcResult.innerHTML = '';
 
-                    if (isNaN(yearsToCalc) || yearsToCalc <= 0) {
-                        yearCalcResult.innerHTML = '<p class="error-message">অনুগ্রহ করে বছরের একটি সঠিক সংখ্যা লিখুন।</p>';
+                    if (years === 0 && months === 0 && days === 0 && hours === 0 && minutes === 0) {
+                        yearCalcResult.innerHTML = '<p class="error-message">অনুগ্রহ করে অন্তত একটি মান (বছর, মাস, দিন ইত্যাদি) লিখুন।</p>';
                         return;
                     }
 
-                    // যদি কোনো তারিখ নির্বাচন করা না থাকে, তাহলে আজকের তারিখ ব্যবহার করুন
                     const startDate = startDateValue ? new Date(startDateValue) : new Date();
 
-                    // তারিখ অবৈধ হলে ত্রুটি দেখান
                     if (isNaN(startDate.getTime())) {
                         yearCalcResult.innerHTML = '<p class="error-message">অনুগ্রহ করে একটি সঠিক তারিখ নির্বাচন করুন।</p>';
                         return;
                     }
 
+                    const toBangla = (n) => n.toLocaleString('bn-BD');
 
                     // ভবিষ্যতের তারিখ গণনা
                     const futureDate = new Date(startDate);
-                    futureDate.setFullYear(startDate.getFullYear() + yearsToCalc);
+                    futureDate.setFullYear(futureDate.getFullYear() + years);
+                    futureDate.setMonth(futureDate.getMonth() + months);
+                    futureDate.setDate(futureDate.getDate() + days);
+                    futureDate.setHours(futureDate.getHours() + hours);
+                    futureDate.setMinutes(futureDate.getMinutes() + minutes);
 
                     // অতীতের তারিখ গণনা
                     const pastDate = new Date(startDate);
-                    pastDate.setFullYear(startDate.getFullYear() - yearsToCalc);
+                    pastDate.setFullYear(pastDate.getFullYear() - years);
+                    pastDate.setMonth(pastDate.getMonth() - months);
+                    pastDate.setDate(pastDate.getDate() - days);
+                    pastDate.setHours(pastDate.getHours() - hours);
+                    pastDate.setMinutes(pastDate.getMinutes() - minutes);
 
-                    // ফলাফল প্রদর্শনের জন্য তারিখ ফরম্যাট করুন
-                    const dateFormatter = new Intl.DateTimeFormat('bn-BD', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                        weekday: 'long'
-                    });
+                    const options = { 
+                        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+                        hour: '2-digit', minute: '2-digit', hour12: true 
+                    };
+                    const dateFormatter = new Intl.DateTimeFormat('bn-BD', options);
 
-                    // ফলাফল প্রদর্শনের জন্য HTML তৈরি করুন
+                    let descParts = [];
+                    if(years) descParts.push(`${toBangla(years)} বছর`);
+                    if(months) descParts.push(`${toBangla(months)} মাস`);
+                    if(days) descParts.push(`${toBangla(days)} দিন`);
+                    if(hours) descParts.push(`${toBangla(hours)} ঘণ্টা`);
+                    if(minutes) descParts.push(`${toBangla(minutes)} মিনিট`);
+                    const desc = descParts.join(', ');
+
                     yearCalcResult.innerHTML = `
-                        <div class="result-item">
-                            <h3>${yearsToCalc} বছর আগে ছিল:</h3>
-                            <p class="past-date">${dateFormatter.format(pastDate)}</p>
+                        <div class="result-item mb-3 p-3 bg-green-50 dark:bg-green-900/30 rounded-lg border border-green-200 dark:border-green-700">
+                            <h3 class="text-green-700 dark:text-green-300 font-bold mb-1 text-lg">${desc} পরে হবে:</h3>
+                            <p class="text-xl font-semibold future-date">${dateFormatter.format(futureDate)}</p>
                         </div>
-                        <div class="result-item">
-                            <h3>${yearsToCalc} বছর পরে হবে:</h3>
-                            <p class="future-date">${dateFormatter.format(futureDate)}</p>
+                        <div class="result-item p-3 bg-red-50 dark:bg-red-900/30 rounded-lg border border-red-200 dark:border-red-700">
+                            <h3 class="text-red-700 dark:text-red-300 font-bold mb-1 text-lg">${desc} আগে ছিল:</h3>
+                            <p class="text-xl font-semibold past-date">${dateFormatter.format(pastDate)}</p>
                         </div>
                     `;
                 }
