@@ -13939,21 +13939,28 @@ function showCustomAlert(message) {
 
         document.body.appendChild(alertBox);
 
-        // স্লাইড ডাউন অ্যানিমেশন
+        // ফিক্স: requestAnimationFrame এর ভেতরে নেস্টেড requestAnimationFrame এবং তার ভেতরে setTimeout ব্যবহার করা হয়েছে।
+        // এটি নিশ্চিত করে যে ব্রাউজার যখন ট্যাবটি রেন্ডার করার জন্য সম্পূর্ণ প্রস্তুত (Active Tab), তখনই কেবল টাইমার শুরু হবে।
+        // ফলে অন্য ট্যাবে থাকলে টাইমার পজ থাকবে এবং ফিরে আসলে এলার্টটি সুন্দরভাবে দেখাবে, হুট করে চলে যাবে না।
+        
         requestAnimationFrame(() => {
-            alertBox.classList.remove('opacity-0', '-translate-y-4');
-            alertBox.classList.add('opacity-100', 'translate-y-0');
-        });
+            requestAnimationFrame(() => {
+                // ১. স্লাইড ডাউন অ্যানিমেশন (Show)
+                alertBox.classList.remove('opacity-0', '-translate-y-4');
+                alertBox.classList.add('opacity-100', 'translate-y-0');
 
-        // ৩ সেকেন্ড পর অটোমেটিক রিমুভ
-        setTimeout(() => {
-            alertBox.classList.remove('opacity-100', 'translate-y-0');
-            alertBox.classList.add('opacity-0', '-translate-y-4');
-            
-            setTimeout(() => {
-                if (alertBox.parentNode) alertBox.parentNode.removeChild(alertBox);
-            }, 300);
-        }, 3000);
+                // ২. ৩ সেকেন্ড পর অটোমেটিক রিমুভ (Hide) - এটি এখন এনিমেশন ফ্রেমের ভেতরে
+                setTimeout(() => {
+                    alertBox.classList.remove('opacity-100', 'translate-y-0');
+                    alertBox.classList.add('opacity-0', '-translate-y-4');
+                    
+                    // ৩. ট্রানজিশন শেষ হলে DOM থেকে রিমুভ
+                    setTimeout(() => {
+                        if (alertBox.parentNode) alertBox.parentNode.removeChild(alertBox);
+                    }, 300);
+                }, 3000);
+            });
+        });
     }
 
 // ====================================================================
