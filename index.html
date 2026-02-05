@@ -13877,9 +13877,6 @@ initializeTimeConverter();
 	// কাস্টম অ্যালার্ট বক্স বাস্তবায়ন New
     // কাস্টম টোস্ট অ্যালার্ট (উপরে ব্যানারের ওপর দেখাবে)
 function showCustomAlert(message) {
-        // নতুন: যদি ট্যাব হিডেন থাকে (ব্যবহারকারী অন্য ট্যাবে আছে), তবে এলার্ট দেখাবে না
-        if (document.hidden) return;
-
         // আগের কোনো অ্যালার্ট থাকলে সরিয়ে ফেলুন
         const existingAlert = document.querySelector('.custom-toast-alert');
         if (existingAlert) existingAlert.remove();
@@ -13914,7 +13911,7 @@ function showCustomAlert(message) {
             'fixed', 'left-1/2', 'transform', '-translate-x-1/2', // পজিশন
             'bg-gray-900', 'dark:bg-gray-100', // ব্যাকগ্রাউন্ড
             'text-white', 'dark:text-gray-900', // টেক্সট
-            'px-6', 'py-1', // ডানে-বামে প্যাডিং এবং উপরে-নিচে সামান্য প্যাডিং
+            'px-6', 'py-1', // ডানে-বামে প্যাডিং এবং উপরে-নিচে সামান্য প্যাডিং (পরিবর্তিত: py-2 থেকে py-1 করা হয়েছে যাতে ছোট ব্যানারে হাইট ঠিক থাকে)
             'rounded-full', // সম্পূর্ণ রাউন্ডেড
             'shadow-2xl', 'border', 'border-gray-700', 'dark:border-gray-300',
             'z-[100]',
@@ -13932,6 +13929,7 @@ function showCustomAlert(message) {
         alertBox.style.width = 'max-content'; 
 
         // আইকন এবং মেসেজ সেট করা
+        // টেক্সট র‍্যাপ করার জন্য 'white-space: nowrap' সরিয়ে 'word-break' এবং 'text-align' যোগ করা হয়েছে
         alertBox.innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-400 dark:text-green-600 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
@@ -13941,50 +13939,21 @@ function showCustomAlert(message) {
 
         document.body.appendChild(alertBox);
 
-        let hideTimeout;
-
-        // নতুন: ট্যাব পরিবর্তন বা হিডেন হলে এলার্ট সাথে সাথে রিমুভ করার হ্যান্ডলার
-        const handleVisibilityChange = () => {
-            if (document.hidden) {
-                if (alertBox && alertBox.parentNode) {
-                    alertBox.parentNode.removeChild(alertBox);
-                }
-                if (hideTimeout) clearTimeout(hideTimeout);
-                document.removeEventListener('visibilitychange', handleVisibilityChange);
-            }
-        };
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-
-        // ফিক্স: requestAnimationFrame এর ভেতরে নেস্টেড requestAnimationFrame এবং তার ভেতরে setTimeout ব্যবহার করা হয়েছে।
+        // স্লাইড ডাউন অ্যানিমেশন
         requestAnimationFrame(() => {
-            // যদি এনিমেশন ফ্রেমের মাঝে ট্যাব হিডেন হয়ে যায়
-            if (document.hidden) {
-                if (alertBox.parentNode) alertBox.parentNode.removeChild(alertBox);
-                return;
-            }
-
-            requestAnimationFrame(() => {
-                if (document.hidden) return;
-
-                // ১. স্লাইড ডাউন অ্যানিমেশন (Show)
-                alertBox.classList.remove('opacity-0', '-translate-y-4');
-                alertBox.classList.add('opacity-100', 'translate-y-0');
-
-                // ২. ৩ সেকেন্ড পর অটোমেটিক রিমুভ (Hide) - এটি এখন এনিমেশন ফ্রেমের ভেতরে
-                hideTimeout = setTimeout(() => {
-                    if (document.hidden) return;
-
-                    alertBox.classList.remove('opacity-100', 'translate-y-0');
-                    alertBox.classList.add('opacity-0', '-translate-y-4');
-                    
-                    // ৩. ট্রানজিশন শেষ হলে DOM থেকে রিমুভ
-                    setTimeout(() => {
-                        if (alertBox.parentNode) alertBox.parentNode.removeChild(alertBox);
-                        document.removeEventListener('visibilitychange', handleVisibilityChange);
-                    }, 300);
-                }, 3000);
-            });
+            alertBox.classList.remove('opacity-0', '-translate-y-4');
+            alertBox.classList.add('opacity-100', 'translate-y-0');
         });
+
+        // ৩ সেকেন্ড পর অটোমেটিক রিমুভ
+        setTimeout(() => {
+            alertBox.classList.remove('opacity-100', 'translate-y-0');
+            alertBox.classList.add('opacity-0', '-translate-y-4');
+            
+            setTimeout(() => {
+                if (alertBox.parentNode) alertBox.parentNode.removeChild(alertBox);
+            }, 300);
+        }, 3000);
     }
 
 // ====================================================================
