@@ -13947,12 +13947,18 @@ function showCustomAlert(message) {
 
         // ৩ সেকেন্ড পর অটোমেটিক রিমুভ
         setTimeout(() => {
-            alertBox.classList.remove('opacity-100', 'translate-y-0');
-            alertBox.classList.add('opacity-0', '-translate-y-4');
-            
-            setTimeout(() => {
+            // ফিক্স: যদি ডকুমেন্ট হিডেন থাকে (অন্য ট্যাবে), তবে এনিমেশন ছাড়াই রিমুভ করুন
+            if (document.hidden) {
                 if (alertBox.parentNode) alertBox.parentNode.removeChild(alertBox);
-            }, 300);
+            } else {
+                // ইউজার ট্যাবে থাকলে সাধারণ এনিমেশন দেখান
+                alertBox.classList.remove('opacity-100', 'translate-y-0');
+                alertBox.classList.add('opacity-0', '-translate-y-4');
+                
+                setTimeout(() => {
+                    if (alertBox.parentNode) alertBox.parentNode.removeChild(alertBox);
+                }, 300);
+            }
         }, 3000);
     }
 
