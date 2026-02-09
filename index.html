@@ -21246,6 +21246,23 @@ function initializePlayerTab() {
     const clearVideoBtn = document.getElementById('clearVideoBtn');
     
     const moveToAudioBtn = document.getElementById('moveToAudioBtn');
+    // নতুন বাটন: ফ্লোটিং প্লেয়ার বাটন সিলেক্ট করা
+    let floatVideoBtn = document.getElementById('floatVideoBtn'); 
+    
+    // যদি HTML এ না থাকে, তবে JS দিয়ে তৈরি করা (নিরাপত্তার জন্য)
+    if (!floatVideoBtn && moveToAudioBtn) {
+        floatVideoBtn = document.createElement('button');
+        floatVideoBtn.id = 'floatVideoBtn';
+        floatVideoBtn.className = 'hidden px-3 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-sm font-semibold transition-colors flex items-center gap-1';
+        floatVideoBtn.title = 'ভিডিওটি ফ্লোটিং প্লেয়ারে দেখুন';
+        floatVideoBtn.innerHTML = `
+           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M9 3v18"/><path d="M15 9h-6"/><path d="M9 15h6"/></svg>
+           ফ্লোটিং প্লেয়ার
+        `;
+        // Move To Audio বাটনের পাশে যুক্ত করা
+        moveToAudioBtn.parentNode.insertBefore(floatVideoBtn, moveToAudioBtn.nextSibling);
+    }
+
     let currentVideoFile = null;
 
     // URL ট্র্যাক করার জন্য গ্লোবাল ভেরিয়েবল
@@ -21354,6 +21371,8 @@ function initializePlayerTab() {
         
         if (clearVideoBtn) clearVideoBtn.classList.remove('hidden');
         if (moveToAudioBtn) moveToAudioBtn.classList.remove('hidden');
+        // ফ্লোটিং ভিডিও বাটন দৃশ্যমান করুন
+        if (floatVideoBtn) floatVideoBtn.classList.remove('hidden');
         
         videoPlayer.onloadedmetadata = () => {
             videoPlayer.play()
@@ -21449,6 +21468,7 @@ function initializePlayerTab() {
             if (videoInput) videoInput.value = '';
             clearVideoBtn.classList.add('hidden');
             if (moveToAudioBtn) moveToAudioBtn.classList.add('hidden');
+            if (floatVideoBtn) floatVideoBtn.classList.add('hidden');
             currentVideoFile = null;
         });
     }
@@ -21465,6 +21485,19 @@ function initializePlayerTab() {
                     audioSection.classList.add('ring-4', 'ring-indigo-500');
                     setTimeout(() => audioSection.classList.remove('ring-4', 'ring-indigo-500'), 1500);
                 }
+            }
+        });
+    }
+    
+    // নতুন: ফ্লোটিং প্লেয়ারে ভিডিও পাঠানো
+    if (floatVideoBtn) {
+        floatVideoBtn.addEventListener('click', () => {
+            if (currentVideoFile && window.playLocalVideoInFloatingPlayer) {
+                // মেইন প্লেয়ার পজ করা
+                if (videoPlayer) videoPlayer.pause();
+                // ফ্লোটিং প্লেয়ারে পাঠানো
+                window.playLocalVideoInFloatingPlayer(currentVideoFile);
+                showCustomAlert('ভিডিওটি ফ্লোটিং প্লেয়ারে চালু করা হয়েছে।');
             }
         });
     }
@@ -21521,8 +21554,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 // END: PLAYER TAB SCRIPT
 // ====================================================================
-
-
 
 // ====================================================================
 // START: QR CODE GENERATOR SCRIPT (Updated with Live Generation & Unicode Fix)
@@ -24728,9 +24759,9 @@ function initializeColorPicker() {
 /* ==================================================================== */
 
 
-/* ======================================================== */
-/* START: NEW SIDEBAR, DASHBOARD & INTERACTIVITY SCRIPT (UPDATED) */
-/* ======================================================== */
+// ========================================================
+// START: NEW SIDEBAR, DASHBOARD & INTERACTIVITY SCRIPT (UPDATED)
+// ========================================================
 document.addEventListener('DOMContentLoaded', () => {
     
     // --- Initialize all new features ---
@@ -24773,6 +24804,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             return false;
         };
+        
+        // নতুন: ফ্লোটিং প্লেয়ারে মিডিয়া বাজছে কিনা চেক করার ফাংশন
+        const isFloatingPlayerPlaying = () => {
+            const container = document.getElementById('rightSideVideoContainer');
+            // যদি কন্টেইনার হাইড থাকে, তবে বাজছে না
+            if (!container || container.classList.contains('hidden')) return false;
+
+            // ১. লোকাল ভিডিও চেক
+            const localVideo = document.getElementById('featuredLocalVideo');
+            if (localVideo && !localVideo.paused && !localVideo.ended && localVideo.currentTime > 0) return true;
+
+            // ২. ইউটিউব আইফ্রেম চেক (আমরা সরাসরি পজিশন জানতে পারি না, তাই দৃশ্যমান থাকলেই 'বাজছে' ধরা হবে)
+            const iframe = document.getElementById('featuredVideoFrame');
+            if (iframe && iframe.src && iframe.src !== 'about:blank' && !iframe.classList.contains('hidden')) return true;
+
+            return false;
+        };
 
         // সাইডবার হাইলাইট আপডেট করার ফাংশন
         const updateSidebarHighlights = () => {
@@ -24785,10 +24833,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             let isAnyMediaActive = false;
-
-            // নতুন: সাইডবার ভিডিও প্লেয়ার দৃশ্যমান কিনা চেক করা
-            const sidebarVideoContainer = document.getElementById('rightSideVideoContainer');
-            const isSidebarVideoVisible = sidebarVideoContainer && !sidebarVideoContainer.classList.contains('hidden');
+            // ফ্লোটিং প্লেয়ার চেক
+            const isFloatingActive = isFloatingPlayerPlaying();
 
             links.forEach(a => {
                 const targetTabId = a.dataset.tabId;
@@ -24800,7 +24846,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 const originalText = a.dataset.originalText;
 
-                let newClass = "block w-full text-left p-2 rounded-lg transition-colors duration-200 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-indigo-500"; // ফোকাস রিং যোগ করা হয়েছে
+                let newClass = "block w-full text-left p-2 rounded-lg transition-colors duration-200 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-indigo-500"; 
                 let iconHtml = ""; 
 
                 if (targetTabId === 'clockTab' && isAlarmActive) {
@@ -24819,8 +24865,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         </span>`;
                     isAnyMediaActive = true;
                 }
-                // নতুন: সাইডবার ভিডিও প্লেয়ার চালু থাকলে "আরও সেটিংস" হাইলাইট করা
-                else if (targetTabId === 'moreSettingsTab' && isSidebarVideoVisible) {
+                // নতুন: ফ্লোটিং প্লেয়ার চালু থাকলে "আরও সেটিংস" হাইলাইট করা এবং ভিজুয়ালাইজার দেখানো
+                else if (targetTabId === 'moreSettingsTab' && isFloatingActive) {
                     newClass += ' bg-yellow-400 text-black font-bold shadow-md';
                     iconHtml = `
                         <span class="playing-icon" title="ভিডিও প্লেয়ার চালু">
@@ -25056,7 +25102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.sidebarHighlightInterval = setInterval(updateSidebarHighlights, 500);
         updateSidebarHighlights();
     }
-
+// ... (rest of the file remains same: Draggable Dashboard & Interactivity) ...
     // --- Draggable Dashboard Functionality ---
     function initializeDraggableDashboard() {
         const dashboardGrid = document.getElementById('dashboard-grid');
@@ -25347,9 +25393,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-/* ======================================================== */
-/* END: NEW SIDEBAR, DASHBOARD & INTERACTIVITY SCRIPT (UPDATED) */
-/* ======================================================== */
+// ========================================================
+// END: NEW SIDEBAR, DASHBOARD & INTERACTIVITY SCRIPT (UPDATED)
+// ========================================================
 
 // ========================================================
 // START: Image Resizer Script (ছবি রিসাইজার) - পরিবর্তিত ও সংশোধিত
@@ -26413,12 +26459,13 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 
 <!-- ==================================================================== -->
-<!-- START: FEATURED YOUTUBE VIDEO SCRIPT (UPDATED FOR SIDEBAR & PROXY) -->
+<!-- START: FEATURED YOUTUBE VIDEO SCRIPT (UPDATED FOR SIDEBAR & PROXY & LOCAL VIDEO) -->
 <!-- ==================================================================== -->
 
 function initFeaturedVideoSystem() {
     const videoContainer = document.getElementById('rightSideVideoContainer');
     const videoFrame = document.getElementById('featuredVideoFrame');
+    const localVideoElement = document.getElementById('featuredLocalVideo'); // নতুন লোকাল ভিডিও এলিমেন্ট
     const closeVideoBtn = document.getElementById('closeVideoBtn');
     
     // সেটিংস এলিমেন্ট
@@ -26428,16 +26475,13 @@ function initFeaturedVideoSystem() {
 
     // সার্ভার কনফিগারেশন তালিকা (Piped ও Invidious রিমুভ করা হয়েছে)
     const servers = [
-        { id: 'youtube', name: 'Server: YouTube (Official)', url: (id) => `https://www.youtube.com/embed/${id}?autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1` }, // Mute 0 করা হয়েছে
+        { id: 'youtube', name: 'Server: YouTube (Official)', url: (id) => `https://www.youtube.com/embed/${id}?autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1` }, 
         { id: 'nocookie', name: 'Server: YT No-Cookie', url: (id) => `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=0` }
     ];
 
-    // বর্তমান সার্ভার ইনডেক্স (লোকাল স্টোরেজ থেকে)
     let currentServerIndex = parseInt(localStorage.getItem('ytPlayerServerIndex') || '0');
-    // ইনডেক্স ভ্যালিডেশন (যাতে রিমুভ করা সার্ভার লোড না হয়)
     if (currentServerIndex < 0 || currentServerIndex >= servers.length) currentServerIndex = 0;
 
-    // ভিডিও আইডি বের করার শক্তিশালী ফাংশন
     function getYoutubeId(url) {
         if (!url) return null;
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
@@ -26445,37 +26489,28 @@ function initFeaturedVideoSystem() {
         return (match && match[2].length === 11) ? match[2] : null;
     }
 
-    // ড্র্যাগ হ্যান্ডেল লজিক (ভিডিও মুভ করার জন্য)
+    // ড্র্যাগ হ্যান্ডেল লজিক
     function makeDraggable(element) {
         const handle = element.querySelector('.video-drag-handle');
         if (!handle) return;
 
-        // --- নতুন: অটো হাইড এবং হোভার ইফেক্ট লজিক ---
-        // প্রাথমিক স্টাইল সেট করা
         handle.style.transition = 'opacity 0.3s ease-in-out';
-        handle.style.opacity = '0'; // শুরুতে হাইড থাকবে
+        handle.style.opacity = '0'; 
 
         let hideTimeout;
 
-        // কন্ট্রোল দেখানোর ফাংশন
         function showControls() {
             handle.style.opacity = '1';
             clearTimeout(hideTimeout);
-            
-            // ৩ সেকেন্ড পর হাইড হবে
             hideTimeout = setTimeout(() => {
                 handle.style.opacity = '0';
             }, 3000);
         }
 
-        // ইভেন্ট লিসেনার যোগ করা (পুরো ভিডিও কন্টেইনারের উপর)
         element.addEventListener('mousemove', showControls);
         element.addEventListener('mouseenter', showControls);
         element.addEventListener('touchstart', showControls);
-        
-        // ভিডিও লোড হওয়ার সাথে সাথে একবার দেখাবে
         showControls();
-        // --- অটো হাইড লজিক শেষ ---
 
         let isDragging = false;
         let startX, startY, initialLeft, initialTop;
@@ -26487,8 +26522,6 @@ function initFeaturedVideoSystem() {
             if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
             e.preventDefault();
             isDragging = true;
-            
-            // ড্র্যাগ করার সময় কন্ট্রোল সবসময় ভিজিবল রাখা
             handle.style.opacity = '1';
             clearTimeout(hideTimeout);
 
@@ -26523,9 +26556,7 @@ function initFeaturedVideoSystem() {
 
         function stopDrag() {
             isDragging = false;
-            // ড্র্যাগ শেষ হলে আবার ৩ সেকেন্ডের টাইমার চালু করা
             showControls();
-            
             document.removeEventListener('mousemove', drag);
             document.removeEventListener('mouseup', stopDrag);
             document.removeEventListener('touchmove', drag);
@@ -26533,17 +26564,19 @@ function initFeaturedVideoSystem() {
         }
     }
 
-    // ড্র্যাগ হ্যান্ডেলে সার্ভার সুইচ এবং পপআপ বাটন ইনজেক্ট করা
     function injectControls() {
         const handle = videoContainer.querySelector('.video-drag-handle');
         if (handle && !document.getElementById('serverSwitchBtn')) {
-            
-            // ১. সার্ভার সুইচ বাটন
             const switchBtn = document.createElement('button');
             switchBtn.id = 'serverSwitchBtn';
-            switchBtn.title = 'সার্ভার পরিবর্তন করুন (ভিডিও না চললে এখানে ক্লিক করুন)';
+            switchBtn.title = 'সার্ভার পরিবর্তন করুন';
             switchBtn.onclick = (e) => {
                 e.stopPropagation();
+                // লোকাল ভিডিও চললে এটি কাজ করবে না
+                if (!localVideoElement.classList.contains('hidden')) {
+                    showCustomAlert('লোকাল ভিডিও চলাকালীন সার্ভার পরিবর্তন সম্ভব নয়।');
+                    return;
+                }
                 currentServerIndex = (currentServerIndex + 1) % servers.length;
                 localStorage.setItem('ytPlayerServerIndex', currentServerIndex);
                 updateSwitchButtonStyle(switchBtn);
@@ -26551,18 +26584,17 @@ function initFeaturedVideoSystem() {
                 showCustomAlert(`সার্ভার পরিবর্তন: ${servers[currentServerIndex].name.replace('Server: ', '')}`);
             };
 
-            // ২. পপআপ / ফ্লোটিং উইন্ডো বাটন
             const popupBtn = document.createElement('button');
             popupBtn.id = 'videoPopupBtn';
             popupBtn.className = 'text-[10px] font-bold bg-green-600 text-white px-2 py-0.5 rounded mr-2 hover:bg-green-700 border border-white/20';
             popupBtn.innerHTML = 'Pop-up';
-            popupBtn.title = 'ফ্লোটিং উইন্ডোতে খুলুন (ভিডিও সমস্যা হলে এটি ব্যবহার করুন)';
+            popupBtn.title = 'ফ্লোটিং উইন্ডোতে খুলুন';
             popupBtn.onclick = (e) => {
                 e.stopPropagation();
                 const originalLink = localStorage.getItem('featuredVideoLink');
                 const linkToOpen = originalLink ? originalLink : videoFrame.src;
 
-                if (linkToOpen) {
+                if (linkToOpen && videoFrame.src) { // আইফ্রেম সোর্স থাকলেই ওপেন হবে
                     window.open(linkToOpen, 'BanglaToolboxPlayer', 'width=854,height=480,top=100,left=100,toolbar=no,menubar=no,location=no,status=no,resizable=yes');
                     showCustomAlert('ভিডিওটি নতুন পপআপ উইন্ডোতে খোলা হয়েছে।');
                 } else {
@@ -26570,7 +26602,6 @@ function initFeaturedVideoSystem() {
                 }
             };
             
-            // বাটনগুলো যুক্ত করা (Close বাটনের আগে)
             handle.insertBefore(popupBtn, closeVideoBtn);
             handle.insertBefore(switchBtn, popupBtn);
             
@@ -26590,7 +26621,7 @@ function initFeaturedVideoSystem() {
             : 'text-[10px] font-bold bg-indigo-600 text-white px-2 py-0.5 rounded mr-2 hover:bg-indigo-700 border border-white/20';
     }
 
-    // ভিডিও লোড ফাংশন
+    // ইউটিউব ভিডিও লোড ফাংশন
     function loadVideoPlayer() {
         const savedUrl = localStorage.getItem('featuredVideoLink');
         
@@ -26600,21 +26631,31 @@ function initFeaturedVideoSystem() {
                 if (urlInput) urlInput.value = savedUrl;
                 const embedSrc = servers[currentServerIndex].url(videoId);
                 
-                // শুধুমাত্র নতুন লিংক হলেই সোর্স আপডেট হবে, যাতে রিলোড কম হয়
+                // লোকাল ভিডিও বন্ধ করুন
+                if (localVideoElement) {
+                    localVideoElement.classList.add('hidden');
+                    localVideoElement.pause();
+                    localVideoElement.src = "";
+                }
+                
                 if (videoFrame.src !== embedSrc) {
                     videoFrame.src = embedSrc;
                 }
                 
                 videoContainer.classList.remove('hidden');
+                videoFrame.classList.remove('hidden'); // আইফ্রেম দেখান
                 injectControls();
             }
         } else {
-            videoContainer.classList.add('hidden');
-            videoFrame.src = "";
+            // যদি লোকাল ভিডিও না চলে তবেই হাইড করুন
+            if (localVideoElement && localVideoElement.classList.contains('hidden')) {
+                videoContainer.classList.add('hidden');
+                videoFrame.src = "";
+            }
         }
     }
 
-    // গ্লোবাল ফাংশন এক্সপোজ করা (ওয়েব সার্চ থেকে এক্সেস করার জন্য)
+    // গ্লোবাল ফাংশন ১: ওয়েব সার্চ বা অন্য কোথাও থেকে ইউটিউব ভিডিও ওপেন করার জন্য
     window.openSidebarVideo = function(url) {
         if (url) {
             const videoId = getYoutubeId(url);
@@ -26627,18 +26668,50 @@ function initFeaturedVideoSystem() {
         }
         return false;
     };
+    
+    // গ্লোবাল ফাংশন ২: লোকাল ফাইল থেকে ভিডিও প্লে করার জন্য
+    window.playLocalVideoInFloatingPlayer = function(file) {
+        if (!file) return;
+        
+        const fileUrl = URL.createObjectURL(file);
+        
+        // ইউটিউব ভিডিও থামান
+        videoFrame.src = "";
+        videoFrame.classList.add('hidden');
+        
+        // লোকাল ভিডিও চালু করুন
+        if (localVideoElement) {
+            localVideoElement.src = fileUrl;
+            localVideoElement.classList.remove('hidden');
+            localVideoElement.play().catch(e => console.log("Play error", e));
+            
+            videoContainer.classList.remove('hidden');
+            injectControls();
+            
+            // ভিডিও শেষ হলে URL revoke করুন মেমোরি সেভের জন্য
+            localVideoElement.onended = () => {
+                 // চাইলে ভিডিও শেষ হলে প্লেয়ার বন্ধ করতে পারেন, অথবা পজ করে রাখতে পারেন
+            };
+        }
+    };
 
-    // ক্লোজ বাটন
+    // ক্লোজ বাটন - উভয় ভিডিও থামাবে
     if (closeVideoBtn) {
         closeVideoBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             videoContainer.classList.add('hidden');
+            // ইউটিউব থামান
             videoFrame.src = ""; 
+            // লোকাল ভিডিও থামান
+            if (localVideoElement) {
+                localVideoElement.pause();
+                localVideoElement.src = "";
+                localVideoElement.classList.add('hidden');
+            }
             showCustomAlert('ভিডিও প্লেয়ার বন্ধ করা হয়েছে।');
         });
     }
 
-    // সেভ বাটন
     if (saveBtn) {
         saveBtn.addEventListener('click', () => {
             const url = urlInput.value.trim();
@@ -26657,7 +26730,6 @@ function initFeaturedVideoSystem() {
         });
     }
 
-    // ক্লিয়ার বাটন
     if (clearBtn) {
         clearBtn.addEventListener('click', () => {
             if(urlInput) urlInput.value = '';
@@ -26665,6 +26737,12 @@ function initFeaturedVideoSystem() {
             showCustomAlert('ভিডিও মুছে ফেলা হয়েছে।');
             videoContainer.classList.add('hidden');
             videoFrame.src = "";
+            // লোকাল ভিডিও বন্ধ
+            if (localVideoElement) {
+                localVideoElement.pause();
+                localVideoElement.src = "";
+                localVideoElement.classList.add('hidden');
+            }
         });
     }
 
@@ -31011,6 +31089,13 @@ document.addEventListener('DOMContentLoaded', () => {
             referrerpolicy="strict-origin-when-cross-origin" 
             allowfullscreen>
     </iframe>
+    
+    <!-- নতুন: লোকাল ভিডিও প্লেয়ার এলিমেন্ট -->
+    <video id="featuredLocalVideo" 
+           class="w-full h-full absolute top-0 left-0 hidden bg-black" 
+           controls 
+           autoplay>
+    </video>
 </div>
 <!-- ======================================================== -->
 <!-- END: ফ্লোটিং সাইডবার ভিডিও প্লেয়ার -->
