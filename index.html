@@ -19241,7 +19241,7 @@ function initializeWebSearch() {
         'instagram.com', 'www.instagram.com',
         'twitter.com', 'x.com', 'mobile.twitter.com',
         'linkedin.com', 'www.linkedin.com',
-        'youtube.com', 'www.youtube.com', 'youtu.be', 'm.youtube.com',
+        // YouTube সরানো হয়েছে কারণ এটি এখন স্পেশাল হ্যান্ডলিং পাবে
         'github.com', 'www.github.com',
         'pinterest.com', 'www.pinterest.com',
         'reddit.com', 'www.reddit.com',
@@ -19401,6 +19401,13 @@ function initializeWebSearch() {
             url = `https://www.google.com/search?igu=1&q=${encodeURIComponent(query)}`;
         }
 
+        // --- NEW: YouTube Link Check ---
+        // যদি URL টি ইউটিউব ভিডিওর হয়, তবে সাইডবার প্লেয়ারে ওপেন করুন
+        if (window.openSidebarVideo && (url.includes('youtube.com') || url.includes('youtu.be'))) {
+            const isPlayed = window.openSidebarVideo(url);
+            if (isPlayed) return; // সাইডবারে চললে আইফ্রেমে লোড করবেন না
+        }
+
         // --- ব্লকড ডোমেইন চেক ---
         const lowerUrl = url.toLowerCase();
         const isBlocked = blockedDomains.some(domain => lowerUrl.includes(domain));
@@ -19509,6 +19516,7 @@ function initializeWebSearch() {
 // ====================================================================
 // END: WEB SEARCH BROWSER SCRIPT
 // ====================================================================
+
 // ========================================================
 // START: NEW FEATURES FUNCTIONS (রেকর্ডার, জেসন, মিম, স্পিড)
 // ========================================================
@@ -24730,7 +24738,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeDraggableDashboard();
     makeAllFeaturesInteractive();
 
-    // --- Sidebar Functionality (Updated: Auto Scroll including Yellow Highlight) ---
+    // --- Sidebar Functionality (Updated: Auto Scroll including Yellow Highlight & Sidebar Video Check) ---
     function initializeSidebar() {
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
@@ -24778,6 +24786,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let isAnyMediaActive = false;
 
+            // নতুন: সাইডবার ভিডিও প্লেয়ার দৃশ্যমান কিনা চেক করা
+            const sidebarVideoContainer = document.getElementById('rightSideVideoContainer');
+            const isSidebarVideoVisible = sidebarVideoContainer && !sidebarVideoContainer.classList.contains('hidden');
+
             links.forEach(a => {
                 const targetTabId = a.dataset.tabId;
                 const targetElement = document.getElementById(targetTabId);
@@ -24801,6 +24813,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     newClass += ' bg-yellow-400 text-black font-bold shadow-md';
                     iconHtml = `
                         <span class="playing-icon" title="মিডিয়া বাজছে">
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                        </span>`;
+                    isAnyMediaActive = true;
+                }
+                // নতুন: সাইডবার ভিডিও প্লেয়ার চালু থাকলে "আরও সেটিংস" হাইলাইট করা
+                else if (targetTabId === 'moreSettingsTab' && isSidebarVideoVisible) {
+                    newClass += ' bg-yellow-400 text-black font-bold shadow-md';
+                    iconHtml = `
+                        <span class="playing-icon" title="ভিডিও প্লেয়ার চালু">
                             <span class="bar"></span>
                             <span class="bar"></span>
                             <span class="bar"></span>
@@ -26405,8 +26428,8 @@ function initFeaturedVideoSystem() {
 
     // সার্ভার কনফিগারেশন তালিকা (Piped ও Invidious রিমুভ করা হয়েছে)
     const servers = [
-        { id: 'youtube', name: 'Server: YouTube (Official)', url: (id) => `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1` },
-        { id: 'nocookie', name: 'Server: YT No-Cookie', url: (id) => `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1` }
+        { id: 'youtube', name: 'Server: YouTube (Official)', url: (id) => `https://www.youtube.com/embed/${id}?autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1` }, // Mute 0 করা হয়েছে
+        { id: 'nocookie', name: 'Server: YT No-Cookie', url: (id) => `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=0` }
     ];
 
     // বর্তমান সার্ভার ইনডেক্স (লোকাল স্টোরেজ থেকে)
@@ -26576,7 +26599,12 @@ function initFeaturedVideoSystem() {
             if (videoId) {
                 if (urlInput) urlInput.value = savedUrl;
                 const embedSrc = servers[currentServerIndex].url(videoId);
-                videoFrame.src = embedSrc;
+                
+                // শুধুমাত্র নতুন লিংক হলেই সোর্স আপডেট হবে, যাতে রিলোড কম হয়
+                if (videoFrame.src !== embedSrc) {
+                    videoFrame.src = embedSrc;
+                }
+                
                 videoContainer.classList.remove('hidden');
                 injectControls();
             }
@@ -26585,6 +26613,20 @@ function initFeaturedVideoSystem() {
             videoFrame.src = "";
         }
     }
+
+    // গ্লোবাল ফাংশন এক্সপোজ করা (ওয়েব সার্চ থেকে এক্সেস করার জন্য)
+    window.openSidebarVideo = function(url) {
+        if (url) {
+            const videoId = getYoutubeId(url);
+            if (videoId) {
+                localStorage.setItem('featuredVideoLink', url);
+                loadVideoPlayer();
+                showCustomAlert('ভিডিওটি সাইডবার প্লেয়ারে চালু করা হয়েছে!');
+                return true;
+            }
+        }
+        return false;
+    };
 
     // ক্লোজ বাটন
     if (closeVideoBtn) {
