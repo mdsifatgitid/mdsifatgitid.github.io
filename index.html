@@ -26587,18 +26587,43 @@ function initFeaturedVideoSystem() {
             const popupBtn = document.createElement('button');
             popupBtn.id = 'videoPopupBtn';
             popupBtn.className = 'text-[10px] font-bold bg-green-600 text-white px-2 py-0.5 rounded mr-2 hover:bg-green-700 border border-white/20';
-            popupBtn.innerHTML = 'Pop-up';
-            popupBtn.title = 'ফ্লোটিং উইন্ডোতে খুলুন';
-            popupBtn.onclick = (e) => {
+            popupBtn.innerHTML = 'PiP'; // নাম পরিবর্তন করে PiP রাখা হলো
+            popupBtn.title = 'Picture-in-Picture / Pop-up মোড';
+            
+            popupBtn.onclick = async (e) => {
                 e.stopPropagation();
-                const originalLink = localStorage.getItem('featuredVideoLink');
-                const linkToOpen = originalLink ? originalLink : videoFrame.src;
 
-                if (linkToOpen && videoFrame.src) { // আইফ্রেম সোর্স থাকলেই ওপেন হবে
-                    window.open(linkToOpen, 'BanglaToolboxPlayer', 'width=854,height=480,top=100,left=100,toolbar=no,menubar=no,location=no,status=no,resizable=yes');
-                    showCustomAlert('ভিডিওটি নতুন পপআপ উইন্ডোতে খোলা হয়েছে।');
-                } else {
-                    showCustomAlert('কোনো ভিডিও লিংক নেই।');
+                // ১. যদি লোকাল ভিডিও চলে (সরাসরি Native PiP API ব্যবহার হবে - যা Always on Top থাকে)
+                if (localVideoElement && !localVideoElement.classList.contains('hidden') && !localVideoElement.paused) {
+                    try {
+                        if (document.pictureInPictureElement) {
+                            await document.exitPictureInPicture();
+                        } else {
+                            await localVideoElement.requestPictureInPicture();
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        showCustomAlert('PiP মোড চালু করা যায়নি।');
+                    }
+                    return;
+                }
+
+                // ২. যদি ইউটিউব ভিডিও চলে
+                // নোট: ইউটিউব আইফ্রেমের জন্য সরাসরি requestPictureInPicture কাজ করে না এবং Document PiP তে ইউটিউব এরর দেয়।
+                // তাই এখানে একটি ক্লিন পপ-আপ উইন্ডো ব্যবহার করা হচ্ছে যা আলাদা উইন্ডোতে ভিডিও দেখাবে।
+                try {
+                    if (!videoFrame.src || videoFrame.src === "") {
+                        showCustomAlert('কোনো ভিডিও লিংক নেই।');
+                        return;
+                    }
+                    
+                    // পপ-আপ উইন্ডো ওপেন করা (Embed URL ব্যবহার করে)
+                    window.open(videoFrame.src, 'BanglaToolboxPlayer', 'width=480,height=270,top=100,left=100,toolbar=no,menubar=no,location=no,status=no,resizable=yes,scrollbars=no');
+                    showCustomAlert('ভিডিওটি পপ-আপ উইন্ডোতে খোলা হয়েছে।');
+
+                } catch (err) {
+                    console.log("Popup failed", err);
+                    showCustomAlert('পপ-আপ খোলা সম্ভব হয়নি।');
                 }
             };
             
