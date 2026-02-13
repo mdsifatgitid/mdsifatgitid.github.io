@@ -7284,10 +7284,12 @@ body.sidebar-open #sidebarOverlay {
 
 		
 <!-- Animated News Ticker Start (Updated) -->
-<div id="news-ticker-container" class="relative w-full max-w-2xl mx-auto mt-3 mb-1 overflow-hidden bg-indigo-100 dark:bg-gray-700 p-1 rounded-lg shadow-inner transition-[height] duration-500 ease-in-out">
+<div id="news-ticker-container" class="relative w-fit max-w-full mx-auto mt-3 mb-1 overflow-hidden bg-indigo-100 dark:bg-gray-700 p-1 rounded-lg shadow-inner transition-[height] duration-500 ease-in-out">
     <!-- Ticker Content Area -->
     <div id="news-ticker-content" class="w-full text-center overflow-hidden relative">
         <a id="news-ticker-text" href="#" target="_blank" class="text-indigo-800 dark:!text-white font-semibold block px-10"></a>
+        <!-- Ghost element for sizing -->
+        <div id="ticker-ghost" class="invisible pointer-events-none px-10 font-semibold block text-indigo-800 dark:!text-white" aria-hidden="true"></div>
     </div>
 
     <!-- News Summary Overlay (Hidden by default) -->
@@ -22340,7 +22342,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Display Headline Logic (Modified for Ticker Messages) ---
+// --- Display Headline Logic (Modified for Ticker Messages & Sizing) ---
     function displayCurrentHeadline(direction = 'up') {
         clearTimeout(transitionTimeout); 
         isTransitioning = true; 
@@ -22358,7 +22360,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const timeBadge = currentMessage.time ? `<span class="bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 text-xs px-1 rounded ml-1">${currentMessage.time}</span>` : '';
         const displayText = ` ● ${currentMessage.title} - <span class="news-source text-indigo-600 dark:text-indigo-400 italic">${currentMessage.source}</span> ${timeBadge}`;
 
+        // Ghost element update for dynamic width sizing
+        const ghost = document.getElementById('ticker-ghost');
+        if (ghost) {
+             ghost.innerHTML = displayText;
+             // Ensure ghost has same basic text styles as link for accurate sizing
+             ghost.className = "invisible pointer-events-none px-10 font-semibold block text-indigo-800 dark:!text-white";
+        }
+
         if (useTypingAnimation) {
+            if(ghost) ghost.style.display = 'none'; // Typing mode doesn't strictly rely on ghost for height/width logic initially
+
             tickerTextElement.className = `news-ticker-text typing-animation text-indigo-800 dark:!text-white font-semibold`;
             tickerTextElement.href = currentMessage.link;
             tickerTextElement.innerHTML = displayText;
@@ -22386,6 +22398,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tickerTextElement.addEventListener('animationend', handleTypingEnd, { once: true });
 
         } else {
+            if(ghost) ghost.style.display = 'block'; // Ensure ghost expands container width
+
             tickerTextElement.className = `news-ticker-text text-indigo-800 dark:!text-white font-semibold`;
             tickerTextElement.style.animation = 'none';
             tickerTextElement.style.position = 'absolute';
@@ -22399,7 +22413,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tickerTextElement.style.top = '-9999px';
             tickerTextElement.style.opacity = '0';
             
-            const newHeight = tickerTextElement.offsetHeight || 24; 
+            // Recalculate height based on the GHOST now
+            const newHeight = ghost ? ghost.offsetHeight : (tickerTextElement.offsetHeight || 24); 
             tickerContent.style.height = `${newHeight}px`;
 
             const startTop = (direction === 'up') ? `${newHeight + 20}px` : `-${newHeight + 20}px`;
