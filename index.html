@@ -4419,6 +4419,7 @@ input:checked + .slider:before {
 /* শেষ: যাকাত ক্যালকুলেটর স্টাইল */
 
 
+/* Animated News Ticker Styles Start (Updated for Single Line Fix) */
 #news-ticker-container {
     position: relative; 
     overflow: hidden; 
@@ -4434,7 +4435,6 @@ input:checked + .slider:before {
     text-align: center;
     overflow: hidden; 
     position: relative; 
-    
     transition: height 0.5s ease-in-out; 
 }
 
@@ -4451,10 +4451,18 @@ input:checked + .slider:before {
     top: 100%;
     opacity: 0;
     
-    white-space: normal; 
-    overflow: visible; 
+    /* ফিক্স: মাল্টিপল লাইন বন্ধ করতে nowrap এবং overflow ব্যবহার করা হয়েছে */
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    
     line-height: 1.5; 
     font-weight: 600; 
+
+    /* ফিক্স: মোবাইল স্ক্রিনে বাটনগুলোর (অ্যারো) নিচে লেখা যাতে না যায় সেজন্য প্যাডিং */
+    padding-left: 35px;
+    padding-right: 35px;
+    box-sizing: border-box;
 }
 
 
@@ -4478,6 +4486,7 @@ input:checked + .slider:before {
     top: auto;
     line-height: normal; 
     text-overflow: clip;
+    padding: 0; /* টাইপিং মোডে প্যাডিং রিসেট */
 }
 
 @keyframes typing {
