@@ -31242,7 +31242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.error("Global Counter Init Failed:", error); }
     }
 
-    // ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার ও পারসিস্টেন্স সহ)
+// ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার ও পারসিস্টেন্স সহ)
     async function initializePublicComments() {
         // নিশ্চিত করুন ইউজার লগইন অবস্থায় আছে
         await ensureAuth();
@@ -31422,14 +31422,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     if(window.showCustomAlert) window.showCustomAlert('টেক্সট কপি হয়েছে');
                 });
                 
-                // পরিবর্তন: উন্নত রিপ্লাই ফরম্যাট
+                // পরিবর্তন: উন্নত রিপ্লাই ফরম্যাট (নেস্টেড রিপ্লাই ফিক্স সহ)
                 card.querySelector('.btn-reply').addEventListener('click', () => {
                     // ১. নাম সেট করা
                     const replyName = `@${data.name}`;
                     
+                    let textToProcess = data.text;
+
+                    // --- নতুন লজিক: যদি এটি আগের কোনো রিপ্লাই হয় ---
+                    // "রিপ্লে:" শব্দটি থাকলে, তার পরের অংশটুকু কোট করা হবে
+                    if (textToProcess.includes('রিপ্লে:')) {
+                        const parts = textToProcess.split('রিপ্লে:');
+                        // একদম শেষের অংশটি নেওয়া (যাতে চেইন রিপ্লাই থাকলেও লেটেস্ট মেসেজটা আসে)
+                        textToProcess = parts[parts.length - 1].trim();
+                    }
+
                     // ২. মূল টেক্সট থেকে প্রথম বাক্য বা নির্দিষ্ট অংশ নেওয়া
                     // বাংলা দাড়ি (।) অথবা ইংরেজি ফুলস্টপ/প্রশ্নবোধক চিহ্ন দিয়ে প্রথম বাক্য আলাদা করা
-                    let quoteText = data.text.split(/[।!?\n]/)[0].trim();
+                    let quoteText = textToProcess.split(/[।!?\n]/)[0].trim();
+                    
                     // যদি খুব বড় হয়, ৫০ অক্ষরে কেটে ফেলা
                     if (quoteText.length > 50) {
                         quoteText = quoteText.substring(0, 50);
