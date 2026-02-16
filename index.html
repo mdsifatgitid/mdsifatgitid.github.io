@@ -31257,6 +31257,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const emojiBtn = document.getElementById('emoji-selector-btn');
         const emojiContainer = document.getElementById('emoji-picker-container');
 
+        // নতুন: নোটিফিকেশন বাবল তৈরি (যদি আগে থেকে না থাকে)
+        let notificationBubble = document.getElementById('comment-notification');
+        if (!notificationBubble) {
+            notificationBubble = document.createElement('div');
+            notificationBubble.id = 'comment-notification';
+            // পজিশন: FAB (bottom: 85px) এর উপরে। bottom-36 (approx 144px) ঠিক আছে।
+            notificationBubble.className = "fixed bottom-36 right-5 z-[1002] bg-white dark:bg-gray-800 p-3 rounded-lg shadow-xl border-l-4 border-blue-500 max-w-[250px] transition-all duration-300 transform translate-y-4 opacity-0 pointer-events-none hidden";
+            document.body.appendChild(notificationBubble);
+        }
+
         // ইমোজির তালিকা
         const avatars = [
             '👤', '👨', '👩', '🧑‍💻', '🦸', '🦹', '🧙', '🧚', '🧛', '🧜',
@@ -31269,6 +31279,12 @@ document.addEventListener('DOMContentLoaded', () => {
             fab.addEventListener('click', (e) => {
                 e.stopPropagation();
                 container.classList.toggle('active');
+                
+                // নোটিফিকেশন থাকলে সরিয়ে দিন
+                if (notificationBubble) {
+                    notificationBubble.classList.add('hidden');
+                }
+
                 if(container.classList.contains('active')) {
                     loadSavedUserData(); // সেভ করা ডাটা লোড
                     cleanupOldComments(); // অটো ক্লিনআপ
@@ -31328,6 +31344,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const name = nameInput.value.trim() || 'বেনামী';
             const text = msgInput.value.trim();
             const avatar = emojiBtn.textContent; // বর্তমান ইমোজি
+            const currentUserUid = auth.currentUser ? auth.currentUser.uid : 'anonymous'; // UID সংগ্রহ
 
             if (!text) return;
 
@@ -31342,6 +31359,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     name: name,
                     text: text,
                     avatar: avatar, // ইমোজি ডাটাবেসে সেভ
+                    uid: currentUserUid, // নিজের মেসেজ চেনার জন্য UID যুক্ত করা হলো
                     timestamp: serverTimestamp(),
                     createdAt: Date.now()
                 });
@@ -31378,12 +31396,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // রিয়েল-টাইম মেসেজ লোড এবং রেন্ডার
         const q = query(commentsRef, orderBy("timestamp", "asc"));
         
+        let isInitialLoad = true; // ফ্ল্যাগ: প্রথম লোড কিনা
+
         onSnapshot(q, (snapshot) => {
+            // ১. লিস্ট রেন্ডারিং (আগের কোড)
             listContainer.innerHTML = '';
             
             if (snapshot.empty) {
                 listContainer.innerHTML = '<div class="text-center text-gray-400 mt-10 text-sm">কোনো মন্তব্য নেই।<br>প্রথম মন্তব্যটি আপনি করুন!</div>';
-                return;
             }
 
             snapshot.forEach((doc) => {
@@ -31457,11 +31477,70 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 listContainer.appendChild(card);
             });
-            listContainer.scrollTop = listContainer.scrollHeight;
+            
+            // স্ক্রল নিচে নামানো (প্রথমবার লোড হলে বা চ্যাট বক্স খোলা থাকলে)
+            if (isInitialLoad || container.classList.contains('active')) {
+                listContainer.scrollTop = listContainer.scrollHeight;
+            }
+
+            // ২. নোটিফিকেশন লজিক (নতুন মেসেজ আসলে)
+            if (!isInitialLoad) {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const data = change.doc.data();
+                        const currentUserUid = auth.currentUser ? auth.currentUser.uid : 'anonymous';
+                        
+                        // যদি মেসেজটি আমার নিজের না হয় এবং খুব পুরনো না হয় (১০ সেকেন্ডের মধ্যে আসা)
+                        // (পুরানো মেসেজগুলো onSnapshot এর প্রথম লোডে আসে না, কিন্তু নেটওয়ার্ক ল্যাগের কারণে চেক রাখা ভালো)
+                        const isRecent = (Date.now() - data.createdAt) < 10000;
+                        
+                        if (data.uid !== currentUserUid && isRecent) {
+                            showNewMessageNotification(data);
+                        }
+                    }
+                });
+            }
+            
+            isInitialLoad = false; // প্রথম লোড শেষ
+
         }, (error) => {
             console.error("Snapshot Error:", error);
             listContainer.innerHTML = '<div class="text-center text-red-400 mt-10 text-sm">ডেটা লোড করতে সমস্যা হচ্ছে।</div>';
         });
+
+        // নোটিফিকেশন দেখানোর ফাংশন
+        let notificationTimeout;
+        function showNewMessageNotification(data) {
+            const bubble = document.getElementById('comment-notification');
+            if(!bubble) return;
+
+            // প্রথম বাক্য বের করা
+            // দাড়ি, প্রশ্নবোধক, বিস্ময়সূচক বা নিউলাইন দিয়ে স্প্লিট করে প্রথম অংশ নেওয়া
+            let firstSentence = data.text.split(/[।!?\n]/)[0].trim();
+            // ইউজার রিকোয়ারমেন্ট অনুযায়ী ৩টি ডট যোগ করা
+            firstSentence += "...";
+
+            // HTML সেট করা
+            bubble.innerHTML = `
+                <div class="flex items-start gap-2">
+                    <div class="text-xl flex-shrink-0 pt-0.5">${data.avatar || '👤'}</div>
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-bold text-blue-600 dark:text-blue-400 truncate mb-0.5">${escapeHtml(data.name)}</p>
+                        <p class="text-sm text-gray-700 dark:text-gray-200 leading-snug break-words font-medium">${escapeHtml(firstSentence)}</p>
+                    </div>
+                </div>
+            `;
+
+            // দেখানো (Animation)
+            bubble.classList.remove('hidden', 'opacity-0', 'translate-y-4', 'pointer-events-none');
+            
+            // ৫ সেকেন্ড পর ভ্যানিস
+            if (notificationTimeout) clearTimeout(notificationTimeout);
+            notificationTimeout = setTimeout(() => {
+                bubble.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+                setTimeout(() => bubble.classList.add('hidden'), 300);
+            }, 5000);
+        }
 
         // ২৪ ঘণ্টার পুরনো মন্তব্য ক্লিনআপ
         async function cleanupOldComments() {
