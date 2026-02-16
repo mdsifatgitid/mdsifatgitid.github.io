@@ -31320,8 +31320,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Firestore কালেকশন রেফারেন্স (সংশোধিত)
-        // আগে 'messages' শেষে ছিল যা ভুল ছিল। এখন 'public_comments' হলো কালেকশন।
+        // Firestore কালেকশন রেফারেন্স
         const commentsRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments");
 
         // মেসেজ পাঠানোর ফাংশন
@@ -31361,11 +31360,14 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (msgInput) {
             msgInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
+                // পরিবর্তন: Shift + Enter চাপলে মেসেজ যাবে, শুধু Enter চাপলে নিউ লাইন হবে
+                if (e.key === 'Enter' && e.shiftKey) {
+                    e.preventDefault(); // ডিফল্ট (নিউ লাইন) বন্ধ করে মেসেজ পাঠান
                     sendMessage();
                 }
+                // শুধু Enter চাপলে ডিফল্টভাবেই নিউ লাইন তৈরি হয়, তাই else ব্লকের প্রয়োজন নেই
             });
+
             msgInput.addEventListener('input', function() {
                 this.style.height = 'auto';
                 this.style.height = (this.scrollHeight) + 'px';
@@ -31419,9 +31421,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     navigator.clipboard.writeText(data.text);
                     if(window.showCustomAlert) window.showCustomAlert('টেক্সট কপি হয়েছে');
                 });
+                
+                // পরিবর্তন: উন্নত রিপ্লাই ফরম্যাট
                 card.querySelector('.btn-reply').addEventListener('click', () => {
-                    msgInput.value = `@${data.name} ` + msgInput.value;
+                    // ১. নাম সেট করা
+                    const replyName = `@${data.name}`;
+                    
+                    // ২. মূল টেক্সট থেকে প্রথম বাক্য বা নির্দিষ্ট অংশ নেওয়া
+                    // বাংলা দাড়ি (।) অথবা ইংরেজি ফুলস্টপ/প্রশ্নবোধক চিহ্ন দিয়ে প্রথম বাক্য আলাদা করা
+                    let quoteText = data.text.split(/[।!?\n]/)[0].trim();
+                    // যদি খুব বড় হয়, ৫০ অক্ষরে কেটে ফেলা
+                    if (quoteText.length > 50) {
+                        quoteText = quoteText.substring(0, 50);
+                    }
+                    
+                    // ৩. নতুন ফরম্যাটে টেক্সটবক্সে বসানো
+                    msgInput.value = `${replyName}\n"${quoteText}..."\nরিপ্লে: `;
+                    
+                    // ফোকাস এবং হাইট ঠিক করা
                     msgInput.focus();
+                    msgInput.style.height = 'auto';
+                    msgInput.style.height = (msgInput.scrollHeight) + 'px';
                 });
 
                 listContainer.appendChild(card);
