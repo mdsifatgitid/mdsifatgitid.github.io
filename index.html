@@ -7216,6 +7216,223 @@ body.sidebar-open #sidebarOverlay {
 /* END: সাইডবার ভিডিও প্লেয়ার স্টাইল */
 /* ========================================= */
 
+/* ==================================================================== */
+/* START: পাবলিক মন্তব্য সেকশন স্টাইল (আপডেটেড) */
+/* ==================================================================== */
+#comment-fab {
+    position: fixed;
+    bottom: 85px;
+    right: 20px;
+    z-index: 999;
+    width: 50px;
+    height: 50px;
+    background-color: #3b82f6;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s;
+}
+#comment-fab:hover {
+    transform: scale(1.1);
+    background-color: #2563eb;
+}
+#comment-section-container {
+    position: fixed;
+    bottom: 145px;
+    right: 20px;
+    width: 320px;
+    height: 450px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e2e8f0;
+    transform: scale(0);
+    transform-origin: bottom right;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+.dark #comment-section-container {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+#comment-section-container.active {
+    transform: scale(1);
+}
+.comment-header {
+    padding: 12px 15px;
+    background-color: #3b82f6;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.comment-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #f8fafc;
+}
+.dark .comment-list {
+    background-color: #111827;
+}
+.comment-input-area {
+    padding: 10px;
+    border-top: 1px solid #e2e8f0;
+    background-color: #fff;
+    position: relative; /* ইমোজি পিকারের জন্য */
+}
+.dark .comment-input-area {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+/* ইমোজি পিকার স্টাইল */
+#emoji-picker-container {
+    position: absolute;
+    bottom: 100%;
+    left: 10px;
+    width: 280px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    padding: 10px;
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+    z-index: 1001;
+}
+.dark #emoji-picker-container {
+    background: #374151;
+    border-color: #4b5563;
+}
+.emoji-choice-btn {
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    transition: background 0.2s;
+    text-align: center;
+}
+.emoji-choice-btn:hover {
+    background-color: #f3f4f6;
+    transform: scale(1.2);
+}
+.dark .emoji-choice-btn:hover {
+    background-color: #4b5563;
+}
+/* মন্তব্য কার্ড স্টাইল */
+.comment-card {
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px 10px 10px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: relative;
+    border: 1px solid #e2e8f0;
+    max-width: 95%;
+    align-self: flex-start;
+    display: flex;
+    gap: 8px;
+}
+.dark .comment-card {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #e2e8f0;
+}
+.comment-avatar {
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    padding-top: 2px;
+}
+.comment-content-wrapper {
+    flex-grow: 1;
+}
+.comment-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #3b82f6;
+    margin-bottom: 2px;
+}
+.dark .comment-name {
+    color: #60a5fa;
+}
+.comment-msg {
+    font-size: 0.95rem;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    line-height: 1.4;
+}
+.comment-time {
+    font-size: 0.7rem;
+    color: #9ca3af;
+    text-align: right;
+    margin-top: 4px;
+}
+/* অ্যাকশন বার */
+.comment-actions {
+    position: absolute;
+    right: 5px;
+    top: -15px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 3px 6px;
+    display: flex;
+    gap: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    opacity: 0;
+    transition: opacity 0.2s, top 0.2s;
+    pointer-events: none;
+    border: 1px solid #e2e8f0;
+}
+.dark .comment-actions {
+    background: rgba(31, 41, 55, 0.95);
+    border-color: #4b5563;
+}
+.comment-card:hover .comment-actions {
+    opacity: 1;
+    top: -12px;
+    pointer-events: auto;
+}
+.comment-action-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    color: #4b5563;
+    background-color: #f3f4f6;
+    transition: all 0.2s;
+}
+.dark .comment-action-btn {
+    background-color: #4b5563;
+    color: #e5e7eb;
+}
+.comment-action-btn:hover {
+    transform: scale(1.15);
+}
+.btn-reply:hover { background-color: #3b82f6; color: white; }
+.btn-copy:hover { background-color: #10b981; color: white; }
+.btn-delete:hover { background-color: #ef4444; color: white; }
+/* ==================================================================== */
+/* END: পাবলিক মন্তব্য সেকশন স্টাইল */
+/* ==================================================================== */
+
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -30939,12 +31156,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 <!-- ====================================================================-->
-<!-- START: SCRIPT PART 2 FOR GLOBAL VISITOR COUNTER (FIREBASE)-->
+<!-- START: FIREBASE SCRIPT (Visitor Counter & Public Comments with Avatar) -->
 <!-- ====================================================================-->
 <script type="module">
-
-    // এই মডিউলটি Firebase ইনিশিয়ালাইজ করে এবং গ্লোবাল ভিজিটর কাউন্টার পরিচালনা করে।
-
     // আপনার ওয়েব অ্যাপের Firebase কনফিগারেশন
     const firebaseConfig = {
         apiKey: "AIzaSyBmTptSZWbNB5MrT8jIWVm6knak2L2Xv40",
@@ -30956,106 +31170,274 @@ document.addEventListener('DOMContentLoaded', () => {
         measurementId: "G-6NVS7YFNBX"
     };
 
+    // Firebase ফাংশনগুলো ইম্পোর্ট
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { 
+        getFirestore, doc, runTransaction, onSnapshot, 
+        collection, addDoc, deleteDoc, query, orderBy, 
+        serverTimestamp, getDocs, where, writeBatch 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+
+    // Firebase অ্যাপ ইনিশিয়ালাইজেশন
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const analytics = getAnalytics(app);
+
+    // ডোমেইন অনুযায়ী সঠিক Artifact ID নির্ধারণ (Dynamic)
+    // এটি অটোমেটিক্যালি বুঝবে আপনি কোন ডোমেইন থেকে অ্যাপটি চালাচ্ছেন
+    const hostname = window.location.hostname;
+    const APP_ID = (hostname.includes('mdsifatgitid')) ? 'mdsifatgitid.github.io' : 'banglatoolbox.github.io';
+    
+    console.log(`Current App ID: ${APP_ID}`); // ডিবাগিং এর জন্য
+
+    // অ্যাপ লোড হওয়ার সাথে সাথে লগইন নিশ্চিত করা (Central Auth Check)
+    function ensureAuth() {
+        return new Promise((resolve, reject) => {
+            if (auth.currentUser) {
+                resolve(auth.currentUser);
+                return;
+            }
+            signInAnonymously(auth)
+                .then((result) => resolve(result.user))
+                .catch((error) => {
+                    console.error("Auth Error:", error);
+                    reject(error);
+                });
+        });
+    }
+
+    // ১. গ্লোবাল ভিজিটর কাউন্টার ফাংশন
     async function initializeGlobalCounter() {
         try {
-            // Firebase SDK গুলি ডায়নামিকভাবে ইম্পোর্ট করা হচ্ছে
-            const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
-            const { getFirestore, doc, runTransaction, onSnapshot } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-            const { getAuth, signInAnonymously } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
-            const { getAnalytics } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js");
-
-            const app = initializeApp(firebaseConfig);
-            const db = getFirestore(app);
-            const auth = getAuth(app);
-            const analytics = getAnalytics(app); // অ্যানালিটিক্স এখানে ইনিশিয়ালাইজ করা হলো
-
-            // বেনামীভাবে ব্যবহারকারীকে সাইন ইন করানো হচ্ছে
-            if (!auth.currentUser) {
-                await signInAnonymously(auth);
-            }
+            await ensureAuth();
             
             const todayString = new Date().toISOString().split('T')[0];
-            const counterDocRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "global_visitor_stats", "counts");
+            // এখানে APP_ID ব্যবহার করা হয়েছে
+            const counterDocRef = doc(db, "artifacts", APP_ID, "public", "data", "global_visitor_stats", "counts");
 
-            // ভিজিট সংখ্যা ১ বাড়ানোর ফাংশন
             const incrementCounts = async () => {
                  try {
                     await runTransaction(db, async (transaction) => {
                         const counterDoc = await transaction.get(counterDocRef);
-
                         if (!counterDoc.exists()) {
-                            // ডকুমেন্ট না থাকলে নতুন করে তৈরি হবে
-                            transaction.set(counterDocRef, {
-                                totalVisits: 1,
-                                dailyVisits: { [todayString]: 1 }
-                            });
+                            transaction.set(counterDocRef, { totalVisits: 1, dailyVisits: { [todayString]: 1 } });
                         } else {
-                            // ডকুমেন্ট থাকলে সংখ্যা বাড়ানো হবে
                             const data = counterDoc.data();
                             const newTotalVisits = (data.totalVisits || 0) + 1;
-                            
-                            const dailyVisits = data.dailyVisits || {};
-                            const newDailyCount = (dailyVisits[todayString] || 0) + 1;
-                            
+                            const newDailyCount = ((data.dailyVisits || {})[todayString] || 0) + 1;
                             transaction.update(counterDocRef, {
                                 totalVisits: newTotalVisits,
                                 [`dailyVisits.${todayString}`]: newDailyCount
                             });
                         }
                     });
-                } catch (e) {
-                    console.error("Firestore transaction failed: ", e);
+                } catch (e) { console.error("Counter Transaction failed: ", e); }
+            };
+
+            onSnapshot(counterDocRef, (doc) => {
+                const allTodayVisitsEl = document.getElementById('all-today-visits');
+                const allTotalVisitsEl = document.getElementById('all-total-visits');
+                if (doc.exists()) {
+                    const data = doc.data();
+                    if (allTotalVisitsEl) allTotalVisitsEl.textContent = (data.totalVisits || 0).toLocaleString('bn-BD');
+                    if (allTodayVisitsEl) allTodayVisitsEl.textContent = ((data.dailyVisits || {})[todayString] || 0).toLocaleString('bn-BD');
                 }
-            };
+            }, (error) => console.error("Counter Listener Error:", error));
 
-            // রিয়েল-টাইমে ভিজিট সংখ্যা দেখানোর ফাংশন
-            const listenForCounts = () => {
-                onSnapshot(counterDocRef, (doc) => {
-                    const allTodayVisitsEl = document.getElementById('all-today-visits');
-                    const allTotalVisitsEl = document.getElementById('all-total-visits');
-
-                    if (doc.exists()) {
-                        const data = doc.data();
-                        const total = data.totalVisits || 0;
-                        const today = (data.dailyVisits && data.dailyVisits[todayString]) ? data.dailyVisits[todayString] : 0;
-                        
-                        if (allTotalVisitsEl) allTotalVisitsEl.textContent = total.toLocaleString('bn-BD');
-                        if (allTodayVisitsEl) allTodayVisitsEl.textContent = today.toLocaleString('bn-BD');
-                    } else {
-                        if (allTotalVisitsEl) allTotalVisitsEl.textContent = '০';
-                        if (allTodayVisitsEl) allTodayVisitsEl.textContent = '০';
-                    }
-                }, (error) => {
-                     console.error("Firestore snapshot listener error:", error);
-                });
-            };
-
-            // এই সেশনে ব্যবহারকারীর ভিজিট গণনা হয়েছে কিনা তা পরীক্ষা করা হচ্ছে
-            // এটি প্রতিবার পেইজ রিলোড করার সাথে সাথে ভিজিট সংখ্যা বেড়ে যাওয়া থেকে বিরত রাখবে
             if (!sessionStorage.getItem('globalVisitCounted')) {
                 await incrementCounts();
                 sessionStorage.setItem('globalVisitCounted', 'true');
             }
+        } catch (error) { console.error("Global Counter Init Failed:", error); }
+    }
 
-            // রিয়েল-টাইম আপডেটের জন্য লিসেনার চালু করা হচ্ছে
-            listenForCounts();
+    // ২. পাবলিক কমেন্ট সেকশন ফাংশন
+    async function initializePublicComments() {
+        const fab = document.getElementById('comment-fab');
+        const container = document.getElementById('comment-section-container');
+        const closeBtn = document.getElementById('close-comment-btn');
+        const sendBtn = document.getElementById('send-comment-btn');
+        const nameInput = document.getElementById('comment-username');
+        const msgInput = document.getElementById('comment-message');
+        const listContainer = document.getElementById('comment-list');
+        const emojiBtn = document.getElementById('emoji-selector-btn');
+        const emojiContainer = document.getElementById('emoji-picker-container');
 
-        } catch (error) {
-            console.error("Failed to initialize global visitor counter:", error);
-            // কোনো সমস্যা হলে কাউন্টারে ত্রুটি বার্তা দেখানো হবে
-            const allTodayVisitsEl = document.getElementById('all-today-visits');
-            const allTotalVisitsEl = document.getElementById('all-total-visits');
-            if (allTodayVisitsEl) allTodayVisitsEl.textContent = '∞';
-            if (allTotalVisitsEl) allTotalVisitsEl.textContent = '∞';
+        if (fab && container && closeBtn) {
+            fab.addEventListener('click', (e) => {
+                e.stopPropagation();
+                container.classList.toggle('active');
+                if(container.classList.contains('active')) {
+                    loadSavedUserData();
+                    setTimeout(() => listContainer.scrollTop = listContainer.scrollHeight, 300);
+                }
+            });
+            closeBtn.addEventListener('click', () => container.classList.remove('active'));
+            container.addEventListener('click', (e) => e.stopPropagation());
+        }
+
+        function loadSavedUserData() {
+            const savedName = localStorage.getItem('bt_comment_username');
+            const savedAvatar = localStorage.getItem('bt_comment_avatar');
+            if (savedName) nameInput.value = savedName;
+            if (savedAvatar) emojiBtn.textContent = savedAvatar;
+        }
+
+        const avatars = ['👤', '👨', '👩', '🧑‍💻', '🦸', '🦹', '🧙', '🧚', '🧛', '🧜', '🧞', '🤖', '👾', '👽', '👻', '🤡', '💩', '😺', '😸', '😹', '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯'];
+        function setupEmojiPicker() {
+            emojiContainer.innerHTML = '';
+            avatars.forEach(emoji => {
+                const btn = document.createElement('button');
+                btn.className = 'emoji-choice-btn';
+                btn.textContent = emoji;
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    emojiBtn.textContent = emoji;
+                    localStorage.setItem('bt_comment_avatar', emoji);
+                    emojiContainer.classList.add('hidden');
+                };
+                emojiContainer.appendChild(btn);
+            });
+        }
+        setupEmojiPicker();
+
+        emojiBtn.addEventListener('click', (e) => { e.stopPropagation(); emojiContainer.classList.toggle('hidden'); });
+        document.addEventListener('click', (e) => { if (!emojiContainer.contains(e.target) && e.target !== emojiBtn) emojiContainer.classList.add('hidden'); });
+
+        try {
+            await ensureAuth();
+        } catch (e) {
+            listContainer.innerHTML = '<div class="text-center text-red-500 mt-10 text-sm">সার্ভারে সংযোগ করা যাচ্ছে না।<br>ইন্টারনেট চেক করুন।</div>';
+            return;
+        }
+
+        // এখানেও APP_ID ব্যবহার করা হয়েছে
+        const commentsRef = collection(db, "artifacts", APP_ID, "public", "data", "public_comments", "messages");
+
+        async function sendMessage() {
+            const name = nameInput.value.trim() || 'বেনামী';
+            const text = msgInput.value.trim();
+            const avatar = emojiBtn.textContent;
+
+            if (!text) return;
+
+            localStorage.setItem('bt_comment_username', name);
+            localStorage.setItem('bt_comment_avatar', avatar);
+
+            sendBtn.disabled = true;
+
+            try {
+                await ensureAuth();
+                await addDoc(commentsRef, {
+                    name: name,
+                    text: text,
+                    avatar: avatar,
+                    timestamp: serverTimestamp(),
+                    createdAt: Date.now()
+                });
+                msgInput.value = '';
+                msgInput.style.height = '40px';
+            } catch (e) {
+                console.error("Error sending comment:", e);
+                if(window.showCustomAlert) window.showCustomAlert("মেসেজ পাঠানো যায়নি। পারমিশন সমস্যা।");
+                else alert("মেসেজ পাঠানো যায়নি।");
+            } finally {
+                sendBtn.disabled = false;
+            }
+        }
+
+        if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+        if (msgInput) {
+            msgInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            msgInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+                if(this.value === '') this.style.height = '40px';
+            });
+        }
+
+        const q = query(commentsRef, orderBy("timestamp", "asc"));
+        
+        onSnapshot(q, (snapshot) => {
+            listContainer.innerHTML = '';
+            if (snapshot.empty) {
+                listContainer.innerHTML = '<div class="text-center text-gray-400 mt-10 text-sm">কোনো মন্তব্য নেই।<br>প্রথম মন্তব্যটি আপনি করুন!</div>';
+                return;
+            }
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                if (Date.now() - data.createdAt > 24 * 60 * 60 * 1000) return;
+                const time = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' }) : '...';
+                const userAvatar = data.avatar || '👤';
+
+                const card = document.createElement('div');
+                card.className = 'comment-card group';
+                card.innerHTML = `
+                    <div class="comment-avatar">${userAvatar}</div>
+                    <div class="comment-content-wrapper">
+                        <div class="comment-name">${escapeHtml(data.name)}</div>
+                        <div class="comment-msg">${escapeHtml(data.text)}</div>
+                        <div class="comment-time">${time}</div>
+                    </div>
+                    <div class="comment-actions">
+                        <button class="comment-action-btn btn-reply" title="রিপ্লে">↩</button>
+                        <button class="comment-action-btn btn-copy" title="কপি">📋</button>
+                        <button class="comment-action-btn btn-delete" title="মুছুন">✖</button>
+                    </div>
+                `;
+                card.querySelector('.btn-delete').addEventListener('click', async () => {
+                    if(confirm('আপনি কি এই মন্তব্যটি মুছে ফেলতে চান?')) {
+                        try { await deleteDoc(doc.ref); } catch(e) { console.error(e); }
+                    }
+                });
+                card.querySelector('.btn-copy').addEventListener('click', () => {
+                    navigator.clipboard.writeText(data.text);
+                    if(window.showCustomAlert) window.showCustomAlert('টেক্সট কপি হয়েছে');
+                });
+                card.querySelector('.btn-reply').addEventListener('click', () => {
+                    msgInput.value = `@${data.name} ` + msgInput.value;
+                    msgInput.focus();
+                });
+                listContainer.appendChild(card);
+            });
+            listContainer.scrollTop = listContainer.scrollHeight;
+        }, (error) => {
+            console.error("Snapshot Error:", error);
+            listContainer.innerHTML = '<div class="text-center text-red-500 mt-10 text-sm">ডেটা লোড করা যাচ্ছে না।<br>(Permission Denied)</div>';
+        });
+
+        async function cleanupOldComments() {
+            const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+            const oldDocsQuery = query(commentsRef, where("createdAt", "<", oneDayAgo));
+            try {
+                const snapshot = await getDocs(oldDocsQuery);
+                if (!snapshot.empty) {
+                    const batch = writeBatch(db);
+                    snapshot.docs.forEach((doc) => batch.delete(doc.ref));
+                    await batch.commit();
+                }
+            } catch (e) {}
+        }
+        function escapeHtml(text) {
+            if (!text) return "";
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
     }
 
-    // মডিউল লোড হওয়ার সাথে সাথে ফাংশনটি কল করা হচ্ছে
     initializeGlobalCounter();
+    initializePublicComments();
 
 </script>
 <!-- ====================================================================-->
-<!-- End: SCRIPT PART 2 FOR GLOBAL VISITOR COUNTER (FIREBASE-->
+<!-- END: FIREBASE SCRIPT -->
 <!-- ====================================================================-->
 	
 <!-- ====================================================================-->
@@ -31107,6 +31489,53 @@ document.addEventListener('DOMContentLoaded', () => {
     <!-- WhatsApp Floating Button Section End -->
 	
 </div>
+
+<!-- ======================================================== -->
+<!-- START: পাবলিক মন্তব্য সেকশন (Floating & Emoji) -->
+<!-- ======================================================== -->
+<div id="comment-fab" title="মন্তব্য করুন">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+</div>
+
+<div id="comment-section-container">
+    <div class="comment-header">
+        <span>পাবলিক মন্তব্য</span>
+        <button id="close-comment-btn" class="hover:bg-blue-700 p-1 rounded-full transition">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+    </div>
+    
+    <div id="comment-list" class="comment-list">
+        <div class="text-center text-gray-500 mt-10 text-sm">লোডিং...</div>
+    </div>
+
+    <div class="comment-input-area">
+        <!-- ইমোজি পিকার কন্টেইনার (লুকানো) -->
+        <div id="emoji-picker-container" class="hidden"></div>
+
+        <div class="flex gap-2 mb-2">
+            <!-- প্রোফাইল ইমোজি বাটন -->
+            <button id="emoji-selector-btn" class="p-2 border rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 text-xl transition-colors w-12 flex items-center justify-center" title="প্রোফাইল ইমোজি সেট করুন">👤</button>
+            
+            <!-- নাম ইনপুট -->
+            <input type="text" id="comment-username" placeholder="আপনার নাম" class="flex-grow p-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" maxlength="20">
+        </div>
+        
+        <div class="flex gap-2">
+            <!-- মেসেজ ইনপুট -->
+            <textarea id="comment-message" rows="1" placeholder="মেসেজ লিখুন..." class="flex-grow p-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white resize-none" style="min-height: 40px; max-height: 80px;"></textarea>
+            
+            <!-- সেন্ড বাটন -->
+            <button id="send-comment-btn" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg flex items-center justify-center transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed w-10">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+        </div>
+        <p class="text-[10px] text-gray-400 mt-1 text-center">মন্তব্য ২৪ ঘণ্টা পর মুছে যাবে। যেকেউ ডিলিট করতে পারে।</p>
+    </div>
+</div>
+<!-- ======================================================== -->
+<!-- END: পাবলিক মন্তব্য সেকশন -->
+<!-- ======================================================== -->
 
 <!-- Sidebar Overlay -->
 <div id="sidebarOverlay" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-30 hidden"></div>
