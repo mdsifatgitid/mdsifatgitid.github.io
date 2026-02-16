@@ -31186,20 +31186,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const auth = getAuth(app);
     const analytics = getAnalytics(app);
 
-    // ডোমেইন অনুযায়ী সঠিক Artifact ID নির্ধারণ (Dynamic)
-    // এটি অটোমেটিক্যালি বুঝবে আপনি কোন ডোমেইন থেকে অ্যাপটি চালাচ্ছেন
-    const hostname = window.location.hostname;
-    const APP_ID = (hostname.includes('mdsifatgitid')) ? 'mdsifatgitid.github.io' : 'banglatoolbox.github.io';
-    
-    console.log(`Current App ID: ${APP_ID}`); // ডিবাগিং এর জন্য
-
     // অ্যাপ লোড হওয়ার সাথে সাথে লগইন নিশ্চিত করা (Central Auth Check)
     function ensureAuth() {
         return new Promise((resolve, reject) => {
+            // যদি ইউজার অলরেডি লগইন থাকে
             if (auth.currentUser) {
                 resolve(auth.currentUser);
                 return;
             }
+            // লগইন না থাকলে নতুন করে লগইন করা
             signInAnonymously(auth)
                 .then((result) => resolve(result.user))
                 .catch((error) => {
@@ -31212,11 +31207,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // ১. গ্লোবাল ভিজিটর কাউন্টার ফাংশন
     async function initializeGlobalCounter() {
         try {
-            await ensureAuth();
+            await ensureAuth(); // আগে লগইন নিশ্চিত করুন
             
             const todayString = new Date().toISOString().split('T')[0];
-            // এখানে APP_ID ব্যবহার করা হয়েছে
-            const counterDocRef = doc(db, "artifacts", APP_ID, "public", "data", "global_visitor_stats", "counts");
+            const counterDocRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "global_visitor_stats", "counts");
 
             const incrementCounts = async () => {
                  try {
@@ -31237,6 +31231,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch (e) { console.error("Counter Transaction failed: ", e); }
             };
 
+            // রিয়েলটাইম লিসেনার
             onSnapshot(counterDocRef, (doc) => {
                 const allTodayVisitsEl = document.getElementById('all-today-visits');
                 const allTotalVisitsEl = document.getElementById('all-total-visits');
@@ -31254,7 +31249,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.error("Global Counter Init Failed:", error); }
     }
 
-    // ২. পাবলিক কমেন্ট সেকশন ফাংশন
+    // ২. পাবলিক কমেন্ট সেকশন ফাংশন (আপডেটেড)
     async function initializePublicComments() {
         const fab = document.getElementById('comment-fab');
         const container = document.getElementById('comment-section-container');
@@ -31266,6 +31261,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const emojiBtn = document.getElementById('emoji-selector-btn');
         const emojiContainer = document.getElementById('emoji-picker-container');
 
+        // UI টগল লজিক
         if (fab && container && closeBtn) {
             fab.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -31286,6 +31282,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (savedAvatar) emojiBtn.textContent = savedAvatar;
         }
 
+        // ইমোজি পিকার সেটআপ
         const avatars = ['👤', '👨', '👩', '🧑‍💻', '🦸', '🦹', '🧙', '🧚', '🧛', '🧜', '🧞', '🤖', '👾', '👽', '👻', '🤡', '💩', '😺', '😸', '😹', '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯'];
         function setupEmojiPicker() {
             emojiContainer.innerHTML = '';
@@ -31307,16 +31304,17 @@ document.addEventListener('DOMContentLoaded', () => {
         emojiBtn.addEventListener('click', (e) => { e.stopPropagation(); emojiContainer.classList.toggle('hidden'); });
         document.addEventListener('click', (e) => { if (!emojiContainer.contains(e.target) && e.target !== emojiBtn) emojiContainer.classList.add('hidden'); });
 
+        // Firestore লজিক শুরু (অথেনটিকেশন চেক সহ)
         try {
-            await ensureAuth();
+            await ensureAuth(); // ডাটা লোড করার আগে লগইন নিশ্চিত করা
         } catch (e) {
             listContainer.innerHTML = '<div class="text-center text-red-500 mt-10 text-sm">সার্ভারে সংযোগ করা যাচ্ছে না।<br>ইন্টারনেট চেক করুন।</div>';
             return;
         }
 
-        // এখানেও APP_ID ব্যবহার করা হয়েছে
-        const commentsRef = collection(db, "artifacts", APP_ID, "public", "data", "public_comments", "messages");
+        const commentsRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments", "messages");
 
+        // মেসেজ পাঠানোর ফাংশন
         async function sendMessage() {
             const name = nameInput.value.trim() || 'বেনামী';
             const text = msgInput.value.trim();
@@ -31330,7 +31328,9 @@ document.addEventListener('DOMContentLoaded', () => {
             sendBtn.disabled = true;
 
             try {
+                // পাঠানোর আগেও একবার অথেনটিকেশন চেক
                 await ensureAuth();
+                
                 await addDoc(commentsRef, {
                     name: name,
                     text: text,
@@ -31364,17 +31364,22 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        // রিয়েল-টাইম মেসেজ লোড
         const q = query(commentsRef, orderBy("timestamp", "asc"));
         
         onSnapshot(q, (snapshot) => {
             listContainer.innerHTML = '';
+            
             if (snapshot.empty) {
                 listContainer.innerHTML = '<div class="text-center text-gray-400 mt-10 text-sm">কোনো মন্তব্য নেই।<br>প্রথম মন্তব্যটি আপনি করুন!</div>';
                 return;
             }
+
             snapshot.forEach((doc) => {
                 const data = doc.data();
+                // ২৪ ঘণ্টার বেশি পুরনো মেসেজ লোড না করা
                 if (Date.now() - data.createdAt > 24 * 60 * 60 * 1000) return;
+
                 const time = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' }) : '...';
                 const userAvatar = data.avatar || '👤';
 
@@ -31393,6 +31398,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button class="comment-action-btn btn-delete" title="মুছুন">✖</button>
                     </div>
                 `;
+
                 card.querySelector('.btn-delete').addEventListener('click', async () => {
                     if(confirm('আপনি কি এই মন্তব্যটি মুছে ফেলতে চান?')) {
                         try { await deleteDoc(doc.ref); } catch(e) { console.error(e); }
@@ -31406,6 +31412,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     msgInput.value = `@${data.name} ` + msgInput.value;
                     msgInput.focus();
                 });
+
                 listContainer.appendChild(card);
             });
             listContainer.scrollTop = listContainer.scrollHeight;
@@ -31426,12 +31433,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (e) {}
         }
+        
         function escapeHtml(text) {
             if (!text) return "";
             return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
     }
 
+    // ইনিশিয়ালাইজেশন
+    // আমরা আলাদাভাবে কল করছি কিন্তু ensureAuth উভয়ের ভেতরেই আছে
     initializeGlobalCounter();
     initializePublicComments();
 
