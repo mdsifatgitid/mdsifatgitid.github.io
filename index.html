@@ -31186,28 +31186,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const auth = getAuth(app);
     const analytics = getAnalytics(app);
 
-    // অ্যাপ লোড হওয়ার সাথে সাথে লগইন নিশ্চিত করা (Central Auth Check)
-    function ensureAuth() {
-        return new Promise((resolve, reject) => {
-            // যদি ইউজার অলরেডি লগইন থাকে
-            if (auth.currentUser) {
-                resolve(auth.currentUser);
-                return;
+    // অথেন্টিকেশন স্ট্যাটাস চেক এবং সাইন ইন
+    async function ensureAuth() {
+        if (!auth.currentUser) {
+            try {
+                await signInAnonymously(auth);
+                console.log("User signed in anonymously");
+            } catch (error) {
+                console.error("Auth Error:", error);
             }
-            // লগইন না থাকলে নতুন করে লগইন করা
-            signInAnonymously(auth)
-                .then((result) => resolve(result.user))
-                .catch((error) => {
-                    console.error("Auth Error:", error);
-                    reject(error);
-                });
-        });
+        }
     }
 
     // ১. গ্লোবাল ভিজিটর কাউন্টার ফাংশন
     async function initializeGlobalCounter() {
         try {
-            await ensureAuth(); // আগে লগইন নিশ্চিত করুন
+            await ensureAuth();
             
             const todayString = new Date().toISOString().split('T')[0];
             const counterDocRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "global_visitor_stats", "counts");
@@ -31231,7 +31225,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch (e) { console.error("Counter Transaction failed: ", e); }
             };
 
-            // রিয়েলটাইম লিসেনার
             onSnapshot(counterDocRef, (doc) => {
                 const allTodayVisitsEl = document.getElementById('all-today-visits');
                 const allTotalVisitsEl = document.getElementById('all-total-visits');
@@ -31249,8 +31242,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.error("Global Counter Init Failed:", error); }
     }
 
-    // ২. পাবলিক কমেন্ট সেকশন ফাংশন (আপডেটেড)
+    // ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার ও পারসিস্টেন্স সহ)
     async function initializePublicComments() {
+        // নিশ্চিত করুন ইউজার লগইন অবস্থায় আছে
+        await ensureAuth();
+
         const fab = document.getElementById('comment-fab');
         const container = document.getElementById('comment-section-container');
         const closeBtn = document.getElementById('close-comment-btn');
@@ -31261,13 +31257,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const emojiBtn = document.getElementById('emoji-selector-btn');
         const emojiContainer = document.getElementById('emoji-picker-container');
 
+        // ইমোজির তালিকা
+        const avatars = [
+            '👤', '👨', '👩', '🧑‍💻', '🦸', '🦹', '🧙', '🧚', '🧛', '🧜',
+            '🧞', '🤖', '👾', '👽', '👻', '🤡', '💩', '😺', '😸', '😹',
+            '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯'
+        ];
+
         // UI টগল লজিক
         if (fab && container && closeBtn) {
             fab.addEventListener('click', (e) => {
                 e.stopPropagation();
                 container.classList.toggle('active');
                 if(container.classList.contains('active')) {
-                    loadSavedUserData();
+                    loadSavedUserData(); // সেভ করা ডাটা লোড
+                    cleanupOldComments(); // অটো ক্লিনআপ
                     setTimeout(() => listContainer.scrollTop = listContainer.scrollHeight, 300);
                 }
             });
@@ -31275,15 +31279,16 @@ document.addEventListener('DOMContentLoaded', () => {
             container.addEventListener('click', (e) => e.stopPropagation());
         }
 
+        // লোকাল স্টোরেজ থেকে ডাটা লোড করার ফাংশন
         function loadSavedUserData() {
             const savedName = localStorage.getItem('bt_comment_username');
             const savedAvatar = localStorage.getItem('bt_comment_avatar');
+            
             if (savedName) nameInput.value = savedName;
             if (savedAvatar) emojiBtn.textContent = savedAvatar;
         }
 
         // ইমোজি পিকার সেটআপ
-        const avatars = ['👤', '👨', '👩', '🧑‍💻', '🦸', '🦹', '🧙', '🧚', '🧛', '🧜', '🧞', '🤖', '👾', '👽', '👻', '🤡', '💩', '😺', '😸', '😹', '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯'];
         function setupEmojiPicker() {
             emojiContainer.innerHTML = '';
             avatars.forEach(emoji => {
@@ -31291,8 +31296,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.className = 'emoji-choice-btn';
                 btn.textContent = emoji;
                 btn.onclick = (e) => {
-                    e.stopPropagation();
+                    e.stopPropagation(); // বাবলিং বন্ধ
                     emojiBtn.textContent = emoji;
+                    // ইমোজি সিলেক্ট করলেই লোকাল স্টোরেজে সেভ হবে
                     localStorage.setItem('bt_comment_avatar', emoji);
                     emojiContainer.classList.add('hidden');
                 };
@@ -31301,40 +31307,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         setupEmojiPicker();
 
-        emojiBtn.addEventListener('click', (e) => { e.stopPropagation(); emojiContainer.classList.toggle('hidden'); });
-        document.addEventListener('click', (e) => { if (!emojiContainer.contains(e.target) && e.target !== emojiBtn) emojiContainer.classList.add('hidden'); });
+        // ইমোজি বাটন ক্লিক
+        emojiBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            emojiContainer.classList.toggle('hidden');
+        });
 
-        // Firestore লজিক শুরু (অথেনটিকেশন চেক সহ)
-        try {
-            await ensureAuth(); // ডাটা লোড করার আগে লগইন নিশ্চিত করা
-        } catch (e) {
-            listContainer.innerHTML = '<div class="text-center text-red-500 mt-10 text-sm">সার্ভারে সংযোগ করা যাচ্ছে না।<br>ইন্টারনেট চেক করুন।</div>';
-            return;
-        }
+        // বাইরে ক্লিক করলে ইমোজি পিকার বন্ধ
+        document.addEventListener('click', (e) => {
+            if (!emojiContainer.contains(e.target) && e.target !== emojiBtn) {
+                emojiContainer.classList.add('hidden');
+            }
+        });
 
-        const commentsRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments", "messages");
+        // Firestore কালেকশন রেফারেন্স (সংশোধিত)
+        // আগে 'messages' শেষে ছিল যা ভুল ছিল। এখন 'public_comments' হলো কালেকশন।
+        const commentsRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments");
 
         // মেসেজ পাঠানোর ফাংশন
         async function sendMessage() {
             const name = nameInput.value.trim() || 'বেনামী';
             const text = msgInput.value.trim();
-            const avatar = emojiBtn.textContent;
+            const avatar = emojiBtn.textContent; // বর্তমান ইমোজি
 
             if (!text) return;
 
+            // নাম এবং অবতার লোকাল স্টোরেজে সেভ করুন
             localStorage.setItem('bt_comment_username', name);
             localStorage.setItem('bt_comment_avatar', avatar);
 
             sendBtn.disabled = true;
 
             try {
-                // পাঠানোর আগেও একবার অথেনটিকেশন চেক
-                await ensureAuth();
-                
                 await addDoc(commentsRef, {
                     name: name,
                     text: text,
-                    avatar: avatar,
+                    avatar: avatar, // ইমোজি ডাটাবেসে সেভ
                     timestamp: serverTimestamp(),
                     createdAt: Date.now()
                 });
@@ -31342,7 +31350,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 msgInput.style.height = '40px';
             } catch (e) {
                 console.error("Error sending comment:", e);
-                if(window.showCustomAlert) window.showCustomAlert("মেসেজ পাঠানো যায়নি। পারমিশন সমস্যা।");
+                if(window.showCustomAlert) window.showCustomAlert("মেসেজ পাঠানো যায়নি। পারমিশন বা নেটওয়ার্ক চেক করুন।");
                 else alert("মেসেজ পাঠানো যায়নি।");
             } finally {
                 sendBtn.disabled = false;
@@ -31350,6 +31358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+        
         if (msgInput) {
             msgInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -31364,7 +31373,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // রিয়েল-টাইম মেসেজ লোড
+        // রিয়েল-টাইম মেসেজ লোড এবং রেন্ডার
         const q = query(commentsRef, orderBy("timestamp", "asc"));
         
         onSnapshot(q, (snapshot) => {
@@ -31377,11 +31386,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             snapshot.forEach((doc) => {
                 const data = doc.data();
-                // ২৪ ঘণ্টার বেশি পুরনো মেসেজ লোড না করা
+                // ২৪ ঘণ্টার বেশি পুরনো মেসেজ লোড না করা (ক্লায়েন্ট সাইড ফিল্টার)
                 if (Date.now() - data.createdAt > 24 * 60 * 60 * 1000) return;
 
                 const time = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' }) : '...';
-                const userAvatar = data.avatar || '👤';
+                const userAvatar = data.avatar || '👤'; // পুরানো মেসেজে অবতার না থাকলে ডিফল্ট
 
                 const card = document.createElement('div');
                 card.className = 'comment-card group';
@@ -31392,6 +31401,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="comment-msg">${escapeHtml(data.text)}</div>
                         <div class="comment-time">${time}</div>
                     </div>
+                    
                     <div class="comment-actions">
                         <button class="comment-action-btn btn-reply" title="রিপ্লে">↩</button>
                         <button class="comment-action-btn btn-copy" title="কপি">📋</button>
@@ -31399,6 +31409,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
 
+                // ইভেন্ট লিসেনার
                 card.querySelector('.btn-delete').addEventListener('click', async () => {
                     if(confirm('আপনি কি এই মন্তব্যটি মুছে ফেলতে চান?')) {
                         try { await deleteDoc(doc.ref); } catch(e) { console.error(e); }
@@ -31418,9 +31429,10 @@ document.addEventListener('DOMContentLoaded', () => {
             listContainer.scrollTop = listContainer.scrollHeight;
         }, (error) => {
             console.error("Snapshot Error:", error);
-            listContainer.innerHTML = '<div class="text-center text-red-500 mt-10 text-sm">ডেটা লোড করা যাচ্ছে না।<br>(Permission Denied)</div>';
+            listContainer.innerHTML = '<div class="text-center text-red-400 mt-10 text-sm">ডেটা লোড করতে সমস্যা হচ্ছে।</div>';
         });
 
+        // ২৪ ঘণ্টার পুরনো মন্তব্য ক্লিনআপ
         async function cleanupOldComments() {
             const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
             const oldDocsQuery = query(commentsRef, where("createdAt", "<", oneDayAgo));
@@ -31431,7 +31443,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     snapshot.docs.forEach((doc) => batch.delete(doc.ref));
                     await batch.commit();
                 }
-            } catch (e) {}
+            } catch (e) { console.log("Cleanup check done."); }
         }
         
         function escapeHtml(text) {
@@ -31441,9 +31453,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ইনিশিয়ালাইজেশন
-    // আমরা আলাদাভাবে কল করছি কিন্তু ensureAuth উভয়ের ভেতরেই আছে
-    initializeGlobalCounter();
-    initializePublicComments();
+    // আমরা প্রথমে কাউন্টার ইনিশিয়ালাইজ করব, তারপর কমেন্টস, যাতে অথেন্টিকেশন নিশ্চিত হয়
+    initializeGlobalCounter().then(() => {
+        initializePublicComments();
+    });
 
 </script>
 <!-- ====================================================================-->
