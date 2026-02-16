@@ -7333,24 +7333,45 @@ body.sidebar-open #sidebarOverlay {
 .dark .emoji-choice-btn:hover {
     background-color: #4b5563;
 }
-/* মন্তব্য কার্ড স্টাইল */
+/* মন্তব্য কার্ড স্টাইল (আপডেটেড) */
 .comment-card {
     background-color: white;
     padding: 10px;
-    border-radius: 10px 10px 10px 0;
+    border-radius: 12px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     position: relative;
     border: 1px solid #e2e8f0;
-    max-width: 95%;
-    align-self: flex-start;
+    max-width: 85%; /* প্রস্থ একটু কমানো হয়েছে যাতে চ্যাট বাবলের মতো লাগে */
     display: flex;
     gap: 8px;
+    margin-bottom: 8px; /* মেসেজগুলোর মাঝে গ্যাপ */
 }
 .dark .comment-card {
     background-color: #374151;
     border-color: #4b5563;
     color: #e2e8f0;
 }
+
+/* নিজের মেসেজ (ডানদিকে) */
+.comment-card.my-message {
+    align-self: flex-end; /* ডানদিকে সরে যাবে */
+    background-color: #e0e7ff; /* হালকা নীল ব্যাকগ্রাউন্ড */
+    border-bottom-right-radius: 2px; /* বাবল ইফেক্ট */
+    flex-direction: row-reverse; /* অবতার ডানদিকে নেওয়ার জন্য */
+    text-align: right;
+}
+.dark .comment-card.my-message {
+    background-color: #1e3a8a; /* ডার্ক মোডে গাঢ় নীল */
+    border-color: #1d4ed8;
+}
+
+/* অন্যের মেসেজ (বামদিকে) */
+.comment-card.other-message {
+    align-self: flex-start; /* বামদিকে থাকবে */
+    border-bottom-left-radius: 2px; /* বাবল ইফেক্ট */
+}
+
+/* অবতার এবং টেক্সট অ্যাডজাস্টমেন্ট */
 .comment-avatar {
     font-size: 1.6rem;
     flex-shrink: 0;
@@ -7358,9 +7379,10 @@ body.sidebar-open #sidebarOverlay {
 }
 .comment-content-wrapper {
     flex-grow: 1;
+    min-width: 0; /* টেক্সট র‍্যাপিং ফিক্স */
 }
 .comment-name {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: #3b82f6;
     margin-bottom: 2px;
@@ -7368,6 +7390,14 @@ body.sidebar-open #sidebarOverlay {
 .dark .comment-name {
     color: #60a5fa;
 }
+/* নিজের মেসেজে নাম লুকানো বা কালার চেঞ্জ (অপশনাল) */
+.comment-card.my-message .comment-name {
+    color: #4f46e5;
+}
+.dark .comment-card.my-message .comment-name {
+    color: #818cf8;
+}
+
 .comment-msg {
     font-size: 0.95rem;
     word-wrap: break-word;
@@ -7375,15 +7405,18 @@ body.sidebar-open #sidebarOverlay {
     line-height: 1.4;
 }
 .comment-time {
-    font-size: 0.7rem;
-    color: #9ca3af;
-    text-align: right;
+    font-size: 0.65rem;
+    color: #64748b; /* slate-500 */
     margin-top: 4px;
+    display: block;
 }
+.dark .comment-time {
+    color: #94a3b8;
+}
+
 /* অ্যাকশন বার */
 .comment-actions {
     position: absolute;
-    right: 5px;
     top: -15px;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
@@ -7395,7 +7428,19 @@ body.sidebar-open #sidebarOverlay {
     transition: opacity 0.2s, top 0.2s;
     pointer-events: none;
     border: 1px solid #e2e8f0;
+    z-index: 5;
 }
+/* নিজের মেসেজের অ্যাকশন বার বামদিকে আসবে */
+.comment-card.my-message .comment-actions {
+    left: 5px;
+    right: auto;
+}
+/* অন্যের মেসেজের অ্যাকশন বার ডানদিকে আসবে */
+.comment-card.other-message .comment-actions {
+    right: 5px;
+    left: auto;
+}
+
 .dark .comment-actions {
     background: rgba(31, 41, 55, 0.95);
     border-color: #4b5563;
@@ -31242,7 +31287,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.error("Global Counter Init Failed:", error); }
     }
 
-// ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার ও পারসিস্টেন্স সহ)
+// ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার, পাসওয়ার্ড প্রটেকশন ও অ্যালাইনমেন্ট সহ)
     async function initializePublicComments() {
         // নিশ্চিত করুন ইউজার লগইন অবস্থায় আছে
         await ensureAuth();
@@ -31252,6 +31297,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const closeBtn = document.getElementById('close-comment-btn');
         const sendBtn = document.getElementById('send-comment-btn');
         const nameInput = document.getElementById('comment-username');
+        const editNameBtn = document.getElementById('edit-username-btn'); // নতুন এডিট বাটন
         const msgInput = document.getElementById('comment-message');
         const listContainer = document.getElementById('comment-list');
         const emojiBtn = document.getElementById('emoji-selector-btn');
@@ -31262,7 +31308,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!notificationBubble) {
             notificationBubble = document.createElement('div');
             notificationBubble.id = 'comment-notification';
-            // পজিশন: FAB (bottom: 85px) এর উপরে। bottom-36 (approx 144px) ঠিক আছে।
             notificationBubble.className = "fixed bottom-36 right-5 z-[1002] bg-white dark:bg-gray-800 p-3 rounded-lg shadow-xl border-l-4 border-blue-500 max-w-[250px] transition-all duration-300 transform translate-y-4 opacity-0 pointer-events-none hidden";
             document.body.appendChild(notificationBubble);
         }
@@ -31295,13 +31340,43 @@ document.addEventListener('DOMContentLoaded', () => {
             container.addEventListener('click', (e) => e.stopPropagation());
         }
 
-        // লোকাল স্টোরেজ থেকে ডাটা লোড করার ফাংশন
+        // লোকাল স্টোরেজ থেকে ডাটা লোড এবং নাম লক করার ফাংশন
         function loadSavedUserData() {
             const savedName = localStorage.getItem('bt_comment_username');
             const savedAvatar = localStorage.getItem('bt_comment_avatar');
             
-            if (savedName) nameInput.value = savedName;
+            if (savedName) {
+                nameInput.value = savedName;
+                nameInput.disabled = true; // নাম সেভ থাকলে লক করে দিন
+                nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+                editNameBtn.classList.remove('hidden'); // এডিট বাটন দেখান
+            } else {
+                nameInput.disabled = false;
+                nameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                editNameBtn.classList.add('hidden');
+            }
             if (savedAvatar) emojiBtn.textContent = savedAvatar;
+        }
+
+        // --- পাসওয়ার্ড দিয়ে নাম আনলক করার লজিক ---
+        if (editNameBtn) {
+            editNameBtn.addEventListener('click', () => {
+                const password = prompt("নাম পরিবর্তন করতে পাসওয়ার্ড দিন:");
+                // স্পেস এবং কেইস ইগনোর করে চেক করার জন্য নরমালাইজেশন
+                // ইনপুট থেকে স্পেস সরানো এবং ছোট হাতের করা
+                const normalizedPass = password ? password.toLowerCase().replace(/\s+/g, '') : '';
+                
+                // সঠিক পাসওয়ার্ড: banglatoolbox
+                if (normalizedPass === 'banglatoolbox') {
+                    nameInput.disabled = false;
+                    nameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                    nameInput.focus();
+                    editNameBtn.classList.add('hidden'); // আনলক হলে বাটন লুকান
+                    alert("নাম এডিট করার অনুমতি দেওয়া হয়েছে।");
+                } else {
+                    alert("ভুল পাসওয়ার্ড! নাম পরিবর্তন করা যাবে না।");
+                }
+            });
         }
 
         // ইমোজি পিকার সেটআপ
@@ -31343,14 +31418,19 @@ document.addEventListener('DOMContentLoaded', () => {
         async function sendMessage() {
             const name = nameInput.value.trim() || 'বেনামী';
             const text = msgInput.value.trim();
-            const avatar = emojiBtn.textContent; // বর্তমান ইমোজি
-            const currentUserUid = auth.currentUser ? auth.currentUser.uid : 'anonymous'; // UID সংগ্রহ
+            const avatar = emojiBtn.textContent; 
+            const currentUserUid = auth.currentUser ? auth.currentUser.uid : 'anonymous'; 
 
             if (!text) return;
 
-            // নাম এবং অবতার লোকাল স্টোরেজে সেভ করুন
+            // নাম এবং অবতার লোকাল স্টোরেজে সেভ করুন (যদি নাম লক না থাকে তবেই নতুন করে লক হবে)
             localStorage.setItem('bt_comment_username', name);
             localStorage.setItem('bt_comment_avatar', avatar);
+            
+            // পাঠানোর পর ইনপুট আবার লক করুন এবং এডিট বাটন দেখান
+            nameInput.disabled = true;
+            nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+            editNameBtn.classList.remove('hidden');
 
             sendBtn.disabled = true;
 
@@ -31358,8 +31438,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 await addDoc(commentsRef, {
                     name: name,
                     text: text,
-                    avatar: avatar, // ইমোজি ডাটাবেসে সেভ
-                    uid: currentUserUid, // নিজের মেসেজ চেনার জন্য UID যুক্ত করা হলো
+                    avatar: avatar, 
+                    uid: currentUserUid, 
                     timestamp: serverTimestamp(),
                     createdAt: Date.now()
                 });
@@ -31378,12 +31458,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (msgInput) {
             msgInput.addEventListener('keydown', (e) => {
-                // পরিবর্তন: Shift + Enter চাপলে মেসেজ যাবে, শুধু Enter চাপলে নিউ লাইন হবে
                 if (e.key === 'Enter' && e.shiftKey) {
-                    e.preventDefault(); // ডিফল্ট (নিউ লাইন) বন্ধ করে মেসেজ পাঠান
+                    e.preventDefault(); 
                     sendMessage();
                 }
-                // শুধু Enter চাপলে ডিফল্টভাবেই নিউ লাইন তৈরি হয়, তাই else ব্লকের প্রয়োজন নেই
             });
 
             msgInput.addEventListener('input', function() {
@@ -31395,27 +31473,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // রিয়েল-টাইম মেসেজ লোড এবং রেন্ডার
         const q = query(commentsRef, orderBy("timestamp", "asc"));
-        
-        let isInitialLoad = true; // ফ্ল্যাগ: প্রথম লোড কিনা
+        let isInitialLoad = true;
 
         onSnapshot(q, (snapshot) => {
-            // ১. লিস্ট রেন্ডারিং (আগের কোড)
             listContainer.innerHTML = '';
             
             if (snapshot.empty) {
                 listContainer.innerHTML = '<div class="text-center text-gray-400 mt-10 text-sm">কোনো মন্তব্য নেই।<br>প্রথম মন্তব্যটি আপনি করুন!</div>';
             }
 
+            // নিজের ইউজার আইডি (অ্যালাইনমেন্টের জন্য)
+            const myUid = auth.currentUser ? auth.currentUser.uid : null;
+
             snapshot.forEach((doc) => {
                 const data = doc.data();
-                // ২৪ ঘণ্টার বেশি পুরনো মেসেজ লোড না করা (ক্লায়েন্ট সাইড ফিল্টার)
                 if (Date.now() - data.createdAt > 24 * 60 * 60 * 1000) return;
 
                 const time = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' }) : '...';
-                const userAvatar = data.avatar || '👤'; // পুরানো মেসেজে অবতার না থাকলে ডিফল্ট
+                const userAvatar = data.avatar || '👤';
 
+                // --- অ্যালাইনমেন্ট লজিক ---
+                const isMe = (data.uid === myUid);
+                const alignClass = isMe ? 'my-message' : 'other-message';
+                
                 const card = document.createElement('div');
-                card.className = 'comment-card group';
+                card.className = `comment-card group ${alignClass}`;
                 card.innerHTML = `
                     <div class="comment-avatar">${userAvatar}</div>
                     <div class="comment-content-wrapper">
@@ -31442,34 +31524,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     if(window.showCustomAlert) window.showCustomAlert('টেক্সট কপি হয়েছে');
                 });
                 
-                // পরিবর্তন: উন্নত রিপ্লাই ফরম্যাট (নেস্টেড রিপ্লাই ফিক্স সহ)
                 card.querySelector('.btn-reply').addEventListener('click', () => {
-                    // ১. নাম সেট করা
                     const replyName = `@${data.name}`;
-                    
                     let textToProcess = data.text;
-
-                    // --- নতুন লজিক: যদি এটি আগের কোনো রিপ্লাই হয় ---
-                    // "রিপ্লে:" শব্দটি থাকলে, তার পরের অংশটুকু কোট করা হবে
                     if (textToProcess.includes('রিপ্লে:')) {
                         const parts = textToProcess.split('রিপ্লে:');
-                        // একদম শেষের অংশটি নেওয়া (যাতে চেইন রিপ্লাই থাকলেও লেটেস্ট মেসেজটা আসে)
                         textToProcess = parts[parts.length - 1].trim();
                     }
-
-                    // ২. মূল টেক্সট থেকে প্রথম বাক্য বা নির্দিষ্ট অংশ নেওয়া
-                    // বাংলা দাড়ি (।) অথবা ইংরেজি ফুলস্টপ/প্রশ্নবোধক চিহ্ন দিয়ে প্রথম বাক্য আলাদা করা
                     let quoteText = textToProcess.split(/[।!?\n]/)[0].trim();
-                    
-                    // যদি খুব বড় হয়, ৫০ অক্ষরে কেটে ফেলা
                     if (quoteText.length > 50) {
                         quoteText = quoteText.substring(0, 50);
                     }
-                    
-                    // ৩. নতুন ফরম্যাটে টেক্সটবক্সে বসানো
                     msgInput.value = `${replyName}\n"${quoteText}..."\nরিপ্লে: `;
-                    
-                    // ফোকাস এবং হাইট ঠিক করা
                     msgInput.focus();
                     msgInput.style.height = 'auto';
                     msgInput.style.height = (msgInput.scrollHeight) + 'px';
@@ -31478,30 +31544,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 listContainer.appendChild(card);
             });
             
-            // স্ক্রল নিচে নামানো (প্রথমবার লোড হলে বা চ্যাট বক্স খোলা থাকলে)
             if (isInitialLoad || container.classList.contains('active')) {
                 listContainer.scrollTop = listContainer.scrollHeight;
             }
 
-            // ২. নোটিফিকেশন লজিক (নতুন মেসেজ আসলে)
             if (!isInitialLoad) {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         const data = change.doc.data();
-                        const currentUserUid = auth.currentUser ? auth.currentUser.uid : 'anonymous';
-                        
-                        // যদি মেসেজটি আমার নিজের না হয় এবং খুব পুরনো না হয় (১০ সেকেন্ডের মধ্যে আসা)
-                        // (পুরানো মেসেজগুলো onSnapshot এর প্রথম লোডে আসে না, কিন্তু নেটওয়ার্ক ল্যাগের কারণে চেক রাখা ভালো)
                         const isRecent = (Date.now() - data.createdAt) < 10000;
-                        
-                        if (data.uid !== currentUserUid && isRecent) {
+                        if (data.uid !== myUid && isRecent) {
                             showNewMessageNotification(data);
                         }
                     }
                 });
             }
             
-            isInitialLoad = false; // প্রথম লোড শেষ
+            isInitialLoad = false; 
 
         }, (error) => {
             console.error("Snapshot Error:", error);
@@ -31514,13 +31573,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const bubble = document.getElementById('comment-notification');
             if(!bubble) return;
 
-            // প্রথম বাক্য বের করা
-            // দাড়ি, প্রশ্নবোধক, বিস্ময়সূচক বা নিউলাইন দিয়ে স্প্লিট করে প্রথম অংশ নেওয়া
             let firstSentence = data.text.split(/[।!?\n]/)[0].trim();
-            // ইউজার রিকোয়ারমেন্ট অনুযায়ী ৩টি ডট যোগ করা
             firstSentence += "...";
 
-            // HTML সেট করা
             bubble.innerHTML = `
                 <div class="flex items-start gap-2">
                     <div class="text-xl flex-shrink-0 pt-0.5">${data.avatar || '👤'}</div>
@@ -31531,10 +31586,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            // দেখানো (Animation)
             bubble.classList.remove('hidden', 'opacity-0', 'translate-y-4', 'pointer-events-none');
             
-            // ৫ সেকেন্ড পর ভ্যানিস
             if (notificationTimeout) clearTimeout(notificationTimeout);
             notificationTimeout = setTimeout(() => {
                 bubble.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
@@ -31542,7 +31595,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 5000);
         }
 
-        // ২৪ ঘণ্টার পুরনো মন্তব্য ক্লিনআপ
         async function cleanupOldComments() {
             const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
             const oldDocsQuery = query(commentsRef, where("createdAt", "<", oneDayAgo));
@@ -31650,8 +31702,14 @@ document.addEventListener('DOMContentLoaded', () => {
             <!-- প্রোফাইল ইমোজি বাটন -->
             <button id="emoji-selector-btn" class="p-2 border rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 text-xl transition-colors w-12 flex items-center justify-center" title="প্রোফাইল ইমোজি সেট করুন">👤</button>
             
-            <!-- নাম ইনপুট -->
-            <input type="text" id="comment-username" placeholder="আপনার নাম" class="flex-grow p-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" maxlength="20">
+            <!-- নাম ইনপুট এবং এডিট বাটন গ্রুপ -->
+            <div class="flex-grow flex relative">
+                <input type="text" id="comment-username" placeholder="আপনার নাম (লক হবে)" class="w-full p-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white pr-8" maxlength="20">
+                <!-- নাম এডিট বাটন -->
+                <button id="edit-username-btn" class="absolute right-1 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-500 hidden" title="নাম পরিবর্তন করুন">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 3.732z" /></svg>
+                </button>
+            </div>
         </div>
         
         <div class="flex gap-2">
