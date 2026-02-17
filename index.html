@@ -31209,7 +31209,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 <!-- ====================================================================-->
-<!-- START: FIREBASE SCRIPT (Visitor Counter & Public Comments with Avatar) -->
+<!-- START: FIREBASE SCRIPT (Visitor Counter & Public Comments with Avatar & Presence) -->
 <!-- ====================================================================-->
 <script type="module">
     // আপনার ওয়েব অ্যাপের Firebase কনফিগারেশন
@@ -31223,12 +31223,12 @@ document.addEventListener('DOMContentLoaded', () => {
         measurementId: "G-6NVS7YFNBX"
     };
 
-    // Firebase ফাংশনগুলো ইম্পোর্ট
+    // Firebase ফাংশনগুলো ইম্পোর্ট (setDoc যুক্ত করা হয়েছে)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { 
         getFirestore, doc, runTransaction, onSnapshot, 
         collection, addDoc, deleteDoc, query, orderBy, 
-        serverTimestamp, getDocs, where, writeBatch 
+        serverTimestamp, getDocs, where, writeBatch, setDoc 
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
@@ -31295,7 +31295,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.error("Global Counter Init Failed:", error); }
     }
 
-// ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার, পাসওয়ার্ড প্রটেকশন, অ্যালাইনমেন্ট ও নোটিফিকেশন ডট সহ)
+// ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার, পাসওয়ার্ড প্রটেকশন, অ্যালাইনমেন্ট ও নোটিফিকেশন ডট এবং একটিভ কাউন্টার সহ)
     async function initializePublicComments() {
         // নিশ্চিত করুন ইউজার লগইন অবস্থায় আছে
         await ensureAuth();
@@ -31310,6 +31310,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const listContainer = document.getElementById('comment-list');
         const emojiBtn = document.getElementById('emoji-selector-btn');
         const emojiContainer = document.getElementById('emoji-picker-container');
+        const activeCountEl = document.getElementById('active-user-count'); // নতুন কাউন্টার এলিমেন্ট
         
         // নতুন: নোটিফিকেশন ডট এলিমেন্ট
         const notificationDot = document.getElementById('comment-notification-dot');
@@ -31322,6 +31323,47 @@ document.addEventListener('DOMContentLoaded', () => {
             notificationBubble.className = "fixed bottom-36 right-5 z-[1002] bg-white dark:bg-gray-800 p-3 rounded-lg shadow-xl border-l-4 border-blue-500 max-w-[250px] transition-all duration-300 transform translate-y-4 opacity-0 pointer-events-none hidden";
             document.body.appendChild(notificationBubble);
         }
+
+        // --- নতুন: একটিভ ইউজার ট্র্যাকিং (Presence System) ---
+        if (auth.currentUser) {
+            const presenceRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "presence", auth.currentUser.uid);
+            
+            // ১. নিজের উপস্থিতি আপডেট করা (প্রতি মিনিটে হার্টবিট পাঠানো)
+            const updatePresence = async () => {
+                try {
+                    await setDoc(presenceRef, {
+                        uid: auth.currentUser.uid,
+                        last_active: Date.now()
+                    }, { merge: true });
+                } catch (e) { console.error("Presence update failed", e); }
+            };
+            
+            updatePresence();
+            setInterval(updatePresence, 60000); // ১ মিনিট পর পর
+
+            // ২. অন্যদের উপস্থিতি শোনা (Active Count)
+            const presenceCollRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "presence");
+            
+            onSnapshot(presenceCollRef, (snapshot) => {
+                const now = Date.now();
+                // গত ২ মিনিটের মধ্যে যারা একটিভ ছিল তাদের গণনা
+                const activeCount = snapshot.docs.filter(doc => {
+                    const data = doc.data();
+                    return data.last_active && (now - data.last_active < 120000); // ২ মিনিট (120000 ms)
+                }).length;
+
+                if(activeCountEl) {
+                    activeCountEl.innerHTML = `
+                        <span class="relative flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                        একটিভ: ${activeCount.toLocaleString('bn-BD')}
+                    `;
+                }
+            });
+        }
+        // --- ট্র্যাকিং শেষ ---
 
         // ইমোজির তালিকা
         const avatars = [
@@ -31737,6 +31779,14 @@ document.addEventListener('DOMContentLoaded', () => {
 <div id="comment-section-container">
     <div class="comment-header">
         <span>পাবলিক মেসেজ</span>
+        <!-- নতুন: একটিভ ইউজার কাউন্টার -->
+        <span id="active-user-count" class="ml-auto mr-3 bg-white text-blue-600 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+            একটিভ: ১
+        </span>
         <button id="close-comment-btn" class="hover:bg-blue-700 p-1 rounded-full transition">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
