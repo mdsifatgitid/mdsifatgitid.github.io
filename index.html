@@ -31295,7 +31295,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.error("Global Counter Init Failed:", error); }
     }
 
-// ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার, পাসওয়ার্ড প্রটেকশন ও অ্যালাইনমেন্ট সহ)
+// ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার, পাসওয়ার্ড প্রটেকশন, অ্যালাইনমেন্ট ও নোটিফিকেশন ডট সহ)
     async function initializePublicComments() {
         // নিশ্চিত করুন ইউজার লগইন অবস্থায় আছে
         await ensureAuth();
@@ -31305,11 +31305,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const closeBtn = document.getElementById('close-comment-btn');
         const sendBtn = document.getElementById('send-comment-btn');
         const nameInput = document.getElementById('comment-username');
-        const editNameBtn = document.getElementById('edit-username-btn'); // নতুন এডিট বাটন
+        const editNameBtn = document.getElementById('edit-username-btn'); 
         const msgInput = document.getElementById('comment-message');
         const listContainer = document.getElementById('comment-list');
         const emojiBtn = document.getElementById('emoji-selector-btn');
         const emojiContainer = document.getElementById('emoji-picker-container');
+        
+        // নতুন: নোটিফিকেশন ডট এলিমেন্ট
+        const notificationDot = document.getElementById('comment-notification-dot');
 
         // নতুন: নোটিফিকেশন বাবল তৈরি (যদি আগে থেকে না থাকে)
         let notificationBubble = document.getElementById('comment-notification');
@@ -31327,18 +31330,21 @@ document.addEventListener('DOMContentLoaded', () => {
             '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯'
         ];
 
-        // UI টগল লজিক
+        // UI টগল লজিক (আপডেটেড)
         if (fab && container && closeBtn) {
             fab.addEventListener('click', (e) => {
                 e.stopPropagation();
                 container.classList.toggle('active');
                 
-                // নোটিফিকেশন থাকলে সরিয়ে দিন
+                // নোটিফিকেশন বাবল থাকলে সরিয়ে দিন
                 if (notificationBubble) {
                     notificationBubble.classList.add('hidden');
                 }
 
+                // যদি সেকশন খোলা হয়, তাহলে লাল ডট সরিয়ে ফেলুন
                 if(container.classList.contains('active')) {
+                    if (notificationDot) notificationDot.classList.add('hidden'); // লাল ডট লুকান
+                    
                     loadSavedUserData(); // সেভ করা ডাটা লোড
                     cleanupOldComments(); // অটো ক্লিনআপ
                     setTimeout(() => listContainer.scrollTop = listContainer.scrollHeight, 300);
@@ -31499,7 +31505,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // রিয়েল-টাইম মেসেজ লোড এবং রেন্ডার
+        // রিয়েল-টাইম মেসেজ লোড এবং রেন্ডার (আপডেটেড)
         const q = query(commentsRef, orderBy("timestamp", "asc"));
         let isInitialLoad = true;
 
@@ -31583,13 +31589,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 listContainer.scrollTop = listContainer.scrollHeight;
             }
 
+            // নতুন মেসেজ আসলে নোটিফিকেশন দেখানোর লজিক
             if (!isInitialLoad) {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         const data = change.doc.data();
+                        // সাম্প্রতিক মেসেজ কিনা চেক করা (১০ সেকেন্ডের মধ্যে)
                         const isRecent = (Date.now() - data.createdAt) < 10000;
+                        
                         if (data.uid !== myUid && isRecent) {
-                            showNewMessageNotification(data);
+                            showNewMessageNotification(data); // নোটিফিকেশন বাবল
+
+                            // *** নতুন: লাল ডট দেখানো ***
+                            // যদি চ্যাট উইন্ডো খোলা না থাকে, তবেই ডট দেখান
+                            if (!container.classList.contains('active')) {
+                                if (notificationDot) notificationDot.classList.remove('hidden');
+                            }
                         }
                     }
                 });
@@ -31602,7 +31617,7 @@ document.addEventListener('DOMContentLoaded', () => {
             listContainer.innerHTML = '<div class="text-center text-red-400 mt-10 text-sm">ডেটা লোড করতে সমস্যা হচ্ছে।</div>';
         });
 
-        // নোটিফিকেশন দেখানোর ফাংশন
+        // নোটিফিকেশন বাবল দেখানোর ফাংশন
         let notificationTimeout;
         function showNewMessageNotification(data) {
             const bubble = document.getElementById('comment-notification');
@@ -31713,8 +31728,10 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- ======================================================== -->
 <!-- START: পাবলিক মন্তব্য সেকশন (Floating & Emoji) -->
 <!-- ======================================================== -->
-<div id="comment-fab" title="মন্তব্য করুন">
+<div id="comment-fab" class="relative" title="মন্তব্য করুন">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+    <!-- Notification Red Dot -->
+    <span id="comment-notification-dot" class="absolute top-0 right-0 w-3 h-3 bg-red-600 border-2 border-white dark:border-gray-800 rounded-full hidden"></span>
 </div>
 
 <div id="comment-section-container">
