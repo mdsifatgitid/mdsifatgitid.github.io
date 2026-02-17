@@ -7360,6 +7360,13 @@ body.sidebar-open #sidebarOverlay {
     flex-direction: row-reverse; /* অবতার ডানদিকে নেওয়ার জন্য */
     text-align: right;
 }
+
+/* নতুন যুক্ত করা: নিজের মেসেজ জাস্টিফাইড হবে কিন্তু শেষ লাইন বামে থাকবে */
+.comment-card.my-message .comment-msg {
+    text-align: justify;
+    text-align-last: left;
+}
+
 .dark .comment-card.my-message {
     background-color: #1e3a8a; /* ডার্ক মোডে গাঢ় নীল */
     border-color: #1d4ed8;
@@ -7477,6 +7484,7 @@ body.sidebar-open #sidebarOverlay {
 /* ==================================================================== */
 /* END: পাবলিক মন্তব্য সেকশন স্টাইল */
 /* ==================================================================== */
+
 
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
