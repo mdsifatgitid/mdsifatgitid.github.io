@@ -31348,17 +31348,20 @@ document.addEventListener('DOMContentLoaded', () => {
             container.addEventListener('click', (e) => e.stopPropagation());
         }
 
-        // লোকাল স্টোরেজ থেকে ডাটা লোড এবং নাম লক করার ফাংশন
+        // লোকাল স্টোরেজ থেকে ডাটা লোড এবং নাম লক করার ফাংশন (আপডেটেড)
         function loadSavedUserData() {
             const savedName = localStorage.getItem('bt_comment_username');
             const savedAvatar = localStorage.getItem('bt_comment_avatar');
             
-            if (savedName) {
+            // নাম যদি সেভ থাকে এবং সেটি 'বেনামী' না হয়, তবেই লক করুন
+            if (savedName && savedName.trim() !== '' && savedName !== 'বেনামী') {
                 nameInput.value = savedName;
                 nameInput.disabled = true; // নাম সেভ থাকলে লক করে দিন
                 nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
                 editNameBtn.classList.remove('hidden'); // এডিট বাটন দেখান
             } else {
+                // নাম না থাকলে বা 'বেনামী' হলে আনলক রাখুন
+                if (savedName) nameInput.value = savedName; 
                 nameInput.disabled = false;
                 nameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
                 editNameBtn.classList.add('hidden');
@@ -31366,12 +31369,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (savedAvatar) emojiBtn.textContent = savedAvatar;
         }
 
-        // --- পাসওয়ার্ড দিয়ে নাম আনলক করার লজিক ---
+        // --- পাসওয়ার্ড দিয়ে নাম আনলক করার লজিক (আপডেটেড) ---
         if (editNameBtn) {
             editNameBtn.addEventListener('click', () => {
+                const currentName = nameInput.value.trim();
+
+                // নাম ফাকা থাকলে বা 'বেনামী' থাকলে সরাসরি আনলক হবে (পাসওয়ার্ড লাগবে না)
+                if (!currentName || currentName === 'বেনামী') {
+                    nameInput.disabled = false;
+                    nameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                    nameInput.focus();
+                    editNameBtn.classList.add('hidden');
+                    return;
+                }
+
                 const password = prompt("নাম পরিবর্তন করতে পাসওয়ার্ড দিন:");
                 // স্পেস এবং কেইস ইগনোর করে চেক করার জন্য নরমালাইজেশন
-                // ইনপুট থেকে স্পেস সরানো এবং ছোট হাতের করা
                 const normalizedPass = password ? password.toLowerCase().replace(/\s+/g, '') : '';
                 
                 // সঠিক পাসওয়ার্ড: banglatoolbox
@@ -31422,7 +31435,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Firestore কালেকশন রেফারেন্স
         const commentsRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments");
 
-        // মেসেজ পাঠানোর ফাংশন
+        // মেসেজ পাঠানোর ফাংশন (আপডেটেড)
         async function sendMessage() {
             const name = nameInput.value.trim() || 'বেনামী';
             const text = msgInput.value.trim();
@@ -31431,14 +31444,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!text) return;
 
-            // নাম এবং অবতার লোকাল স্টোরেজে সেভ করুন (যদি নাম লক না থাকে তবেই নতুন করে লক হবে)
+            // নাম এবং অবতার লোকাল স্টোরেজে সেভ করুন
             localStorage.setItem('bt_comment_username', name);
             localStorage.setItem('bt_comment_avatar', avatar);
             
-            // পাঠানোর পর ইনপুট আবার লক করুন এবং এডিট বাটন দেখান
-            nameInput.disabled = true;
-            nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
-            editNameBtn.classList.remove('hidden');
+            // পাঠানোর পর ইনপুট লক করা হবে কিনা তা চেক করুন
+            if (name !== 'বেনামী') {
+                nameInput.disabled = true;
+                nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+                editNameBtn.classList.remove('hidden');
+            } else {
+                // বেনামী হলে লক করার প্রয়োজন নেই
+                nameInput.disabled = false;
+                nameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                editNameBtn.classList.add('hidden');
+            }
 
             sendBtn.disabled = true;
 
