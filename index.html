@@ -31348,7 +31348,7 @@ document.addEventListener('DOMContentLoaded', () => {
             container.addEventListener('click', (e) => e.stopPropagation());
         }
 
-        // লোকাল স্টোরেজ থেকে ডাটা লোড এবং নাম লক করার ফাংশন (আপডেটেড)
+        // লোকাল স্টোরেজ থেকে ডাটা লোড এবং নাম লক করার ফাংশন
         function loadSavedUserData() {
             const savedName = localStorage.getItem('bt_comment_username');
             const savedAvatar = localStorage.getItem('bt_comment_avatar');
@@ -31369,7 +31369,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (savedAvatar) emojiBtn.textContent = savedAvatar;
         }
 
-        // --- পাসওয়ার্ড দিয়ে নাম আনলক করার লজিক (আপডেটেড) ---
+        // --- পাসওয়ার্ড দিয়ে নাম আনলক করার লজিক ---
         if (editNameBtn) {
             editNameBtn.addEventListener('click', () => {
                 const currentName = nameInput.value.trim();
@@ -31435,7 +31435,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Firestore কালেকশন রেফারেন্স
         const commentsRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments");
 
-        // মেসেজ পাঠানোর ফাংশন (আপডেটেড)
+        // মেসেজ পাঠানোর ফাংশন
         async function sendMessage() {
             const name = nameInput.value.trim() || 'বেনামী';
             const text = msgInput.value.trim();
@@ -31517,7 +31517,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = doc.data();
                 if (Date.now() - data.createdAt > 24 * 60 * 60 * 1000) return;
 
-                const time = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' }) : '...';
+                // --- পরিবর্তন: তারিখ ও সময় ফরম্যাটিং ---
+                const time = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString('bn-BD', { 
+                    day: 'numeric', 
+                    month: 'short', 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                }) : '...';
+                
                 const userAvatar = data.avatar || '👤';
 
                 // --- অ্যালাইনমেন্ট লজিক ---
