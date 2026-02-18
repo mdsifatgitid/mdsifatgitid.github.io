@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bangla-toolbox-v16';
+const CACHE_NAME = 'bangla-toolbox-v17';
 const urlsToCache = [
     './', 
     './index.html', 
