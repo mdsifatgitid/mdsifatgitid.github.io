@@ -11909,7 +11909,7 @@ async function clearExpiredItems() {
 // হিজরি তারিখ অ্যাডজাস্টমেন্টের জন্য সেন্ট্রাল ফাংশন
 function getGlobalHijriAdjustment() {
     // যদি সেটিংসে ইউজার কিছু সেট না করে থাকে, তবে এই ভ্যালুটি কাজ করবে।
-    const defaultValue = '-2'; 
+    const defaultValue = '-1'; 
     
     return parseInt(localStorage.getItem('hijriDateAdjustment') || defaultValue, 10);
 }
