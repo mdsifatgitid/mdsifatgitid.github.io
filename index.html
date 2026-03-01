@@ -7737,7 +7737,7 @@ body.sidebar-open #sidebarOverlay {
 	<button id="typingTestTab" class="tab-button rounded-xl has-tooltip" data-tooltip="শর্টকাট: Alt+Y">টাইপিং টেস্ট</button>
 	<button id="sttTab" class="tab-button rounded-xl">কথা থেকে লেখা</button>
     <button id="ttsTab" class="tab-button rounded-xl">লেখা থেকে কথা</button>
-	<button id="mapTab" class="tab-button rounded-xl has-tooltip" data-tooltip="শর্টকাট: Alt+M">গুগল ম্যাপ</button>
+	<button id="mapTab" class="tab-button rounded-xl">গুগল ম্যাপ</button>
     <button id="weatherTab" class="tab-button rounded-xl has-tooltip" data-tooltip="শর্টকাট: Alt+W">আবহাওয়া</button>
 	<button id="measurementTab" class="tab-button rounded-xl">পরিমাপ</button>
 	<button id="notepadTab" class="tab-button rounded-xl has-tooltip" data-tooltip="শর্টকাট: Alt+N">নোটপ্যাড</button>
@@ -9049,7 +9049,7 @@ body.sidebar-open #sidebarOverlay {
                             <li class="flex justify-between items-center"><span>ছবি রিসাইজার</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + R</kbd></li>
                             <li class="flex justify-between items-center"><span>ওয়েব সার্চ</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + G</kbd></li>
                             <li class="flex justify-between items-center"><span>আবহাওয়া</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + W</kbd></li>
-                            <li class="flex justify-between items-center"><span>গুগল ম্যাপ</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + M</kbd></li>
+                            <li class="flex justify-between items-center"><span>পাবলিক মেসেজ</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + M</kbd></li>
                             <li class="flex justify-between items-center"><span>ইতিহাস</span> <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 font-mono text-xs">Alt + H</kbd></li>
                         </ul>
                     </div>
@@ -11909,7 +11909,7 @@ async function clearExpiredItems() {
 // হিজরি তারিখ অ্যাডজাস্টমেন্টের জন্য সেন্ট্রাল ফাংশন
 function getGlobalHijriAdjustment() {
     // যদি সেটিংসে ইউজার কিছু সেট না করে থাকে, তবে এই ভ্যালুটি কাজ করবে।
-    const defaultValue = '-1'; 
+    const defaultValue = '-2'; 
     
     return parseInt(localStorage.getItem('hijriDateAdjustment') || defaultValue, 10);
 }
@@ -29709,7 +29709,7 @@ function initializeGlobalShortcuts() {
                 'h': 'historyTab',          // History
                 'q': 'qrCodeTab',           // QR Code
                 'i': 'invoiceTab',          // Invoice
-                'm': 'mapTab',              // Map
+                'm': 'comment-fab',              // Public Massage
                 'a': 'textAssistantTab',    // AI Assistant
                 'z': 'zakatCalcTab',        // Zakat
                 'd': 'dashboardTab',        // Dashboard
