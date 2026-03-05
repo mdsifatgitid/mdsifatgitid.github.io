@@ -31376,6 +31376,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fab && container && closeBtn) {
             fab.addEventListener('click', (e) => {
                 e.stopPropagation();
+                
+                // --- নতুন: অন্য উইন্ডোগুলো বন্ধ করার জন্য কোড ---
+                const profileWin = document.getElementById('profileWindow');
+                const cloudWin = document.getElementById('cloudWindow');
+                if(profileWin) profileWin.classList.add('hidden');
+                if(cloudWin) cloudWin.classList.add('hidden');
+                // --- কোড শেষ ---
+
                 container.classList.toggle('active');
                 
                 // নোটিফিকেশন বাবল থাকলে সরিয়ে দিন
@@ -32015,11 +32023,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function toggleProfileWindow() {
         const profileWin = document.getElementById('profileWindow');
         const cloudWin = document.getElementById('cloudWindow');
+        // নতুন: মন্তব্য উইন্ডো বন্ধ করার জন্য যুক্ত করা হয়েছে
+        const commentContainer = document.getElementById('comment-section-container');
         
-        // অন্য উইন্ডো বন্ধ করুন
         if(cloudWin) cloudWin.classList.add('hidden');
+        // নতুন: মন্তব্য উইন্ডো বন্ধ করার জন্য যুক্ত করা হয়েছে
+        if(commentContainer) commentContainer.classList.remove('active');
         
-        // প্রোফাইল উইন্ডো টগল করুন
         if(profileWin) profileWin.classList.toggle('hidden');
     }
 
@@ -32027,11 +32037,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function toggleCloudWindow() {
         const profileWin = document.getElementById('profileWindow');
         const cloudWin = document.getElementById('cloudWindow');
+        // নতুন: মন্তব্য উইন্ডো বন্ধ করার জন্য যুক্ত করা হয়েছে
+        const commentContainer = document.getElementById('comment-section-container');
         
-        // অন্য উইন্ডো বন্ধ করুন
         if(profileWin) profileWin.classList.add('hidden');
+        // নতুন: মন্তব্য উইন্ডো বন্ধ করার জন্য যুক্ত করা হয়েছে
+        if(commentContainer) commentContainer.classList.remove('active');
         
-        // ক্লাউড উইন্ডো টগল করুন
         if(cloudWin) cloudWin.classList.toggle('hidden');
     }
 
