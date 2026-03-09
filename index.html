@@ -7217,7 +7217,7 @@ body.sidebar-open #sidebarOverlay {
 /* ========================================= */
 
 /* ==================================================================== */
-/* START: পাবলিক মন্তব্য সেকশন স্টাইল (আপডেটেড) */
+/* START: PUBLIC COMMENTS SECTION CSS (UPDATED) */
 /* ==================================================================== */
 #comment-fab {
     position: fixed;
@@ -7245,7 +7245,7 @@ body.sidebar-open #sidebarOverlay {
     bottom: 145px;
     right: 20px;
     width: 320px;
-    height: 450px;
+    height: 500px; /* পিন সেকশনের জন্য উচ্চতা বাড়ানো হয়েছে */
     background-color: #ffffff;
     border-radius: 16px;
     box-shadow: 0 5px 25px rgba(0,0,0,0.2);
@@ -7273,7 +7273,92 @@ body.sidebar-open #sidebarOverlay {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-shrink: 0; /* হেডার যেন ছোট না হয় */
 }
+
+/* --- নতুন: পিন করা মেসেজ সেকশন স্টাইল (আরও কমপ্যাক্ট) --- */
+#pinned-comments-container {
+    position: relative;
+    padding: 6px;
+    background-color: #eef2ff; /* indigo-50 */
+    border-bottom: 1px solid #e0e7ff; /* indigo-100 */
+    flex-shrink: 0;
+    height: 75px; /* উচ্চতা কমানো হয়েছে */
+}
+.dark #pinned-comments-container {
+    background-color: #374151;
+    border-bottom-color: #4b5563;
+}
+#pinned-comments-wrapper {
+    display: flex;
+    transition: transform 0.3s ease-in-out;
+}
+.pinned-item {
+    flex: 0 0 100%;
+    padding: 6px; /* প্যাডিং কমানো হয়েছে */
+    background-color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    border: 1px solid #ddd;
+    overflow: hidden;
+}
+.dark .pinned-item {
+    background-color: #1f2937;
+    border-color: #4b5563;
+}
+.pinned-avatar {
+    font-size: 1.3rem; /* ফন্ট সাইজ কমানো হয়েছে */
+    flex-shrink: 0;
+}
+.pinned-content {
+    overflow: hidden;
+}
+.pinned-name {
+    font-size: 0.65rem; /* ফন্ট সাইজ কমানো হয়েছে */
+    font-weight: bold;
+    color: #4f46e5;
+    white-space: nowrap;
+}
+.dark .pinned-name {
+    color: #818cf8;
+}
+.pinned-text {
+    font-size: 0.75rem; /* ফন্ট সাইজ কমানো হয়েছে */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #374151;
+}
+.dark .pinned-text {
+    color: #d1d5db;
+}
+.pinned-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+.pinned-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+#pinned-nav-prev { left: 8px; }
+#pinned-nav-next { right: 8px; }
+/* --- পিন সেকশন স্টাইল শেষ --- */
+
 .comment-list {
     flex-grow: 1;
     overflow-y: auto;
@@ -7291,12 +7376,12 @@ body.sidebar-open #sidebarOverlay {
     border-top: 1px solid #e2e8f0;
     background-color: #fff;
     position: relative; /* ইমোজি পিকারের জন্য */
+    flex-shrink: 0;
 }
 .dark .comment-input-area {
     background-color: #1f2937;
     border-color: #374151;
 }
-/* ইমোজি পিকার স্টাইল */
 #emoji-picker-container {
     position: absolute;
     bottom: 100%;
@@ -7333,7 +7418,6 @@ body.sidebar-open #sidebarOverlay {
 .dark .emoji-choice-btn:hover {
     background-color: #4b5563;
 }
-/* মন্তব্য কার্ড স্টাইল (আপডেটেড) */
 .comment-card {
     background-color: white;
     padding: 10px;
@@ -7341,44 +7425,44 @@ body.sidebar-open #sidebarOverlay {
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     position: relative;
     border: 1px solid #e2e8f0;
-    max-width: 85%; /* প্রস্থ একটু কমানো হয়েছে যাতে চ্যাট বাবলের মতো লাগে */
+    max-width: 85%;
     display: flex;
     gap: 8px;
-    margin-bottom: 8px; /* মেসেজগুলোর মাঝে গ্যাপ */
+    margin-bottom: 8px;
+    scroll-margin-top: 100px; /* পিন সেকশনের নিচে আনার জন্য */
+}
+/* নতুন: স্ক্রোল করার পর হাইলাইট ইফেক্ট */
+.comment-highlight {
+    transition: background-color 0.3s ease-in-out;
+    background-color: #dbeafe !important; /* light blue */
+}
+.dark .comment-highlight {
+    background-color: #1e3a8a !important; /* dark blue */
 }
 .dark .comment-card {
     background-color: #374151;
     border-color: #4b5563;
     color: #e2e8f0;
 }
-
-/* নিজের মেসেজ (ডানদিকে) */
 .comment-card.my-message {
-    align-self: flex-end; /* ডানদিকে সরে যাবে */
-    background-color: #e0e7ff; /* হালকা নীল ব্যাকগ্রাউন্ড */
-    border-bottom-right-radius: 2px; /* বাবল ইফেক্ট */
-    flex-direction: row-reverse; /* অবতার ডানদিকে নেওয়ার জন্য */
+    align-self: flex-end;
+    background-color: #e0e7ff;
+    border-bottom-right-radius: 2px;
+    flex-direction: row-reverse;
     text-align: right;
 }
-
-/* নতুন যুক্ত করা: নিজের মেসেজ জাস্টিফাইড হবে কিন্তু শেষ লাইন বামে থাকবে */
 .comment-card.my-message .comment-msg {
     text-align: justify;
     text-align-last: left;
 }
-
 .dark .comment-card.my-message {
-    background-color: #1e3a8a; /* ডার্ক মোডে গাঢ় নীল */
+    background-color: #1e3a8a;
     border-color: #1d4ed8;
 }
-
-/* অন্যের মেসেজ (বামদিকে) */
 .comment-card.other-message {
-    align-self: flex-start; /* বামদিকে থাকবে */
-    border-bottom-left-radius: 2px; /* বাবল ইফেক্ট */
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
 }
-
-/* অবতার এবং টেক্সট অ্যাডজাস্টমেন্ট */
 .comment-avatar {
     font-size: 1.6rem;
     flex-shrink: 0;
@@ -7386,7 +7470,7 @@ body.sidebar-open #sidebarOverlay {
 }
 .comment-content-wrapper {
     flex-grow: 1;
-    min-width: 0; /* টেক্সট র‍্যাপিং ফিক্স */
+    min-width: 0;
 }
 .comment-name {
     font-size: 0.75rem;
@@ -7397,14 +7481,12 @@ body.sidebar-open #sidebarOverlay {
 .dark .comment-name {
     color: #60a5fa;
 }
-/* নিজের মেসেজে নাম লুকানো বা কালার চেঞ্জ (অপশনাল) */
 .comment-card.my-message .comment-name {
     color: #4f46e5;
 }
 .dark .comment-card.my-message .comment-name {
     color: #818cf8;
 }
-
 .comment-msg {
     font-size: 0.95rem;
     word-wrap: break-word;
@@ -7413,15 +7495,13 @@ body.sidebar-open #sidebarOverlay {
 }
 .comment-time {
     font-size: 0.65rem;
-    color: #64748b; /* slate-500 */
+    color: #64748b;
     margin-top: 4px;
     display: block;
 }
 .dark .comment-time {
     color: #94a3b8;
 }
-
-/* অ্যাকশন বার */
 .comment-actions {
     position: absolute;
     top: -15px;
@@ -7437,26 +7517,10 @@ body.sidebar-open #sidebarOverlay {
     border: 1px solid #e2e8f0;
     z-index: 5;
 }
-/* নিজের মেসেজের অ্যাকশন বার বামদিকে আসবে */
-.comment-card.my-message .comment-actions {
-    left: 5px;
-    right: auto;
-}
-/* অন্যের মেসেজের অ্যাকশন বার ডানদিকে আসবে */
-.comment-card.other-message .comment-actions {
-    right: 5px;
-    left: auto;
-}
-
-.dark .comment-actions {
-    background: rgba(31, 41, 55, 0.95);
-    border-color: #4b5563;
-}
-.comment-card:hover .comment-actions {
-    opacity: 1;
-    top: -12px;
-    pointer-events: auto;
-}
+.comment-card.my-message .comment-actions { left: 5px; right: auto; }
+.comment-card.other-message .comment-actions { right: 5px; left: auto; }
+.dark .comment-actions { background: rgba(31, 41, 55, 0.95); border-color: #4b5563; }
+.comment-card:hover .comment-actions { opacity: 1; top: -12px; pointer-events: auto; }
 .comment-action-btn {
     width: 24px;
     height: 24px;
@@ -7471,18 +7535,16 @@ body.sidebar-open #sidebarOverlay {
     background-color: #f3f4f6;
     transition: all 0.2s;
 }
-.dark .comment-action-btn {
-    background-color: #4b5563;
-    color: #e5e7eb;
-}
-.comment-action-btn:hover {
-    transform: scale(1.15);
-}
+.dark .comment-action-btn { background-color: #4b5563; color: #e5e7eb; }
+.comment-action-btn:hover { transform: scale(1.15); }
 .btn-reply:hover { background-color: #3b82f6; color: white; }
 .btn-copy:hover { background-color: #10b981; color: white; }
 .btn-delete:hover { background-color: #ef4444; color: white; }
+/* নতুন: পিন বাটন স্টাইল */
+.btn-pin:hover { background-color: #f59e0b; color: white; }
+.btn-pin.pinned { background-color: #f59e0b; color: white; transform: rotate(45deg); }
 /* ==================================================================== */
-/* END: পাবলিক মন্তব্য সেকশন স্টাইল */
+/* END: PUBLIC COMMENTS SECTION CSS */
 /* ==================================================================== */
 
 
@@ -31298,7 +31360,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার, পাসওয়ার্ড প্রটেকশন, অ্যালাইনমেন্ট ও নোটিফিকেশন ডট এবং একটিভ কাউন্টার সহ)
     async function initializePublicComments() {
-        // নিশ্চিত করুন ইউজার লগইন অবস্থায় আছে
         await ensureAuth();
 
         const fab = document.getElementById('comment-fab');
@@ -31311,12 +31372,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const listContainer = document.getElementById('comment-list');
         const emojiBtn = document.getElementById('emoji-selector-btn');
         const emojiContainer = document.getElementById('emoji-picker-container');
-        const activeCountEl = document.getElementById('active-user-count'); // নতুন কাউন্টার এলিমেন্ট
+        const activeCountEl = document.getElementById('active-user-count');
         
-        // নতুন: নোটিফিকেশন ডট এলিমেন্ট
-        const notificationDot = document.getElementById('comment-notification-dot');
+        // নতুন: পিন সেকশনের উপাদান
+        const pinnedContainer = document.getElementById('pinned-comments-container');
+        const pinnedWrapper = document.getElementById('pinned-comments-wrapper');
+        const prevPinBtn = document.getElementById('pinned-nav-prev');
+        const nextPinBtn = document.getElementById('pinned-nav-next');
+        let currentPinnedIndex = 0;
+        let totalPinned = 0;
 
-        // নতুন: নোটিফিকেশন বাবল তৈরি (যদি আগে থেকে না থাকে)
+        const notificationDot = document.getElementById('comment-notification-dot');
         let notificationBubble = document.getElementById('comment-notification');
         if (!notificationBubble) {
             notificationBubble = document.createElement('div');
@@ -31325,79 +31391,30 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.appendChild(notificationBubble);
         }
 
-        // --- নতুন: একটিভ ইউজার ট্র্যাকিং (Presence System) ---
         if (auth.currentUser) {
             const presenceRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "presence", auth.currentUser.uid);
-            
-            // ১. নিজের উপস্থিতি আপডেট করা (প্রতি মিনিটে হার্টবিট পাঠানো)
-            const updatePresence = async () => {
-                try {
-                    await setDoc(presenceRef, {
-                        uid: auth.currentUser.uid,
-                        last_active: Date.now()
-                    }, { merge: true });
-                } catch (e) { console.error("Presence update failed", e); }
-            };
-            
+            const updatePresence = async () => { try { await setDoc(presenceRef, { uid: auth.currentUser.uid, last_active: Date.now() }, { merge: true }); } catch (e) { console.error("Presence update failed", e); } };
             updatePresence();
-            setInterval(updatePresence, 60000); // ১ মিনিট পর পর
-
-            // ২. অন্যদের উপস্থিতি শোনা (Active Count)
+            setInterval(updatePresence, 60000);
             const presenceCollRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "presence");
-            
             onSnapshot(presenceCollRef, (snapshot) => {
                 const now = Date.now();
-                // গত ২ মিনিটের মধ্যে যারা একটিভ ছিল তাদের গণনা
-                const activeCount = snapshot.docs.filter(doc => {
-                    const data = doc.data();
-                    return data.last_active && (now - data.last_active < 120000); // ২ মিনিট (120000 ms)
-                }).length;
-
+                const activeCount = snapshot.docs.filter(doc => (now - doc.data().last_active < 120000)).length;
                 if(activeCountEl) {
-                    activeCountEl.innerHTML = `
-                        <span class="relative flex h-2 w-2">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                        </span>
-                        একটিভ: ${activeCount.toLocaleString('bn-BD')}
-                    `;
+                    activeCountEl.innerHTML = `<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span>একটিভ: ${activeCount.toLocaleString('bn-BD')}`;
                 }
             });
         }
-        // --- ট্র্যাকিং শেষ ---
 
-        // ইমোজির তালিকা
-        const avatars = [
-            '👤', '👨', '👩', '🧑‍💻', '🦸', '🦹', '🧙', '🧚', '🧛', '🧜',
-            '🧞', '🤖', '👾', '👽', '👻', '🤡', '💩', '😺', '😸', '😹',
-            '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯'
-        ];
-
-        // UI টগল লজিক (আপডেটেড)
         if (fab && container && closeBtn) {
             fab.addEventListener('click', (e) => {
                 e.stopPropagation();
-                
-                // --- নতুন: অন্য উইন্ডোগুলো বন্ধ করার জন্য কোড ---
-                const profileWin = document.getElementById('profileWindow');
-                const cloudWin = document.getElementById('cloudWindow');
-                if(profileWin) profileWin.classList.add('hidden');
-                if(cloudWin) cloudWin.classList.add('hidden');
-                // --- কোড শেষ ---
-
                 container.classList.toggle('active');
-                
-                // নোটিফিকেশন বাবল থাকলে সরিয়ে দিন
-                if (notificationBubble) {
-                    notificationBubble.classList.add('hidden');
-                }
-
-                // যদি সেকশন খোলা হয়, তাহলে লাল ডট সরিয়ে ফেলুন
-                if(container.classList.contains('active')) {
-                    if (notificationDot) notificationDot.classList.add('hidden'); // লাল ডট লুকান
-                    
-                    loadSavedUserData(); // সেভ করা ডাটা লোড
-                    cleanupOldComments(); // অটো ক্লিনআপ
+                if (notificationBubble) notificationBubble.classList.add('hidden');
+                if (container.classList.contains('active')) {
+                    if (notificationDot) notificationDot.classList.add('hidden');
+                    loadSavedUserData();
+                    cleanupOldComments();
                     setTimeout(() => listContainer.scrollTop = listContainer.scrollHeight, 300);
                 }
             });
@@ -31405,19 +31422,15 @@ document.addEventListener('DOMContentLoaded', () => {
             container.addEventListener('click', (e) => e.stopPropagation());
         }
 
-        // লোকাল স্টোরেজ থেকে ডাটা লোড এবং নাম লক করার ফাংশন
         function loadSavedUserData() {
             const savedName = localStorage.getItem('bt_comment_username');
             const savedAvatar = localStorage.getItem('bt_comment_avatar');
-            
-            // নাম যদি সেভ থাকে এবং সেটি 'বেনামী' না হয়, তবেই লক করুন
             if (savedName && savedName.trim() !== '' && savedName !== 'বেনামী') {
                 nameInput.value = savedName;
-                nameInput.disabled = true; // নাম সেভ থাকলে লক করে দিন
+                nameInput.disabled = true;
                 nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
-                editNameBtn.classList.remove('hidden'); // এডিট বাটন দেখান
+                editNameBtn.classList.remove('hidden');
             } else {
-                // নাম না থাকলে বা 'বেনামী' হলে আনলক রাখুন
                 if (savedName) nameInput.value = savedName; 
                 nameInput.disabled = false;
                 nameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
@@ -31426,12 +31439,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (savedAvatar) emojiBtn.textContent = savedAvatar;
         }
 
-        // --- পাসওয়ার্ড দিয়ে নাম আনলক করার লজিক ---
         if (editNameBtn) {
             editNameBtn.addEventListener('click', () => {
                 const currentName = nameInput.value.trim();
-
-                // নাম ফাকা থাকলে বা 'বেনামী' থাকলে সরাসরি আনলক হবে (পাসওয়ার্ড লাগবে না)
                 if (!currentName || currentName === 'বেনামী') {
                     nameInput.disabled = false;
                     nameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
@@ -31439,17 +31449,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     editNameBtn.classList.add('hidden');
                     return;
                 }
-
                 const password = prompt("নাম পরিবর্তন করতে পাসওয়ার্ড দিন:");
-                // স্পেস এবং কেইস ইগনোর করে চেক করার জন্য নরমালাইজেশন
                 const normalizedPass = password ? password.toLowerCase().replace(/\s+/g, '') : '';
-                
-                // সঠিক পাসওয়ার্ড: banglatoolbox
                 if (normalizedPass === 'banglatoolbox') {
                     nameInput.disabled = false;
                     nameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
                     nameInput.focus();
-                    editNameBtn.classList.add('hidden'); // আনলক হলে বাটন লুকান
+                    editNameBtn.classList.add('hidden');
                     alert("নাম এডিট করার অনুমতি দেওয়া হয়েছে।");
                 } else {
                     alert("ভুল পাসওয়ার্ড! নাম পরিবর্তন করা যাবে না।");
@@ -31457,42 +31463,24 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // ইমোজি পিকার সেটআপ
+        const avatars = ['👤', '👨', '👩', '🧑‍💻', '🦸', '🦹', '🧙', '🧚', '🧛', '🧜', '🧞', '🤖', '👾', '👽', '👻', '🤡', '💩', '😺', '😸', '😹', '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯'];
         function setupEmojiPicker() {
             emojiContainer.innerHTML = '';
             avatars.forEach(emoji => {
                 const btn = document.createElement('button');
                 btn.className = 'emoji-choice-btn';
                 btn.textContent = emoji;
-                btn.onclick = (e) => {
-                    e.stopPropagation(); // বাবলিং বন্ধ
-                    emojiBtn.textContent = emoji;
-                    // ইমোজি সিলেক্ট করলেই লোকাল স্টোরেজে সেভ হবে
-                    localStorage.setItem('bt_comment_avatar', emoji);
-                    emojiContainer.classList.add('hidden');
-                };
+                btn.onclick = (e) => { e.stopPropagation(); emojiBtn.textContent = emoji; localStorage.setItem('bt_comment_avatar', emoji); emojiContainer.classList.add('hidden'); };
                 emojiContainer.appendChild(btn);
             });
         }
         setupEmojiPicker();
 
-        // ইমোজি বাটন ক্লিক
-        emojiBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            emojiContainer.classList.toggle('hidden');
-        });
+        emojiBtn.addEventListener('click', (e) => { e.stopPropagation(); emojiContainer.classList.toggle('hidden'); });
+        document.addEventListener('click', (e) => { if (!emojiContainer.contains(e.target) && e.target !== emojiBtn) emojiContainer.classList.add('hidden'); });
 
-        // বাইরে ক্লিক করলে ইমোজি পিকার বন্ধ
-        document.addEventListener('click', (e) => {
-            if (!emojiContainer.contains(e.target) && e.target !== emojiBtn) {
-                emojiContainer.classList.add('hidden');
-            }
-        });
-
-        // Firestore কালেকশন রেফারেন্স
         const commentsRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments");
 
-        // মেসেজ পাঠানোর ফাংশন
         async function sendMessage() {
             const name = nameInput.value.trim() || 'বেনামী';
             const text = msgInput.value.trim();
@@ -31500,159 +31488,71 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentUserUid = auth.currentUser ? auth.currentUser.uid : 'anonymous'; 
 
             if (!text) return;
-
-            // নাম এবং অবতার লোকাল স্টোরেজে সেভ করুন
             localStorage.setItem('bt_comment_username', name);
             localStorage.setItem('bt_comment_avatar', avatar);
             
-            // পাঠানোর পর ইনপুট লক করা হবে কিনা তা চেক করুন
             if (name !== 'বেনামী') {
                 nameInput.disabled = true;
                 nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
                 editNameBtn.classList.remove('hidden');
             } else {
-                // বেনামী হলে লক করার প্রয়োজন নেই
                 nameInput.disabled = false;
                 nameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
                 editNameBtn.classList.add('hidden');
             }
 
             sendBtn.disabled = true;
-
             try {
-                await addDoc(commentsRef, {
-                    name: name,
-                    text: text,
-                    avatar: avatar, 
-                    uid: currentUserUid, 
-                    timestamp: serverTimestamp(),
-                    createdAt: Date.now()
-                });
+                await addDoc(commentsRef, { name, text, avatar, uid: currentUserUid, timestamp: serverTimestamp(), createdAt: Date.now(), pinned: false });
                 msgInput.value = '';
                 msgInput.style.height = '40px';
             } catch (e) {
                 console.error("Error sending comment:", e);
-                if(window.showCustomAlert) window.showCustomAlert("মেসেজ পাঠানো যায়নি। পারমিশন বা নেটওয়ার্ক চেক করুন।");
-                else alert("মেসেজ পাঠানো যায়নি।");
+                showCustomAlert("মেসেজ পাঠানো যায়নি।");
             } finally {
                 sendBtn.disabled = false;
             }
         }
 
         if (sendBtn) sendBtn.addEventListener('click', sendMessage);
-        
         if (msgInput) {
-            msgInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && e.shiftKey) {
-                    e.preventDefault(); 
-                    sendMessage();
-                }
-            });
-
-            msgInput.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = (this.scrollHeight) + 'px';
-                if(this.value === '') this.style.height = '40px';
-            });
+            msgInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.shiftKey) { e.preventDefault(); sendMessage(); } });
+            msgInput.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px'; if(this.value === '') this.style.height = '40px'; });
         }
 
-        // রিয়েল-টাইম মেসেজ লোড এবং রেন্ডার (আপডেটেড)
-        const q = query(commentsRef, orderBy("timestamp", "asc"));
         let isInitialLoad = true;
 
-        onSnapshot(q, (snapshot) => {
+        // --- রেন্ডার লজিক (সংশোধিত) ---
+        onSnapshot(query(commentsRef, orderBy("timestamp", "asc")), (snapshot) => {
             listContainer.innerHTML = '';
             
-            if (snapshot.empty) {
-                listContainer.innerHTML = '<div class="text-center text-gray-400 mt-10 text-sm">কোনো মন্তব্য নেই।<br>প্রথম মন্তব্যটি আপনি করুন!</div>';
+            const allDocs = snapshot.docs.filter(doc => (Date.now() - doc.data().createdAt < 24 * 60 * 60 * 1000));
+            
+            // পিন করা মেসেজগুলো আলাদা করা
+            const pinnedDocs = allDocs.filter(doc => doc.data().pinned);
+
+            if (allDocs.length === 0) {
+                listContainer.innerHTML = '<div class="text-center text-gray-400 mt-10 text-sm">কোনো মন্তব্য নেই।</div>';
             }
 
-            // নিজের ইউজার আইডি (অ্যালাইনমেন্টের জন্য)
             const myUid = auth.currentUser ? auth.currentUser.uid : null;
 
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                if (Date.now() - data.createdAt > 24 * 60 * 60 * 1000) return;
-
-                // --- পরিবর্তন: তারিখ ও সময় ফরম্যাটিং ---
-                const time = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString('bn-BD', { 
-                    day: 'numeric', 
-                    month: 'short', 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                }) : '...';
-                
-                const userAvatar = data.avatar || '👤';
-
-                // --- অ্যালাইনমেন্ট লজিক ---
-                const isMe = (data.uid === myUid);
-                const alignClass = isMe ? 'my-message' : 'other-message';
-                
-                const card = document.createElement('div');
-                card.className = `comment-card group ${alignClass}`;
-                card.innerHTML = `
-                    <div class="comment-avatar">${userAvatar}</div>
-                    <div class="comment-content-wrapper">
-                        <div class="comment-name">${escapeHtml(data.name)}</div>
-                        <div class="comment-msg">${escapeHtml(data.text)}</div>
-                        <div class="comment-time">${time}</div>
-                    </div>
-                    
-                    <div class="comment-actions">
-                        <button class="comment-action-btn btn-reply" title="রিপ্লে">↩</button>
-                        <button class="comment-action-btn btn-copy" title="কপি">📋</button>
-                        <button class="comment-action-btn btn-delete" title="মুছুন">✖</button>
-                    </div>
-                `;
-
-                // ইভেন্ট লিসেনার
-                card.querySelector('.btn-delete').addEventListener('click', async () => {
-                    if(confirm('আপনি কি এই মন্তব্যটি মুছে ফেলতে চান?')) {
-                        try { await deleteDoc(doc.ref); } catch(e) { console.error(e); }
-                    }
-                });
-                card.querySelector('.btn-copy').addEventListener('click', () => {
-                    navigator.clipboard.writeText(data.text);
-                    if(window.showCustomAlert) window.showCustomAlert('টেক্সট কপি হয়েছে');
-                });
-                
-                card.querySelector('.btn-reply').addEventListener('click', () => {
-                    const replyName = `@${data.name}`;
-                    let textToProcess = data.text;
-                    if (textToProcess.includes('রিপ্লে:')) {
-                        const parts = textToProcess.split('রিপ্লে:');
-                        textToProcess = parts[parts.length - 1].trim();
-                    }
-                    let quoteText = textToProcess.split(/[।!?\n]/)[0].trim();
-                    if (quoteText.length > 50) {
-                        quoteText = quoteText.substring(0, 50);
-                    }
-                    msgInput.value = `${replyName}\n"${quoteText}..."\nরিপ্লে: `;
-                    msgInput.focus();
-                    msgInput.style.height = 'auto';
-                    msgInput.style.height = (msgInput.scrollHeight) + 'px';
-                });
-
-                listContainer.appendChild(card);
-            });
+            // পরিবর্তন: এখানে allDocs ব্যবহার করা হয়েছে যাতে পিন করা মেসেজও চ্যাটে দেখা যায়
+            allDocs.forEach(doc => renderCommentCard(doc, myUid));
             
+            // পিন সেকশন রেন্ডার
+            renderPinnedSection(pinnedDocs, myUid);
+
             if (isInitialLoad || container.classList.contains('active')) {
                 listContainer.scrollTop = listContainer.scrollHeight;
             }
-
-            // নতুন মেসেজ আসলে নোটিফিকেশন দেখানোর লজিক
             if (!isInitialLoad) {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         const data = change.doc.data();
-                        // সাম্প্রতিক মেসেজ কিনা চেক করা (১০ সেকেন্ডের মধ্যে)
                         const isRecent = (Date.now() - data.createdAt) < 10000;
-                        
                         if (data.uid !== myUid && isRecent) {
-                            showNewMessageNotification(data); // নোটিফিকেশন বাবল
-
-                            // *** নতুন: লাল ডট দেখানো ***
-                            // যদি চ্যাট উইন্ডো খোলা না থাকে, তবেই ডট দেখান
+                            showNewMessageNotification(data);
                             if (!container.classList.contains('active')) {
                                 if (notificationDot) notificationDot.classList.remove('hidden');
                             }
@@ -31660,40 +31560,128 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             }
-            
             isInitialLoad = false; 
-
         }, (error) => {
             console.error("Snapshot Error:", error);
             listContainer.innerHTML = '<div class="text-center text-red-400 mt-10 text-sm">ডেটা লোড করতে সমস্যা হচ্ছে।</div>';
         });
 
-        // নোটিফিকেশন বাবল দেখানোর ফাংশন
+        // --- পিন করা সেকশনের জন্য ফাংশন (সংশোধিত: onclick) ---
+        function renderPinnedSection(pinnedDocs) {
+            if (pinnedDocs.length > 0) {
+                pinnedContainer.classList.remove('hidden');
+                pinnedWrapper.innerHTML = '';
+                pinnedDocs.forEach(doc => {
+                    const data = doc.data();
+                    const item = document.createElement('div');
+                    item.className = 'pinned-item';
+                    item.dataset.scrollToId = `comment-${doc.id}`; // আইডি সেট করা
+                    item.innerHTML = `
+                        <div class="pinned-avatar">${data.avatar || '👤'}</div>
+                        <div class="pinned-content">
+                            <div class="pinned-name">${escapeHtml(data.name)}</div>
+                            <div class="pinned-text">${escapeHtml(data.text)}</div>
+                        </div>
+                    `;
+                    // পরিবর্তন: এখন সরাসরি doc.id পাঠানো হচ্ছে
+                    item.onclick = () => scrollToComment(item.dataset.scrollToId);
+                    pinnedWrapper.appendChild(item);
+                });
+                totalPinned = pinnedDocs.length;
+                showPinnedComment(0);
+            } else {
+                pinnedContainer.classList.add('hidden');
+                totalPinned = 0;
+            }
+        }
+        
+        function showPinnedComment(index) {
+            currentPinnedIndex = index;
+            const offset = -index * 100;
+            pinnedWrapper.style.transform = `translateX(${offset}%)`;
+            updatePinnedNavButtons();
+        }
+
+        function updatePinnedNavButtons() {
+            prevPinBtn.disabled = currentPinnedIndex === 0;
+            nextPinBtn.disabled = currentPinnedIndex >= totalPinned - 1;
+            
+            if (totalPinned <= 1) {
+                prevPinBtn.style.display = 'none';
+                nextPinBtn.style.display = 'none';
+            } else {
+                prevPinBtn.style.display = 'flex';
+                nextPinBtn.style.display = 'flex';
+            }
+        }
+        
+        if(prevPinBtn) prevPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex - 1));
+        if(nextPinBtn) nextPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex + 1));
+        
+        function renderCommentCard(doc, myUid) {
+            const data = doc.data();
+            const time = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString('bn-BD', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '...';
+            const isMe = data.uid === myUid;
+            const alignClass = isMe ? 'my-message' : 'other-message';
+            
+            const card = document.createElement('div');
+            card.id = `comment-${doc.id}`;
+            card.className = `comment-card group ${alignClass}`;
+            
+            const pinClass = data.pinned ? 'pinned' : '';
+            const pinTitle = data.pinned ? 'আনপিন করুন' : 'পিন করুন';
+
+            card.innerHTML = `
+                <div class="comment-avatar">${data.avatar || '👤'}</div>
+                <div class="comment-content-wrapper">
+                    <div class="comment-name">${escapeHtml(data.name)}</div>
+                    <div class="comment-msg">${escapeHtml(data.text)}</div>
+                    <div class="comment-time">${time}</div>
+                </div>
+                <div class="comment-actions">
+                    <button class="comment-action-btn btn-pin ${pinClass}" title="${pinTitle}">📌</button>
+                    <button class="comment-action-btn btn-reply" title="রিপ্লে">↩</button>
+                    <button class="comment-action-btn btn-copy" title="কপি">📋</button>
+                    <button class="comment-action-btn btn-delete" title="মুছুন">✖</button>
+                </div>
+            `;
+            listContainer.appendChild(card);
+            
+            card.querySelector('.btn-pin').addEventListener('click', async () => {
+                await setDoc(doc.ref, { pinned: !data.pinned }, { merge: true });
+            });
+            card.querySelector('.btn-delete').addEventListener('click', async () => { if(confirm('মুছে ফেলতে চান?')) await deleteDoc(doc.ref); });
+            card.querySelector('.btn-copy').addEventListener('click', () => { navigator.clipboard.writeText(data.text); showCustomAlert('টেক্সট কপি হয়েছে'); });
+            card.querySelector('.btn-reply').addEventListener('click', () => {
+                let quoteText = data.text.split(/[।!?\n]/)[0].trim().substring(0, 50);
+                msgInput.value = `@${data.name}\n"${quoteText}..."\nরিপ্লে: `;
+                msgInput.focus();
+                msgInput.style.height = 'auto';
+                msgInput.style.height = (msgInput.scrollHeight) + 'px';
+            });
+        }
+        
+        // পিন করা আইটেমে ক্লিক করলে স্ক্রোল করার ফাংশন (সংশোধিত)
+        function scrollToComment(elementId) {
+            const targetElement = document.getElementById(elementId);
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // হাইলাইট করার জন্য একটি ক্লাস যোগ করা
+                targetElement.classList.add('comment-highlight');
+                // কিছুক্ষণ পর হাইলাইট ক্লাসটি সরিয়ে ফেলা
+                setTimeout(() => targetElement.classList.remove('comment-highlight'), 1500);
+            }
+        }
+
         let notificationTimeout;
         function showNewMessageNotification(data) {
             const bubble = document.getElementById('comment-notification');
             if(!bubble) return;
-
-            let firstSentence = data.text.split(/[।!?\n]/)[0].trim();
-            firstSentence += "...";
-
-            bubble.innerHTML = `
-                <div class="flex items-start gap-2">
-                    <div class="text-xl flex-shrink-0 pt-0.5">${data.avatar || '👤'}</div>
-                    <div class="overflow-hidden">
-                        <p class="text-xs font-bold text-blue-600 dark:text-blue-400 truncate mb-0.5">${escapeHtml(data.name)}</p>
-                        <p class="text-sm text-gray-700 dark:text-gray-200 leading-snug break-words font-medium">${escapeHtml(firstSentence)}</p>
-                    </div>
-                </div>
-            `;
-
+            let firstSentence = data.text.split(/[।!?\n]/)[0].trim() + "...";
+            bubble.innerHTML = `<div class="flex items-start gap-2"><div class="text-xl flex-shrink-0 pt-0.5">${data.avatar || '👤'}</div><div class="overflow-hidden"><p class="text-xs font-bold text-blue-600 dark:text-blue-400 truncate mb-0.5">${escapeHtml(data.name)}</p><p class="text-sm text-gray-700 dark:text-gray-200 leading-snug break-words font-medium">${escapeHtml(firstSentence)}</p></div></div>`;
             bubble.classList.remove('hidden', 'opacity-0', 'translate-y-4', 'pointer-events-none');
-            
             if (notificationTimeout) clearTimeout(notificationTimeout);
-            notificationTimeout = setTimeout(() => {
-                bubble.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
-                setTimeout(() => bubble.classList.add('hidden'), 300);
-            }, 5000);
+            notificationTimeout = setTimeout(() => { bubble.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none'); setTimeout(() => bubble.classList.add('hidden'), 300); }, 5000);
         }
 
         async function cleanupOldComments() {
@@ -31709,10 +31697,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (e) { console.log("Cleanup check done."); }
         }
         
-        function escapeHtml(text) {
-            if (!text) return "";
-            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
+        function escapeHtml(text) { return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;") : ""; }
     }
 
     // ইনিশিয়ালাইজেশন
@@ -31777,18 +31762,16 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>
 
 <!-- ======================================================== -->
-<!-- START: পাবলিক মন্তব্য সেকশন (Floating & Emoji) -->
+<!-- START: PUBLIC COMMENTS SECTION (UPDATED) -->
 <!-- ======================================================== -->
 <div id="comment-fab" class="relative" title="মন্তব্য করুন">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-    <!-- Notification Red Dot -->
     <span id="comment-notification-dot" class="absolute top-0 right-0 w-3 h-3 bg-red-600 border-2 border-white dark:border-gray-800 rounded-full hidden"></span>
 </div>
 
 <div id="comment-section-container">
     <div class="comment-header">
         <span>পাবলিক মেসেজ</span>
-        <!-- নতুন: একটিভ ইউজার কাউন্টার -->
         <span id="active-user-count" class="ml-auto mr-3 bg-white text-blue-600 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1">
             <span class="relative flex h-2 w-2">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -31801,33 +31784,34 @@ document.addEventListener('DOMContentLoaded', () => {
         </button>
     </div>
     
+    <!-- নতুন: পিন করা মেসেজের জন্য ফ্লোটিং কন্টেইনার -->
+    <div id="pinned-comments-container" class="hidden">
+        <button id="pinned-nav-prev" class="pinned-nav-btn" disabled>&lt;</button>
+        <div class="overflow-hidden mx-8">
+            <div id="pinned-comments-wrapper">
+                <!-- পিন করা আইটেম এখানে JS দিয়ে যুক্ত হবে -->
+            </div>
+        </div>
+        <button id="pinned-nav-next" class="pinned-nav-btn" disabled>&gt;</button>
+    </div>
+
     <div id="comment-list" class="comment-list">
         <div class="text-center text-gray-500 mt-10 text-sm">লোডিং...</div>
     </div>
 
     <div class="comment-input-area">
-        <!-- ইমোজি পিকার কন্টেইনার (লুকানো) -->
         <div id="emoji-picker-container" class="hidden"></div>
-
         <div class="flex gap-2 mb-2">
-            <!-- প্রোফাইল ইমোজি বাটন -->
             <button id="emoji-selector-btn" class="p-2 border rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 text-xl transition-colors w-12 flex items-center justify-center" title="প্রোফাইল ইমোজি সেট করুন">👤</button>
-            
-            <!-- নাম ইনপুট এবং এডিট বাটন গ্রুপ -->
             <div class="flex-grow flex relative">
                 <input type="text" id="comment-username" placeholder="আপনার নাম (লক হবে)" class="w-full p-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white pr-8" maxlength="20">
-                <!-- নাম এডিট বাটন -->
                 <button id="edit-username-btn" class="absolute right-1 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-500 hidden" title="নাম পরিবর্তন করুন">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 3.732z" /></svg>
                 </button>
             </div>
         </div>
-        
         <div class="flex gap-2">
-            <!-- মেসেজ ইনপুট -->
             <textarea id="comment-message" rows="1" placeholder="মেসেজ লিখুন..." class="flex-grow p-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white resize-none" style="min-height: 40px; max-height: 80px;"></textarea>
-            
-            <!-- সেন্ড বাটন -->
             <button id="send-comment-btn" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg flex items-center justify-center transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed w-10">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             </button>
@@ -31836,7 +31820,7 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
 </div>
 <!-- ======================================================== -->
-<!-- END: পাবলিক মন্তব্য সেকশন -->
+<!-- END: PUBLIC COMMENTS SECTION -->
 <!-- ======================================================== -->
 
 <!-- Sidebar Overlay -->
