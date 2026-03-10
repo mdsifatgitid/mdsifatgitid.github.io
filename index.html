@@ -7494,6 +7494,18 @@ body.sidebar-open #sidebarOverlay {
     white-space: pre-wrap;
     line-height: 1.4;
 }
+/* নতুন: এডিটিং মোডের জন্য স্টাইল */
+.comment-msg.editing {
+    outline: 2px solid #3b82f6;
+    background-color: #eff6ff;
+    border-radius: 4px;
+    padding: 2px 4px;
+    margin: -2px -4px;
+}
+.dark .comment-msg.editing {
+    background-color: #374151;
+}
+
 .comment-time {
     font-size: 0.65rem;
     color: #64748b;
@@ -7544,6 +7556,9 @@ body.sidebar-open #sidebarOverlay {
 /* নতুন: পিন বাটন স্টাইল */
 .btn-pin:hover { background-color: #f59e0b; color: white; }
 .btn-pin.pinned { background-color: #f59e0b; color: white; transform: rotate(45deg); }
+/* নতুন: এডিট বাটন স্টাইল */
+.btn-edit:hover { background-color: #6366f1; color: white; }
+
 /* ==================================================================== */
 /* END: PUBLIC COMMENTS SECTION CSS */
 /* ==================================================================== */
@@ -31535,7 +31550,12 @@ document.addEventListener('DOMContentLoaded', () => {
         onSnapshot(query(commentsRef, orderBy("timestamp", "asc")), (snapshot) => {
             listContainer.innerHTML = '';
             
-            const allDocs = snapshot.docs.filter(doc => (Date.now() - doc.data().createdAt < 24 * 60 * 60 * 1000));
+            // নতুন পরিবর্তন: এখন শুধুমাত্র ২৪ ঘণ্টার বেশি পুরানো এবং আন-পিন করা মেসেজ ফিল্টার করা হবে
+            const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
+            const allDocs = snapshot.docs.filter(doc => {
+                const data = doc.data();
+                return data.pinned === true || (data.createdAt && data.createdAt > twentyFourHoursAgo);
+            });
             
             // পিন করা মেসেজগুলো আলাদা করা
             const pinnedDocs = allDocs.filter(doc => doc.data().pinned);
@@ -31545,8 +31565,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const myUid = auth.currentUser ? auth.currentUser.uid : null;
-
-            // পরিবর্তন: এখানে allDocs ব্যবহার করা হয়েছে যাতে পিন করা মেসেজও চ্যাটে দেখা যায়
             allDocs.forEach(doc => renderCommentCard(doc, myUid));
             
             // পিন সেকশন রেন্ডার
@@ -31627,6 +31645,60 @@ document.addEventListener('DOMContentLoaded', () => {
         if(prevPinBtn) prevPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex - 1));
         if(nextPinBtn) nextPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex + 1));
         
+        // --- নতুন: এডিট করার ফাংশন ---
+        const handleEditComment = (docId, currentText) => {
+            const card = document.getElementById(`comment-${docId}`);
+            if (!card) return;
+            
+            const msgElement = card.querySelector('.comment-msg');
+            msgElement.setAttribute('contenteditable', 'true');
+            msgElement.classList.add('editing');
+            msgElement.focus();
+            
+            // টেক্সটের শেষে কার্সর সেট করা
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.selectNodeContents(msgElement);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+
+            const cleanup = () => {
+                msgElement.setAttribute('contenteditable', 'false');
+                msgElement.classList.remove('editing');
+                msgElement.removeEventListener('blur', saveOnBlur);
+                msgElement.removeEventListener('keydown', saveOnEnter);
+            };
+
+            const saveChanges = async () => {
+                const newText = msgElement.innerText.trim();
+                if (newText && newText !== currentText) {
+                    await setDoc(doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments", docId), {
+                        text: newText,
+                        editedAt: serverTimestamp() // এডিটের সময় যোগ করা
+                    }, { merge: true });
+                } else {
+                    msgElement.innerText = currentText; // পরিবর্তন না হলে আগের টেক্সট ফিরিয়ে আনা
+                }
+                cleanup();
+            };
+
+            const saveOnBlur = () => saveChanges();
+            const saveOnEnter = (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    saveChanges();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    msgElement.innerText = currentText; // বাতিল করলে আগের টেক্সট
+                    cleanup();
+                }
+            };
+            
+            msgElement.addEventListener('blur', saveOnBlur, { once: true });
+            msgElement.addEventListener('keydown', saveOnEnter);
+        };
+
         function renderCommentCard(doc, myUid) {
             const data = doc.data();
             const time = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString('bn-BD', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '...';
@@ -31639,6 +31711,9 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const pinClass = data.pinned ? 'pinned' : '';
             const pinTitle = data.pinned ? 'আনপিন করুন' : 'পিন করুন';
+            
+            // নতুন: এডিট বাটন শুধুমাত্র নিজের মেসেজে দেখানোর জন্য
+            const editButtonHtml = isMe ? `<button class="comment-action-btn btn-edit" title="এডিট করুন"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>` : '';
 
             card.innerHTML = `
                 <div class="comment-avatar">${data.avatar || '👤'}</div>
@@ -31650,6 +31725,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="comment-actions">
                     <button class="comment-action-btn btn-pin ${pinClass}" title="${pinTitle}">📌</button>
                     <button class="comment-action-btn btn-reply" title="রিপ্লে">↩</button>
+                    ${editButtonHtml}
                     <button class="comment-action-btn btn-copy" title="কপি">📋</button>
                     <button class="comment-action-btn btn-delete" title="মুছুন">✖</button>
                 </div>
@@ -31668,6 +31744,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 msgInput.style.height = 'auto';
                 msgInput.style.height = (msgInput.scrollHeight) + 'px';
             });
+            // নতুন: এডিট বাটনের জন্য ইভেন্ট লিসেনার
+            const editBtn = card.querySelector('.btn-edit');
+            if (editBtn) {
+                editBtn.addEventListener('click', () => handleEditComment(doc.id, data.text));
+            }
         }
         
         // পিন করা আইটেমে ক্লিক করলে স্ক্রোল করার ফাংশন (সংশোধিত)
@@ -31695,15 +31776,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         async function cleanupOldComments() {
             const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
-            const oldDocsQuery = query(commentsRef, where("createdAt", "<", oneDayAgo));
+            // নতুন পরিবর্তন: এখন শুধুমাত্র 'pinned' olmayanları siliyor
+            const oldDocsQuery = query(commentsRef, where("createdAt", "<", oneDayAgo), where("pinned", "==", false));
             try {
                 const snapshot = await getDocs(oldDocsQuery);
                 if (!snapshot.empty) {
                     const batch = writeBatch(db);
                     snapshot.docs.forEach((doc) => batch.delete(doc.ref));
                     await batch.commit();
+                    console.log(`${snapshot.size} টি পুরনো মেসেজ মুছে ফেলা হয়েছে।`);
                 }
-            } catch (e) { console.log("Cleanup check done."); }
+            } catch (e) { console.log("Cleanup check done. No old unpinned comments found or index needs creation."); }
         }
         
         function escapeHtml(text) { return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;") : ""; }
