@@ -31409,6 +31409,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fab && container && closeBtn) {
             fab.addEventListener('click', (e) => {
                 e.stopPropagation();
+                
+                // --- নতুন পরিবর্তন: অন্য উইন্ডোগুলো বন্ধ করুন ---
+                const profileWin = document.getElementById('profileWindow');
+                const cloudWin = document.getElementById('cloudWindow');
+                if(profileWin) profileWin.classList.add('hidden');
+                if(cloudWin) cloudWin.classList.add('hidden');
+                // --- পরিবর্তন শেষ ---
+
                 container.classList.toggle('active');
                 if (notificationBubble) notificationBubble.classList.add('hidden');
                 if (container.classList.contains('active')) {
@@ -31532,7 +31540,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const pinnedDocs = allDocs.filter(doc => doc.data().pinned);
 
             if (allDocs.length === 0) {
-                listContainer.innerHTML = '<div class="text-center text-gray-400 mt-10 text-sm">কোনো মন্তব্য নেই।</div>';
+                listContainer.innerHTML = '<div class="text-center text-gray-400 mt-10 text-sm">কোনো মন্তব্য নেই।<br>প্রথম মন্তব্যটি আপনি করুন!</div>';
             }
 
             const myUid = auth.currentUser ? auth.currentUser.uid : null;
@@ -32008,12 +32016,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function toggleProfileWindow() {
         const profileWin = document.getElementById('profileWindow');
         const cloudWin = document.getElementById('cloudWindow');
-        // নতুন: মন্তব্য উইন্ডো বন্ধ করার জন্য যুক্ত করা হয়েছে
         const commentContainer = document.getElementById('comment-section-container');
         
         if(cloudWin) cloudWin.classList.add('hidden');
-        // নতুন: মন্তব্য উইন্ডো বন্ধ করার জন্য যুক্ত করা হয়েছে
-        if(commentContainer) commentContainer.classList.remove('active');
+        if(commentContainer) commentContainer.classList.remove('active'); // মন্তব্য উইন্ডো বন্ধ করুন
         
         if(profileWin) profileWin.classList.toggle('hidden');
     }
@@ -32022,12 +32028,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function toggleCloudWindow() {
         const profileWin = document.getElementById('profileWindow');
         const cloudWin = document.getElementById('cloudWindow');
-        // নতুন: মন্তব্য উইন্ডো বন্ধ করার জন্য যুক্ত করা হয়েছে
         const commentContainer = document.getElementById('comment-section-container');
         
         if(profileWin) profileWin.classList.add('hidden');
-        // নতুন: মন্তব্য উইন্ডো বন্ধ করার জন্য যুক্ত করা হয়েছে
-        if(commentContainer) commentContainer.classList.remove('active');
+        if(commentContainer) commentContainer.classList.remove('active'); // মন্তব্য উইন্ডো বন্ধ করুন
         
         if(cloudWin) cloudWin.classList.toggle('hidden');
     }
