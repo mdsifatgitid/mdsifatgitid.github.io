@@ -7245,7 +7245,7 @@ body.sidebar-open #sidebarOverlay {
     bottom: 145px;
     right: 20px;
     width: 320px;
-    height: 500px; /* পিন সেকশনের জন্য উচ্চতা বাড়ানো হয়েছে */
+    height: 500px;
     background-color: #ffffff;
     border-radius: 16px;
     box-shadow: 0 5px 25px rgba(0,0,0,0.2);
@@ -7273,17 +7273,17 @@ body.sidebar-open #sidebarOverlay {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-shrink: 0; /* হেডার যেন ছোট না হয় */
+    flex-shrink: 0;
 }
 
 /* --- নতুন: পিন করা মেসেজ সেকশন স্টাইল (আরও কমপ্যাক্ট) --- */
 #pinned-comments-container {
     position: relative;
-    padding: 6px;
-    background-color: #eef2ff; /* indigo-50 */
-    border-bottom: 1px solid #e0e7ff; /* indigo-100 */
+    padding: 4px 8px; /* প্যাডিং সামঞ্জস্য করা হয়েছে */
+    background-color: #eef2ff;
+    border-bottom: 1px solid #e0e7ff;
     flex-shrink: 0;
-    height: 75px; /* উচ্চতা কমানো হয়েছে */
+    height: 65px; /* উচ্চতা কমানো হয়েছে */
 }
 .dark #pinned-comments-container {
     background-color: #374151;
@@ -7295,22 +7295,23 @@ body.sidebar-open #sidebarOverlay {
 }
 .pinned-item {
     flex: 0 0 100%;
-    padding: 6px; /* প্যাডিং কমানো হয়েছে */
+    padding: 4px 6px; /* প্যাডিং কমানো হয়েছে */
     background-color: #fff;
     border-radius: 8px;
     cursor: pointer;
     display: flex;
-    gap: 8px;
+    gap: 6px; /* গ্যাপ কমানো হয়েছে */
     align-items: center;
     border: 1px solid #ddd;
     overflow: hidden;
+    height: 55px; /* আইটেমের উচ্চতা ফিক্সড করা হয়েছে */
 }
 .dark .pinned-item {
     background-color: #1f2937;
     border-color: #4b5563;
 }
 .pinned-avatar {
-    font-size: 1.3rem; /* ফন্ট সাইজ কমানো হয়েছে */
+    font-size: 1.2rem; /* ফন্ট সাইজ কমানো হয়েছে */
     flex-shrink: 0;
 }
 .pinned-content {
@@ -7375,7 +7376,7 @@ body.sidebar-open #sidebarOverlay {
     padding: 10px;
     border-top: 1px solid #e2e8f0;
     background-color: #fff;
-    position: relative; /* ইমোজি পিকারের জন্য */
+    position: relative;
     flex-shrink: 0;
 }
 .dark .comment-input-area {
@@ -7429,7 +7430,7 @@ body.sidebar-open #sidebarOverlay {
     display: flex;
     gap: 8px;
     margin-bottom: 8px;
-    scroll-margin-top: 100px; /* পিন সেকশনের নিচে আনার জন্য */
+    scroll-margin-top: 85px; /* পিন সেকশনের নিচে আনার জন্য সামঞ্জস্য করা হয়েছে */
 }
 /* নতুন: স্ক্রোল করার পর হাইলাইট ইফেক্ট */
 .comment-highlight {
