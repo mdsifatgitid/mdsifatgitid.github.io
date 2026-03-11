@@ -7494,6 +7494,22 @@ body.sidebar-open #sidebarOverlay {
     white-space: pre-wrap;
     line-height: 1.4;
 }
+
+/* নতুন: নিজের মেসেজের টেক্সটকে ক্লিকযোগ্য করার জন্য */
+.comment-card.my-message .comment-msg {
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 4px;
+    padding: 2px 4px;
+    margin: -2px -4px;
+}
+.comment-card.my-message .comment-msg:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+.dark .comment-card.my-message .comment-msg:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
 /* নতুন: এডিটিং মোডের জন্য স্টাইল */
 .comment-msg.editing {
     outline: 2px solid #3b82f6;
@@ -7556,8 +7572,7 @@ body.sidebar-open #sidebarOverlay {
 /* নতুন: পিন বাটন স্টাইল */
 .btn-pin:hover { background-color: #f59e0b; color: white; }
 .btn-pin.pinned { background-color: #f59e0b; color: white; transform: rotate(45deg); }
-/* নতুন: এডিট বাটন স্টাইল */
-.btn-edit:hover { background-color: #6366f1; color: white; }
+/* এডিট বাটন স্টাইল মুছে ফেলা হয়েছে যেহেতু বাটনটি আর নেই */
 
 /* ==================================================================== */
 /* END: PUBLIC COMMENTS SECTION CSS */
@@ -31712,9 +31727,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const pinClass = data.pinned ? 'pinned' : '';
             const pinTitle = data.pinned ? 'আনপিন করুন' : 'পিন করুন';
             
-            // নতুন: এডিট বাটন শুধুমাত্র নিজের মেসেজে দেখানোর জন্য
-            const editButtonHtml = isMe ? `<button class="comment-action-btn btn-edit" title="এডিট করুন"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>` : '';
-
+            // পরিবর্তন: এডিট বাটন HTML থেকে সরানো হয়েছে
             card.innerHTML = `
                 <div class="comment-avatar">${data.avatar || '👤'}</div>
                 <div class="comment-content-wrapper">
@@ -31725,7 +31738,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="comment-actions">
                     <button class="comment-action-btn btn-pin ${pinClass}" title="${pinTitle}">📌</button>
                     <button class="comment-action-btn btn-reply" title="রিপ্লে">↩</button>
-                    ${editButtonHtml}
                     <button class="comment-action-btn btn-copy" title="কপি">📋</button>
                     <button class="comment-action-btn btn-delete" title="মুছুন">✖</button>
                 </div>
@@ -31744,10 +31756,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 msgInput.style.height = 'auto';
                 msgInput.style.height = (msgInput.scrollHeight) + 'px';
             });
-            // নতুন: এডিট বাটনের জন্য ইভেন্ট লিসেনার
-            const editBtn = card.querySelector('.btn-edit');
-            if (editBtn) {
-                editBtn.addEventListener('click', () => handleEditComment(doc.id, data.text));
+            
+            // নতুন: নিজের মেসেজে ক্লিক করে এডিট করার ইভেন্ট
+            if (isMe) {
+                const msgElement = card.querySelector('.comment-msg');
+                msgElement.addEventListener('click', (e) => {
+                    // যদি কোনো টেক্সট সিলেক্ট করা হয়, তাহলে এডিট মোড চালু হবে না
+                    if (window.getSelection().toString().length > 0) return;
+                    
+                    // যদি অন্য কোনো বাটন ক্লিক হয় (event bubbling), তাহলে ইগনোর করুন
+                    if (e.target.closest('button')) return;
+
+                    // যদি ইতোমধ্যে এডিট মোডে থাকে, তাহলে কিছু করবেন না
+                    if (msgElement.isContentEditable) return;
+                    
+                    handleEditComment(doc.id, data.text);
+                });
             }
         }
         
