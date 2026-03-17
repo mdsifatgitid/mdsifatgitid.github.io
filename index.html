@@ -8570,6 +8570,7 @@ body.sidebar-open #sidebarOverlay {
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-enter">দুটি এন্টার</a>
 									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-enter-v2">দুটি এন্টার V2</a>
 									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-enter-v3">দুটি এন্টার V3</a>
+									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-enter-v4">দুটি এন্টার v4</a>
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="custom">কাস্টম</a>
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="custom-serial">ক্রমিকসহ কাস্টম</a>
                                 </div>
@@ -8610,6 +8611,7 @@ body.sidebar-open #sidebarOverlay {
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-enter">দুটি এন্টার</a>
 									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-enter-v2">দুটি এন্টার V2</a>
 									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-enter-v3">দুটি এন্টার V3</a>
+									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="double-enter-v4">দুটি এন্টার v4</a>
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="custom">কাস্টম</a>
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" data-preset="custom-serial">ক্রমিকসহ কাস্টম</a>
                                 </div>
@@ -21111,6 +21113,17 @@ async function pasteFromClipboard(textareaId) {
             case 'double-enter-v3': {
                 let processedText = clipboardText.trim().replace(/(\r?\n\s*){2,}/g, '\n');
                 processedText = processedText.replace(/^\s+/gm, ''); 
+                if (textarea.value.trim() !== '') {
+                    textToInsert = '\n\n' + processedText;
+                } else {
+                    textToInsert = processedText;
+                }
+                break;
+            }
+            case 'double-enter-v4': {
+                let processedText = clipboardText.trim().replace(/(\r?\n\s*){2,}/g, '\n');
+                processedText = processedText.replace(/^\s+/gm, ''); 
+                processedText = processedText.replace(/ {2,}/g, ' ');
                 if (textarea.value.trim() !== '') {
                     textToInsert = '\n\n' + processedText;
                 } else {
