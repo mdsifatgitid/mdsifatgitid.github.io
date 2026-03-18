@@ -11270,19 +11270,6 @@ body.sidebar-open #sidebarOverlay {
                 <span class="slider round"></span>
             </label>
         </div>
-
-<!-- START: ডিফল্ট হোমপেজ সেটিংস (নতুন) -->
-<div class="setting-item" style="margin-top: 15px;">
-    <div class="setting-text">
-        <label for="homepageSelect" class="font-semibold text-gray-700 dark:text-gray-300">ডিফল্ট হোমপেজ</label>
-        <p class="text-sm text-gray-500 dark:text-gray-400">ব্রাউজার রিফ্রেশ করলে কোন ট্যাবটি প্রথমে দেখাবে তা নির্বাচন করুন।</p>
-    </div>
-    <select id="homepageSelect" class="p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:ring-2 focus:ring-indigo-500">
-        <!-- অপশনগুলো JavaScript দ্বারা যুক্ত হবে -->
-        <option value="">লোড হচ্ছে...</option>
-    </select>
-</div>
-<!-- END: ডিফল্ট হোমপেজ সেটিংস (নতুন) -->
 		
         <!-- অ্যাপ থিম সিলেকশন -->
         <div class="setting-item">
@@ -14950,49 +14937,8 @@ window.addEventListener('click', () => {
                 console.log('setApiKeyBtn:', setApiKeyBtn);
                 console.log('apiKeyModal:', apiKeyModal);
 
-                
-// ====================================================================
-// START: ডিফল্ট ট্যাব লোডিং লজিক (আপডেটেড)// প্রাথমিক ট্যাব প্রদর্শন
-// ====================================================================
-
-                // নতুন: ট্যাব আইডি এবং showTab() ফাংশনের কী-এর মধ্যে একটি নির্ভরযোগ্য ম্যাপিং
-                // এটি getTabKey ফাংশনকে আরও শক্তিশালী করে এবং ত্রুটি কমায়।
-                const tabIdToShowTabKeyMap = {
-                    'basicCalcTab': 'basic', 'ageCalcTab': 'age', 'dateCalcTab': 'date',
-                    'scientificCalcTab': 'scientific', 'converterTab': 'converter', 'measurementTab': 'measurement',
-                    'typingTestTab': 'typingTest', 'translatorTab': 'translator', 'mapTab': 'map',
-                    'prayerTimeTab': 'prayerTime', 'imageToTextTab': 'imageToText', 'wordCounterTab': 'wordCounter',
-                    'weatherTab': 'weather', 'notepadTab': 'notepad', 'clockTab': 'clock',
-                    'playerTab': 'player', 'qrCodeTab': 'qrCode', 'spellCheckTab': 'spellCheck',
-                    'textBeautifierTab': 'beautify', 'wordMeaningTab': 'meaning', 'ttsTab': 'tts',
-                    'sttTab': 'stt', 'textAssistantTab': 'textAssistant', 'allFeaturesTab': 'allFeatures',
-                    'zakatCalcTab': 'zakat', 'emergencyNumbersTab': 'emergency', 'importantLinksTab': 'importantLinks',
-                    'healthLifestyleTab': 'healthLifestyle', 'daysObservancesTab': 'daysObservances',
-                    'holidayListTab': 'holiday', 'quizTab': 'quiz', 'donateTab': 'donate',
-                    'invoiceTab': 'invoice', 'colorPickerTab': 'colorPicker', 'dashboardTab': 'dashboard',
-                    'moreSettingsTab': 'moreSettings', 'historyTab': 'history', 'webSearchTab': 'webSearch',
-                    'currencyTab': 'currency', 'emiCalcTab': 'emi', 'ipInfoTab': 'ip',
-                    'recipeTab': 'recipe', 'pdfToolsTab': 'pdf', 'screenRecorderTab': 'screenRecorder',
-                    'jsonFormatterTab': 'jsonFormatter', 'memeGenTab': 'memeGen', 'barcodeGenTab': 'barcode',
-                    'randomPickerTab': 'randomPicker', 'unitPriceTab': 'unitPrice', 'tasbeehTab': 'tasbeeh',
-                    'speedTestTab': 'speedTest', 'diffCheckerTab': 'diffChecker', 'expenseTrackerTab': 'expenseTracker',
-                    'textEncryptionTab': 'encryption', 'imageResizerTab': 'imageResizer'
-                };
-
-                // ট্যাব আইডি থেকে showTab ফাংশনের জন্য কী (key) তৈরি করার নতুন ফাংশন
-                const getTabKey = (id) => {
-                    return tabIdToShowTabKeyMap[id] || 'converter'; // ফলব্যাক হিসেবে 'converter'
-                };
-
-                // সেভ করা হোমপেজ পছন্দ লোড করুন
-                const defaultTabId = localStorage.getItem('defaultHomepageTab') || 'converterTab';
-                
-                // ব্যবহারকারীর পছন্দ অনুযায়ী প্রাথমিক ট্যাবটি দেখান
-                showTab(getTabKey(defaultTabId));
-
-// ====================================================================
-// END: ডিফল্ট ট্যাব লোডিং লজিক (আপডেটেড)
-// ====================================================================
+                // প্রাথমিক ট্যাব প্রদর্শন
+                showTab('converter'); // লোডে মৌলিক ক্যালকুলেটরকে সক্রিয় হিসাবে সেট করুন
 
                 // API কী বোতামের স্টাইল আপডেট করার ফাংশন
 function updateApiKeyButton() {
@@ -27304,43 +27250,6 @@ function initializeMoreSettings() {
             };
         }
 
-    // ০.০.১. নতুন: ডিফল্ট হোমপেজ সেটিংস লজিক (সংশোধিত)
-    const homepageSelect = document.getElementById('homepageSelect');
-    if (homepageSelect) {
-        // ড্রপডাউনটি পুনরায় লোড হওয়া বন্ধ করতে
-        if (homepageSelect.options.length <= 1) {
-            homepageSelect.innerHTML = ''; // "লোড হচ্ছে..." লেখাটি সরান
-            
-            // নতুন: সাইডবার থেকে ট্যাবের তালিকা আনা হচ্ছে, কারণ এটি সবচেয়ে নির্ভরযোগ্য
-            const sidebarLinks = document.querySelectorAll('#sidebar-tool-list a');
-
-            sidebarLinks.forEach(link => {
-                const tabId = link.dataset.tabId;
-                const tabName = link.textContent.trim().replace(/🔔|$/, '').trim(); // আইকন টেক্সট বাদ দেওয়া
-
-                // যে ট্যাবগুলো হোমপেজ হিসেবে সেট করার যোগ্য নয়, সেগুলোকে বাদ দেওয়া হচ্ছে
-                const excludedIds = ['setApiKeyBtn', 'moreSettingsTab', 'donateTab'];
-                
-                if (tabId && !excludedIds.includes(tabId)) {
-                    const option = document.createElement('option');
-                    option.value = tabId;
-                    option.textContent = tabName;
-                    homepageSelect.appendChild(option);
-                }
-            });
-        }
-
-        // সেভ করা পছন্দ লোড করুন
-        const savedHomepage = localStorage.getItem('defaultHomepageTab') || 'converterTab'; // ডিফল্ট 'converterTab'
-        homepageSelect.value = savedHomepage;
-
-        // পরিবর্তনে সেভ করুন
-        homepageSelect.addEventListener('change', () => {
-            const selectedTab = homepageSelect.value;
-            localStorage.setItem('defaultHomepageTab', selectedTab);
-            showCustomAlert(`ডিফল্ট হোমপেজ "${homepageSelect.options[homepageSelect.selectedIndex].text}" হিসেবে সেট করা হয়েছে।`);
-        });
-    }
     // ০.১. জেমিনি মডেল সিলেকশন লজিক (নতুন)
     const settingsGeminiModel = document.getElementById('settingsGeminiModel');
     if (settingsGeminiModel) {
