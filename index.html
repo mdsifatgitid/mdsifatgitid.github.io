@@ -14961,7 +14961,7 @@ window.addEventListener('click', () => {
                  * @param {string} id - ট্যাবের বাটন আইডি (যেমন: 'basicCalcTab')।
                  * @returns {string} - showTab() ফাংশনের জন্য ব্যবহৃত কী (যেমন: 'basic')।
                  */
-                const getTabKey = (id) => {
+           const getTabKey = (id) => {
                     if (!id) return 'converter'; // ডিফল্ট ফলব্যাক
 
                     // কিছু ট্যাবের জন্য বিশেষ সংক্ষিপ্ত রূপ ব্যবহার করা হয়েছে, সেগুলোর জন্য একটি ছোট ম্যাপ।
@@ -14971,7 +14971,14 @@ window.addEventListener('click', () => {
                         'dateCalcTab': 'date',
                         'scientificCalcTab': 'scientific',
                         'textBeautifierTab': 'beautify',
-                        'wordMeaningTab': 'meaning'
+                        'wordMeaningTab': 'meaning',
+                        // নতুন সংযোজন: এই ট্যাবগুলোর জন্য সংক্ষিপ্ত কী যোগ করা হয়েছে
+                        'emergencyNumbersTab': 'emergency',
+                        'barcodeGenTab': 'barcode',
+                        'emiCalcTab': 'emi',
+                        'ipInfoTab': 'ip',
+                        'textEncryptionTab': 'encryption',
+                        'pdfToolsTab': 'pdf'
                     };
 
                     // যদি আইডিটি সংক্ষিপ্ত লিস্টে থাকে, তবে সেটি রিটার্ন করুন।
