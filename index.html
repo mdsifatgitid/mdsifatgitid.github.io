@@ -7574,6 +7574,26 @@ body.sidebar-open #sidebarOverlay {
 .btn-pin.pinned { background-color: #f59e0b; color: white; transform: rotate(45deg); }
 /* এডিট বাটন স্টাইল মুছে ফেলা হয়েছে যেহেতু বাটনটি আর নেই */
 
+
+@keyframes highlight-fade {
+    from { background-color: rgba(255, 235, 59, 0.4); }
+    to { background-color: transparent; }
+}
+.dark .section-highlight {
+    animation: highlight-fade-dark 2s ease-out;
+}
+@keyframes highlight-fade-dark {
+    from { background-color: rgba(255, 235, 59, 0.2); }
+    to { background-color: transparent; }
+}
+.section-highlight {
+    animation: highlight-fade 2s ease-out;
+    border-radius: 1rem;
+    padding-top: 1rem; /* হাইলাইট এরিয়ার সৌন্দর্য বৃদ্ধির জন্য */
+    margin-top: 1.5rem !important; /* হাইলাইট এরিয়ার সৌন্দর্য বৃদ্ধির জন্য */
+    border-top: none !important; /* আগের বর্ডার লুকানোর জন্য */
+}
+
 /* ==================================================================== */
 /* END: PUBLIC COMMENTS SECTION CSS */
 /* ==================================================================== */
@@ -31600,7 +31620,49 @@ document.addEventListener('DOMContentLoaded', () => {
             notificationBubble.className = "fixed bottom-36 right-5 z-[1002] bg-white dark:bg-gray-800 p-3 rounded-lg shadow-xl border-l-4 border-blue-500 max-w-[250px] transition-all duration-300 transform translate-y-4 opacity-0 pointer-events-none hidden";
             document.body.appendChild(notificationBubble);
         }
+       // নতুন পরিবর্তন: একটিভ ইউজার কাউন্টারে ক্লিক করলে ভিজিটর কাউন্টার সেকশনে নিয়ে যাবে
+        if (activeCountEl) {
+            activeCountEl.onclick = () => {
+                const importantLinksTabButton = document.getElementById('importantLinksTab');
+                const moreMenuBtn = document.getElementById('moreMenuBtn');
+                const moreMenuDropdown = document.getElementById('moreMenuDropdown');
 
+                // ১. বাটনটি খুঁজে বের করে ক্লিক সিমুলেট করা
+                if (importantLinksTabButton) {
+                    const isHiddenInDropdown = moreMenuDropdown && moreMenuDropdown.classList.contains('hidden') && moreMenuDropdown.contains(importantLinksTabButton);
+
+                    if (isHiddenInDropdown) {
+                        moreMenuBtn.click(); // প্রথমে ড্রপডাউন খুলুন
+                        setTimeout(() => { importantLinksTabButton.click(); }, 50); // তারপর বাটন ক্লিক
+                    } else {
+                        importantLinksTabButton.click(); // সরাসরি ক্লিক
+                    }
+                }
+
+                // ২. মন্তব্য উইন্ডো বন্ধ করুন
+                if (container) {
+                    container.classList.remove('active');
+                }
+
+                // ৩. ট্যাব পরিবর্তনের পর স্ক্রল করার জন্য অপেক্ষা
+                setTimeout(() => {
+                    const counterSection = document.getElementById('visitor-counter-section');
+                    if (counterSection) {
+                        counterSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        
+                        // দৃষ্টি আকর্ষণের জন্য একটি অস্থায়ী হাইলাইট ক্লাস যোগ করা
+                        counterSection.classList.add('section-highlight');
+                        
+                        // অ্যানিমেশন শেষ হলে ক্লাসটি সরিয়ে ফেলা হবে
+                        setTimeout(() => {
+                            counterSection.classList.remove('section-highlight');
+                        }, 2000); // অ্যানিমেশনের সময়কাল 2s
+                    } else {
+                        console.error('Visitor counter section not found!');
+                    }
+                }, 300); // 300ms is a safe delay
+            };
+        }
         if (auth.currentUser) {
             const presenceRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "presence", auth.currentUser.uid);
             const updatePresence = async () => { try { await setDoc(presenceRef, { uid: auth.currentUser.uid, last_active: Date.now() }, { merge: true }); } catch (e) { console.error("Presence update failed", e); } };
@@ -32067,7 +32129,8 @@ document.addEventListener('DOMContentLoaded', () => {
 <div id="comment-section-container">
     <div class="comment-header">
         <span>পাবলিক মেসেজ</span>
-        <span id="active-user-count" class="ml-auto mr-3 bg-white text-blue-600 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1">
+        <!-- পরিবর্তন: cursor-pointer এবং title যুক্ত করা হয়েছে -->
+        <span id="active-user-count" class="ml-auto mr-3 bg-white text-blue-600 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" title="ভিজিটর কাউন্টার দেখুন">
             <span class="relative flex h-2 w-2">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
               <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
