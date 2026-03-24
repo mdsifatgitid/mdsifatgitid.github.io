@@ -9959,7 +9959,7 @@ body.sidebar-open #sidebarOverlay {
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
             </a>
         </div>
- <!-- ভিজিটর কাউন্টার সেকশন শুরু -->
+<!-- ভিজিটর কাউন্টার সেকশন শুরু -->
 <!-- এই সম্পূর্ণ div টি আপনার পুরনো visitor-counter-section div এর পরিবর্তে বসান -->
 <div id="visitor-counter-section" class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600 grid grid-cols-2 md:grid-cols-4 gap-4">
     <!-- আপনার আজকের ভিজিট কার্ড (বিদ্যমান) -->
@@ -9972,15 +9972,35 @@ body.sidebar-open #sidebarOverlay {
         <h4 class="text-sm font-semibold text-green-600 dark:text-green-300">আপনার মোট ভিজিট</h4>
         <p id="total-visits" class="text-3xl font-bold text-green-800 dark:text-green-200 mt-2">০</p>
     </div>
-    <!-- আজকের ভিজিট (সকল) কার্ড (নতুন) -->
+    <!-- আজকের ভিজিট (সকল) কার্ড (বিদ্যমান) -->
     <div class="bg-yellow-100 dark:bg-yellow-900/50 p-4 rounded-xl text-center">
         <h4 class="text-sm font-semibold text-yellow-600 dark:text-yellow-300">আজকের ভিজিটর</h4>
         <p id="all-today-visits" class="text-3xl font-bold text-yellow-800 dark:text-yellow-200 mt-2">০</p>
     </div>
-    <!-- সর্বমোট ভিজিট (সকল) কার্ড (নতুন) -->
+    <!-- সর্বমোট ভিজিট (সকল) কার্ড (বিদ্যমান) -->
     <div class="bg-red-100 dark:bg-red-900/50 p-4 rounded-xl text-center">
         <h4 class="text-sm font-semibold text-red-600 dark:text-red-300">মোট ভিজিটর (সকল)</h4>
         <p id="all-total-visits" class="text-3xl font-bold text-red-800 dark:text-red-200 mt-2">০</p>
+    </div>
+    <!-- এ মাসের ভিজিট (নতুন) -->
+    <div class="bg-cyan-100 dark:bg-cyan-900/50 p-4 rounded-xl text-center">
+        <h4 class="text-sm font-semibold text-cyan-600 dark:text-cyan-300">এ মাসের ভিজিটর</h4>
+        <p id="this-month-visits" class="text-3xl font-bold text-cyan-800 dark:text-cyan-200 mt-2">০</p>
+    </div>
+    <!-- গত মাসের ভিজিট (নতুন) -->
+    <div class="bg-pink-100 dark:bg-pink-900/50 p-4 rounded-xl text-center">
+        <h4 class="text-sm font-semibold text-pink-600 dark:text-pink-300">গত মাসের ভিজিটর</h4>
+        <p id="last-month-visits" class="text-3xl font-bold text-pink-800 dark:text-pink-200 mt-2">০</p>
+    </div>
+    <!-- এ বছরের ভিজিট (নতুন) -->
+    <div class="bg-lime-100 dark:bg-lime-900/50 p-4 rounded-xl text-center">
+        <h4 class="text-sm font-semibold text-lime-600 dark:text-lime-300">এ বছরের ভিজিটর</h4>
+        <p id="this-year-visits" class="text-3xl font-bold text-lime-800 dark:text-lime-200 mt-2">০</p>
+    </div>
+    <!-- গত বছরের ভিজিট (নতুন) -->
+    <div class="bg-orange-100 dark:bg-orange-900/50 p-4 rounded-xl text-center">
+        <h4 class="text-sm font-semibold text-orange-600 dark:text-orange-300">গত বছরের ভিজিটর</h4>
+        <p id="last-year-visits" class="text-3xl font-bold text-orange-800 dark:text-orange-200 mt-2">০</p>
     </div>
 </div>
 <!-- ভিজিটর কাউন্টার সেকশন শেষ -->
@@ -31463,12 +31483,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ১. গ্লোবাল ভিজিটর কাউন্টার ফাংশন
+// ১. গ্লোবাল ভিজিটর কাউন্টার ফাংশন
     async function initializeGlobalCounter() {
         try {
             await ensureAuth();
             
-            const todayString = new Date().toISOString().split('T')[0];
+            const now = new Date();
+            const todayString = now.toISOString().split('T')[0]; // YYYY-MM-DD
+            const thisMonthString = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`; // YYYY-MM
+            const thisYearString = `${now.getFullYear()}`; // YYYY
+
             const counterDocRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "global_visitor_stats", "counts");
 
             const incrementCounts = async () => {
@@ -31476,14 +31500,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     await runTransaction(db, async (transaction) => {
                         const counterDoc = await transaction.get(counterDocRef);
                         if (!counterDoc.exists()) {
-                            transaction.set(counterDocRef, { totalVisits: 1, dailyVisits: { [todayString]: 1 } });
+                            transaction.set(counterDocRef, { 
+                                totalVisits: 1, 
+                                dailyVisits: { [todayString]: 1 },
+                                monthlyVisits: { [thisMonthString]: 1 },
+                                yearlyVisits: { [thisYearString]: 1 }
+                            });
                         } else {
                             const data = counterDoc.data();
                             const newTotalVisits = (data.totalVisits || 0) + 1;
                             const newDailyCount = ((data.dailyVisits || {})[todayString] || 0) + 1;
+                            const newMonthlyCount = ((data.monthlyVisits || {})[thisMonthString] || 0) + 1;
+                            const newYearlyCount = ((data.yearlyVisits || {})[thisYearString] || 0) + 1;
+                            
                             transaction.update(counterDocRef, {
                                 totalVisits: newTotalVisits,
-                                [`dailyVisits.${todayString}`]: newDailyCount
+                                [`dailyVisits.${todayString}`]: newDailyCount,
+                                [`monthlyVisits.${thisMonthString}`]: newMonthlyCount,
+                                [`yearlyVisits.${thisYearString}`]: newYearlyCount
                             });
                         }
                     });
@@ -31493,10 +31527,37 @@ document.addEventListener('DOMContentLoaded', () => {
             onSnapshot(counterDocRef, (doc) => {
                 const allTodayVisitsEl = document.getElementById('all-today-visits');
                 const allTotalVisitsEl = document.getElementById('all-total-visits');
+                // New Elements
+                const thisMonthVisitsEl = document.getElementById('this-month-visits');
+                const lastMonthVisitsEl = document.getElementById('last-month-visits');
+                const thisYearVisitsEl = document.getElementById('this-year-visits');
+                const lastYearVisitsEl = document.getElementById('last-year-visits');
+
                 if (doc.exists()) {
                     const data = doc.data();
+                    
+                    // Existing counters
                     if (allTotalVisitsEl) allTotalVisitsEl.textContent = (data.totalVisits || 0).toLocaleString('bn-BD');
                     if (allTodayVisitsEl) allTodayVisitsEl.textContent = ((data.dailyVisits || {})[todayString] || 0).toLocaleString('bn-BD');
+
+                    // New counters logic
+                    const monthlyData = data.monthlyVisits || {};
+                    const yearlyData = data.yearlyVisits || {};
+                    
+                    // This Month
+                    if (thisMonthVisitsEl) thisMonthVisitsEl.textContent = (monthlyData[thisMonthString] || 0).toLocaleString('bn-BD');
+                    
+                    // Last Month
+                    const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                    const lastMonthString = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth() + 1).padStart(2, '0')}`;
+                    if (lastMonthVisitsEl) lastMonthVisitsEl.textContent = (monthlyData[lastMonthString] || 0).toLocaleString('bn-BD');
+                    
+                    // This Year
+                    if (thisYearVisitsEl) thisYearVisitsEl.textContent = (yearlyData[thisYearString] || 0).toLocaleString('bn-BD');
+                    
+                    // Last Year
+                    const lastYearString = `${now.getFullYear() - 1}`;
+                    if (lastYearVisitsEl) lastYearVisitsEl.textContent = (yearlyData[lastYearString] || 0).toLocaleString('bn-BD');
                 }
             }, (error) => console.error("Counter Listener Error:", error));
 
