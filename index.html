@@ -7598,7 +7598,26 @@ body.sidebar-open #sidebarOverlay {
 /* END: PUBLIC COMMENTS SECTION CSS */
 /* ==================================================================== */
 
-
+/* START: Unicode Textbox Word Counter */
+#unicodeCounterStats {
+    position: absolute;
+    left: 0;
+    display: flex;
+    gap: 10px;
+    white-space: nowrap; /* লেখা যাতে ভেঙে নিচে না যায় */
+}
+#unicodeCounterStats h4, #unicodeCounterStats p {
+    font-size: 0.75rem; /* ছোট স্ক্রিনে জায়গা বাঁচাতে ফন্ট সাইজ সামান্য কমানো হয়েছে */
+    display: inline;
+    margin: 0;
+}
+/* মোবাইল ডিভাইসে যাতে ওভারল্যাপ না হয় তার জন্য সামান্য অ্যাডজাস্টমেন্ট */
+@media (max-width: 640px) {
+    #unicodeCounterStats {
+        display: none; /* খুব ছোট স্ক্রিনে হাইড রাখা ভালো অথবা ছোট ফন্ট ব্যবহার */
+    }
+}
+/* END: Unicode Textbox Word Counter */
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -8557,14 +8576,40 @@ body.sidebar-open #sidebarOverlay {
 	
     <div class="font-converter-content">
 
-	<!-- নতুন: লাইভ কনভার্ট টগল সুইচ -->
-<div id="converter-options" class="flex justify-center items-center gap-3">
-    <span class="font-semibold text-gray-700 dark:text-gray-300">ম্যানুয়াল কনভার্ট</span>
-    <label class="switch">
-        <input type="checkbox" id="live-convert-toggle">
-        <span class="slider round"></span>
-    </label>
-    <span class="font-semibold text-gray-700 dark:text-gray-300">লাইভ কনভার্ট</span>
+
+<!-- লাইভ টগল কনভার্টার অপশনস এবং কনভার্টার ওয়ার্ড কাউন্টার কন্টেইনার -->
+
+<div class="relative flex justify-center items-center">
+    <!-- START: Unicode Textbox Word Counter (বামে থাকবে) -->
+    <div id="unicodeCounterStats" class="hidden">
+        <div class="flex items-center gap-1">
+            <h4 class="text-gray-500 dark:text-gray-400">শব্দ:</h4>
+            <p id="unicodeCharCount" class="font-bold text-indigo-600 dark:text-indigo-400">০</p>
+        </div>
+        <div class="flex items-center gap-1">
+            <h4 class="text-gray-500 dark:text-gray-400">বাক্য:</h4>
+            <p id="unicodeSentenceCount" class="font-bold text-indigo-600 dark:text-indigo-400">০</p>
+        </div>
+        <div class="flex items-center gap-1">
+            <h4 class="text-gray-500 dark:text-gray-400">অনুচ্ছেদ:</h4>
+            <p id="unicodeParagraphCount" class="font-bold text-indigo-600 dark:text-indigo-400">০</p>
+        </div>
+        <div class="flex items-center gap-1">
+            <h4 class="text-gray-500 dark:text-gray-400">অক্ষর:</h4>
+            <p id="unicodeWordCount" class="font-bold text-indigo-600 dark:text-indigo-400">০</p>
+        </div>
+    </div>
+    <!-- END: Unicode Textbox Word Counter -->
+
+    <!-- লাইভ কনভার্টার টগল বাটন (সবসময় মাঝখানে থাকবে) -->
+    <div id="converter-options" class="flex items-center gap-3">
+        <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">ম্যানুয়াল কনভার্ট</span>
+        <label class="switch">
+            <input type="checkbox" id="live-convert-toggle">
+            <span class="slider round"></span>
+        </label>
+        <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">লাইভ কনভার্ট</span>
+    </div>
 </div>
         <div class="font-converter-sections-wrapper">
             <!-- বাম টেক্সটএরিয়া -->
@@ -14617,12 +14662,14 @@ function showCustomAlert(message) {
             if (textarea) {
                 textarea.value = '';
                 addState(textareaId); // এই ক্লিয়ার অ্যাকশনটি ইতিহাসে যোগ করুন
+				unicodeCounterStats.classList.add('hidden');
             }
         }
 
         function clearAllTextareas() {
             clearTextarea('textAreaLeft');
             clearTextarea('textAreaRight');
+			unicodeCounterStats.classList.add('hidden');
         }
 
         function updateButtonStates(textareaId) {
@@ -14643,6 +14690,55 @@ function showCustomAlert(message) {
 // START: Load Converter Data from IndexedDB on page load
 // ====================================================================
 document.addEventListener('DOMContentLoaded', async () => {
+
+<!-- START: UNICODE TEXTBOX WORD COUNTER SCRIPT -->
+const textAreaLeftForCounter = document.getElementById('textAreaLeft');
+const unicodeCounterStats = document.getElementById('unicodeCounterStats');
+const unicodeWordCountEl = document.getElementById('unicodeWordCount');
+const unicodeCharCountEl = document.getElementById('unicodeCharCount');
+const unicodeSentenceCountEl = document.getElementById('unicodeSentenceCount');
+const unicodeParagraphCountEl = document.getElementById('unicodeParagraphCount');
+
+function updateUnicodeCounter() {
+    if (!textAreaLeftForCounter || !unicodeCounterStats) return;
+
+    const text = textAreaLeftForCounter.value;
+
+    if (text.trim() === '') {
+        unicodeCounterStats.classList.add('hidden');
+        return;
+    }
+    
+    unicodeCounterStats.classList.remove('hidden');
+
+    // Character Count
+    const charCount = text.length;
+    unicodeWordCountEl.textContent = charCount.toLocaleString('bn-BD');
+
+    // Word Count
+    const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+    const wordCount = words.length;
+    unicodeCharCountEl.textContent = wordCount.toLocaleString('bn-BD');
+
+    // Sentence Count (handles English and Bengali terminators)
+    const sentences = text.trim().split(/[.!?।]/).filter(sentence => sentence.trim().length > 0);
+    const sentenceCount = sentences.length;
+    unicodeSentenceCountEl.textContent = sentenceCount.toLocaleString('bn-BD');
+
+    // Paragraph Count
+    const paragraphs = text.trim().split(/\n+/).filter(para => para.trim().length > 0);
+    const paragraphCount = paragraphs.length;
+    unicodeParagraphCountEl.textContent = paragraphCount.toLocaleString('bn-BD');
+}
+
+if (textAreaLeftForCounter) {
+    // Add event listener for real-time updates
+    textAreaLeftForCounter.addEventListener('input', updateUnicodeCounter);
+    
+    // Initial call in case text is loaded from storage
+    setTimeout(updateUnicodeCounter, 500); // Small delay to ensure data is loaded
+}
+<!-- END: UNICODE TEXTBOX WORD COUNTER SCRIPT -->
 		
 try {
     // Clear expired items on startup
@@ -21286,6 +21382,7 @@ async function pasteFromClipboard(textareaId) {
         // হিস্টোরিতে যোগ করা
         addState(textareaId);
         showCustomAlert('টেক্সট পেস্ট করা হয়েছে!');
+		updateUnicodeCounter();
 
         // লাইভ কনভার্ট ট্রিগার
         const liveConvertToggle = document.getElementById('live-convert-toggle');
@@ -21293,6 +21390,7 @@ async function pasteFromClipboard(textareaId) {
             if (textareaId === 'textAreaLeft') {
                 setTimeout(() => {
                     convertLeftToRight();
+					updateUnicodeCounter();
                     const rightArea = document.getElementById('textAreaRight');
                     if (rightArea) {
                         rightArea.scrollTop = rightArea.scrollHeight;
@@ -21301,6 +21399,7 @@ async function pasteFromClipboard(textareaId) {
             } else if (textareaId === 'textAreaRight') {
                 setTimeout(() => {
                     convertRightToLeft();
+					updateUnicodeCounter();
                     const leftArea = document.getElementById('textAreaLeft');
                     if (leftArea) {
                         leftArea.scrollTop = leftArea.scrollHeight;
