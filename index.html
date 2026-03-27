@@ -14720,8 +14720,9 @@ function updateUnicodeCounter() {
     const wordCount = words.length;
     unicodeCharCountEl.textContent = wordCount.toLocaleString('bn-BD');
 
-    // Sentence Count (handles English and Bengali terminators)
-    const sentences = text.trim().split(/[.!?।]/).filter(sentence => sentence.trim().length > 0);
+    // Sentence Count (handles English and Bengali terminators including the pipe character)
+    // পরিবর্তন: এখানে '|' চিহ্নটি বাক্যের সমাপ্তি হিসেবে যুক্ত করা হয়েছে।
+    const sentences = text.trim().split(/[.!?।\|]/).filter(sentence => sentence.trim().length > 0);
     const sentenceCount = sentences.length;
     unicodeSentenceCountEl.textContent = sentenceCount.toLocaleString('bn-BD');
 
