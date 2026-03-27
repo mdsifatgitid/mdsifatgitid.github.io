@@ -18155,8 +18155,9 @@ function initializeWordCounter() {
         const wordCount = words.length;
         wordCountEl.textContent = text.trim() === '' ? '০' : new Intl.NumberFormat('bn-BD').format(wordCount);
 
-        // Sentence Count (handles English and Bengali terminators)
-        const sentences = text.trim().split(/[.!?।]/).filter(sentence => sentence.trim().length > 0);
+// Sentence Count (handles English and Bengali terminators including the pipe character)
+// পরিবর্তন: এখানে '|' চিহ্নটি বাক্যের সমাপ্তি হিসেবে যুক্ত করা হয়েছে।
+const sentences = text.trim().split(/[.!?।\|]/).filter(sentence => sentence.trim().length > 0);
         const sentenceCount = sentences.length;
         sentenceCountEl.textContent = new Intl.NumberFormat('bn-BD').format(sentenceCount);
 
