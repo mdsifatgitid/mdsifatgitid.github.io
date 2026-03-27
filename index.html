@@ -21480,7 +21480,11 @@ if (liveConvertToggle && textAreaLeftForLive && textAreaRightForLive) {
     const handleBijoyInput = () => {
         if (liveConvertToggle.checked) {
             // সামান্য ডিলে দেওয়া হয় যাতে যুক্তবর্ণ লেখার সময় অক্ষর হারিয়ে না যায়
-            setTimeout(() => convertRightToLeft(), 0);
+             setTimeout(() => {
+                convertRightToLeft();
+                // পরিবর্তন: লাইভ কনভার্টের পর কাউন্টার আপডেট করার জন্য এই লাইনটি যোগ করা হয়েছে।
+                updateUnicodeCounter();
+            }, 0);
         }
     };
 
