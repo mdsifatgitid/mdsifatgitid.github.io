@@ -30026,6 +30026,21 @@ function initializeGlobalShortcuts() {
             // ৩. Ctrl + Down Arrow: ইনপুট বক্সে ফোকাস করুন (সিলেকশন)
             else if (e.key === 'ArrowDown') {
                 e.preventDefault();
+                // *** নতুন কোড শুরু: পাবলিক মেসেজ উইন্ডো চেক ***
+                // প্রথমে চেক করা হচ্ছে পাবলিক মেসেজ উইন্ডোটি খোলা আছে কিনা।
+                const commentContainer = document.getElementById('comment-section-container');
+                if (commentContainer && commentContainer.classList.contains('active')) {
+                    const commentInput = document.getElementById('comment-message');
+                    if (commentInput) {
+                        commentInput.focus(); // সরাসরি মেসেজ টেক্সটবক্সে ফোকাস করা হচ্ছে
+                        
+                        // কার্সর লেখার শেষে নিয়ে যাওয়া হচ্ছে, যাতে ইউজার সাথে সাথে টাইপ শুরু করতে পারে
+                        commentInput.selectionStart = commentInput.selectionEnd = commentInput.value.length;
+                        
+                        return; // ফাংশনের বাকি অংশ আর এক্সিকিউট হবে না
+                    }
+                }
+                // *** নতুন কোড শেষ ***
                 focusNextInput();
             }
             // ৪. Ctrl + Up Arrow: ফোকাস সরান (আনসিলেকশন/আনফোকাস)
