@@ -21339,20 +21339,20 @@ async function pasteFromClipboard(textareaId) {
                 }
                 break;
             }
-		// START: JS PASTE LOGIC FOR V5 (SIMPLIFIED)
+			
+		// START: JS PASTE LOGIC FOR V5 (UPDATED WITH NEW SYMBOLS)
             case 'double-enter-v5': {
-                // ১. v4 এর লজিক: সব একাধিক হোয়াইটস্পেস ১টি হয়ে যাবে
+                // ১. v4 এর লজিক: সব একাধিক স্পেস বা এন্টার ১টি হয়ে যাবে
                 let processedText = clipboardText.trim().replace(/(\r?\n\s*){2,}/g, '\n');
                 processedText = processedText.replace(/^\s+/gm, ''); 
                 processedText = processedText.replace(/ {2,}/g, ' ');
 
-                // ২. চিহ্নের (। | ,) আগের সব স্পেস বা এন্টার মুছে ফেলা
-                // (v4 এর কারণে এখানে সর্বোচ্চ ১টি স্পেস বা ১টি এন্টার থাকতে পারে, যা এই লাইনে রিমুভ হবে)
-                processedText = processedText.replace(/\s+([।|,])/g, '$1');
+                // ২. চিহ্নগুলোর (। , | ’ ” Õ Ó) আগের সব স্পেস বা এন্টার মুছে ফেলা
+                processedText = processedText.replace(/\s+([।|,|’|”|Õ|Ó])/g, '$1');
 
                 // ৩. চিহ্নের পরে যদি স্পেস বা এন্টার না থাকে, তবে ১টি স্পেস নিশ্চিত করা
-                // কিন্তু যদি আগে থেকেই ১টি এন্টার বা স্পেস থাকে (যা v4 নিশ্চিত করেছে), তবে সেটি পরিবর্তন হবে না
-                processedText = processedText.replace(/([।|,])(?!\s|$)/g, '$1 ');
+                // (যদি v4 এর কারণে আগে থেকেই স্পেস/এন্টার থাকে তবে তা পরিবর্তন হবে না)
+                processedText = processedText.replace(/([।|,|’|”|Õ|Ó])(?!\s|$)/g, '$1 ');
 
                 // ৪. শেষে ডাবল এন্টার হ্যান্ডলিং
                 if (textarea.value.trim() !== '') {
@@ -21362,7 +21362,8 @@ async function pasteFromClipboard(textareaId) {
                 }
                 break;
             }
-		// END: JS PASTE LOGIC FOR V5 (SIMPLIFIED)
+		// END: JS PASTE LOGIC FOR V5 (UPDATED WITH NEW SYMBOLS)
+
             case 'custom-serial': {
                 const prefix = customValue ? customValue.replace(/\{serial\}/g, serialCounter) : '';
                 updateSerialCounter(serialCounter + 1);
