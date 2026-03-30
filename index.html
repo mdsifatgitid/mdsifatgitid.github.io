@@ -21341,20 +21341,24 @@ async function pasteFromClipboard(textareaId) {
             }
 			
 		// START: JS PASTE LOGIC FOR V5 (UPDATED WITH NEW SYMBOLS)
-            case 'double-enter-v5': {
-                // ১. v4 এর লজিক: সব একাধিক স্পেস বা এন্টার ১টি হয়ে যাবে
+          case 'double-enter-v5': {
+                // ১. v4 এর বেসিক লজিক: সব মাল্টিপল হোয়াইটস্পেস ১টি হয়ে যাবে
                 let processedText = clipboardText.trim().replace(/(\r?\n\s*){2,}/g, '\n');
                 processedText = processedText.replace(/^\s+/gm, ''); 
                 processedText = processedText.replace(/ {2,}/g, ' ');
 
-                // ২. চিহ্নগুলোর (। , | ’ ” Õ Ó) আগের সব স্পেস বা এন্টার মুছে ফেলা
+                // ২. সকল চিহ্নের (। , | ’ ” Õ Ó) আগের বাড়তি স্পেস বা এন্টার মুছে ফেলা
                 processedText = processedText.replace(/\s+([।|,|’|”|Õ|Ó])/g, '$1');
 
-                // ৩. চিহ্নের পরে যদি স্পেস বা এন্টার না থাকে, তবে ১টি স্পেস নিশ্চিত করা
-                // (যদি v4 এর কারণে আগে থেকেই স্পেস/এন্টার থাকে তবে তা পরিবর্তন হবে না)
-                processedText = processedText.replace(/([।|,|’|”|Õ|Ó])(?!\s|$)/g, '$1 ');
+                // ৩. দাড়ি (।), কমা (,) এবং পাইপ (|) চিহ্নের পরে ১টি স্পেস নিশ্চিত করা (যদি না থাকে)
+                // এটি শুধুমাত্র এই ৩টি চিহ্নের জন্য কাজ করবে
+                processedText = processedText.replace(/([।|,|])(?!\s|$)/g, '$1 ');
 
-                // ৪. শেষে ডাবল এন্টার হ্যান্ডলিং
+                // ৪. কোটেশন বা আন্সি বিশেষ চিহ্নগুলোর (’ ” Õ Ó) পরে কোনো জোরপূর্বক স্পেস যোগ করা হবে না।
+                // v4 এর কারণে যদি আগে থেকে স্পেস থাকে তবে ১টি বজায় থাকবে, না থাকলে কিছুই যোগ হবে না।
+                // এর ফলে ”Q (চ্ছ) এর মতো যুক্তবর্ণগুলো আর ভাঙবে না।
+
+                // ৫. শেষে ডাবল এন্টার হ্যান্ডলিং
                 if (textarea.value.trim() !== '') {
                     textToInsert = '\n\n' + processedText.trim();
                 } else {
