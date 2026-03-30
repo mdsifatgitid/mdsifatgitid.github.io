@@ -8636,6 +8636,7 @@ body.sidebar-open #sidebarOverlay {
 									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 has-tooltip" data-preset="double-enter-v2" data-tooltip="শেষে দুটি এন্টার দেয়া হবে এবং টেক্সট এর ভেতরে একাধিক এন্টার বা ফাঁকা লাইন থাকলে তা মুছে যাবে">দুটি এন্টার v2</a>
 									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 has-tooltip" data-preset="double-enter-v3" data-tooltip="ডাবল এন্টার v2 এর ফিচার + যেকোনো লাইনের সামনে ফাঁকা থাকলে তাও মুছে দেয়া হবে">দুটি এন্টার v3</a>
 									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 has-tooltip" data-preset="double-enter-v4" data-tooltip="ডাবল এন্টার v3 এর ফিচার + টেক্সট এর মাঝে একাধিক স্পেস থাকলে তা একটি করে স্পেসে পরিণত হবে">দুটি এন্টার v4</a>
+									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 has-tooltip" data-preset="double-enter-v5" data-tooltip="দুটি এন্টার v4 এর ফিচার + দাঁড়ি ও কমা চিহ্নের আগে স্পেস/এন্টার থাকবে না তবে পরে একটি স্পেস থাকবে">দুটি এন্টার v5</a>
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 has-tooltip" data-preset="custom" data-tooltip="কাঙ্খিত শব্দ/বাক্য যুক্ত হয়ে পেস্ট হবে">কাস্টম</a>
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 has-tooltip" data-preset="custom-serial" data-tooltip="সিরিয়াল নম্বরসহ কাঙ্খিত শব্দ/বাক্য যুক্ত হয়ে পেস্ট হবে">ক্রমিকসহ কাস্টম</a>
                                 </div>
@@ -8677,6 +8678,7 @@ body.sidebar-open #sidebarOverlay {
 									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 has-tooltip" data-preset="double-enter-v2" data-tooltip="শেষে দুটি এন্টার দেয়া হবে এবং টেক্সট এর ভেতরে একাধিক এন্টার বা ফাঁকা লাইন থাকলে তা মুছে যাবে">দুটি এন্টার v2</a>
 									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 has-tooltip" data-preset="double-enter-v3" data-tooltip="ডাবল এন্টার v2 এর ফিচার + যেকোনো লাইনের সামনে ফাঁকা থাকলে তাও মুছে দেয়া হবে">দুটি এন্টার v3</a>
 									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 has-tooltip" data-preset="double-enter-v4" data-tooltip="ডাবল এন্টার v3 এর ফিচার + টেক্সট এর মাঝে একাধিক স্পেস থাকলে তা একটি করে স্পেসে পরিণত হবে">দুটি এন্টার v4</a>
+									<a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 has-tooltip" data-preset="double-enter-v5" data-tooltip="দুটি এন্টার v4 এর ফিচার + দাঁড়ি ও কমা চিহ্নের আগে স্পেস/এন্টার থাকবে না তবে পরে একটি স্পেস থাকবে">দুটি এন্টার v5</a>
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 has-tooltip" data-preset="custom" data-tooltip="কাঙ্খিত শব্দ/বাক্য যুক্ত হয়ে পেস্ট হবে">কাস্টম</a>
                                     <a href="#" class="text-gray-700 dark:text-gray-200 block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 has-tooltip" data-preset="custom-serial" data-tooltip="সিরিয়াল নম্বরসহ কাঙ্খিত শব্দ/বাক্য যুক্ত হয়ে পেস্ট হবে">ক্রমিকসহ কাস্টম</a>
                                 </div>
@@ -21337,6 +21339,45 @@ async function pasteFromClipboard(textareaId) {
                 }
                 break;
             }
+		// START: JS PASTE LOGIC FOR V5 (UPDATED)
+            case 'double-enter-v4': {
+                let processedText = clipboardText.trim().replace(/(\r?\n\s*){2,}/g, '\n');
+                processedText = processedText.replace(/^\s+/gm, ''); 
+                processedText = processedText.replace(/ {2,}/g, ' ');
+                if (textarea.value.trim() !== '') {
+                    textToInsert = '\n\n' + processedText;
+                } else {
+                    textToInsert = processedText;
+                }
+                break;
+            }
+            case 'double-enter-v5': {
+                // ১. v4 এর বেসিক লজিক: ট্রিম, মাল্টিপল এন্টার ফিক্স এবং লাইনের শুরুর স্পেস রিমুভ
+                let processedText = clipboardText.trim().replace(/(\r?\n\s*){2,}/g, '\n');
+                processedText = processedText.replace(/^\s+/gm, ''); 
+                processedText = processedText.replace(/ {2,}/g, ' ');
+
+                // ২. চিহ্নগুলোর (। | ,) ঠিক আগে যদি কোনো স্পেস বা এন্টার থাকে, তা মুছে ফেলবে
+                processedText = processedText.replace(/[\s\r\n]+([।|,])/g, '$1');
+
+                // ৩. চিহ্নগুলোর পরে যদি কোনো স্পেস না থাকে, তবে একটি স্পেস নিশ্চিত করা
+                processedText = processedText.replace(/([।|,])(?!\s|$)/g, '$1 ');
+
+                // ৪. চিহ্নগুলোর পরে একাধিক হোয়াইটস্পেস (স্পেস/এন্টার) থাকলে তা ১টি স্পেস বা ১টি এন্টারে পরিণত করা
+                // যদি চিহ্নের পর এন্টার থাকে তবে ১টি এন্টার রাখবে, অন্যথায় ১টি স্পেস রাখবে
+                processedText = processedText.replace(/([।|,])\s+/g, (match, p1) => {
+                    return match.includes('\n') ? p1 + '\n' : p1 + ' ';
+                });
+
+                // ৫. ডাবল এন্টার হ্যান্ডলিং (আগে টেক্সট থাকলে)
+                if (textarea.value.trim() !== '') {
+                    textToInsert = '\n\n' + processedText.trim();
+                } else {
+                    textToInsert = processedText.trim();
+                }
+                break;
+            }
+		// END: JS PASTE LOGIC FOR V5 (UPDATED)
             case 'custom-serial': {
                 const prefix = customValue ? customValue.replace(/\{serial\}/g, serialCounter) : '';
                 updateSerialCounter(serialCounter + 1);
