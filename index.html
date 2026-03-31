@@ -7619,6 +7619,16 @@ body.sidebar-open #sidebarOverlay {
 }
 /* END: Unicode Textbox Word Counter */
 
+/* নতুন: শুধুমাত্র ডোনেট বাটনের ভেতরের হার্ট আইকনটিকে লাল করার জন্য */
+#donateIconBtn svg {
+    color: #ef4444; /* Tailwind red-500 */
+}
+
+/* ডার্ক মোডে আইকনের জন্য একটি উজ্জ্বল লাল, যাতে ভালো দেখা যায় */
+.dark #donateIconBtn svg {
+    color: #f87171; /* Tailwind red-400 */
+}
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
 </head>
@@ -7791,13 +7801,12 @@ body.sidebar-open #sidebarOverlay {
 
 <!-- টাইটেল এবং ভয়েস কমান্ড বাটন এরিয়া শুরু -->
         <div class="flex justify-center items-center gap-3 mb-2 mt-2">
-            <h2 id="main-heading" class="text-2xl font-bold text-gray-800 dark:text-white mb-0">বাংলা টুলবক্স</h2>
-            
-            <div class="flex items-center gap-1"> <!-- বাটন দুটিকে একটি গ্রুপে রাখা হয়েছে এবং গ্যাপ কমানো হয়েছে -->
-                <!-- Voice Command Button -->
+		    <!-- Voice Command Button -->
                 <button id="voiceCommandBtn" type="button" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm has-tooltip" data-tooltip=" ভয়েজ কমান্ড ও টিটিএস (শর্টকাট: Alt+V)">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
                 </button>
+            <h2 id="main-heading" class="text-2xl font-bold text-gray-800 dark:text-white mb-0">বাংলা টুলবক্স</h2>
+	    <div class="flex items-center gap-1"> <!-- বাটন দুটিকে একটি গ্রুপে রাখা হয়েছে এবং গ্যাপ কমানো হয়েছে -->
 
                 <!-- PWA Install Button -->
                 <!-- ক্লাস voice-command-btn যুক্ত করা হয়েছে -->
@@ -7836,6 +7845,14 @@ body.sidebar-open #sidebarOverlay {
     </div>
 </div>
             </div>
+        <!-- নতুন ডোনেট আইকন বাটন -->
+        <button id="donateIconBtn" type="button" class="voice-command-btn w-9 h-9 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm has-tooltip" data-tooltip="ডোনেট করুন (সহায়তা করুন)">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+            </svg>
+        </button>
+        <!-- নতুন বাটন শেষ -->
+
         </div>
         <!-- টাইটেল এবং ভয়েস কমান্ড বাটন এরিয়া শেষ -->
 
@@ -15671,6 +15688,7 @@ if (tasbeehTab) {tasbeehTab.addEventListener('click', () => {showTab('tasbeeh');
     });
 }
 if (diffCheckerTab) diffCheckerTab.addEventListener('click', () => showTab('diffChecker'));
+if (document.getElementById('donateIconBtn')) {document.getElementById('donateIconBtn').addEventListener('click', () => showTab('donate'));}
 if (expenseTrackerTab) expenseTrackerTab.addEventListener('click', () => {    showTab('expenseTracker');    initializeExpenseTracker(); });
 
 	
