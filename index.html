@@ -7619,6 +7619,10 @@ body.sidebar-open #sidebarOverlay {
 }
 /* END: Unicode Textbox Word Counter */
 
+/* ========================================= */
+/* START: ডোনেট আইকন অ্যানিমেশন (বিদ্যমান) */
+/* ========================================= */
+
 /* নতুন: শুধুমাত্র ডোনেট বাটনের ভেতরের হার্ট আইকনটিকে লাল করার জন্য */
 #donateIconBtn svg {
     color: #ef4444; /* Tailwind red-500 */
@@ -7628,6 +7632,28 @@ body.sidebar-open #sidebarOverlay {
 .dark #donateIconBtn svg {
     color: #f87171; /* Tailwind red-400 */
 }
+
+@keyframes vanishAndReappear {
+    0% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        opacity: 0;
+        transform: scale(0.5) rotate(20deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.animate-vanish {
+    animation: vanishAndReappear 1s ease-in-out;
+}
+/* ========================================= */
+/* END: ডোনেট আইকন অ্যানিমেশন */
+/* ========================================= */
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -22733,6 +22759,24 @@ if (mainHeading) {
         // ব্যানারের মিনিটের শুরু থেকে 30 সেকেন্ড হলে এবং সেটিং চালু থাকলে, তখন অ্যানিমেশন ট্রিগার করুন
         if (isTitleAnimationEnabled && (seconds === 30) && !mainHeading.classList.contains('glitch-effect')) {
             mainHeading.classList.add('glitch-effect');
+			
+	           // ************* START: নতুন পরিবর্তন *************
+            // টাইটেল অ্যানিমেশনের সাথে ডোনেট আইকন অ্যানিমেশন ট্রিগার করুন
+            const donateIcon = document.getElementById('donateIconBtn');
+            if (donateIcon) {
+                // অ্যানিমেশনটি পুনরায় চালানোর জন্য প্রথমে ক্লাসটি সরিয়ে আবার যোগ করা হচ্ছে
+                donateIcon.classList.remove('animate-vanish');
+                // একটি রিফ্লো ট্রিগার করা হয় যাতে ব্রাউজার পরিবর্তনটি লক্ষ্য করে
+                void donateIcon.offsetWidth; 
+                donateIcon.classList.add('animate-vanish');
+
+                // অ্যানিমেশন শেষ হলে ক্লাসটি সরিয়ে দিন যাতে পরে আবার ট্রিগার করা যায়
+                donateIcon.addEventListener('animationend', () => {
+                    donateIcon.classList.remove('animate-vanish');
+                }, { once: true });
+            }
+            // ************** END: নতুন পরিবর্তন ***************
+			
         }
     }, 1000);
 
@@ -33048,5 +33092,6 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- ============================================== -->
 <!-- END: প্রোফাইল, স্টোরেজ উইন্ডো এবং নোটিফিকেশন Experimental -->
 <!-- ============================================== -->
+
 </body>
 </html>
