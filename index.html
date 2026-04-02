@@ -7655,6 +7655,39 @@ body.sidebar-open #sidebarOverlay {
 /* END: ডোনেট আইকন অ্যানিমেশন */
 /* ========================================= */
 
+/* নতুন: ব্যাক বাটনের জন্য স্টাইল-এবাউট আস,টার্মস */
+.back-to-main-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: #e0e7ff;
+    color: #3f51b5;
+    font-weight: 600;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.dark .back-to-main-btn {
+    background-color: #4a5568;
+    color: #e2e8f0;
+}
+.back-to-main-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+}
+
+/* বাটনটিকে সঠিকভাবে পজিশন করার জন্য প্যারেন্ট div-কে relative করা হচ্ছে */
+#aboutUsContent, #contactUsContent, #privacyPolicyContent, #termsContent {
+    position: relative;
+}
+/* নতুন: ব্যাক বাটনের জন্য স্টাইল-এবাউট আস, টার্মস */
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
 </head>
@@ -12006,6 +12039,145 @@ body.sidebar-open #sidebarOverlay {
 
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের HTML Content কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
+
+<!-- ======================================================== -->
+<!-- START: ABOUT US, CONTACT, PRIVACY, TERMS PAGES -->
+<!-- ======================================================== -->
+
+<!-- About Us Page -->
+<div id="aboutUsContent" class="calculator-content">
+    <div class="p-6 text-left text-gray-700 dark:text-gray-300 max-w-4xl mx-auto">
+	        <!-- নতুন ব্যাক বাটন শুরু -->
+    <button class="back-to-main-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" /></svg>
+        <span>ফিরে যান</span>
+    </button>
+        <!-- নতুন ব্যাক বাটন শেষ -->
+        <h2 class="text-2xl font-bold mb-4">About Us</h2>
+        <p class="mb-4">
+            Welcome to Bangla Toolbox, your all-in-one utility web application designed for Bengali users. Our mission is to provide a comprehensive and easy-to-use set of digital tools to assist with your daily tasks, all in one place.
+        </p>
+        <p class="mb-4">
+            From the essential Bijoy to Unicode font converter to a scientific calculator, prayer time schedules, and advanced AI-powered tools like OCR and translation, Bangla Toolbox aims to be the go-to resource for your digital needs. We are continuously working to add more features and improve the user experience.
+        </p>
+        <p>
+            This project is developed and maintained by Md Shahiduzzaman Sifat. We hope you find this toolbox useful!
+        </p>
+    </div>
+</div>
+
+<!-- Contact Us Page -->
+<div id="contactUsContent" class="calculator-content">
+    <div class="p-6 text-left text-gray-700 dark:text-gray-300 max-w-4xl mx-auto">
+	        <!-- নতুন ব্যাক বাটন শুরু -->
+    <button class="back-to-main-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" /></svg>
+        <span>ফিরে যান</span>
+    </button>
+        <!-- নতুন ব্যাক বাটন শেষ -->
+        <h2 class="text-2xl font-bold mb-4">Contact Us</h2>
+        <p class="mb-4">
+            We value your feedback and suggestions. If you have any questions, bug reports, or feature requests, please do not hesitate to reach out to us.
+        </p>
+        <p class="mb-4">
+            You can contact us via email at:
+            <a href="mailto:banglatoolbox@gmail.com" class="text-blue-600 hover:underline">banglatoolbox@gmail.com</a>
+        </p>
+        <p>
+            We will do our best to respond to your inquiry as soon as possible. Thank you for using Bangla Toolbox!
+        </p>
+    </div>
+</div>
+
+<!-- Privacy Policy Page -->
+<div id="privacyPolicyContent" class="calculator-content">
+    <div class="p-6 text-left text-gray-700 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed">
+	        <!-- নতুন ব্যাক বাটন শুরু -->
+    <button class="back-to-main-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" /></svg>
+        <span>ফিরে যান</span>
+    </button>
+        <!-- নতুন ব্যাক বাটন শেষ -->
+        <h2 class="text-2xl font-bold mb-4">Privacy Policy for Bangla Toolbox</h2>
+
+        <p class="mb-4">At Bangla Toolbox, accessible from https://banglatoolbox.github.io/, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Bangla Toolbox and how we use it.</p>
+
+        <h3 class="text-xl font-semibold mt-6 mb-2">Log Files</h3>
+        <p class="mb-4">Bangla Toolbox follows a standard procedure of using log files. These files log visitors when they visit websites. The information collected by log files include internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable. The purpose of the information is for analyzing trends, administering the site, and gathering demographic information.</p>
+
+        <h3 class="text-xl font-semibold mt-6 mb-2">Cookies and Web Beacons</h3>
+        <p class="mb-4">Like any other website, Bangla Toolbox uses 'cookies'. These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users' experience by customizing our web page content based on visitors' browser type and/or other information.</p>
+
+        <h3 class="text-xl font-semibold mt-6 mb-2">Google DoubleClick DART Cookie</h3>
+        <p class="mb-4">Google is one of a third-party vendor on our site. It also uses cookies, known as DART cookies, to serve ads to our site visitors based upon their visit to www.website.com and other sites on the internet. However, visitors may choose to decline the use of DART cookies by visiting the Google ad and content network Privacy Policy at the following URL – <a href="https://policies.google.com/technologies/ads" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">https://policies.google.com/technologies/ads</a></p>
+
+        <h3 class="text-xl font-semibold mt-6 mb-2">Our Advertising Partners</h3>
+        <p class="mb-4">Some of advertisers on our site may use cookies and web beacons. Our advertising partners are listed below. Each of our advertising partners has their own Privacy Policy for their policies on user data. For easier access, we hyperlinked to their Privacy Policies below.</p>
+        <ul class="list-disc ml-6">
+            <li>Google: <a href="https://policies.google.com/technologies/ads" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">https://policies.google.com/technologies/ads</a></li>
+        </ul>
+
+        <h3 class="text-xl font-semibold mt-6 mb-2">Third Party Privacy Policies</h3>
+        <p class="mb-4">Bangla Toolbox's Privacy Policy does not apply to other advertisers or websites. Thus, we are advising you to consult the respective Privacy Policies of these third-party ad servers for more detailed information. It may include their practices and instructions about how to opt-out of certain options.</p>
+
+        <h3 class="text-xl font-semibold mt-6 mb-2">Online Privacy Policy Only</h3>
+        <p class="mb-4">This Privacy Policy applies only to our online activities and is valid for visitors to our website with regards to the information that they shared and/or collect in Bangla Toolbox. This policy is not applicable to any information collected offline or via channels other than this website.</p>
+
+        <h3 class="text-xl font-semibold mt-6 mb-2">Consent</h3>
+        <p>By using our website, you hereby consent to our Privacy Policy and agree to its Terms and Conditions.</p>
+    </div>
+</div>
+
+<!-- Terms & Conditions Page -->
+<div id="termsContent" class="calculator-content">
+    <div class="p-6 text-left text-gray-700 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed">
+	        <!-- নতুন ব্যাক বাটন শুরু -->
+    <button class="back-to-main-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" /></svg>
+        <span>ফিরে যান</span>
+    </button>
+        <!-- নতুন ব্যাক বাটন শেষ -->
+        <h2 class="text-2xl font-bold mb-4">Terms and Conditions</h2>
+
+        <p class="mb-4">Welcome to Bangla Toolbox!</p>
+        <p class="mb-4">These terms and conditions outline the rules and regulations for the use of Bangla Toolbox's Website, located at https://banglatoolbox.github.io/.</p>
+        <p class="mb-4">By accessing this website we assume you accept these terms and conditions. Do not continue to use Bangla Toolbox if you do not agree to take all of the terms and conditions stated on this page.</p>
+
+        <h3 class="text-xl font-semibold mt-6 mb-2">License</h3>
+        <p class="mb-4">Unless otherwise stated, Bangla Toolbox and/or its licensors own the intellectual property rights for all material on Bangla Toolbox. All intellectual property rights are reserved. You may access this from Bangla Toolbox for your own personal use subjected to restrictions set in these terms and conditions.</p>
+        <p class="mb-4">You must not:</p>
+        <ul class="list-disc ml-6 mb-4">
+            <li>Republish material from Bangla Toolbox</li>
+            <li>Sell, rent or sub-license material from Bangla Toolbox</li>
+            <li>Reproduce, duplicate or copy material from Bangla Toolbox</li>
+            <li>Redistribute content from Bangla Toolbox</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold mt-6 mb-2">Disclaimer</h3>
+        <p>The materials on Bangla Toolbox's website are provided on an 'as is' basis. Bangla Toolbox makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.</p>
+        <p>Further, Bangla Toolbox does not warrant or make any representations concerning the accuracy, likely results, or reliability of the use of the materials on its website or otherwise relating to such materials or on any sites linked to this site.</p>
+    </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- END: ABOUT US, CONTACT, PRIVACY, TERMS PAGES -->
+<!-- ======================================================== -->
+
+<!-- START: AD-SENSE REQUIRED PAGES FOOTER -->
+<footer class="mt-8 pt-4 border-t border-gray-200 dark:border-gray-600 text-center text-xs text-gray-500 dark:text-gray-400">
+    <div class="flex justify-center items-center gap-4 mb-2">
+        <a id="aboutUsTab" href="javascript:void(0);" class="hover:underline">About Us</a>
+        <span class="text-gray-300 dark:text-gray-600">|</span>
+        <a id="contactUsTab" href="javascript:void(0);" class="hover:underline">Contact Us</a>
+        <span class="text-gray-300 dark:text-gray-600">|</span>
+        <a id="privacyPolicyTab" href="javascript:void(0);" class="hover:underline">Privacy Policy</a>
+        <span class="text-gray-300 dark:text-gray-600">|</span>
+        <a id="termsTab" href="javascript:void(0);" class="hover:underline">Terms & Conditions</a>
+    </div>
+    <p>&copy; 2026 Bangla Toolbox. All Rights Reserved.</p>
+</footer>
+<!-- END: AD-SENSE REQUIRED PAGES FOOTER -->
+
 </div>
 
     <!-- API কী মডেল -->
@@ -14847,6 +15019,16 @@ try {
             console.log('DOMContentLoaded ইভেন্ট চালু হয়েছে। স্ক্রিপ্ট চলছে।');
             try {
                 const basicCalcTab = document.getElementById('basicCalcTab');
+				// এই চারটি লাইন আপনার বিদ্যমান const ভেরিয়েবলের সাথে যুক্ত করুন
+				const aboutUsTab = document.getElementById('aboutUsTab');
+				const contactUsTab = document.getElementById('contactUsTab');
+				const privacyPolicyTab = document.getElementById('privacyPolicyTab');
+				const termsTab = document.getElementById('termsTab');
+
+				const aboutUsContent = document.getElementById('aboutUsContent');
+				const contactUsContent = document.getElementById('contactUsContent');
+				const privacyPolicyContent = document.getElementById('privacyPolicyContent');
+				const termsContent = document.getElementById('termsContent');
                 const ageCalcTab = document.getElementById('ageCalcTab');
                 const dateCalcTab = document.getElementById('dateCalcTab');
                 const scientificCalcTab = document.getElementById('scientificCalcTab');
@@ -15280,7 +15462,7 @@ function showTab(tabId) {
         ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,barcodeGenTab, randomPickerTab,
         translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
         qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab, webSearchTab, 
-        textAssistantTab,holidayListTab,quizTab,unitPriceTab,tasbeehTab,diffCheckerTab,expenseTrackerTab,textEncryptionTab,
+        textAssistantTab,holidayListTab,quizTab,unitPriceTab,tasbeehTab,diffCheckerTab,expenseTrackerTab,textEncryptionTab,aboutUsTab, contactUsTab, privacyPolicyTab, termsTab,
         allFeaturesTab
     ];
     const contents = [
@@ -15289,7 +15471,7 @@ function showTab(tabId) {
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent, barcodeGenContent, randomPickerContent,
         weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
         textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,unitPriceContent,tasbeehContent,
-		diffCheckerContent,expenseTrackerContent,textEncryptionContent,
+		diffCheckerContent,expenseTrackerContent,textEncryptionContent,aboutUsContent, contactUsContent, privacyPolicyContent, termsContent,
         allFeaturesContent
     ];
 
@@ -15593,6 +15775,23 @@ case 'randomPicker':
     activeContent = textEncryptionContent;
     initializeTextEncryption();
     break;
+	// switch (tabId) ব্লকের ভেতরে নিচের case-গুলো যুক্ত করুন
+        case 'about':
+            activeTab = aboutUsTab;
+            activeContent = aboutUsContent;
+            break;
+        case 'contact':
+            activeTab = contactUsTab;
+            activeContent = contactUsContent;
+            break;
+        case 'privacy':
+            activeTab = privacyPolicyTab;
+            activeContent = privacyPolicyContent;
+            break;
+        case 'terms':
+            activeTab = termsTab;
+            activeContent = termsContent;
+            break;
 case 'speedTest':
     activeTab = speedTestTab;
     activeContent = speedTestContent;
@@ -15651,11 +15850,39 @@ case 'speedTest':
 // ====================================================================
 
 // ====================================================================
+// START: BACK TO MAIN BUTTON LOGIC
+// ====================================================================
+function initializeBackButtons() {
+    const backButtons = document.querySelectorAll('.back-to-main-btn');
+    backButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // বাটনটির প্যারেন্ট পেজকে হাইড করুন
+            const parentContent = button.closest('.calculator-content');
+            if (parentContent) {
+                parentContent.classList.remove('active');
+            }
+            // কনভার্টার ট্যাব দেখান
+            showTab('converter');
+        });
+    });
+}
+// পেজ লোড হওয়ার সাথে সাথে বাটনগুলোতে ইভেন্ট যুক্ত করুন
+initializeBackButtons();
+// ====================================================================
+// END: BACK TO MAIN BUTTON LOGIC
+// ====================================================================
+
+// ====================================================================
 // START: IF SECTION FOR TAB
 // ====================================================================
 //নিচের এই সেকশনে নতুন ট্যাবের ইফ লাইনটি যুক্ত করতে হয় বা বসাতে হয় ।
 
     if (basicCalcTab) basicCalcTab.addEventListener('click', () => showTab('basic'));
+	// এই চারটি লাইন আপনার বিদ্যমান event listener-গুলোর সাথে যুক্ত করুন
+	if (aboutUsTab) aboutUsTab.addEventListener('click', () => showTab('about'));
+	if (contactUsTab) contactUsTab.addEventListener('click', () => showTab('contact'));
+	if (privacyPolicyTab) privacyPolicyTab.addEventListener('click', () => showTab('privacy'));
+	if (termsTab) termsTab.addEventListener('click', () => showTab('terms'));
     if (ageCalcTab) ageCalcTab.addEventListener('click', () => showTab('age'));
     if (dateCalcTab) dateCalcTab.addEventListener('click', () => showTab('date'));
     if (scientificCalcTab) scientificCalcTab.addEventListener('click', () => showTab('scientific'));
