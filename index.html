@@ -21611,7 +21611,7 @@ async function pasteFromClipboard(textareaId) {
                 break;
             }
 			
-		// START: JS PASTE LOGIC FOR V5 (UPDATED WITH NEW SYMBOLS)
+		// START: JS PASTE LOGIC FOR V5 (UPDATED WITH NEW SYMBOLS & PERIOD SPACING)
           case 'double-enter-v5': {
                 // ১. v4 এর বেসিক লজিক: সব মাল্টিপল হোয়াইটস্পেস ১টি হয়ে যাবে
                 let processedText = clipboardText.trim().replace(/(\r?\n\s*){2,}/g, '\n');
@@ -21624,19 +21624,9 @@ async function pasteFromClipboard(textareaId) {
                 // ৩. কমা (,) এবং পাইপ (|) চিহ্নের পরে ১টি স্পেস নিশ্চিত করা
                 processedText = processedText.replace(/([,|])(?!\s|$|[”’ÕÓ])/g, '$1 ');
 
-                // ৪. নতুন লজিক: দাঁড়ির (।) পর যদি এন্টার থাকে এবং সেটি যদি লেখার শেষ দাঁড়ি না হয়, তবে একটি স্পেস যুক্ত করা
-                processedText = processedText.replace(/।(\r?\n)/g, (match, newline, offset) => {
-                    // বর্তমান দাঁড়ির পর আর কোনো দাঁড়ি আছে কিনা তা খোঁজা হচ্ছে
-                    const nextPeriodIndex = processedText.indexOf('।', offset + 1);
-                    
-                    // যদি পরে আরও দাঁড়ি পাওয়া যায় (অর্থাৎ এটি শেষ দাঁড়ি নয়)
-                    if (nextPeriodIndex !== -1) {
-                        return '। ' + newline; // দাঁড়ির পর একটি স্পেস এবং তারপর এন্টার
-                    } else {
-                        // এটিই শেষ দাঁড়ি, তাই কোনো পরিবর্তন হবে না
-                        return match; // যেমন ছিল তেমনই (`।` এবং `এন্টার`) থাকবে
-                    }
-                });
+                // ৪. নতুন লজিক: সকল দাঁড়ির (।) পর একটি স্পেস যুক্ত করা হবে, যদি না এর পরে স্পেস বা কোটেশন চিহ্ন থাকে।
+                // এটি টেক্সটের শেষের দাঁডিসহ সব দাঁড়ির জন্য কাজ করবে।
+                processedText = processedText.replace(/।(?!\s|[”’ÕÓ])/g, '। ');
 
                 // ৫. শেষে ডাবল এন্টার হ্যান্ডলিং
                 if (textarea.value.trim() !== '') {
@@ -21646,7 +21636,7 @@ async function pasteFromClipboard(textareaId) {
                 }
                 break;
             }
-		// END: JS PASTE LOGIC FOR V5 (UPDATED WITH NEW SYMBOLS)
+		// END: JS PASTE LOGIC FOR V5 (UPDATED WITH NEW SYMBOLS & PERIOD SPACING)
 
             case 'custom-serial': {
                 const prefix = customValue ? customValue.replace(/\{serial\}/g, serialCounter) : '';
