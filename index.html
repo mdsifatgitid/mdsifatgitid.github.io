@@ -21611,26 +21611,33 @@ async function pasteFromClipboard(textareaId) {
                 break;
             }
 			
-		// START: JS PASTE LOGIC FOR V5 (IMPROVED WITH SPACE BEFORE NEWLINE)
+		// START: JS PASTE LOGIC FOR V5 (FINAL FIX FOR QUOTATION SPACING)
           case 'double-enter-v5': {
-                // ১. বেসিক ক্লিনআপ: একাধিক স্পেস/লাইন এবং লাইনের শুরুর স্পেস মুছে ফেলা।
+                // ১. বেসিক ক্লিনআপ।
                 let processedText = clipboardText.trim()
                     .replace(/(\r?\n\s*){2,}/g, '\n') // একাধিক নতুন লাইন -> একটি
                     .replace(/^\s+/gm, '')             // লাইনের শুরুর স্পেস -> বাদ
                     .replace(/ {2,}/g, ' ');           // একাধিক স্পেস -> একটি
 
-                // ২. সকল চিহ্নের (দাঁড়ি, পাইপ, কমা, কোটেশন) আগের বাড়তি স্পেস বা এন্টার মুছে ফেলা।
+                // ২. সকল চিহ্নের আগের বাড়তি স্পেস মুছে ফেলা।
                 processedText = processedText.replace(/\s+([।|,|’|”|Õ|Ó])/g, '$1');
-                
-                // ৩. (*** মূল পরিবর্তন ***) দাঁড়ি বা পাইপের পরে থাকা স্পেস ও এন্টার ঠিক করা।
-                // এটি দুটি ধাপে কাজ করে:
-                
-                // ধাপ ক: যদি দাঁড়ি/পাইপের পরে এন্টার (newline) থাকে, তাহলে সেগুলোকে " স্পেস + একটি এন্টার"-এ পরিণত করুন।
-                processedText = processedText.replace(/([।|])([”’ÓÕ]?)(\s*[\r\n]+\s*)/g, '$1$2 \n');
 
-                // ধাপ খ: যদি দাঁড়ি/পাইপের পরে এন্টার না থাকে, তাহলে শুধু একটি স্পেস যোগ করুন।
-                // (?!) Negative lookahead ব্যবহার করে নিশ্চিত করা হচ্ছে যে পরে কোনো এন্টার নেই।
-                processedText = processedText.replace(/([।|])([”’ÓÕ]?)(?![ \t\r\n]*[\r\n])\s*/g, '$1$2 ');
+                // ৩. (*** মূল সমাধান ***) দাঁড়ি ও পাইপের পরের স্পেস এবং এন্টার হ্যান্ডেল করার জন্য একটি মাত্র নিয়ম।
+                // এটি একটি ফাংশন ব্যবহার করে শর্ত অনুযায়ী রিপ্লেস করে।
+                processedText = processedText.replace(/([।|])([”’ÓÕ]?)(\s*)/g, (match, dandi, quote, whitespace) => {
+                    const quoteChar = quote || ''; // যদি কোটেশন না থাকে, তবে খালি স্ট্রিং।
+                    
+                    // যদি হোয়াইটস্পেসের মধ্যে এন্টার থাকে
+                    if (/\n|\r/.test(whitespace)) {
+                        // তাহলে দাঁড়ি + কোটেশন + একটি স্পেস + একটি এন্টার দিয়ে রিপ্লেস করুন।
+                        return `${dandi}${quoteChar} \n`;
+                    }
+                    // যদি এন্টার না থাকে
+                    else {
+                        // তাহলে দাঁড়ি + কোটেশন + একটি স্পেস দিয়ে রিপ্লেস করুন।
+                        return `${dandi}${quoteChar} `;
+                    }
+                });
 
                 // ৪. কমা (,) চিহ্নের পরে একটি স্পেস নিশ্চিত করা।
                 processedText = processedText.replace(/([,])(?!\s|$|[”’ÓÕ])/g, '$1 ');
@@ -21643,7 +21650,7 @@ async function pasteFromClipboard(textareaId) {
                 }
                 break;
             }
-		// END: JS PASTE LOGIC FOR V5 (IMPROVED WITH SPACE BEFORE NEWLINE)
+		// END: JS PASTE LOGIC FOR V5 (FINAL FIX FOR QUOTATION SPACING)
 
             case 'custom-serial': {
                 const prefix = customValue ? customValue.replace(/\{serial\}/g, serialCounter) : '';
