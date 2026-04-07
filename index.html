@@ -21641,38 +21641,43 @@ async function pasteFromClipboard(textareaId) {
                 break;
             }
 			
-		// START: JS PASTE LOGIC FOR V5 (FINAL FIX FOR QUOTATION SPACING)
-          case 'double-enter-v5': {
-                // ১. বেসিক ক্লিনআপ।
+	// START: JS PASTE LOGIC FOR V5 (FINAL FIX FOR QUOTATION SPACING)
+			case 'double-enter-v5': {
+                // ১. বেসিক ক্লিনআপ (একাধিক লাইন এবং স্পেস কমানো)
                 let processedText = clipboardText.trim()
-                    .replace(/(\r?\n\s*){2,}/g, '\n') // একাধিক নতুন লাইন -> একটি
-                    .replace(/^\s+/gm, '')             // লাইনের শুরুর স্পেস -> বাদ
-                    .replace(/ {2,}/g, ' ');           // একাধিক স্পেস -> একটি
+                    .replace(/(\r?\n\s*){2,}/g, '\n')
+                    .replace(/^\s+/gm, '')
+                    .replace(/ {2,}/g, ' ');
 
-                // ২. সকল চিহ্নের আগের বাড়তি স্পেস মুছে ফেলা।
+                // ২. চিহ্নের আগের বাড়তি স্পেস মুছে ফেলা (ফ্যান্সি কোটসহ)
                 processedText = processedText.replace(/\s+([।|,|’|”|Õ|Ó])/g, '$1');
 
-                // ৩. (*** মূল সমাধান ***) দাঁড়ি ও পাইপের পরের স্পেস এবং এন্টার হ্যান্ডেল করার জন্য একটি মাত্র নিয়ম।
-                // এটি একটি ফাংশন ব্যবহার করে শর্ত অনুযায়ী রিপ্লেস করে।
-                processedText = processedText.replace(/([।|])([”’ÓÕ]?)(\s*)/g, (match, dandi, quote, whitespace) => {
-                    const quoteChar = quote || ''; // যদি কোটেশন না থাকে, তবে খালি স্ট্রিং।
+                // ৩. দাড়ি ও পাইপের পরের স্পেস এবং এন্টার হ্যান্ডেলিং
+                // এখানে ' এবং " এর জন্য এক্সক্লুশন লজিক যোগ করা হয়েছে
+                processedText = processedText.replace(/([।|])([”’ÓÕ]?)(\s*)/g, (match, dandi, quote, whitespace, offset, fullText) => {
+                    const quoteChar = quote || '';
                     
-                    // যদি হোয়াইটস্পেসের মধ্যে এন্টার থাকে
-                    if (/\n|\r/.test(whitespace)) {
-                        // তাহলে দাঁড়ি + কোটেশন + একটি স্পেস + একটি এন্টার দিয়ে রিপ্লেস করুন।
-                        return `${dandi}${quoteChar} \n`;
+                    // চেক: দাড়ি/পাইপের ঠিক পরেই (বা স্পেসের পরে) ' অথবা " আছে কিনা
+                    const nextChar = fullText[offset + match.length];
+                    if (nextChar === "'" || nextChar === '"') {
+                        // যদি ' বা " পাওয়া যায়, তবে যা আছে তাই থাকবে (কোনো পরিবর্তন হবে না)
+                        return match;
                     }
-                    // যদি এন্টার না থাকে
-                    else {
-                        // তাহলে দাঁড়ি + কোটেশন + একটি স্পেস দিয়ে রিপ্লেস করুন।
+
+                    // সাধারণ ভিউ ৫ লজিক (অন্যান্য ক্ষেত্রে কাজ করবে)
+                    if (/\n|\r/.test(whitespace)) {
+                        // যদি এন্টার থাকে, তবে একটি স্পেস এবং একটি এন্টার নিশ্চিত করবে
+                        return `${dandi}${quoteChar} \n`;
+                    } else {
+                        // অন্যথায় শুধু একটি স্পেস নিশ্চিত করবে
                         return `${dandi}${quoteChar} `;
                     }
                 });
 
-                // ৪. কমা (,) চিহ্নের পরে একটি স্পেস নিশ্চিত করা।
+                // ৪. কমা (,) চিহ্নের পরে একটি স্পেস নিশ্চিত করা
                 processedText = processedText.replace(/([,])(?!\s|$|[”’ÓÕ])/g, '$1 ');
 
-                // ৫. শেষে ডাবল এন্টার হ্যান্ডলিং।
+                // ৫. শেষে ডাবল এন্টার হ্যান্ডলিং
                 if (textarea.value.trim() !== '') {
                     textToInsert = '\n\n' + processedText;
                 } else {
