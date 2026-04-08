@@ -8013,6 +8013,7 @@ body.sidebar-open #sidebarOverlay {
 				<button id="recipeTab" class="tab-button rounded-xl">রেসিপি জেনারেটর</button>
 				<button id="pdfToolsTab" class="tab-button rounded-xl">পিডিএফ টুলস</button>
 				<button id="jsonFormatterTab" class="tab-button rounded-xl">জেসন ফর্মাটার</button>
+				<button id="seoMetaGenTab" class="tab-button rounded-xl">এসইও মেটা ট্যাগ</button>
 				<button id="memeGenTab" class="tab-button rounded-xl">মিম জেনারেটর</button>
 				<button id="randomPickerTab" class="tab-button rounded-xl">র‍্যান্ডম পিকার</button>
 				<button id="screenRecorderTab" class="tab-button rounded-xl">স্ক্রিন রেকর্ডার</button>
@@ -8091,7 +8092,31 @@ body.sidebar-open #sidebarOverlay {
             <button id="explainBasicBtn" class="explain-button rounded-xl">ব্যাখ্যা করুন ✨</button>
             <div id="basicExplanationLoading" class="loading-indicator">জেমিনি ব্যাখ্যা করছে</div>
             <div id="basicExplanation" class="response-area rounded-lg mt-4" style="background-color: #e6f7ff; border: 1px solid #b3e0ff;"></div>
-        </div>
+             <!-- Info Section Start -->
+            <div class="mt-8 p-5 bg-white dark:bg-gray-800 rounded-xl border-l-4 border-indigo-500 shadow-md text-left mx-auto max-w-4xl">
+                <h4 class="text-lg font-bold text-indigo-700 dark:text-indigo-400 mb-3 border-b pb-2 dark:border-gray-700 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+                    এই টুলের সুবিধা ও ব্যবহার (Features & Usage)
+                </h4>
+                
+                <div class="mb-4">
+                    <h5 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-1">🇧🇩 বাংলায়:</h5>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
+                        <strong class="text-gray-700 dark:text-gray-300">সুবিধা ও কার্যকারিতা:</strong> এটি একটি আধুনিক ও দ্রুতগতির সাধারণ ক্যালকুলেটর। এর মাধ্যমে আপনি প্রাত্যহিক যোগ, বিয়োগ, গুণ, ভাগ এবং শতকরা (%) হিসাব খুব সহজেই করতে পারবেন। এর সবচেয়ে বড় বৈশিষ্ট্য হলো 'হিস্টোরি প্যানেল', যা আপনার অতীতের সমস্ত হিসাব সংরক্ষণ করে রাখে এবং এআই (AI) এর মাধ্যমে যেকোনো জটিল হিসাবের ব্যাখ্যা প্রদান করতে পারে।<br>
+                        <strong class="text-gray-700 dark:text-gray-300 mt-1 inline-block">ব্যবহারের নিয়ম:</strong> অনস্ক্রিন বাটন অথবা আপনার কিবোর্ডের নাম্বার প্যাড ব্যবহার করে হিসাব করুন। কোনো হিসাবের বিস্তারিত বুঝতে চাইলে "ব্যাখ্যা করুন ✨" বাটনে ক্লিক করুন।
+                    </p>
+                </div>
+                
+                <div>
+                    <h5 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-1">🇬🇧 In English:</h5>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
+                        <strong class="text-gray-700 dark:text-gray-300">Benefits & Functionality:</strong> This is a modern and fast basic calculator. It allows you to easily perform daily calculations like addition, subtraction, multiplication, division, and percentages (%). Its best features include a 'History Panel' that saves all your past calculations and an AI-powered explanation tool for complex equations.<br>
+                        <strong class="text-gray-700 dark:text-gray-300 mt-1 inline-block">How to use:</strong> Use the on-screen buttons or your physical keyboard's numpad to calculate. Click the "Explain ✨" button to get a detailed AI explanation of your current calculation.
+                    </p>
+                </div>
+            </div>
+            <!-- Info Section End -->       
+		</div>
 
         <!-- বয়স ক্যালকুলেটর বিভাগ -->
         <div id="ageCalculatorContent" class="calculator-content">
@@ -8151,7 +8176,31 @@ body.sidebar-open #sidebarOverlay {
                 <div id="yearCalcResult" class="result-area">
                     <!-- Results will be injected here -->
                 </div>
-            </div>
+			        </div>
+		                <!-- Info Section Start -->
+                <div class="mt-8 p-5 bg-white dark:bg-gray-800 rounded-xl border-l-4 border-indigo-500 shadow-md text-left">
+                    <h4 class="text-lg font-bold text-indigo-700 dark:text-indigo-400 mb-3 border-b pb-2 dark:border-gray-700 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+                        এই টুলের সুবিধা ও ব্যবহার (Features & Usage)
+                    </h4>
+                    
+                    <div class="mb-4">
+                        <h5 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-1">🇧🇩 বাংলায়:</h5>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
+                            <strong class="text-gray-700 dark:text-gray-300">সুবিধা ও কার্যকারিতা:</strong> এটি একটি ডুয়াল-ফাংশন ক্যালকুলেটর। প্রথম অংশে আপনি দুটি ভিন্ন তারিখের মধ্যে আপনার নির্ভুল বয়স (বছর, মাস, দিন) বের করতে পারবেন। দ্বিতীয় অংশে যেকোনো তারিখ ও সময়ের সাথে নির্দিষ্ট পরিমাণ বছর, মাস, দিন বা ঘণ্টা যোগ ও বিয়োগ করে অতীত বা ভবিষ্যতের সঠিক সময় বের করা যায়।<br>
+                            <strong class="text-gray-700 dark:text-gray-300 mt-1 inline-block">ব্যবহারের নিয়ম:</strong> বয়স বের করতে জন্ম তারিখ সিলেক্ট করে 'হিসাব করুন' চাপুন। তারিখ যোগ/বিয়োগ করতে বেস টাইম সিলেক্ট করে কত বছর বা দিন যোগ/বিয়োগ করবেন তা লিখে বাটনে ক্লিক করুন।
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h5 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-1">🇬🇧 In English:</h5>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
+                            <strong class="text-gray-700 dark:text-gray-300">Benefits & Functionality:</strong> This is a dual-function calculator. In the first part, you can calculate your exact age (years, months, days) between two dates. In the second part, you can add or subtract specific years, months, days, or hours from any given date and time to find exact past or future timestamps.<br>
+                            <strong class="text-gray-700 dark:text-gray-300 mt-1 inline-block">How to use:</strong> To calculate age, select your birth date and click 'Calculate'. To manipulate dates, set a base time, enter the values to add/subtract, and hit the calculate button.
+                        </p>
+                    </div>
+                </div>
+                <!-- Info Section End -->
         </div>
 
 
@@ -8668,7 +8717,30 @@ body.sidebar-open #sidebarOverlay {
                         </div>
                     </div>
                 </div>
-
+               <!-- Info Section Start -->
+                <div class="mt-8 p-5 bg-white dark:bg-gray-800 rounded-xl border-l-4 border-indigo-500 shadow-md text-left">
+                    <h4 class="text-lg font-bold text-indigo-700 dark:text-indigo-400 mb-3 border-b pb-2 dark:border-gray-700 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+                        এই টুলের সুবিধা ও ব্যবহার (Features & Usage)
+                    </h4>
+                    
+                    <div class="mb-4">
+                        <h5 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-1">🇧🇩 বাংলায়:</h5>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
+                            <strong class="text-gray-700 dark:text-gray-300">সুবিধা ও কার্যকারিতা:</strong> আপনার টাইপিং স্পিড (WPM) ও নির্ভুলতা যাচাই করার জন্য এটি একটি চমৎকার টুল। এখানে বাংলা ও ইংরেজি উভয় ভাষায় টাইপিং অনুশীলন করা যায়। টেস্ট শেষে আপনার পারফরম্যান্স হিস্ট্রি এবং কোন অক্ষরগুলো টাইপ করতে বেশি সময় লাগছে, তা গ্রাফের মাধ্যমে বিশ্লেষণ করে দেখানো হয়।<br>
+                            <strong class="text-gray-700 dark:text-gray-300 mt-1 inline-block">ব্যবহারের নিয়ম:</strong> ওপর থেকে আপনার পছন্দের অনুচ্ছেদ এবং সময়সীমা নির্বাচন করুন (চাইলে কাস্টম টেক্সটও দিতে পারেন)। এরপর "পুনরায় শুরু করুন" বাটনে ক্লিক করে হাইলাইট করা লেখাটি নিচের বক্সে টাইপ করা শুরু করুন।
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h5 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-1">🇬🇧 In English:</h5>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
+                            <strong class="text-gray-700 dark:text-gray-300">Benefits & Functionality:</strong> This is an excellent tool to test and improve your typing speed (WPM) and accuracy. You can practice in both Bengali and English. After the test, it provides graphical analysis of your performance history and identifies the slowest characters you type.<br>
+                            <strong class="text-gray-700 dark:text-gray-300 mt-1 inline-block">How to use:</strong> Select your preferred paragraph and time limit from the top (you can also use custom text). Then click "Restart" and begin typing the highlighted text in the input box below.
+                        </p>
+                    </div>
+                </div>
+                <!-- Info Section End -->
             </div>
         </div>
 
@@ -8877,6 +8949,30 @@ body.sidebar-open #sidebarOverlay {
         
         <a href="https://bio.link/mdsifatbiolink" target="_blank" class="external-converter-link rounded-xl">প্রয়োজনে এখানে যোগাযোগ করুন অথবা মতামত জানান</a>
     </div>
+        <!-- Info Section Start -->
+        <div class="mt-8 p-5 bg-white dark:bg-gray-800 rounded-xl border-l-4 border-indigo-500 shadow-md text-left mx-auto max-w-4xl">
+            <h4 class="text-lg font-bold text-indigo-700 dark:text-indigo-400 mb-3 border-b pb-2 dark:border-gray-700 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+                এই টুলের সুবিধা ও ব্যবহার (Features & Usage)
+            </h4>
+            
+            <div class="mb-4">
+                <h5 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-1">🇧🇩 বাংলায়:</h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
+                    <strong class="text-gray-700 dark:text-gray-300">সুবিধা ও কার্যকারিতা:</strong> এটি একটি উন্নত মানের বাংলা ফন্ট কনভার্টার। এর সাহায্যে আপনি সহজেই ইউনিকোড থেকে বিজয় বা বিজয় থেকে ইউনিকোডে টেক্সট কনভার্ট করতে পারবেন। এখানে ওয়ার্ড/ক্যারেক্টার কাউন্টার, লাইভ টাইপিং কনভার্সন, আনডু-রিডু, কাস্টম প্রিসেট সেভ করা এবং MS Word/Excel ফাইল সরাসরি আপলোড করে কনভার্ট করার আধুনিক সুবিধা রয়েছে।<br>
+                    <strong class="text-gray-700 dark:text-gray-300 mt-1 inline-block">ব্যবহারের নিয়ম:</strong> নির্দিষ্ট বক্সে আপনার লেখা পেস্ট করে কনভার্ট বাটনে ক্লিক করুন। ভাঙা বিজয় লেখা ঠিক করতে 'ফিক্স করুন' ব্যবহার করুন। পুরো ফাইল কনভার্ট করতে নিচের আপলোড সেকশনে ফাইল ড্রপ করে এক্সপোর্ট করুন।
+                </p>
+            </div>
+            
+            <div>
+                <h5 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-1">🇬🇧 In English:</h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
+                    <strong class="text-gray-700 dark:text-gray-300">Benefits & Functionality:</strong> This is an advanced Bengali font converter. You can seamlessly convert text between Unicode and Bijoy formats. It includes modern features like word/character counting, live typing conversion, undo-redo, custom paste presets, and direct MS Word/Excel file upload support for bulk conversion.<br>
+                    <strong class="text-gray-700 dark:text-gray-300 mt-1 inline-block">How to use:</strong> Paste your text into the respective box and click convert. Use 'Fix' to correct broken Bijoy text. For bulk conversion, drop a file in the upload section below and click export.
+                </p>
+            </div>
+        </div>
+        <!-- Info Section End -->
 </div>
 
 <!-- কাস্টম প্রিসেট ইনপুটের জন্য মোডাল -->
@@ -9208,6 +9304,9 @@ body.sidebar-open #sidebarOverlay {
                     <li class="mb-2">
                         <strong class="text-yellow-600 dark:text-yellow-400 hover:text-yellow-500 cursor-pointer transition-colors">জেসন ফর্মাটার:</strong> অগোছালো JSON কোড সুন্দরভাবে সাজান (Beautify), মিনিফাই করুন এবং ভুল থাকলে তা যাচাই করুন।
                     </li>
+					<li class="mb-2">
+						<strong class="text-yellow-600 dark:text-yellow-400 hover:text-yellow-500 cursor-pointer transition-colors" onclick="showTab('seoMetaGen')">এসইও মেটা ট্যাগ:</strong> আপনার ওয়েবসাইট বা ব্লগের জন্য সহজে এসইও (SEO) এবং সোশ্যাল মিডিয়া শেয়ারিং মেটা ট্যাগ তৈরি করুন।
+					</li>
                     <li class="mb-2">
                         <strong class="text-pink-600 dark:text-pink-400 hover:text-pink-500 cursor-pointer transition-colors">মিম জেনারেটর:</strong> ছবি আপলোড করে টেক্সট বসিয়ে সহজেই মজার মিম তৈরি করুন।
                     </li>
@@ -9572,6 +9671,30 @@ body.sidebar-open #sidebarOverlay {
             <textarea id="ocrResultText" rows="10" placeholder="এখানে লেখা দেখা যাবে..."></textarea>
         </div>
         <button id="clearOcrBtn" class="font-clear-button rounded-lg mt-4 w-full">সব মুছে ফেলুন</button>
+		        <!-- Info Section Start -->
+        <div class="mt-8 p-5 bg-white dark:bg-gray-800 rounded-xl border-l-4 border-indigo-500 shadow-md text-left">
+            <h4 class="text-lg font-bold text-indigo-700 dark:text-indigo-400 mb-3 border-b pb-2 dark:border-gray-700 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+                এই টুলের সুবিধা ও ব্যবহার (Features & Usage)
+            </h4>
+            
+            <div class="mb-4">
+                <h5 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-1">🇧🇩 বাংলায়:</h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
+                    <strong class="text-gray-700 dark:text-gray-300">সুবিধা ও কার্যকারিতা:</strong> এআই (AI) চালিত এই ওসিআর (OCR) টুলের সাহায্যে আপনি যেকোনো ছবি, স্ক্রিনশট বা স্ক্যান করা ডকুমেন্ট থেকে বাংলা ও ইংরেজি লেখা হুবহু টেক্সট হিসেবে বের করে আনতে পারবেন। এটি হাতের লেখা বা জটিল ফন্টের ছবি থেকেও সফলভাবে টেক্সট এক্সট্র্যাক্ট করতে সক্ষম।<br>
+                    <strong class="text-gray-700 dark:text-gray-300 mt-1 inline-block">ব্যবহারের নিয়ম:</strong> ডটেড বক্সে ক্লিক করে আপনার কাঙ্ক্ষিত ছবিটি আপলোড করুন অথবা ড্র্যাগ করে টেনে এনে ছেড়ে দিন। এরপর "লেখা বের করুন" বাটনে ক্লিক করলে কিছুক্ষণ পর নিচের বক্সে আপনার টেক্সট চলে আসবে, যা আপনি কপি বা এডিট করতে পারবেন।
+                </p>
+            </div>
+            
+            <div>
+                <h5 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-1">🇬🇧 In English:</h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
+                    <strong class="text-gray-700 dark:text-gray-300">Benefits & Functionality:</strong> With this AI-powered OCR tool, you can accurately extract Bengali and English text from any image, screenshot, or scanned document. It is even capable of extracting text from handwriting or complex font styles.<br>
+                    <strong class="text-gray-700 dark:text-gray-300 mt-1 inline-block">How to use:</strong> Click on the dotted box to upload your desired image or drag and drop it inside the box. Then click the "Extract Text" button. After a short processing time, the extracted text will appear in the box below, ready to be copied or edited.
+                </p>
+            </div>
+        </div>
+        <!-- Info Section End -->
     </div>
 </div>
 <!-- নতুন: ওয়ার্ড কাউন্টার বিভাগ -->
@@ -12065,6 +12188,64 @@ body.sidebar-open #sidebarOverlay {
 </div>
 <!-- ======================================================== -->
 <!-- END: Text Encryption Content -->
+<!-- ======================================================== -->
+
+<!-- ======================================================== -->
+<!-- START: Meta Tag Content -->
+<!-- ======================================================== -->
+<div id="seoMetaGenContent" class="calculator-content">
+    <div class="converter-section" style="max-width: 800px; margin: 0 auto;">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200">🔍 এসইও মেটা ট্যাগ জেনারেটর</h3>
+        <p class="text-sm text-gray-500 mb-6 dark:text-gray-400">আপনার ওয়েবসাইট বা ব্লগের জন্য সহজে এসইও (SEO) এবং সোশ্যাল মিডিয়া (Facebook, Twitter) শেয়ারিং মেটা ট্যাগ তৈরি করুন।</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-left">
+            <div>
+                <label class="block mb-1 text-sm font-semibold dark:text-gray-300">সাইটের শিরোনাম (Title) <span class="text-red-500">*</span></label>
+                <input type="text" id="seoTitle" placeholder="যেমন: Bangla Toolbox - All in One Utility" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block mb-1 text-sm font-semibold dark:text-gray-300">সাইটের বিবরণ (Description) <span class="text-red-500">*</span></label>
+                <input type="text" id="seoDesc" placeholder="সাইট সম্পর্কে সংক্ষেপে লিখুন (১৬০ অক্ষরের মধ্যে)" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="md:col-span-2">
+                <label class="block mb-1 text-sm font-semibold dark:text-gray-300">কি-ওয়ার্ডস (Keywords)</label>
+                <input type="text" id="seoKeywords" placeholder="কমা (,) দিয়ে আলাদা করুন। যেমন: tools, calculator, bangla" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block mb-1 text-sm font-semibold dark:text-gray-300">লেখকের নাম (Author)</label>
+                <input type="text" id="seoAuthor" placeholder="যেমন: Md Shahiduzzaman Sifat" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block mb-1 text-sm font-semibold dark:text-gray-300">ওয়েবসাইটের লিংক (URL)</label>
+                <input type="url" id="seoUrl" placeholder="https://banglatoolbox.github.io/" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="md:col-span-2">
+                <label class="block mb-1 text-sm font-semibold dark:text-gray-300">ছবির লিংক (Image URL for Social Sharing)</label>
+                <input type="url" id="seoImage" placeholder="https://example.com/image.jpg" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
+            </div>
+        </div>
+
+        <div class="flex gap-3 mt-6 mb-6">
+            <button id="generateSeoBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-all flex justify-center items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+                জেনারেট করুন
+            </button>
+            <button id="clearSeoBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all">মুছুন</button>
+        </div>
+
+        <div id="seoResultArea" class="hidden text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+            <label class="block mb-2 font-bold text-gray-700 dark:text-gray-300">জেনারেট করা মেটা ট্যাগ (ওয়েবসাইটের &lt;head&gt; ট্যাগের ভেতর পেস্ট করুন):</label>
+            <textarea id="seoOutput" rows="12" class="w-full p-3 border rounded-lg font-mono text-sm bg-white dark:bg-gray-900 dark:border-gray-600 text-blue-600 dark:text-green-400 focus:outline-none focus:ring-2 focus:ring-indigo-500" readonly></textarea>
+            
+            <button id="copySeoBtn" class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow transition-all flex justify-center items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                কোড কপি করুন
+            </button>
+        </div>
+    </div>
+</div>
+<!-- ======================================================== -->
+<!-- END: Meta Tag Content -->
 <!-- ======================================================== -->
 
 
@@ -15144,6 +15325,8 @@ const expenseTrackerTab = document.getElementById('expenseTrackerTab');
 const expenseTrackerContent = document.getElementById('expenseTrackerContent');
 const textEncryptionTab = document.getElementById('textEncryptionTab');
 const textEncryptionContent = document.getElementById('textEncryptionContent');
+const seoMetaGenTab = document.getElementById('seoMetaGenTab');
+const seoMetaGenContent = document.getElementById('seoMetaGenContent');
 
 // ====================================================================
 // END: CONST SECTION FOR TAB
@@ -15491,7 +15674,7 @@ function showTab(tabId) {
         basicCalcTab,colorPickerTab, dashboardTab,imageResizerTab,moreSettingsTab,historyTab,currencyTab, emiCalcTab, ipInfoTab, recipeTab, pdfToolsTab,screenRecorderTab, jsonFormatterTab, memeGenTab, speedTestTab,
         ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,barcodeGenTab, randomPickerTab,
         translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
-        qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab, webSearchTab, 
+        qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab, webSearchTab, seoMetaGenTab,
         textAssistantTab,holidayListTab,quizTab,unitPriceTab,tasbeehTab,diffCheckerTab,expenseTrackerTab,textEncryptionTab,aboutUsTab, contactUsTab, privacyPolicyTab, termsTab,
         allFeaturesTab
     ];
@@ -15499,7 +15682,7 @@ function showTab(tabId) {
         basicCalculatorContent,colorPickerContent,dashboardContent,imageResizerContent,moreSettingsContent,historyContent,currencyContent, emiCalcContent, ipInfoContent, recipeContent, pdfToolsContent,screenRecorderContent, jsonFormatterContent, memeGenContent, speedTestContent,
         ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent,  converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent, webSearchContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent, barcodeGenContent, randomPickerContent,
-        weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent,
+        weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent, seoMetaGenContent,
         textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,unitPriceContent,tasbeehContent,
 		diffCheckerContent,expenseTrackerContent,textEncryptionContent,aboutUsContent, contactUsContent, privacyPolicyContent, termsContent,
         allFeaturesContent
@@ -15617,6 +15800,11 @@ case 'basic':
             activeContent = prayerTimeContent;
             initializePrayerTimeTab();
         break;
+		case 'seoMetaGen':
+			activeTab = seoMetaGenTab;
+			activeContent = seoMetaGenContent;
+			initializeSeoMetaGenerator();
+		break;
 			case 'tasbeeh':
 			activeTab = tasbeehTab;
 			activeContent = tasbeehContent;
@@ -15855,7 +16043,7 @@ case 'speedTest':
         'clock', 'player', 'quiz', 'history', 'daysObservances', 'tasbeeh','diffChecker',
         'holiday', 'zakat', 'qrCode', 'colorPicker', 'invoice', 'unitPrice',
         'imageResizer', 'emergency', 'healthLifestyle', 'expenseTracker',
-        'currency', 'emi', 'ip', 'recipe', 'pdf', 'randomPicker','barcode',
+        'currency', 'emi', 'ip', 'recipe', 'pdf', 'randomPicker','barcode','seoMetaGen',
         'screenRecorder', 'jsonFormatter', 'memeGen', 'speedTest', 'encryption',
         'allFeatures', 'importantLinks', 'donate'
     ];
@@ -15971,6 +16159,7 @@ if (tasbeehTab) {tasbeehTab.addEventListener('click', () => {showTab('tasbeeh');
     });
 }
 if (diffCheckerTab) diffCheckerTab.addEventListener('click', () => showTab('diffChecker'));
+if (seoMetaGenTab) seoMetaGenTab.addEventListener('click', () => showTab('seoMetaGen'));
 if (document.getElementById('donateIconBtn')) {document.getElementById('donateIconBtn').addEventListener('click', () => showTab('donate'));}
 if (expenseTrackerTab) expenseTrackerTab.addEventListener('click', () => {    showTab('expenseTracker');    initializeExpenseTracker(); });
 
@@ -20570,6 +20759,107 @@ function initializeJsonFormatter() {
 }
 // ========================================================
 // END: JSON Formatter Function
+// ========================================================
+
+// ========================================================
+// START: SEO Meta Tag Generator Function
+// ========================================================
+function initializeSeoMetaGenerator() {
+    const titleInput = document.getElementById('seoTitle');
+    const descInput = document.getElementById('seoDesc');
+    const keywordsInput = document.getElementById('seoKeywords');
+    const authorInput = document.getElementById('seoAuthor');
+    const urlInput = document.getElementById('seoUrl');
+    const imageInput = document.getElementById('seoImage');
+    
+    const generateBtn = document.getElementById('generateSeoBtn');
+    const clearBtn = document.getElementById('clearSeoBtn');
+    const copyBtn = document.getElementById('copySeoBtn');
+    
+    const resultArea = document.getElementById('seoResultArea');
+    const outputArea = document.getElementById('seoOutput');
+
+    if (!generateBtn) return;
+
+    generateBtn.onclick = () => {
+        const title = titleInput.value.trim();
+        const desc = descInput.value.trim();
+        const keywords = keywordsInput.value.trim();
+        const author = authorInput.value.trim();
+        const url = urlInput.value.trim();
+        const image = imageInput.value.trim();
+
+        if (!title || !desc) {
+            showCustomAlert('অনুগ্রহ করে অন্তত সাইটের শিরোনাম (Title) এবং বিবরণ (Description) দিন।');
+            return;
+        }
+
+        let metaTags = `\n`;
+        metaTags += `<title>${title}</title>\n`;
+        metaTags += `<meta name="title" content="${title}">\n`;
+        metaTags += `<meta name="description" content="${desc}">\n`;
+        
+        if (keywords) metaTags += `<meta name="keywords" content="${keywords}">\n`;
+        if (author) metaTags += `<meta name="author" content="${author}">\n`;
+        metaTags += `<meta name="robots" content="index, follow">\n`;
+        metaTags += `<meta http-equiv="Content-Type" content="text/html; charset=utf-8">\n`;
+        metaTags += `<meta name="language" content="Bengali">\n\n`;
+
+        metaTags += `\n`;
+        metaTags += `<meta property="og:type" content="website">\n`;
+        if (url) metaTags += `<meta property="og:url" content="${url}">\n`;
+        metaTags += `<meta property="og:title" content="${title}">\n`;
+        metaTags += `<meta property="og:description" content="${desc}">\n`;
+        if (image) metaTags += `<meta property="og:image" content="${image}">\n\n`;
+
+        metaTags += `\n`;
+        metaTags += `<meta property="twitter:card" content="summary_large_image">\n`;
+        if (url) metaTags += `<meta property="twitter:url" content="${url}">\n`;
+        metaTags += `<meta property="twitter:title" content="${title}">\n`;
+        metaTags += `<meta property="twitter:description" content="${desc}">\n`;
+        if (image) metaTags += `<meta property="twitter:image" content="${image}">\n`;
+
+        outputArea.value = metaTags;
+        resultArea.classList.remove('hidden');
+        showCustomAlert('মেটা ট্যাগ সফলভাবে তৈরি হয়েছে!');
+        
+        // স্ক্রল করে রেজাল্ট দেখানোর জন্য
+        setTimeout(() => {
+            resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+    };
+
+    clearBtn.onclick = () => {
+        titleInput.value = '';
+        descInput.value = '';
+        keywordsInput.value = '';
+        authorInput.value = '';
+        urlInput.value = '';
+        imageInput.value = '';
+        outputArea.value = '';
+        resultArea.classList.add('hidden');
+        showCustomAlert('সব মুছে ফেলা হয়েছে।');
+    };
+
+    copyBtn.onclick = () => {
+        if (!outputArea.value) return;
+        
+        outputArea.select();
+        outputArea.setSelectionRange(0, 99999); // মোবাইল ডিভাইসের জন্য
+        
+        try {
+            document.execCommand('copy');
+            showCustomAlert('মেটা ট্যাগ কোড কপি করা হয়েছে!');
+        } catch (err) {
+            navigator.clipboard.writeText(outputArea.value)
+                .then(() => showCustomAlert('মেটা ট্যাগ কোড কপি করা হয়েছে!'))
+                .catch(() => showCustomAlert('কপি করতে সমস্যা হয়েছে।'));
+        }
+        window.getSelection().removeAllRanges(); // সিলেকশন সরিয়ে ফেলা
+    };
+}
+// ========================================================
+// END: SEO Meta Tag Generator Function
 // ========================================================
 
 // 3. Meme Generator Function
@@ -26111,6 +26401,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'expenseTrackerTab': ['cost', 'budget', 'income', 'খরচ', 'হিসাব'],
                 'tasbeehTab': ['zikr', 'count', 'pray', 'তাসবিহ', 'জিকির'],
                 'historyTab': ['today', 'past', 'event', 'ইতিহাস'],
+				'seoMetaGenTab': ['seo', 'meta', 'tags', 'generator', 'ওয়েবসাইট', 'মেটা ট্যাগ', 'এসইও'],
                 'holidayListTab': ['vacation', 'off day', 'calendar', 'ছুটি']
             };
 
@@ -26350,6 +26641,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'ওয়েব সার্চ': 'webSearchTab',
             'গুগল ম্যাপ': 'mapTab',
             'আবহাওয়া': 'weatherTab',
+			'এসইও মেটা ট্যাগ': 'seoMetaGenTab',
             'নামাজের সময়সূচি': 'prayerTimeTab',
             'দিবসসমূহ': 'daysObservancesTab',
             'ছুটির তালিকা': 'holidayListTab',
@@ -30297,6 +30589,7 @@ function processVoiceCommand(command) {
         'রেসিপি জেনারেটর, রেসিপি, রান্না': 'recipeTab',
         'পিডিএফ টুলস, পিডিএফ': 'pdfToolsTab',
         'জেসন ফর্মাটার, জেসন': 'jsonFormatterTab',
+		'এসইও, এসইও মেটা, মেটা ট্যাগ, seo': 'seoMetaGenTab',
         'মিম জেনারেটর, মিম': 'memeGenTab',
         'র‍্যান্ডম পিকার, লটারি': 'randomPickerTab',
         'স্ক্রিন রেকর্ডার, রেকর্ডার, স্ক্রিন': 'screenRecorderTab',
