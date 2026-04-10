@@ -7705,6 +7705,38 @@ body.sidebar-open #sidebarOverlay {
 /* END: নিউজ টিকার এক্সপান্ড/কলাপ্স স্টাইল */
 /* ========================================= */
 
+/* ======================================================== */
+/* START: Canvas Tab Styles (ক্যানভাস) */
+/* ======================================================== */
+.canvas-tool-section { display: none; }
+.canvas-tool-section.active { display: block; animation: fadeInContent 0.3s ease-out forwards; }
+
+.qibla-compass { 
+    width: 200px; height: 200px; border-radius: 50%; border: 4px solid #3f51b5; 
+    position: relative; margin: 0 auto; transition: transform 0.1s ease-out; 
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="none" stroke="%23cbd5e1" stroke-width="2"/><line x1="50" y1="10" x2="50" y2="90" stroke="%23cbd5e1" stroke-width="1"/><line x1="10" y1="50" x2="90" y2="50" stroke="%23cbd5e1" stroke-width="1"/><polygon points="50,5 55,20 45,20" fill="%23ef4444"/><text x="50" y="35" font-size="12" font-weight="bold" text-anchor="middle" fill="%23333">N</text></svg>') center/cover; 
+}
+.dark .qibla-compass { 
+    border-color: #6366f1; 
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="none" stroke="%23475569" stroke-width="2"/><line x1="50" y1="10" x2="50" y2="90" stroke="%23475569" stroke-width="1"/><line x1="10" y1="50" x2="90" y2="50" stroke="%23475569" stroke-width="1"/><polygon points="50,5 55,20 45,20" fill="%23ef4444"/><text x="50" y="35" font-size="12" font-weight="bold" text-anchor="middle" fill="%23e2e8f0">N</text></svg>') center/cover; 
+}
+/* বাংলাদেশ থেকে মক্কার দিক আনুমানিক ২৯২.৫ ডিগ্রী (North-West) */
+.qibla-pointer { 
+    position: absolute; top: 50%; left: 50%; width: 4px; height: 90px; 
+    background: linear-gradient(to top, transparent 50%, #10b981 50%); 
+    transform-origin: bottom center; transform: translate(-50%, -100%) rotate(292.5deg); 
+    border-radius: 4px; 
+}
+.qibla-pointer::after {
+    content: "🕋"; position: absolute; top: -20px; left: -10px; font-size: 20px; transform: rotate(-292.5deg);
+}
+
+.screen-tester-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99999; display: none; cursor: pointer; }
+.cgpa-row input { width: 100%; padding: 8px; border: 1px solid #cce7ff; border-radius: 8px; font-size: 0.95rem; }
+.dark .cgpa-row input { background-color: #4a5568; border-color: #718096; color: #f7fafc; }
+/* ======================================================== */
+/* END: Canvas Tab Styles */
+/* ======================================================== */
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
@@ -7964,10 +7996,10 @@ body.sidebar-open #sidebarOverlay {
     <button id="ageCalcTab" class="tab-button rounded-xl">বয়স ক্যালকুলেটর</button>
 	<button id="webSearchTab" class="tab-button rounded-xl has-tooltip" data-tooltip="শর্টকাট: Alt+G">ওয়েব সার্চ</button>
 	<button id="textAssistantTab" class="tab-button rounded-xl has-tooltip" data-tooltip="শর্টকাট: Alt+A">টেক্সট অ্যাসিস্ট্যান্ট</button>
-  <button id="converterTab" class="tab-button rounded-xl has-tooltip" data-tooltip="শর্টকাট: Alt+B">কনভার্টার</button>
+	<button id="converterTab" class="tab-button rounded-xl has-tooltip" data-tooltip="শর্টকাট: Alt+B">কনভার্টার</button>
 	<button id="prayerTimeTab" class="tab-button rounded-xl">নামাজের সময়সূচি</button>
+	<button id="canvasTab" class="tab-button rounded-xl has-tooltip" data-tooltip="মাল্টি-টুলস হাব">ক্যানভাস</button>
     <button id="translatorTab" class="tab-button rounded-xl has-tooltip" data-tooltip="শর্টকাট: Alt+T">ট্রান্সলেটর</button>
-	<button id="wordCounterTab" class="tab-button rounded-xl">ওয়ার্ড কাউন্টার</button>
 	<button id="wordMeaningTab" class="tab-button rounded-xl">শব্দের অর্থ</button>
     <button id="spellCheckTab" class="tab-button rounded-xl">বানান সংশোধন</button>
     <button id="textBeautifierTab" class="tab-button rounded-xl">লেখা সাজানো</button>
@@ -8018,11 +8050,11 @@ body.sidebar-open #sidebarOverlay {
 				<button id="randomPickerTab" class="tab-button rounded-xl">র‍্যান্ডম পিকার</button>
 				<button id="screenRecorderTab" class="tab-button rounded-xl">স্ক্রিন রেকর্ডার</button>
 				<button id="emergencyNumbersTab" class="tab-button rounded-xl">জরুরি নম্বর</button>
-				<button id="tasbeehTab" class="tab-button rounded-xl">ডিজিটাল তাসবিহ</button>
+				<button id="tasbeehTab" class="tab-button rounded-xl">তাসবিহ</button>
 				<button id="diffCheckerTab" class="tab-button rounded-xl">ডিফ চেকার (Diff)</button>
+				<button id="wordCounterTab" class="tab-button rounded-xl">ওয়ার্ড কাউন্টার</button>
 				<button id="textEncryptionTab" class="tab-button rounded-xl">টেক্সট এনক্রিপশন</button>
-
-				<button id="expenseTrackerTab" class="tab-button rounded-xl has-tooltip" data-tooltip="শর্টকাট: Alt+E">আয়-ব্যয় হিসাব</button>
+				<button id="expenseTrackerTab" class="tab-button rounded-xl has-tooltip" data-tooltip="শর্টকাট: Alt+E">আয়-ব্যয়</button>
 				<button id="allFeaturesTab" class="tab-button rounded-xl has-tooltip" data-tooltip="শর্টকাট: Alt+F">সকল ফিচার</button>
 				<button id="importantLinksTab" class="tab-button rounded-xl has-tooltip" data-tooltip="শর্টকাট: Alt+K">গুরুত্বপূর্ণ লিংকসমূহ</button>
 				<button id="donateTab" class="tab-button rounded-xl has-tooltip" data-tooltip="শর্টকাট: Alt+J">ডোনেট</button>
@@ -12248,6 +12280,129 @@ body.sidebar-open #sidebarOverlay {
 <!-- END: Meta Tag Content -->
 <!-- ======================================================== -->
 
+<!-- ======================================================== -->
+<!-- START: Canvas Tab Content (ক্যানভাস) -->
+<!-- ======================================================== -->
+<div id="canvasContent" class="calculator-content">
+    <div class="converter-section" style="max-width: 800px; margin: 0 auto;">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200 flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            ক্যানভাস (মাল্টি-টুলস)
+        </h3>
+        
+        <div class="mb-6">
+            <label for="canvasToolSelect" class="block mb-2 font-semibold text-gray-700 dark:text-gray-300 text-left">টুল নির্বাচন করুন:</label>
+            <select id="canvasToolSelect" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-indigo-500 font-bold text-indigo-700 dark:text-indigo-300 shadow-sm">
+                <option value="landMeasurer">১. ভূমি পরিমাপ ক্যালকুলেটর</option>
+                <option value="goldCalculator">২. সোনার দাম ক্যালকুলেটর</option>
+                <option value="cgpaCalculator">৩. CGPA / GPA ক্যালকুলেটর</option>
+                <option value="qiblaCompass">৪. কিবলা কম্পাস</option>
+                <option value="screenTester">৫. ল্যাপটপ/মোবাইল স্ক্রিন টেস্টার</option>
+            </select>
+        </div>
+
+        <!-- 1. Land Measurer -->
+        <div id="landMeasurerTool" class="canvas-tool-section active bg-blue-50 dark:bg-gray-800 p-4 rounded-xl border border-blue-200 dark:border-gray-600">
+            <h4 class="font-bold text-lg mb-3 text-blue-700 dark:text-blue-300">ভূমি পরিমাপ ক্যালকুলেটর</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+                <div>
+                    <label class="block text-sm font-semibold mb-1 dark:text-gray-300">পরিমাণ (Value)</label>
+                    <input type="number" id="landValue" value="1" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1 dark:text-gray-300">একক (Unit)</label>
+                    <select id="landUnit" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
+                        <option value="shatak">শতাংশ / ডেসিমেল</option>
+                        <option value="katha">কাঠা</option>
+                        <option value="bigha">বিঘা</option>
+                        <option value="acre">একর</option>
+                        <option value="sqft">বর্গফুট (Sq Ft)</option>
+                        <option value="ojutangsho">অযুতাংশ</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-4 p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 text-left">
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 font-bold border-b dark:border-gray-600 pb-1">ফলাফল:</p>
+                <div id="landResult" class="grid grid-cols-2 gap-2 text-sm dark:text-white font-medium"></div>
+            </div>
+        </div>
+
+        <!-- 2. Gold Calculator -->
+        <div id="goldCalculatorTool" class="canvas-tool-section bg-yellow-50 dark:bg-gray-800 p-4 rounded-xl border border-yellow-200 dark:border-gray-600">
+            <h4 class="font-bold text-lg mb-3 text-yellow-700 dark:text-yellow-400">সোনার দাম হিসাব</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3 text-left">
+                <div><label class="text-xs font-semibold dark:text-gray-300">ভরি</label><input type="number" id="goldVori" value="1" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"></div>
+                <div><label class="text-xs font-semibold dark:text-gray-300">আনা</label><input type="number" id="goldAna" value="0" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"></div>
+                <div><label class="text-xs font-semibold dark:text-gray-300">রতি</label><input type="number" id="goldRoti" value="0" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"></div>
+                <div><label class="text-xs font-semibold dark:text-gray-300">পয়েন্ট</label><input type="number" id="goldPoint" value="0" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"></div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4 text-left">
+                <div><label class="text-xs font-semibold dark:text-gray-300">১ ভরির দাম (৳)</label><input type="number" id="goldPricePerVori" placeholder="যেমন: 120000" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"></div>
+                <div><label class="text-xs font-semibold dark:text-gray-300">মজুরি (৳/ভরি)</label><input type="number" id="goldMakingCharge" placeholder="যেমন: 3500" value="3500" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"></div>
+                <div><label class="text-xs font-semibold dark:text-gray-300">ভ্যাট (%)</label><input type="number" id="goldVat" value="5" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"></div>
+            </div>
+            <button id="calcGoldBtn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 rounded-lg transition-colors">হিসাব করুন</button>
+            <div id="goldResult" class="mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hidden text-left dark:text-white text-sm space-y-1"></div>
+        </div>
+
+        <!-- 3. CGPA Calculator -->
+        <div id="cgpaCalculatorTool" class="canvas-tool-section bg-indigo-50 dark:bg-gray-800 p-4 rounded-xl border border-indigo-200 dark:border-gray-600">
+            <h4 class="font-bold text-lg mb-3 text-indigo-700 dark:text-indigo-400">CGPA / GPA ক্যালকুলেটর</h4>
+            <div class="flex justify-between items-center mb-3">
+                <label class="font-semibold text-sm dark:text-gray-300">সাবজেক্ট/সেমিস্টার যোগ করুন:</label>
+                <button id="addCgpaRowBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded text-sm transition-colors">+ যোগ করুন</button>
+            </div>
+            <div id="cgpaRowsContainer" class="space-y-2 mb-4">
+                <div class="flex gap-2 cgpa-row">
+                    <input type="number" placeholder="ক্রেডিট (Credits)" class="cgpa-credit dark:bg-gray-700" min="1" step="0.5">
+                    <input type="number" placeholder="গ্রেড পয়েন্ট (GPA)" class="cgpa-grade dark:bg-gray-700" min="0" max="5" step="0.01">
+                    <button class="bg-red-500 hover:bg-red-600 text-white px-3 rounded del-cgpa-row transition-colors">&times;</button>
+                </div>
+                <div class="flex gap-2 cgpa-row">
+                    <input type="number" placeholder="ক্রেডিট (Credits)" class="cgpa-credit dark:bg-gray-700" min="1" step="0.5">
+                    <input type="number" placeholder="গ্রেড পয়েন্ট (GPA)" class="cgpa-grade dark:bg-gray-700" min="0" max="5" step="0.01">
+                    <button class="bg-red-500 hover:bg-red-600 text-white px-3 rounded del-cgpa-row transition-colors">&times;</button>
+                </div>
+            </div>
+            <button id="calcCgpaBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg transition-colors">CGPA হিসাব করুন</button>
+            <div id="cgpaResult" class="mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg text-center font-bold text-xl text-indigo-700 dark:text-indigo-300 hidden border border-gray-200 dark:border-gray-600"></div>
+        </div>
+
+        <!-- 4. Qibla Compass -->
+        <div id="qiblaCompassTool" class="canvas-tool-section bg-emerald-50 dark:bg-gray-800 p-4 rounded-xl border border-emerald-200 dark:border-gray-600 text-center">
+            <h4 class="font-bold text-lg mb-2 text-emerald-700 dark:text-emerald-400">কিবলা কম্পাস</h4>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">আপনার মোবাইলটি সমতল স্থানে রাখুন এবং লোকেশন/সেন্সর চালু করুন। লাল তীরের দিকটিই কিবলা।</p>
+            
+            <button id="startCompassBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg font-bold mb-4 transition-colors">কম্পাস চালু করুন</button>
+            
+            <div id="compassContainer" class="hidden my-4">
+                <div class="qibla-compass shadow-lg" id="qiblaCompassRing">
+                    <!-- Qibla Direction Pointer -->
+                    <div class="qibla-pointer" id="qiblaPointer"></div>
+                </div>
+                <div class="mt-6 font-bold text-emerald-700 dark:text-emerald-400 bg-white dark:bg-gray-700 p-3 rounded-lg border border-gray-200 dark:border-gray-600 inline-block text-left">
+                    কিবলা দিক: <span class="text-gray-800 dark:text-white">২৯২.৫°</span> (বাংলাদেশ থেকে)<br>
+                    আপনার বর্তমান দিক: <span id="currentDegree" class="text-gray-800 dark:text-white">০</span>°
+                </div>
+                <p class="text-xs text-red-500 mt-3 font-semibold" id="compassWarning"></p>
+            </div>
+        </div>
+
+        <!-- 5. Screen Tester -->
+        <div id="screenTesterTool" class="canvas-tool-section bg-gray-100 dark:bg-gray-800 p-4 rounded-xl border border-gray-300 dark:border-gray-600 text-center">
+            <h4 class="font-bold text-lg mb-3 text-gray-700 dark:text-gray-300">ল্যাপটপ/মোবাইল স্ক্রিন টেস্টার</h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">আপনার ডিভাইসের স্ক্রিনে কোনো ডেড পিক্সেল (Dead Pixel) বা দাগ আছে কিনা তা চেক করতে এটি ফুলস্ক্রিন সলিড কালার দেখাবে।</p>
+            <button id="startScreenTestToolBtn" class="bg-gray-800 hover:bg-gray-900 dark:bg-gray-200 dark:hover:bg-white text-white dark:text-gray-800 px-6 py-3 rounded-lg font-bold transition-colors">টেস্ট শুরু করুন</button>
+            <p class="text-xs text-gray-500 mt-4 bg-white dark:bg-gray-700 p-2 rounded border border-gray-200 dark:border-gray-600">নিয়ম: ফুলস্ক্রিন মোড চালু হলে স্ক্রিনে ক্লিক করে করে রঙ পরিবর্তন করতে পারবেন। বের হতে ESC চাপুন বা ডাবল ক্লিক করুন।</p>
+        </div>
+
+    </div>
+</div>
+<!-- Screen Tester Overlay (Outside standard flow) -->
+<div id="screenTesterOverlay" class="screen-tester-overlay"></div>
+<!-- ======================================================== -->
+<!-- END: Canvas Tab Content -->
+<!-- ======================================================== -->
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের HTML Content কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
 
@@ -15307,6 +15462,8 @@ try {
 				const unitPriceContent = document.getElementById('unitPriceContent');
 				const tasbeehTab = document.getElementById('tasbeehTab');
 				const tasbeehContent = document.getElementById('tasbeehContent');
+				const canvasTab = document.getElementById('canvasTab');
+				const canvasContent = document.getElementById('canvasContent');
 
 const webSearchTab = document.getElementById('webSearchTab');
 const webSearchContent = document.getElementById('webSearchContent');
@@ -15673,7 +15830,7 @@ function showTab(tabId) {
     const tabs = [
         basicCalcTab,colorPickerTab, dashboardTab,imageResizerTab,moreSettingsTab,historyTab,currencyTab, emiCalcTab, ipInfoTab, recipeTab, pdfToolsTab,screenRecorderTab, jsonFormatterTab, memeGenTab, speedTestTab,
         ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,barcodeGenTab, randomPickerTab,
-        translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,
+        translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,canvasTab,
         qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab, webSearchTab, seoMetaGenTab,
         textAssistantTab,holidayListTab,quizTab,unitPriceTab,tasbeehTab,diffCheckerTab,expenseTrackerTab,textEncryptionTab,aboutUsTab, contactUsTab, privacyPolicyTab, termsTab,
         allFeaturesTab
@@ -15683,7 +15840,7 @@ function showTab(tabId) {
         ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent,  converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent, webSearchContent,
         measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent, barcodeGenContent, randomPickerContent,
         weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent, seoMetaGenContent,
-        textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,unitPriceContent,tasbeehContent,
+        textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,unitPriceContent,tasbeehContent,canvasContent,
 		diffCheckerContent,expenseTrackerContent,textEncryptionContent,aboutUsContent, contactUsContent, privacyPolicyContent, termsContent,
         allFeaturesContent
     ];
@@ -15809,6 +15966,11 @@ case 'basic':
 			activeTab = tasbeehTab;
 			activeContent = tasbeehContent;
 			initializeTasbeeh();
+		break;
+		case 'canvas':
+			activeTab = canvasTab;
+			activeContent = canvasContent;
+			initializeCanvasTools(); // ক্যানভাস চালু করার ফাংশন
 		break;
         case 'daysObservances':
             activeTab = daysObservancesTab;
@@ -16041,7 +16203,7 @@ case 'speedTest':
     // 'আরও' মেনুর অন্তর্ভুক্ত ট্যাব আইডি সমূহ tabidmap
     const moreMenuTabs = [
         'clock', 'player', 'quiz', 'history', 'daysObservances', 'tasbeeh','diffChecker',
-        'holiday', 'zakat', 'qrCode', 'colorPicker', 'invoice', 'unitPrice',
+        'holiday', 'zakat', 'qrCode', 'colorPicker', 'invoice', 'unitPrice', 'wordCounter',
         'imageResizer', 'emergency', 'healthLifestyle', 'expenseTracker',
         'currency', 'emi', 'ip', 'recipe', 'pdf', 'randomPicker','barcode','seoMetaGen',
         'screenRecorder', 'jsonFormatter', 'memeGen', 'speedTest', 'encryption',
@@ -16129,6 +16291,7 @@ initializeBackButtons();
     if (playerTab) playerTab.addEventListener('click', () => showTab('player'));
     if (zakatCalcTab) zakatCalcTab.addEventListener('click', () => showTab('zakat'));
     if (imageResizerTab) imageResizerTab.addEventListener('click', () => showTab('imageResizer'));
+	if (canvasTab) canvasTab.addEventListener('click', () => showTab('canvas'));
     if (qrCodeTab) qrCodeTab.addEventListener('click', () => showTab('qrCode'));
     if (importantLinksTab) importantLinksTab.addEventListener('click', () => showTab('importantLinks'));
     if (textAssistantTab) textAssistantTab.addEventListener('click', () => showTab('textAssistant'));
@@ -32258,6 +32421,244 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 // END: FILE CONVERTER SCRIPT (DOCX, DOC, XLSX, TXT) - DRAG DROP & FORMATTING
 // ====================================================================
+
+// ========================================================
+// START: CANVAS TOOLS SCRIPT
+// ========================================================
+function initializeCanvasTools() {
+    const canvasContentDiv = document.getElementById('canvasContent');
+    if (canvasContentDiv.getAttribute('data-canvas-initialized') === 'true') {
+        return; 
+    }
+    canvasContentDiv.setAttribute('data-canvas-initialized', 'true');
+
+    // --- Dropdown Logic ---
+    const toolSelect = document.getElementById('canvasToolSelect');
+    const sections = document.querySelectorAll('.canvas-tool-section');
+
+    if(toolSelect) {
+        toolSelect.addEventListener('change', (e) => {
+            sections.forEach(sec => sec.classList.remove('active'));
+            const activeSec = document.getElementById(e.target.value + 'Tool');
+            if (activeSec) activeSec.classList.add('active');
+        });
+    }
+
+    // --- 1. Land Measurer ---
+    const landValueInput = document.getElementById('landValue');
+    const landUnitSelect = document.getElementById('landUnit');
+    const landResult = document.getElementById('landResult');
+
+    function calculateLand() {
+        const val = parseFloat(landValueInput.value);
+        if (isNaN(val) || val < 0) { landResult.innerHTML = ''; return; }
+        
+        const unit = landUnitSelect.value;
+        let shatakVal = 0;
+        switch(unit) {
+            case 'shatak': shatakVal = val; break;
+            case 'katha': shatakVal = val * 1.65; break; 
+            case 'bigha': shatakVal = val * 33.06; break; 
+            case 'acre': shatakVal = val * 100; break;
+            case 'sqft': shatakVal = val / 435.6; break;
+            case 'ojutangsho': shatakVal = val / 100; break;
+        }
+
+        const toBn = (n) => n.toLocaleString('bn-BD', {maximumFractionDigits: 3});
+
+        landResult.innerHTML = `
+            <div class="bg-gray-100 dark:bg-gray-600 p-2 rounded">শতাংশ: <span class="font-bold text-blue-600 dark:text-blue-400">${toBn(shatakVal)}</span></div>
+            <div class="bg-gray-100 dark:bg-gray-600 p-2 rounded">কাঠা: <span class="font-bold text-blue-600 dark:text-blue-400">${toBn(shatakVal / 1.65)}</span></div>
+            <div class="bg-gray-100 dark:bg-gray-600 p-2 rounded">বিঘা: <span class="font-bold text-blue-600 dark:text-blue-400">${toBn(shatakVal / 33.06)}</span></div>
+            <div class="bg-gray-100 dark:bg-gray-600 p-2 rounded">একর: <span class="font-bold text-blue-600 dark:text-blue-400">${toBn(shatakVal / 100)}</span></div>
+            <div class="bg-gray-100 dark:bg-gray-600 p-2 rounded">বর্গফুট: <span class="font-bold text-blue-600 dark:text-blue-400">${toBn(shatakVal * 435.6)}</span></div>
+            <div class="bg-gray-100 dark:bg-gray-600 p-2 rounded">অযুতাংশ: <span class="font-bold text-blue-600 dark:text-blue-400">${toBn(shatakVal * 100)}</span></div>
+        `;
+    }
+    if(landValueInput) {
+        landValueInput.addEventListener('input', calculateLand);
+        landUnitSelect.addEventListener('change', calculateLand);
+        calculateLand(); 
+    }
+
+    // --- 2. Gold Calculator ---
+    const btnCalcGold = document.getElementById('calcGoldBtn');
+    if(btnCalcGold){
+        btnCalcGold.addEventListener('click', () => {
+            const vori = parseFloat(document.getElementById('goldVori').value) || 0;
+            const ana = parseFloat(document.getElementById('goldAna').value) || 0;
+            const roti = parseFloat(document.getElementById('goldRoti').value) || 0;
+            const point = parseFloat(document.getElementById('goldPoint').value) || 0;
+            
+            const pricePerVori = parseFloat(document.getElementById('goldPricePerVori').value) || 0;
+            const makingChargePerVori = parseFloat(document.getElementById('goldMakingCharge').value) || 0;
+            const vatPercent = parseFloat(document.getElementById('goldVat').value) || 0;
+
+            if (!pricePerVori) return showCustomAlert("১ ভরির দাম দিতে হবে।");
+
+            const totalVori = vori + (ana / 16) + (roti / 96) + (point / 960);
+            const rawGoldPrice = totalVori * pricePerVori;
+            const totalMakingCharge = totalVori * makingChargePerVori;
+            const priceWithMaking = rawGoldPrice + totalMakingCharge;
+            const vatAmount = priceWithMaking * (vatPercent / 100);
+            const finalPrice = priceWithMaking + vatAmount;
+
+            const toBn = (n) => n.toLocaleString('bn-BD', {maximumFractionDigits: 2});
+            const resDiv = document.getElementById('goldResult');
+            resDiv.innerHTML = `
+                <table class="w-full text-sm">
+                    <tr><td class="py-1">মোট স্বর্ণ:</td><td class="text-right font-bold">${toBn(totalVori)} ভরি</td></tr>
+                    <tr><td class="py-1">স্বর্ণের দাম:</td><td class="text-right font-bold">৳${toBn(rawGoldPrice)}</td></tr>
+                    <tr><td class="py-1">মোট মজুরি:</td><td class="text-right font-bold">৳${toBn(totalMakingCharge)}</td></tr>
+                    <tr><td class="py-1 border-b dark:border-gray-500">ভ্যাট (${toBn(vatPercent)}%):</td><td class="text-right font-bold border-b dark:border-gray-500">৳${toBn(vatAmount)}</td></tr>
+                    <tr><td class="py-2 font-bold text-yellow-600 dark:text-yellow-400">সর্বমোট দাম:</td><td class="text-right font-bold text-lg text-yellow-600 dark:text-yellow-400">৳${toBn(finalPrice)}</td></tr>
+                </table>
+            `;
+            resDiv.classList.remove('hidden');
+        });
+    }
+
+    // --- 3. CGPA Calculator ---
+    const btnAddRow = document.getElementById('addCgpaRowBtn');
+    const rowsContainer = document.getElementById('cgpaRowsContainer');
+    const btnCalcCgpa = document.getElementById('calcCgpaBtn');
+
+    if(btnAddRow){
+        btnAddRow.addEventListener('click', () => {
+            const row = document.createElement('div');
+            row.className = 'flex gap-2 cgpa-row mb-2';
+            row.innerHTML = `
+                <input type="number" placeholder="ক্রেডিট (Credits)" class="cgpa-credit dark:bg-gray-700" min="1" step="0.5">
+                <input type="number" placeholder="গ্রেড পয়েন্ট (GPA)" class="cgpa-grade dark:bg-gray-700" min="0" max="5" step="0.01">
+                <button class="bg-red-500 hover:bg-red-600 text-white px-3 rounded del-cgpa-row transition-colors">&times;</button>
+            `;
+            rowsContainer.appendChild(row);
+            row.querySelector('.del-cgpa-row').addEventListener('click', () => row.remove());
+        });
+
+        document.querySelectorAll('.del-cgpa-row').forEach(btn => {
+            btn.addEventListener('click', (e) => e.target.parentElement.remove());
+        });
+
+        btnCalcCgpa.addEventListener('click', () => {
+            let totalCredits = 0;
+            let totalPoints = 0;
+            let hasValidInput = false;
+
+            document.querySelectorAll('.cgpa-row').forEach(row => {
+                const cr = parseFloat(row.querySelector('.cgpa-credit').value);
+                const gp = parseFloat(row.querySelector('.cgpa-grade').value);
+                if (!isNaN(cr) && !isNaN(gp)) {
+                    totalCredits += cr;
+                    totalPoints += (cr * gp);
+                    hasValidInput = true;
+                }
+            });
+
+            const resDiv = document.getElementById('cgpaResult');
+            if (!hasValidInput || totalCredits === 0) {
+                showCustomAlert("সঠিক ক্রেডিট এবং জিপিএ দিন।");
+                resDiv.classList.add('hidden');
+                return;
+            }
+
+            const cgpa = totalPoints / totalCredits;
+            resDiv.innerHTML = `মোট ক্রেডিট: ${totalCredits.toLocaleString('bn-BD')} <br> আপনার CGPA: ${cgpa.toLocaleString('bn-BD', {maximumFractionDigits: 2})}`;
+            resDiv.classList.remove('hidden');
+        });
+    }
+
+    // --- 4. Qibla Compass ---
+    const startCompassBtn = document.getElementById('startCompassBtn');
+    const compassContainer = document.getElementById('compassContainer');
+    const compassRing = document.getElementById('qiblaCompassRing');
+    const currentDegreeEl = document.getElementById('currentDegree');
+    const compassWarning = document.getElementById('compassWarning');
+    let qiblaHandler = null;
+
+    if(startCompassBtn){
+        startCompassBtn.addEventListener('click', async () => {
+            if (typeof DeviceOrientationEvent === 'undefined') {
+                compassWarning.innerText = "আপনার ডিভাইস কম্পাস সেন্সর সাপোর্ট করে না। (এটি ল্যাপটপে কাজ করবে না)";
+                return;
+            }
+
+            // iOS 13+ Permission
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                try {
+                    const permissionState = await DeviceOrientationEvent.requestPermission();
+                    if (permissionState !== 'granted') {
+                        compassWarning.innerText = "সেন্সর পারমিশন দেওয়া হয়নি।";
+                        return;
+                    }
+                } catch (e) { console.error(e); }
+            }
+
+            startCompassBtn.classList.add('hidden');
+            compassContainer.classList.remove('hidden');
+
+            qiblaHandler = (e) => {
+                let compassHeading;
+                if (e.webkitCompassHeading) compassHeading = e.webkitCompassHeading;
+                else if (e.alpha !== null) compassHeading = 360 - e.alpha; 
+                else { compassWarning.innerText = "সেন্সর ডেটা পাওয়া যাচ্ছে না।"; return; }
+
+                compassRing.style.transform = `rotate(${-compassHeading}deg)`;
+                currentDegreeEl.innerText = Math.round(compassHeading).toLocaleString('bn-BD');
+            };
+
+            window.addEventListener('deviceorientationabsolute', qiblaHandler, true);
+            if (!('ondeviceorientationabsolute' in window)) {
+                window.addEventListener('deviceorientation', qiblaHandler, true);
+                compassWarning.innerText = "অ্যাবসলিউট কম্পাস না থাকায় দিক পুরোপুরি সঠিক নাও হতে পারে।";
+            }
+        });
+    }
+
+    // --- 5. Screen Tester ---
+    const startScreenTestToolBtn = document.getElementById('startScreenTestToolBtn');
+    const overlay = document.getElementById('screenTesterOverlay');
+    const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFFFF', '#000000', '#FFFF00', '#00FFFF', '#FF00FF'];
+    let colorIndex = 0;
+
+    if(startScreenTestToolBtn){
+        startScreenTestToolBtn.addEventListener('click', () => {
+            colorIndex = 0;
+            overlay.style.backgroundColor = colors[colorIndex];
+            overlay.style.display = 'block';
+
+            if (overlay.requestFullscreen) overlay.requestFullscreen().catch(err => console.log(err));
+            else if (overlay.webkitRequestFullscreen) overlay.webkitRequestFullscreen();
+            else if (overlay.msRequestFullscreen) overlay.msRequestFullscreen();
+        });
+
+        overlay.addEventListener('click', () => {
+            colorIndex++;
+            if (colorIndex < colors.length) overlay.style.backgroundColor = colors[colorIndex];
+            else exitScreenTest();
+        });
+
+        overlay.addEventListener('dblclick', exitScreenTest);
+
+        function exitScreenTest() {
+            overlay.style.display = 'none';
+            if (document.fullscreenElement) {
+                if (document.exitFullscreen) document.exitFullscreen();
+                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                else if (document.msExitFullscreen) document.msExitFullscreen();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && overlay.style.display === 'block') {
+                exitScreenTest();
+            }
+        });
+    }
+}
+// ========================================================
+// END: CANVAS TOOLS SCRIPT
+// ========================================================
 
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
