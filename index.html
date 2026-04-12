@@ -7217,7 +7217,7 @@ body.sidebar-open #sidebarOverlay {
 /* ========================================= */
 
 /* ==================================================================== */
-/* START: PUBLIC COMMENTS SECTION CSS (UPDATED) */
+/* START: PUBLIC COMMENTS SECTION CSS (UPDATED & REFINED) */
 /* ==================================================================== */
 #comment-fab {
     position: fixed;
@@ -7276,14 +7276,13 @@ body.sidebar-open #sidebarOverlay {
     flex-shrink: 0;
 }
 
-/* --- নতুন: পিন করা মেসেজ সেকশন স্টাইল (আরও কমপ্যাক্ট) --- */
 #pinned-comments-container {
     position: relative;
-    padding: 4px 8px; /* প্যাডিং সামঞ্জস্য করা হয়েছে */
+    padding: 4px 8px;
     background-color: #eef2ff;
     border-bottom: 1px solid #e0e7ff;
     flex-shrink: 0;
-    height: 65px; /* উচ্চতা কমানো হয়েছে */
+    height: 65px;
 }
 .dark #pinned-comments-container {
     background-color: #374151;
@@ -7295,30 +7294,30 @@ body.sidebar-open #sidebarOverlay {
 }
 .pinned-item {
     flex: 0 0 100%;
-    padding: 4px 6px; /* প্যাডিং কমানো হয়েছে */
+    padding: 4px 6px;
     background-color: #fff;
     border-radius: 8px;
     cursor: pointer;
     display: flex;
-    gap: 6px; /* গ্যাপ কমানো হয়েছে */
+    gap: 6px;
     align-items: center;
     border: 1px solid #ddd;
     overflow: hidden;
-    height: 55px; /* আইটেমের উচ্চতা ফিক্সড করা হয়েছে */
+    height: 55px;
 }
 .dark .pinned-item {
     background-color: #1f2937;
     border-color: #4b5563;
 }
 .pinned-avatar {
-    font-size: 1.2rem; /* ফন্ট সাইজ কমানো হয়েছে */
+    font-size: 1.2rem;
     flex-shrink: 0;
 }
 .pinned-content {
     overflow: hidden;
 }
 .pinned-name {
-    font-size: 0.65rem; /* ফন্ট সাইজ কমানো হয়েছে */
+    font-size: 0.65rem;
     font-weight: bold;
     color: #4f46e5;
     white-space: nowrap;
@@ -7327,7 +7326,7 @@ body.sidebar-open #sidebarOverlay {
     color: #818cf8;
 }
 .pinned-text {
-    font-size: 0.75rem; /* ফন্ট সাইজ কমানো হয়েছে */
+    font-size: 0.75rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -7358,7 +7357,6 @@ body.sidebar-open #sidebarOverlay {
 }
 #pinned-nav-prev { left: 8px; }
 #pinned-nav-next { right: 8px; }
-/* --- পিন সেকশন স্টাইল শেষ --- */
 
 .comment-list {
     flex-grow: 1;
@@ -7430,15 +7428,14 @@ body.sidebar-open #sidebarOverlay {
     display: flex;
     gap: 8px;
     margin-bottom: 8px;
-    scroll-margin-top: 85px; /* পিন সেকশনের নিচে আনার জন্য সামঞ্জস্য করা হয়েছে */
+    scroll-margin-top: 85px;
 }
-/* নতুন: স্ক্রোল করার পর হাইলাইট ইফেক্ট */
 .comment-highlight {
     transition: background-color 0.3s ease-in-out;
-    background-color: #dbeafe !important; /* light blue */
+    background-color: #dbeafe !important;
 }
 .dark .comment-highlight {
-    background-color: #1e3a8a !important; /* dark blue */
+    background-color: #1e3a8a !important;
 }
 .dark .comment-card {
     background-color: #374151;
@@ -7453,8 +7450,7 @@ body.sidebar-open #sidebarOverlay {
     text-align: right;
 }
 .comment-card.my-message .comment-msg {
-    text-align: justify;
-    text-align-last: left;
+    text-align: left;
 }
 .dark .comment-card.my-message {
     background-color: #1e3a8a;
@@ -7494,31 +7490,30 @@ body.sidebar-open #sidebarOverlay {
     white-space: pre-wrap;
     line-height: 1.4;
 }
-
-/* নতুন: নিজের মেসেজের টেক্সটকে ক্লিকযোগ্য করার জন্য */
-.comment-card.my-message .comment-msg {
+.comment-text-content {
+    /* This class is for targeting the editable part */
+}
+.comment-card.my-message .comment-text-content {
     cursor: pointer;
     transition: background-color 0.2s;
     border-radius: 4px;
     padding: 2px 4px;
     margin: -2px -4px;
 }
-.comment-card.my-message .comment-msg:hover {
+.comment-card.my-message .comment-text-content:hover {
     background-color: rgba(0, 0, 0, 0.05);
 }
-.dark .comment-card.my-message .comment-msg:hover {
+.dark .comment-card.my-message .comment-text-content:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
-
-/* নতুন: এডিটিং মোডের জন্য স্টাইল */
-.comment-msg.editing {
+.comment-text-content.editing {
     outline: 2px solid #3b82f6;
     background-color: #eff6ff;
     border-radius: 4px;
     padding: 2px 4px;
     margin: -2px -4px;
 }
-.dark .comment-msg.editing {
+.dark .comment-text-content.editing {
     background-color: #374151;
 }
 
@@ -7569,31 +7564,48 @@ body.sidebar-open #sidebarOverlay {
 .btn-reply:hover { background-color: #3b82f6; color: white; }
 .btn-copy:hover { background-color: #10b981; color: white; }
 .btn-delete:hover { background-color: #ef4444; color: white; }
-/* নতুন: পিন বাটন স্টাইল */
 .btn-pin:hover { background-color: #f59e0b; color: white; }
 .btn-pin.pinned { background-color: #f59e0b; color: white; transform: rotate(45deg); }
-/* এডিট বাটন স্টাইল মুছে ফেলা হয়েছে যেহেতু বাটনটি আর নেই */
 
-
-@keyframes highlight-fade {
-    from { background-color: rgba(255, 235, 59, 0.4); }
-    to { background-color: transparent; }
-}
-.dark .section-highlight {
-    animation: highlight-fade-dark 2s ease-out;
-}
-@keyframes highlight-fade-dark {
-    from { background-color: rgba(255, 235, 59, 0.2); }
-    to { background-color: transparent; }
-}
 .section-highlight {
     animation: highlight-fade 2s ease-out;
     border-radius: 1rem;
-    padding-top: 1rem; /* হাইলাইট এরিয়ার সৌন্দর্য বৃদ্ধির জন্য */
-    margin-top: 1.5rem !important; /* হাইলাইট এরিয়ার সৌন্দর্য বৃদ্ধির জন্য */
-    border-top: none !important; /* আগের বর্ডার লুকানোর জন্য */
+    padding-top: 1rem;
+    margin-top: 1.5rem !important;
+    border-top: none !important;
 }
 
+.reply-quote {
+    display: block;
+    background-color: #f3f4f6;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border-left: 3px solid #60a5fa;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #4b5563;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: default;
+}
+.dark .reply-quote {
+    background-color: #374151;
+    border-left-color: #93c5fd;
+    color: #d1d5db;
+}
+
+#comment-message[contenteditable="true"] {
+    -webkit-user-select: text;
+    user-select: text;
+}
+#comment-message-wrapper {
+    min-height: 40px;
+    max-height: 120px;
+    overflow-y: auto;
+    resize: none;
+    transition: all 0.2s;
+}
 /* ==================================================================== */
 /* END: PUBLIC COMMENTS SECTION CSS */
 /* ==================================================================== */
@@ -32820,7 +32832,7 @@ function initializeCanvasTools() {
     }
 
 // ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার, পাসওয়ার্ড প্রটেকশন, অ্যালাইনমেন্ট ও নোটিফিকেশন ডট এবং একটিভ কাউন্টার সহ)
-    async function initializePublicComments() {
+async function initializePublicComments() {
         await ensureAuth();
 
         const fab = document.getElementById('comment-fab');
@@ -32830,18 +32842,20 @@ function initializeCanvasTools() {
         const nameInput = document.getElementById('comment-username');
         const editNameBtn = document.getElementById('edit-username-btn'); 
         const msgInput = document.getElementById('comment-message');
+        const msgInputWrapper = document.getElementById('comment-message-wrapper');
         const listContainer = document.getElementById('comment-list');
         const emojiBtn = document.getElementById('emoji-selector-btn');
         const emojiContainer = document.getElementById('emoji-picker-container');
         const activeCountEl = document.getElementById('active-user-count');
         
-        // নতুন: পিন সেকশনের উপাদান
         const pinnedContainer = document.getElementById('pinned-comments-container');
         const pinnedWrapper = document.getElementById('pinned-comments-wrapper');
         const prevPinBtn = document.getElementById('pinned-nav-prev');
         const nextPinBtn = document.getElementById('pinned-nav-next');
         let currentPinnedIndex = 0;
         let totalPinned = 0;
+        
+        let currentReplyInfo = null;
 
         const notificationDot = document.getElementById('comment-notification-dot');
         let notificationBubble = document.getElementById('comment-notification');
@@ -32851,47 +32865,32 @@ function initializeCanvasTools() {
             notificationBubble.className = "fixed bottom-36 right-5 z-[1002] bg-white dark:bg-gray-800 p-3 rounded-lg shadow-xl border-l-4 border-blue-500 max-w-[250px] transition-all duration-300 transform translate-y-4 opacity-0 pointer-events-none hidden";
             document.body.appendChild(notificationBubble);
         }
-       // নতুন পরিবর্তন: একটিভ ইউজার কাউন্টারে ক্লিক করলে ভিজিটর কাউন্টার সেকশনে নিয়ে যাবে
+
         if (activeCountEl) {
             activeCountEl.onclick = () => {
                 const importantLinksTabButton = document.getElementById('importantLinksTab');
                 const moreMenuBtn = document.getElementById('moreMenuBtn');
                 const moreMenuDropdown = document.getElementById('moreMenuDropdown');
-
-                // ১. বাটনটি খুঁজে বের করে ক্লিক সিমুলেট করা
                 if (importantLinksTabButton) {
                     const isHiddenInDropdown = moreMenuDropdown && moreMenuDropdown.classList.contains('hidden') && moreMenuDropdown.contains(importantLinksTabButton);
-
                     if (isHiddenInDropdown) {
-                        moreMenuBtn.click(); // প্রথমে ড্রপডাউন খুলুন
-                        setTimeout(() => { importantLinksTabButton.click(); }, 50); // তারপর বাটন ক্লিক
+                        moreMenuBtn.click();
+                        setTimeout(() => { importantLinksTabButton.click(); }, 50);
                     } else {
-                        importantLinksTabButton.click(); // সরাসরি ক্লিক
+                        importantLinksTabButton.click();
                     }
                 }
-
-                // ২. মন্তব্য উইন্ডো বন্ধ করুন
-                if (container) {
-                    container.classList.remove('active');
-                }
-
-                // ৩. ট্যাব পরিবর্তনের পর স্ক্রল করার জন্য অপেক্ষা
+                if (container) container.classList.remove('active');
                 setTimeout(() => {
                     const counterSection = document.getElementById('visitor-counter-section');
                     if (counterSection) {
                         counterSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        
-                        // দৃষ্টি আকর্ষণের জন্য একটি অস্থায়ী হাইলাইট ক্লাস যোগ করা
                         counterSection.classList.add('section-highlight');
-                        
-                        // অ্যানিমেশন শেষ হলে ক্লাসটি সরিয়ে ফেলা হবে
                         setTimeout(() => {
                             counterSection.classList.remove('section-highlight');
-                        }, 2000); // অ্যানিমেশনের সময়কাল 2s
-                    } else {
-                        console.error('Visitor counter section not found!');
+                        }, 2000);
                     }
-                }, 300); // 300ms is a safe delay
+                }, 300);
             };
         }
         if (auth.currentUser) {
@@ -32912,14 +32911,10 @@ function initializeCanvasTools() {
         if (fab && container && closeBtn) {
             fab.addEventListener('click', (e) => {
                 e.stopPropagation();
-                
-                // --- নতুন পরিবর্তন: অন্য উইন্ডোগুলো বন্ধ করুন ---
                 const profileWin = document.getElementById('profileWindow');
                 const cloudWin = document.getElementById('cloudWindow');
                 if(profileWin) profileWin.classList.add('hidden');
                 if(cloudWin) cloudWin.classList.add('hidden');
-                // --- পরিবর্তন শেষ ---
-
                 container.classList.toggle('active');
                 if (notificationBubble) notificationBubble.classList.add('hidden');
                 if (container.classList.contains('active')) {
@@ -32992,31 +32987,63 @@ function initializeCanvasTools() {
 
         const commentsRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments");
 
+        function sanitizeHtml(html) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            const allowedTags = ['DIV', 'BR', 'B', 'I', 'U', 'S', 'STRONG', 'EM', 'STRIKE'];
+            const allowedClasses = ['reply-quote'];
+            const allElements = tempDiv.querySelectorAll('*');
+            allElements.forEach(el => {
+                if (!allowedTags.includes(el.tagName)) {
+                    el.parentNode.replaceChild(document.createTextNode(el.textContent), el);
+                    return;
+                }
+                if (el.hasAttribute('class')) {
+                    const classes = Array.from(el.classList);
+                    const validClasses = classes.filter(c => allowedClasses.includes(c));
+                    el.className = validClasses.length > 0 ? validClasses.join(' ') : '';
+                }
+                Array.from(el.attributes).forEach(attr => { if (attr.name !== 'class') el.removeAttribute(attr.name); });
+            });
+            return tempDiv.innerHTML;
+        }
+
         async function sendMessage() {
             const name = nameInput.value.trim() || 'বেনামী';
-            const text = msgInput.value.trim();
-            const avatar = emojiBtn.textContent; 
-            const currentUserUid = auth.currentUser ? auth.currentUser.uid : 'anonymous'; 
-
-            if (!text) return;
-            localStorage.setItem('bt_comment_username', name);
-            localStorage.setItem('bt_comment_avatar', avatar);
             
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = msgInput.innerHTML;
+            const quoteEl = tempDiv.querySelector('.reply-quote');
+            if (quoteEl) quoteEl.remove();
+            
+            const text = sanitizeHtml(tempDiv.innerHTML.trim());
+
+            if (!text || text === '<br>') return;
+            
+            const dataToSave = {
+                name, text, avatar: emojiBtn.textContent,
+                uid: auth.currentUser ? auth.currentUser.uid : 'anonymous',
+                timestamp: serverTimestamp(), createdAt: Date.now(), pinned: false
+            };
+
+            if (currentReplyInfo) {
+                dataToSave.replyTo = currentReplyInfo;
+            }
+
+            localStorage.setItem('bt_comment_username', name);
+            localStorage.setItem('bt_comment_avatar', dataToSave.avatar);
             if (name !== 'বেনামী') {
                 nameInput.disabled = true;
                 nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
                 editNameBtn.classList.remove('hidden');
-            } else {
-                nameInput.disabled = false;
-                nameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
-                editNameBtn.classList.add('hidden');
             }
 
             sendBtn.disabled = true;
             try {
-                await addDoc(commentsRef, { name, text, avatar, uid: currentUserUid, timestamp: serverTimestamp(), createdAt: Date.now(), pinned: false });
-                msgInput.value = '';
-                msgInput.style.height = '40px';
+                await addDoc(commentsRef, dataToSave);
+                msgInput.innerHTML = '';
+                currentReplyInfo = null;
+                msgInputWrapper.style.height = '40px';
             } catch (e) {
                 console.error("Error sending comment:", e);
                 showCustomAlert("মেসেজ পাঠানো যায়নি।");
@@ -33027,24 +33054,29 @@ function initializeCanvasTools() {
 
         if (sendBtn) sendBtn.addEventListener('click', sendMessage);
         if (msgInput) {
-            msgInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.shiftKey) { e.preventDefault(); sendMessage(); } });
-            msgInput.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px'; if(this.value === '') this.style.height = '40px'; });
+            msgInput.addEventListener('keydown', (e) => { 
+                if (e.key === 'Enter' && !e.shiftKey) { 
+                    e.preventDefault(); 
+                    sendMessage(); 
+                } 
+            });
+            msgInput.addEventListener('input', function() { 
+                const wrapper = document.getElementById('comment-message-wrapper');
+                wrapper.style.height = 'auto'; 
+                wrapper.style.height = (wrapper.scrollHeight) + 'px'; 
+                if(this.innerHTML.trim() === '' || this.innerHTML.trim() === '<br>') wrapper.style.height = '40px'; 
+            });
         }
 
         let isInitialLoad = true;
 
-        // --- রেন্ডার লজিক (সংশোধিত) ---
         onSnapshot(query(commentsRef, orderBy("timestamp", "asc")), (snapshot) => {
             listContainer.innerHTML = '';
-            
-            // নতুন পরিবর্তন: এখন শুধুমাত্র ২৪ ঘণ্টার বেশি পুরানো এবং আন-পিন করা মেসেজ ফিল্টার করা হবে
             const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
             const allDocs = snapshot.docs.filter(doc => {
                 const data = doc.data();
                 return data.pinned === true || (data.createdAt && data.createdAt > twentyFourHoursAgo);
             });
-            
-            // পিন করা মেসেজগুলো আলাদা করা
             const pinnedDocs = allDocs.filter(doc => doc.data().pinned);
 
             if (allDocs.length === 0) {
@@ -33053,9 +33085,7 @@ function initializeCanvasTools() {
 
             const myUid = auth.currentUser ? auth.currentUser.uid : null;
             allDocs.forEach(doc => renderCommentCard(doc, myUid));
-            
-            // পিন সেকশন রেন্ডার
-            renderPinnedSection(pinnedDocs, myUid);
+            renderPinnedSection(pinnedDocs);
 
             if (isInitialLoad || container.classList.contains('active')) {
                 listContainer.scrollTop = listContainer.scrollHeight;
@@ -33079,8 +33109,7 @@ function initializeCanvasTools() {
             console.error("Snapshot Error:", error);
             listContainer.innerHTML = '<div class="text-center text-red-400 mt-10 text-sm">ডেটা লোড করতে সমস্যা হচ্ছে।</div>';
         });
-
-        // --- পিন করা সেকশনের জন্য ফাংশন (সংশোধিত: onclick) ---
+        
         function renderPinnedSection(pinnedDocs) {
             if (pinnedDocs.length > 0) {
                 pinnedContainer.classList.remove('hidden');
@@ -33089,15 +33118,18 @@ function initializeCanvasTools() {
                     const data = doc.data();
                     const item = document.createElement('div');
                     item.className = 'pinned-item';
-                    item.dataset.scrollToId = `comment-${doc.id}`; // আইডি সেট করা
+                    item.dataset.scrollToId = `comment-${doc.id}`;
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = data.text;
+                    const plainText = tempDiv.innerText;
+
                     item.innerHTML = `
                         <div class="pinned-avatar">${data.avatar || '👤'}</div>
                         <div class="pinned-content">
                             <div class="pinned-name">${escapeHtml(data.name)}</div>
-                            <div class="pinned-text">${escapeHtml(data.text)}</div>
+                            <div class="pinned-text">${escapeHtml(plainText)}</div>
                         </div>
                     `;
-                    // পরিবর্তন: এখন সরাসরি doc.id পাঠানো হচ্ছে
                     item.onclick = () => scrollToComment(item.dataset.scrollToId);
                     pinnedWrapper.appendChild(item);
                 });
@@ -33132,17 +33164,19 @@ function initializeCanvasTools() {
         if(prevPinBtn) prevPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex - 1));
         if(nextPinBtn) nextPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex + 1));
         
-        // --- নতুন: এডিট করার ফাংশন ---
-        const handleEditComment = (docId, currentText) => {
+        const handleEditComment = (docId, currentHtml) => {
             const card = document.getElementById(`comment-${docId}`);
             if (!card) return;
             
-            const msgElement = card.querySelector('.comment-msg');
+            const msgElement = card.querySelector('.comment-text-content');
+            if (!msgElement) return;
+
+            const originalTextContent = msgElement.innerHTML;
+            
             msgElement.setAttribute('contenteditable', 'true');
             msgElement.classList.add('editing');
             msgElement.focus();
             
-            // টেক্সটের শেষে কার্সর সেট করা
             const range = document.createRange();
             const sel = window.getSelection();
             range.selectNodeContents(msgElement);
@@ -33158,14 +33192,24 @@ function initializeCanvasTools() {
             };
 
             const saveChanges = async () => {
-                const newText = msgElement.innerText.trim();
-                if (newText && newText !== currentText) {
+                const newTextContent = msgElement.innerHTML.trim();
+                const quoteElement = card.querySelector('.reply-quote');
+                
+                let newFullHtml = '';
+                if (quoteElement) {
+                    newFullHtml += quoteElement.outerHTML;
+                }
+                newFullHtml += newTextContent;
+
+                const sanitizedNewHtml = sanitizeHtml(newFullHtml);
+
+                if (sanitizedNewHtml.trim() && sanitizedNewHtml !== currentHtml) {
                     await setDoc(doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments", docId), {
-                        text: newText,
-                        editedAt: serverTimestamp() // এডিটের সময় যোগ করা
+                        text: sanitizedNewHtml,
+                        editedAt: serverTimestamp()
                     }, { merge: true });
                 } else {
-                    msgElement.innerText = currentText; // পরিবর্তন না হলে আগের টেক্সট ফিরিয়ে আনা
+                    msgElement.innerHTML = originalTextContent;
                 }
                 cleanup();
             };
@@ -33177,7 +33221,7 @@ function initializeCanvasTools() {
                     saveChanges();
                 } else if (e.key === 'Escape') {
                     e.preventDefault();
-                    msgElement.innerText = currentText; // বাতিল করলে আগের টেক্সট
+                    msgElement.innerHTML = originalTextContent;
                     cleanup();
                 }
             };
@@ -33199,12 +33243,11 @@ function initializeCanvasTools() {
             const pinClass = data.pinned ? 'pinned' : '';
             const pinTitle = data.pinned ? 'আনপিন করুন' : 'পিন করুন';
             
-            // পরিবর্তন: এডিট বাটন HTML থেকে সরানো হয়েছে
             card.innerHTML = `
                 <div class="comment-avatar">${data.avatar || '👤'}</div>
                 <div class="comment-content-wrapper">
                     <div class="comment-name">${escapeHtml(data.name)}</div>
-                    <div class="comment-msg">${escapeHtml(data.text)}</div>
+                    <div class="comment-msg"></div>
                     <div class="comment-time">${time}</div>
                 </div>
                 <div class="comment-actions">
@@ -33214,47 +33257,80 @@ function initializeCanvasTools() {
                     <button class="comment-action-btn btn-delete" title="মুছুন">✖</button>
                 </div>
             `;
+
+            const msgContainer = card.querySelector('.comment-msg');
+            
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = data.text;
+            
+            let quoteHtml = '';
+            let mainTextHtml = data.text;
+            
+            // নতুন: রিপ্লে কন্টেন্ট এবং মূল টেক্সট আলাদা করা
+            const replyEl = tempDiv.querySelector('.reply-quote');
+            if (replyEl) {
+                quoteHtml = replyEl.outerHTML;
+                replyEl.remove();
+                mainTextHtml = tempDiv.innerHTML;
+            }
+            
+            if (data.replyTo && !quoteHtml) {
+                let quoteText = data.replyTo.text.split(/<br>|\n/)[0].trim().substring(0, 70) + "...";
+                quoteHtml = `<div class="reply-quote" style="cursor: pointer;" title="মূল মেসেজটি দেখুন" onclick="scrollToComment('${data.replyTo.docId}')">${escapeHtml(`@${data.replyTo.name}: "${quoteText}"`)}</div>`;
+            }
+
+            msgContainer.innerHTML = `${quoteHtml}<div class="comment-text-content">${mainTextHtml}</div>`;
+            
             listContainer.appendChild(card);
             
             card.querySelector('.btn-pin').addEventListener('click', async () => {
                 await setDoc(doc.ref, { pinned: !data.pinned }, { merge: true });
             });
             card.querySelector('.btn-delete').addEventListener('click', async () => { if(confirm('মুছে ফেলতে চান?')) await deleteDoc(doc.ref); });
-            card.querySelector('.btn-copy').addEventListener('click', () => { navigator.clipboard.writeText(data.text); showCustomAlert('টেক্সট কপি হয়েছে'); });
+            card.querySelector('.btn-copy').addEventListener('click', () => { navigator.clipboard.writeText(msgContainer.innerText); showCustomAlert('টেক্সট কপি হয়েছে'); });
+            
             card.querySelector('.btn-reply').addEventListener('click', () => {
-                let quoteText = data.text.split(/[।!?\n]/)[0].trim().substring(0, 50);
-                msgInput.value = `@${data.name}\n"${quoteText}..."\nরিপ্লে: `;
-                msgInput.focus();
-                msgInput.style.height = 'auto';
-                msgInput.style.height = (msgInput.scrollHeight) + 'px';
+                const tempTextDiv = document.createElement('div');
+                tempTextDiv.innerHTML = data.text;
+                currentReplyInfo = { docId: doc.id, name: data.name, text: tempTextDiv.innerText };
+
+                let quoteText = tempTextDiv.innerText.split(/\n/)[0].trim().substring(0, 50);
+                const safeQuote = escapeHtml(`@${data.name}: "${quoteText}..."`);
+
+                msgInput.innerHTML = `<div class="reply-quote" contenteditable="false">${safeQuote}</div><div contenteditable="true" class="focus:outline-none"><br></div>`;
+                
+                const editablePart = msgInput.querySelector('div[contenteditable="true"]');
+                editablePart.focus();
+                
+                const range = document.createRange();
+                const sel = window.getSelection();
+                range.selectNodeContents(editablePart);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+
+                const wrapper = document.getElementById('comment-message-wrapper');
+                wrapper.style.height = 'auto';
+                wrapper.style.height = (wrapper.scrollHeight) + 'px';
             });
             
-            // নতুন: নিজের মেসেজে ক্লিক করে এডিট করার ইভেন্ট
             if (isMe) {
-                const msgElement = card.querySelector('.comment-msg');
-                msgElement.addEventListener('click', (e) => {
-                    // যদি কোনো টেক্সট সিলেক্ট করা হয়, তাহলে এডিট মোড চালু হবে না
+                const textContentDiv = card.querySelector('.comment-text-content');
+                textContentDiv.addEventListener('click', (e) => {
                     if (window.getSelection().toString().length > 0) return;
-                    
-                    // যদি অন্য কোনো বাটন ক্লিক হয় (event bubbling), তাহলে ইগনোর করুন
                     if (e.target.closest('button')) return;
-
-                    // যদি ইতোমধ্যে এডিট মোডে থাকে, তাহলে কিছু করবেন না
-                    if (msgElement.isContentEditable) return;
-                    
+                    if (textContentDiv.isContentEditable) return;
                     handleEditComment(doc.id, data.text);
                 });
             }
         }
         
-        // পিন করা আইটেমে ক্লিক করলে স্ক্রোল করার ফাংশন (সংশোধিত)
-        function scrollToComment(elementId) {
+        // window অবজেক্টে ফাংশন যোগ করা, যাতে onclick থেকে কল করা যায়
+        window.scrollToComment = function(elementId) {
             const targetElement = document.getElementById(elementId);
             if (targetElement) {
                 targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                // হাইলাইট করার জন্য একটি ক্লাস যোগ করা
                 targetElement.classList.add('comment-highlight');
-                // কিছুক্ষণ পর হাইলাইট ক্লাসটি সরিয়ে ফেলা
                 setTimeout(() => targetElement.classList.remove('comment-highlight'), 1500);
             }
         }
@@ -33263,8 +33339,10 @@ function initializeCanvasTools() {
         function showNewMessageNotification(data) {
             const bubble = document.getElementById('comment-notification');
             if(!bubble) return;
-            let firstSentence = data.text.split(/[।!?\n]/)[0].trim() + "...";
-            bubble.innerHTML = `<div class="flex items-start gap-2"><div class="text-xl flex-shrink-0 pt-0.5">${data.avatar || '??'}</div><div class="overflow-hidden"><p class="text-xs font-bold text-blue-600 dark:text-blue-400 truncate mb-0.5">${escapeHtml(data.name)}</p><p class="text-sm text-gray-700 dark:text-gray-200 leading-snug break-words font-medium">${escapeHtml(firstSentence)}</p></div></div>`;
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = data.text;
+            let firstSentence = tempDiv.innerText.split(/[।!?\n]/)[0].trim() + "...";
+            bubble.innerHTML = `<div class="flex items-start gap-2"><div class="text-xl flex-shrink-0 pt-0.5">${data.avatar || '👤'}</div><div class="overflow-hidden"><p class="text-xs font-bold text-blue-600 dark:text-blue-400 truncate mb-0.5">${escapeHtml(data.name)}</p><p class="text-sm text-gray-700 dark:text-gray-200 leading-snug break-words font-medium">${escapeHtml(firstSentence)}</p></div></div>`;
             bubble.classList.remove('hidden', 'opacity-0', 'translate-y-4', 'pointer-events-none');
             if (notificationTimeout) clearTimeout(notificationTimeout);
             notificationTimeout = setTimeout(() => { bubble.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none'); setTimeout(() => bubble.classList.add('hidden'), 300); }, 5000);
@@ -33272,7 +33350,6 @@ function initializeCanvasTools() {
 
         async function cleanupOldComments() {
             const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
-            // নতুন পরিবর্তন: এখন শুধুমাত্র 'pinned' olmayanları siliyor
             const oldDocsQuery = query(commentsRef, where("createdAt", "<", oneDayAgo), where("pinned", "==", false));
             try {
                 const snapshot = await getDocs(oldDocsQuery);
@@ -33360,7 +33437,6 @@ function initializeCanvasTools() {
 <div id="comment-section-container">
     <div class="comment-header">
         <span>পাবলিক মেসেজ</span>
-        <!-- পরিবর্তন: cursor-pointer এবং title যুক্ত করা হয়েছে -->
         <span id="active-user-count" class="ml-auto mr-3 bg-white text-blue-600 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" title="ভিজিটর কাউন্টার দেখুন">
             <span class="relative flex h-2 w-2">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -33373,13 +33449,10 @@ function initializeCanvasTools() {
         </button>
     </div>
     
-    <!-- নতুন: পিন করা মেসেজের জন্য ফ্লোটিং কন্টেইনার -->
     <div id="pinned-comments-container" class="hidden">
         <button id="pinned-nav-prev" class="pinned-nav-btn" disabled>&lt;</button>
         <div class="overflow-hidden mx-8">
-            <div id="pinned-comments-wrapper">
-                <!-- পিন করা আইটেম এখানে JS দিয়ে যুক্ত হবে -->
-            </div>
+            <div id="pinned-comments-wrapper"></div>
         </div>
         <button id="pinned-nav-next" class="pinned-nav-btn" disabled>&gt;</button>
     </div>
@@ -33400,7 +33473,9 @@ function initializeCanvasTools() {
             </div>
         </div>
         <div class="flex gap-2">
-            <textarea id="comment-message" rows="1" placeholder="মেসেজ লিখুন..." class="flex-grow p-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white resize-none" style="min-height: 40px; max-height: 80px;"></textarea>
+            <div id="comment-message-wrapper" class="flex-grow p-2 text-sm border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">
+                <div id="comment-message" contenteditable="true" data-placeholder="মেসেজ লিখুন..." class="focus:outline-none"></div>
+            </div>
             <button id="send-comment-btn" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg flex items-center justify-center transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed w-10">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             </button>
