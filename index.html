@@ -33307,7 +33307,6 @@ function initializeCanvasTools() {
             
             if (data.replyTo && !quoteHtml) {
                 let quoteText = data.replyTo.text.split(/<br>|\n/)[0].trim().substring(0, 70) + "...";
-                // নতুন পরিবর্তন: data-doc-id অ্যাট্রিবিউট যোগ করা হয়েছে
                 quoteHtml = `<div class="reply-quote" data-doc-id="${data.replyTo.docId}" title="মূল মেসেজটি দেখুন">${escapeHtml(`@${data.replyTo.name}: "${quoteText}"`)}</div>`;
             }
 
@@ -33331,7 +33330,6 @@ function initializeCanvasTools() {
                 showCustomAlert('মেসেজ কপি হয়েছে!'); 
             });
             
-            // নতুন পরিবর্তন: রিপ্লে বাটনের লজিক আপডেট করা হয়েছে
             card.querySelector('.btn-reply').addEventListener('click', () => {
                 currentReplyInfo = { docId: doc.id, name: data.name, text: msgContainer.querySelector('.comment-text-content').innerText };
                 let quoteText = msgContainer.innerText.split(/\n/)[0].trim().substring(0, 50);
@@ -33366,49 +33364,43 @@ function initializeCanvasTools() {
                 });
             }
             
-            // নতুন পরিবর্তন: কোটেশন বক্সে ক্লিক ইভেন্ট যোগ করা
             const quoteBox = msgContainer.querySelector('.reply-quote');
             if (quoteBox && quoteBox.dataset.docId) {
                 quoteBox.addEventListener('click', () => scrollToComment('comment-' + quoteBox.dataset.docId, card.id));
             }
         }
         
-        // নতুন ফাংশন: স্ক্রোল ও হাইলাইট করার জন্য (sourceElementId সহ আপডেট করা হয়েছে)
+        // নতুন পরিবর্তন: sourceElementId যুক্ত করা হয়েছে
         function scrollToComment(elementId, sourceElementId = null) {
-            // আগের কোনো রিটার্ন বাটন থাকলে মুছে ফেলুন
             document.querySelectorAll('.return-to-reply-btn').forEach(btn => btn.remove());
 
             const targetElement = document.getElementById(elementId);
             if (targetElement) {
                 targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 
-                // হাইলাইট করুন
                 targetElement.classList.add('comment-highlight');
                 setTimeout(() => targetElement.classList.remove('comment-highlight'), 3000);
 
-                // যদি সোর্স আইডি থাকে, তাহলে "ফিরে যান" বাটন তৈরি করুন
                 if (sourceElementId) {
                     const returnBtn = document.createElement('button');
                     returnBtn.className = 'return-to-reply-btn';
                     returnBtn.title = 'আগের মেসেজে ফিরে যান';
-                    returnBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/></svg>';
+                    // নতুন পরিবর্তন: আইকনটি আপ-অ্যারো থেকে ডাউন-অ্যারো করা হয়েছে
+                    returnBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/></svg>';
                     returnBtn.dataset.sourceId = sourceElementId;
                     
-                    // মেসেজের অ্যালাইনমেন্ট অনুযায়ী বাটনের পজিশন সেট করুন
                     if (targetElement.classList.contains('my-message')) {
-                        returnBtn.style.left = '-40px'; // ডানের মেসেজের জন্য বামে
+                        returnBtn.style.left = '-40px';
                     } else {
-                        returnBtn.style.right = '-40px'; // বামের মেসেজের জন্য ডানে
+                        returnBtn.style.right = '-40px';
                     }
                     
-                    // বাটনে ক্লিক করলে সোর্স মেসেজে ফিরে যাবে
                     returnBtn.onclick = () => {
-                        scrollToComment(sourceElementId); // এবার সোর্স আইডি ছাড়াই কল করুন
+                        scrollToComment(sourceElementId);
                     };
                     
                     targetElement.appendChild(returnBtn);
                     
-                    // বাটনটি দেখান এবং কিছুক্ষণ পর মুছে ফেলুন
                     setTimeout(() => returnBtn.classList.add('show'), 100);
                     setTimeout(() => {
                         returnBtn.classList.remove('show');
@@ -33447,7 +33439,6 @@ function initializeCanvasTools() {
         
         function escapeHtml(text) { return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;") : ""; }
     }
-
     // ইনিশিয়ালাইজেশন
     // আমরা প্রথমে কাউন্টার ইনিশিয়ালাইজ করব, তারপর কমেন্টস, যাতে অথেন্টিকেশন নিশ্চিত হয়
     initializeGlobalCounter().then(() => {
