@@ -7491,7 +7491,7 @@ body.sidebar-open #sidebarOverlay {
     line-height: 1.4;
 }
 .comment-text-content {
-    /* This class is for targeting the editable part */
+    /* For JS targeting */
 }
 .comment-card.my-message .comment-text-content {
     cursor: pointer;
@@ -7587,7 +7587,7 @@ body.sidebar-open #sidebarOverlay {
     white-space: normal;
     overflow: hidden;
     text-overflow: ellipsis;
-    cursor: default;
+    cursor: pointer; /* পরিবর্তিত: এখন এটি ক্লিকযোগ্য */
 }
 .dark .reply-quote {
     background-color: #374151;
@@ -32832,7 +32832,7 @@ function initializeCanvasTools() {
     }
 
 // ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার, পাসওয়ার্ড প্রটেকশন, অ্যালাইনমেন্ট ও নোটিফিকেশন ডট এবং একটিভ কাউন্টার সহ)
-async function initializePublicComments() {
+   async function initializePublicComments() {
         await ensureAuth();
 
         const fab = document.getElementById('comment-fab');
@@ -33003,7 +33003,7 @@ async function initializePublicComments() {
                     const validClasses = classes.filter(c => allowedClasses.includes(c));
                     el.className = validClasses.length > 0 ? validClasses.join(' ') : '';
                 }
-                Array.from(el.attributes).forEach(attr => { if (attr.name !== 'class') el.removeAttribute(attr.name); });
+                Array.from(el.attributes).forEach(attr => { if (attr.name !== 'class' && attr.name !== 'data-doc-id') el.removeAttribute(attr.name); }); // data-doc-id অ্যাট্রিবিউটটি রাখুন
             });
             return tempDiv.innerHTML;
         }
@@ -33061,7 +33061,7 @@ async function initializePublicComments() {
                 } 
             });
             msgInput.addEventListener('input', function() { 
-                const wrapper = document.getElementById('comment-message-wrapper');
+                const wrapper = msgInputWrapper;
                 wrapper.style.height = 'auto'; 
                 wrapper.style.height = (wrapper.scrollHeight) + 'px'; 
                 if(this.innerHTML.trim() === '' || this.innerHTML.trim() === '<br>') wrapper.style.height = '40px'; 
@@ -33266,7 +33266,6 @@ async function initializePublicComments() {
             let quoteHtml = '';
             let mainTextHtml = data.text;
             
-            // নতুন: রিপ্লে কন্টেন্ট এবং মূল টেক্সট আলাদা করা
             const replyEl = tempDiv.querySelector('.reply-quote');
             if (replyEl) {
                 quoteHtml = replyEl.outerHTML;
@@ -33276,7 +33275,8 @@ async function initializePublicComments() {
             
             if (data.replyTo && !quoteHtml) {
                 let quoteText = data.replyTo.text.split(/<br>|\n/)[0].trim().substring(0, 70) + "...";
-                quoteHtml = `<div class="reply-quote" style="cursor: pointer;" title="মূল মেসেজটি দেখুন" onclick="scrollToComment('${data.replyTo.docId}')">${escapeHtml(`@${data.replyTo.name}: "${quoteText}"`)}</div>`;
+                // নতুন পরিবর্তন: data-doc-id অ্যাট্রিবিউট যোগ করা হয়েছে
+                quoteHtml = `<div class="reply-quote" data-doc-id="${data.replyTo.docId}" style="cursor: pointer;" title="মূল মেসেজটি দেখুন">${escapeHtml(`@${data.replyTo.name}: "${quoteText}"`)}</div>`;
             }
 
             msgContainer.innerHTML = `${quoteHtml}<div class="comment-text-content">${mainTextHtml}</div>`;
@@ -33287,28 +33287,48 @@ async function initializePublicComments() {
                 await setDoc(doc.ref, { pinned: !data.pinned }, { merge: true });
             });
             card.querySelector('.btn-delete').addEventListener('click', async () => { if(confirm('মুছে ফেলতে চান?')) await deleteDoc(doc.ref); });
-            card.querySelector('.btn-copy').addEventListener('click', () => { navigator.clipboard.writeText(msgContainer.innerText); showCustomAlert('টেক্সট কপি হয়েছে'); });
             
+            card.querySelector('.btn-copy').addEventListener('click', () => { 
+                let textToCopy = '';
+                if (data.replyTo) {
+                    textToCopy += `@${data.replyTo.name}: "${data.replyTo.text}"\n`;
+                }
+                textToCopy += `@${data.name}: ${msgContainer.querySelector('.comment-text-content').innerText}`;
+                
+                navigator.clipboard.writeText(textToCopy); 
+                showCustomAlert('মেসেজ কপি হয়েছে!'); 
+            });
+            
+            // নতুন পরিবর্তন: রিপ্লে বাটনের লজিক আপডেট করা হয়েছে
             card.querySelector('.btn-reply').addEventListener('click', () => {
-                const tempTextDiv = document.createElement('div');
-                tempTextDiv.innerHTML = data.text;
-                currentReplyInfo = { docId: doc.id, name: data.name, text: tempTextDiv.innerText };
+                currentReplyInfo = { docId: doc.id, name: data.name, text: msgContainer.querySelector('.comment-text-content').innerText };
 
-                let quoteText = tempTextDiv.innerText.split(/\n/)[0].trim().substring(0, 50);
+                let quoteText = msgContainer.innerText.split(/\n/)[0].trim().substring(0, 50);
                 const safeQuote = escapeHtml(`@${data.name}: "${quoteText}..."`);
 
-                msgInput.innerHTML = `<div class="reply-quote" contenteditable="false">${safeQuote}</div><div contenteditable="true" class="focus:outline-none"><br></div>`;
+                // টেক্সটবক্সের বর্তমান লেখা সংরক্ষণ করুন
+                const existingContent = msgInput.innerHTML.trim();
                 
-                const editablePart = msgInput.querySelector('div[contenteditable="true"]');
-                editablePart.focus();
+                // নতুন কোটেশন তৈরি করুন
+                const quoteHtml = `<div class="reply-quote" contenteditable="false">${safeQuote}</div>`;
+
+                // কোটেশন এবং আগের লেখা একসাথে দেখান
+                if (existingContent && existingContent !== '<br>') {
+                    msgInput.innerHTML = quoteHtml + '<br>' + existingContent;
+                } else {
+                    msgInput.innerHTML = quoteHtml + '<div contenteditable="true" class="focus:outline-none"><br></div>';
+                }
                 
+                // কার্সরকে টেক্সটবক্সের শেষে নিয়ে যান
+                msgInput.focus();
                 const range = document.createRange();
                 const sel = window.getSelection();
-                range.selectNodeContents(editablePart);
+                range.selectNodeContents(msgInput);
                 range.collapse(false);
                 sel.removeAllRanges();
                 sel.addRange(range);
 
+                // টেক্সটবক্সের উচ্চতা অ্যাডজাস্ট করুন
                 const wrapper = document.getElementById('comment-message-wrapper');
                 wrapper.style.height = 'auto';
                 wrapper.style.height = (wrapper.scrollHeight) + 'px';
@@ -33323,15 +33343,21 @@ async function initializePublicComments() {
                     handleEditComment(doc.id, data.text);
                 });
             }
+            
+            // নতুন পরিবর্তন: কোটেশন বক্সে ক্লিক ইভেন্ট যোগ করা
+            const quoteBox = msgContainer.querySelector('.reply-quote');
+            if (quoteBox && quoteBox.dataset.docId) {
+                quoteBox.addEventListener('click', () => scrollToComment(quoteBox.dataset.docId));
+            }
         }
         
-        // window অবজেক্টে ফাংশন যোগ করা, যাতে onclick থেকে কল করা যায়
-        window.scrollToComment = function(elementId) {
+        // নতুন ফাংশন: স্ক্রোল ও হাইলাইট করার জন্য
+        function scrollToComment(elementId) {
             const targetElement = document.getElementById(elementId);
             if (targetElement) {
                 targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 targetElement.classList.add('comment-highlight');
-                setTimeout(() => targetElement.classList.remove('comment-highlight'), 1500);
+                setTimeout(() => targetElement.classList.remove('comment-highlight'), 1500); // ১.৫ সেকেন্ড পর হাইলাইট সরিয়ে ফেলবে
             }
         }
 
