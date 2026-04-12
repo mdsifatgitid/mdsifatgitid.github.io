@@ -33003,7 +33003,7 @@ function initializeCanvasTools() {
                     const validClasses = classes.filter(c => allowedClasses.includes(c));
                     el.className = validClasses.length > 0 ? validClasses.join(' ') : '';
                 }
-                Array.from(el.attributes).forEach(attr => { if (attr.name !== 'class' && attr.name !== 'data-doc-id') el.removeAttribute(attr.name); }); // data-doc-id অ্যাট্রিবিউটটি রাখুন
+                Array.from(el.attributes).forEach(attr => { if (attr.name !== 'class' && attr.name !== 'data-doc-id') el.removeAttribute(attr.name); });
             });
             return tempDiv.innerHTML;
         }
@@ -33276,7 +33276,7 @@ function initializeCanvasTools() {
             if (data.replyTo && !quoteHtml) {
                 let quoteText = data.replyTo.text.split(/<br>|\n/)[0].trim().substring(0, 70) + "...";
                 // নতুন পরিবর্তন: data-doc-id অ্যাট্রিবিউট যোগ করা হয়েছে
-                quoteHtml = `<div class="reply-quote" data-doc-id="${data.replyTo.docId}" style="cursor: pointer;" title="মূল মেসেজটি দেখুন">${escapeHtml(`@${data.replyTo.name}: "${quoteText}"`)}</div>`;
+                quoteHtml = `<div class="reply-quote" data-doc-id="${data.replyTo.docId}" title="মূল মেসেজটি দেখুন">${escapeHtml(`@${data.replyTo.name}: "${quoteText}"`)}</div>`;
             }
 
             msgContainer.innerHTML = `${quoteHtml}<div class="comment-text-content">${mainTextHtml}</div>`;
@@ -33302,24 +33302,16 @@ function initializeCanvasTools() {
             // নতুন পরিবর্তন: রিপ্লে বাটনের লজিক আপডেট করা হয়েছে
             card.querySelector('.btn-reply').addEventListener('click', () => {
                 currentReplyInfo = { docId: doc.id, name: data.name, text: msgContainer.querySelector('.comment-text-content').innerText };
-
                 let quoteText = msgContainer.innerText.split(/\n/)[0].trim().substring(0, 50);
                 const safeQuote = escapeHtml(`@${data.name}: "${quoteText}..."`);
-
-                // টেক্সটবক্সের বর্তমান লেখা সংরক্ষণ করুন
-                const existingContent = msgInput.innerHTML.trim();
-                
-                // নতুন কোটেশন তৈরি করুন
+                const existingContent = msgInput.innerHTML;
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = existingContent;
+                const oldQuote = tempDiv.querySelector('.reply-quote');
+                if (oldQuote) oldQuote.remove();
+                const cleanedContent = tempDiv.innerHTML.trim();
                 const quoteHtml = `<div class="reply-quote" contenteditable="false">${safeQuote}</div>`;
-
-                // কোটেশন এবং আগের লেখা একসাথে দেখান
-                if (existingContent && existingContent !== '<br>') {
-                    msgInput.innerHTML = quoteHtml + '<br>' + existingContent;
-                } else {
-                    msgInput.innerHTML = quoteHtml + '<div contenteditable="true" class="focus:outline-none"><br></div>';
-                }
-                
-                // কার্সরকে টেক্সটবক্সের শেষে নিয়ে যান
+                msgInput.innerHTML = quoteHtml + (cleanedContent && cleanedContent !== '<br>' ? '<br>' + cleanedContent : '');
                 msgInput.focus();
                 const range = document.createRange();
                 const sel = window.getSelection();
@@ -33327,8 +33319,6 @@ function initializeCanvasTools() {
                 range.collapse(false);
                 sel.removeAllRanges();
                 sel.addRange(range);
-
-                // টেক্সটবক্সের উচ্চতা অ্যাডজাস্ট করুন
                 const wrapper = document.getElementById('comment-message-wrapper');
                 wrapper.style.height = 'auto';
                 wrapper.style.height = (wrapper.scrollHeight) + 'px';
@@ -33347,7 +33337,7 @@ function initializeCanvasTools() {
             // নতুন পরিবর্তন: কোটেশন বক্সে ক্লিক ইভেন্ট যোগ করা
             const quoteBox = msgContainer.querySelector('.reply-quote');
             if (quoteBox && quoteBox.dataset.docId) {
-                quoteBox.addEventListener('click', () => scrollToComment(quoteBox.dataset.docId));
+                quoteBox.addEventListener('click', () => scrollToComment('comment-' + quoteBox.dataset.docId));
             }
         }
         
