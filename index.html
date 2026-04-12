@@ -7587,7 +7587,7 @@ body.sidebar-open #sidebarOverlay {
     white-space: normal;
     overflow: hidden;
     text-overflow: ellipsis;
-    cursor: pointer; /* পরিবর্তিত: এখন এটি ক্লিকযোগ্য */
+    cursor: pointer;
 }
 .dark .reply-quote {
     background-color: #374151;
@@ -7605,6 +7605,37 @@ body.sidebar-open #sidebarOverlay {
     overflow-y: auto;
     resize: none;
     transition: all 0.2s;
+}
+
+/* নতুন: ফিরে যান বাটন স্টাইল */
+.return-to-reply-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%) scale(0.8);
+    background-color: #dbeafe;
+    color: #1d4ed8;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #bfdbfe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 6;
+}
+.dark .return-to-reply-btn {
+    background-color: #1e3a8a;
+    color: #93c5fd;
+    border-color: #3b82f6;
+}
+.return-to-reply-btn.show {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+    pointer-events: auto;
 }
 /* ==================================================================== */
 /* END: PUBLIC COMMENTS SECTION CSS */
@@ -32832,7 +32863,8 @@ function initializeCanvasTools() {
     }
 
 // ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার, পাসওয়ার্ড প্রটেকশন, অ্যালাইনমেন্ট ও নোটিফিকেশন ডট এবং একটিভ কাউন্টার সহ)
-   async function initializePublicComments() {
+    // ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার, পাসওয়ার্ড প্রটেকশন, অ্যালাইনমেন্ট ও নোটিফিকেশন ডট এবং একটিভ কাউন্টার সহ)
+    async function initializePublicComments() {
         await ensureAuth();
 
         const fab = document.getElementById('comment-fab');
@@ -33337,17 +33369,52 @@ function initializeCanvasTools() {
             // নতুন পরিবর্তন: কোটেশন বক্সে ক্লিক ইভেন্ট যোগ করা
             const quoteBox = msgContainer.querySelector('.reply-quote');
             if (quoteBox && quoteBox.dataset.docId) {
-                quoteBox.addEventListener('click', () => scrollToComment('comment-' + quoteBox.dataset.docId));
+                quoteBox.addEventListener('click', () => scrollToComment('comment-' + quoteBox.dataset.docId, card.id));
             }
         }
         
-        // নতুন ফাংশন: স্ক্রোল ও হাইলাইট করার জন্য
-        function scrollToComment(elementId) {
+        // নতুন ফাংশন: স্ক্রোল ও হাইলাইট করার জন্য (sourceElementId সহ আপডেট করা হয়েছে)
+        function scrollToComment(elementId, sourceElementId = null) {
+            // আগের কোনো রিটার্ন বাটন থাকলে মুছে ফেলুন
+            document.querySelectorAll('.return-to-reply-btn').forEach(btn => btn.remove());
+
             const targetElement = document.getElementById(elementId);
             if (targetElement) {
                 targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // হাইলাইট করুন
                 targetElement.classList.add('comment-highlight');
-                setTimeout(() => targetElement.classList.remove('comment-highlight'), 1500); // ১.৫ সেকেন্ড পর হাইলাইট সরিয়ে ফেলবে
+                setTimeout(() => targetElement.classList.remove('comment-highlight'), 3000);
+
+                // যদি সোর্স আইডি থাকে, তাহলে "ফিরে যান" বাটন তৈরি করুন
+                if (sourceElementId) {
+                    const returnBtn = document.createElement('button');
+                    returnBtn.className = 'return-to-reply-btn';
+                    returnBtn.title = 'আগের মেসেজে ফিরে যান';
+                    returnBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/></svg>';
+                    returnBtn.dataset.sourceId = sourceElementId;
+                    
+                    // মেসেজের অ্যালাইনমেন্ট অনুযায়ী বাটনের পজিশন সেট করুন
+                    if (targetElement.classList.contains('my-message')) {
+                        returnBtn.style.left = '-40px'; // ডানের মেসেজের জন্য বামে
+                    } else {
+                        returnBtn.style.right = '-40px'; // বামের মেসেজের জন্য ডানে
+                    }
+                    
+                    // বাটনে ক্লিক করলে সোর্স মেসেজে ফিরে যাবে
+                    returnBtn.onclick = () => {
+                        scrollToComment(sourceElementId); // এবার সোর্স আইডি ছাড়াই কল করুন
+                    };
+                    
+                    targetElement.appendChild(returnBtn);
+                    
+                    // বাটনটি দেখান এবং কিছুক্ষণ পর মুছে ফেলুন
+                    setTimeout(() => returnBtn.classList.add('show'), 100);
+                    setTimeout(() => {
+                        returnBtn.classList.remove('show');
+                        setTimeout(() => returnBtn.remove(), 300);
+                    }, 3000);
+                }
             }
         }
 
