@@ -32863,582 +32863,593 @@ function initializeCanvasTools() {
     }
 
 // ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার, পাসওয়ার্ড প্রটেকশন, অ্যালাইনমেন্ট ও নোটিফিকেশন ডট এবং একটিভ কাউন্টার সহ)
-    // ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার, পাসওয়ার্ড প্রটেকশন, অ্যালাইনমেন্ট ও নোটিফিকেশন ডট এবং একটিভ কাউন্টার সহ)
-    async function initializePublicComments() {
-        await ensureAuth();
+// START: আপডেটেড পাবলিক কমেন্ট ফাংশন
+async function initializePublicComments() {
+    await ensureAuth();
 
-        const fab = document.getElementById('comment-fab');
-        const container = document.getElementById('comment-section-container');
-        const closeBtn = document.getElementById('close-comment-btn');
-        const sendBtn = document.getElementById('send-comment-btn');
-        const nameInput = document.getElementById('comment-username');
-        const editNameBtn = document.getElementById('edit-username-btn'); 
-        const msgInput = document.getElementById('comment-message');
-        const msgInputWrapper = document.getElementById('comment-message-wrapper');
-        const listContainer = document.getElementById('comment-list');
-        const emojiBtn = document.getElementById('emoji-selector-btn');
-        const emojiContainer = document.getElementById('emoji-picker-container');
-        const activeCountEl = document.getElementById('active-user-count');
-        
-        const pinnedContainer = document.getElementById('pinned-comments-container');
-        const pinnedWrapper = document.getElementById('pinned-comments-wrapper');
-        const prevPinBtn = document.getElementById('pinned-nav-prev');
-        const nextPinBtn = document.getElementById('pinned-nav-next');
-        let currentPinnedIndex = 0;
-        let totalPinned = 0;
-        
-        let currentReplyInfo = null;
+    const fab = document.getElementById('comment-fab');
+    const container = document.getElementById('comment-section-container');
+    const closeBtn = document.getElementById('close-comment-btn');
+    const sendBtn = document.getElementById('send-comment-btn');
+    const nameInput = document.getElementById('comment-username');
+    const editNameBtn = document.getElementById('edit-username-btn'); 
+    const msgInput = document.getElementById('comment-message');
+    const msgInputWrapper = document.getElementById('comment-message-wrapper');
+    const listContainer = document.getElementById('comment-list');
+    const emojiBtn = document.getElementById('emoji-selector-btn');
+    const emojiContainer = document.getElementById('emoji-picker-container');
+    const activeCountEl = document.getElementById('active-user-count');
+    
+    // নতুন: রিপ্লাই প্রিভিউ কন্টেইনার
+    const replyPreviewContainer = document.getElementById('reply-preview-container');
+    
+    const pinnedContainer = document.getElementById('pinned-comments-container');
+    const pinnedWrapper = document.getElementById('pinned-comments-wrapper');
+    const prevPinBtn = document.getElementById('pinned-nav-prev');
+    const nextPinBtn = document.getElementById('pinned-nav-next');
+    let currentPinnedIndex = 0;
+    let totalPinned = 0;
+    
+    let currentReplyInfo = null;
 
-        const notificationDot = document.getElementById('comment-notification-dot');
-        let notificationBubble = document.getElementById('comment-notification');
-        if (!notificationBubble) {
-            notificationBubble = document.createElement('div');
-            notificationBubble.id = 'comment-notification';
-            notificationBubble.className = "fixed bottom-36 right-5 z-[1002] bg-white dark:bg-gray-800 p-3 rounded-lg shadow-xl border-l-4 border-blue-500 max-w-[250px] transition-all duration-300 transform translate-y-4 opacity-0 pointer-events-none hidden";
-            document.body.appendChild(notificationBubble);
-        }
+    const notificationDot = document.getElementById('comment-notification-dot');
+    let notificationBubble = document.getElementById('comment-notification');
+    if (!notificationBubble) {
+        notificationBubble = document.createElement('div');
+        notificationBubble.id = 'comment-notification';
+        notificationBubble.className = "fixed bottom-36 right-5 z-[1002] bg-white dark:bg-gray-800 p-3 rounded-lg shadow-xl border-l-4 border-blue-500 max-w-[250px] transition-all duration-300 transform translate-y-4 opacity-0 pointer-events-none hidden";
+        document.body.appendChild(notificationBubble);
+    }
 
-        if (activeCountEl) {
-            activeCountEl.onclick = () => {
-                const importantLinksTabButton = document.getElementById('importantLinksTab');
-                const moreMenuBtn = document.getElementById('moreMenuBtn');
-                const moreMenuDropdown = document.getElementById('moreMenuDropdown');
-                if (importantLinksTabButton) {
-                    const isHiddenInDropdown = moreMenuDropdown && moreMenuDropdown.classList.contains('hidden') && moreMenuDropdown.contains(importantLinksTabButton);
-                    if (isHiddenInDropdown) {
-                        moreMenuBtn.click();
-                        setTimeout(() => { importantLinksTabButton.click(); }, 50);
-                    } else {
-                        importantLinksTabButton.click();
-                    }
+    if (activeCountEl) {
+        activeCountEl.onclick = () => {
+            const importantLinksTabButton = document.getElementById('importantLinksTab');
+            const moreMenuBtn = document.getElementById('moreMenuBtn');
+            const moreMenuDropdown = document.getElementById('moreMenuDropdown');
+            if (importantLinksTabButton) {
+                const isHiddenInDropdown = moreMenuDropdown && moreMenuDropdown.classList.contains('hidden') && moreMenuDropdown.contains(importantLinksTabButton);
+                if (isHiddenInDropdown) {
+                    moreMenuBtn.click();
+                    setTimeout(() => { importantLinksTabButton.click(); }, 50);
+                } else {
+                    importantLinksTabButton.click();
                 }
-                if (container) container.classList.remove('active');
-                setTimeout(() => {
-                    const counterSection = document.getElementById('visitor-counter-section');
-                    if (counterSection) {
-                        counterSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        counterSection.classList.add('section-highlight');
-                        setTimeout(() => {
-                            counterSection.classList.remove('section-highlight');
-                        }, 2000);
-                    }
-                }, 300);
-            };
-        }
-        if (auth.currentUser) {
-            const presenceRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "presence", auth.currentUser.uid);
-            const updatePresence = async () => { try { await setDoc(presenceRef, { uid: auth.currentUser.uid, last_active: Date.now() }, { merge: true }); } catch (e) { console.error("Presence update failed", e); } };
-            updatePresence();
-            setInterval(updatePresence, 60000);
-            const presenceCollRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "presence");
-            onSnapshot(presenceCollRef, (snapshot) => {
-                const now = Date.now();
-                const activeCount = snapshot.docs.filter(doc => (now - doc.data().last_active < 120000)).length;
-                if(activeCountEl) {
-                    activeCountEl.innerHTML = `<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span>একটিভ: ${activeCount.toLocaleString('bn-BD')}`;
+            }
+            if (container) container.classList.remove('active');
+            setTimeout(() => {
+                const counterSection = document.getElementById('visitor-counter-section');
+                if (counterSection) {
+                    counterSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    counterSection.classList.add('section-highlight');
+                    setTimeout(() => {
+                        counterSection.classList.remove('section-highlight');
+                    }, 2000);
                 }
-            });
-        }
+            }, 300);
+        };
+    }
+    if (auth.currentUser) {
+        const presenceRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "presence", auth.currentUser.uid);
+        const updatePresence = async () => { try { await setDoc(presenceRef, { uid: auth.currentUser.uid, last_active: Date.now() }, { merge: true }); } catch (e) { console.error("Presence update failed", e); } };
+        updatePresence();
+        setInterval(updatePresence, 60000);
+        const presenceCollRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "presence");
+        onSnapshot(presenceCollRef, (snapshot) => {
+            const now = Date.now();
+            const activeCount = snapshot.docs.filter(doc => (now - doc.data().last_active < 120000)).length;
+            if(activeCountEl) {
+                activeCountEl.innerHTML = `<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span>একটিভ: ${activeCount.toLocaleString('bn-BD')}`;
+            }
+        });
+    }
 
-        if (fab && container && closeBtn) {
-            fab.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const profileWin = document.getElementById('profileWindow');
-                const cloudWin = document.getElementById('cloudWindow');
-                if(profileWin) profileWin.classList.add('hidden');
-                if(cloudWin) cloudWin.classList.add('hidden');
-                container.classList.toggle('active');
-                if (notificationBubble) notificationBubble.classList.add('hidden');
-                if (container.classList.contains('active')) {
-                    if (notificationDot) notificationDot.classList.add('hidden');
-                    loadSavedUserData();
-                    cleanupOldComments();
-                    setTimeout(() => listContainer.scrollTop = listContainer.scrollHeight, 300);
-                }
-            });
-            closeBtn.addEventListener('click', () => container.classList.remove('active'));
-            container.addEventListener('click', (e) => e.stopPropagation());
-        }
+    if (fab && container && closeBtn) {
+        fab.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const profileWin = document.getElementById('profileWindow');
+            const cloudWin = document.getElementById('cloudWindow');
+            if(profileWin) profileWin.classList.add('hidden');
+            if(cloudWin) cloudWin.classList.add('hidden');
+            container.classList.toggle('active');
+            if (notificationBubble) notificationBubble.classList.add('hidden');
+            if (container.classList.contains('active')) {
+                if (notificationDot) notificationDot.classList.add('hidden');
+                loadSavedUserData();
+                cleanupOldComments();
+                setTimeout(() => listContainer.scrollTop = listContainer.scrollHeight, 300);
+            }
+        });
+        closeBtn.addEventListener('click', () => container.classList.remove('active'));
+        container.addEventListener('click', (e) => e.stopPropagation());
+    }
 
-        function loadSavedUserData() {
-            const savedName = localStorage.getItem('bt_comment_username');
-            const savedAvatar = localStorage.getItem('bt_comment_avatar');
-            if (savedName && savedName.trim() !== '' && savedName !== 'বেনামী') {
-                nameInput.value = savedName;
-                nameInput.disabled = true;
-                nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
-                editNameBtn.classList.remove('hidden');
-            } else {
-                if (savedName) nameInput.value = savedName; 
+    function loadSavedUserData() {
+        const savedName = localStorage.getItem('bt_comment_username');
+        const savedAvatar = localStorage.getItem('bt_comment_avatar');
+        if (savedName && savedName.trim() !== '' && savedName !== 'বেনামী') {
+            nameInput.value = savedName;
+            nameInput.disabled = true;
+            nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+            editNameBtn.classList.remove('hidden');
+        } else {
+            if (savedName) nameInput.value = savedName; 
+            nameInput.disabled = false;
+            nameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
+            editNameBtn.classList.add('hidden');
+        }
+        if (savedAvatar) emojiBtn.textContent = savedAvatar;
+    }
+
+    if (editNameBtn) {
+        editNameBtn.addEventListener('click', () => {
+            const currentName = nameInput.value.trim();
+            if (!currentName || currentName === 'বেনামী') {
                 nameInput.disabled = false;
                 nameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                nameInput.focus();
                 editNameBtn.classList.add('hidden');
+                return;
             }
-            if (savedAvatar) emojiBtn.textContent = savedAvatar;
-        }
-
-        if (editNameBtn) {
-            editNameBtn.addEventListener('click', () => {
-                const currentName = nameInput.value.trim();
-                if (!currentName || currentName === 'বেনামী') {
-                    nameInput.disabled = false;
-                    nameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
-                    nameInput.focus();
-                    editNameBtn.classList.add('hidden');
-                    return;
-                }
-                const password = prompt("নাম পরিবর্তন করতে পাসওয়ার্ড দিন:");
-                const normalizedPass = password ? password.toLowerCase().replace(/\s+/g, '') : '';
-                if (normalizedPass === 'banglatoolbox') {
-                    nameInput.disabled = false;
-                    nameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
-                    nameInput.focus();
-                    editNameBtn.classList.add('hidden');
-                    alert("নাম এডিট করার অনুমতি দেওয়া হয়েছে।");
-                } else {
-                    alert("ভুল পাসওয়ার্ড! নাম পরিবর্তন করা যাবে না।");
-                }
-            });
-        }
-
-        const avatars = ['👤', '👨', '👩', '🧑‍💻', '🦸', '🦹', '🧙', '🧚', '🧛', '🧜', '🧞', '🤖', '👾', '👽', '👻', '🤡', '💩', '😺', '😸', '😹', '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯'];
-        function setupEmojiPicker() {
-            emojiContainer.innerHTML = '';
-            avatars.forEach(emoji => {
-                const btn = document.createElement('button');
-                btn.className = 'emoji-choice-btn';
-                btn.textContent = emoji;
-                btn.onclick = (e) => { e.stopPropagation(); emojiBtn.textContent = emoji; localStorage.setItem('bt_comment_avatar', emoji); emojiContainer.classList.add('hidden'); };
-                emojiContainer.appendChild(btn);
-            });
-        }
-        setupEmojiPicker();
-
-        emojiBtn.addEventListener('click', (e) => { e.stopPropagation(); emojiContainer.classList.toggle('hidden'); });
-        document.addEventListener('click', (e) => { if (!emojiContainer.contains(e.target) && e.target !== emojiBtn) emojiContainer.classList.add('hidden'); });
-
-        const commentsRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments");
-
-        function sanitizeHtml(html) {
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = html;
-            const allowedTags = ['DIV', 'BR', 'B', 'I', 'U', 'S', 'STRONG', 'EM', 'STRIKE'];
-            const allowedClasses = ['reply-quote'];
-            const allElements = tempDiv.querySelectorAll('*');
-            allElements.forEach(el => {
-                if (!allowedTags.includes(el.tagName)) {
-                    el.parentNode.replaceChild(document.createTextNode(el.textContent), el);
-                    return;
-                }
-                if (el.hasAttribute('class')) {
-                    const classes = Array.from(el.classList);
-                    const validClasses = classes.filter(c => allowedClasses.includes(c));
-                    el.className = validClasses.length > 0 ? validClasses.join(' ') : '';
-                }
-                Array.from(el.attributes).forEach(attr => { if (attr.name !== 'class' && attr.name !== 'data-doc-id') el.removeAttribute(attr.name); });
-            });
-            return tempDiv.innerHTML;
-        }
-
-        async function sendMessage() {
-            const name = nameInput.value.trim() || 'বেনামী';
-            
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = msgInput.innerHTML;
-            const quoteEl = tempDiv.querySelector('.reply-quote');
-            if (quoteEl) quoteEl.remove();
-            
-            const text = sanitizeHtml(tempDiv.innerHTML.trim());
-
-            if (!text || text === '<br>') return;
-            
-            const dataToSave = {
-                name, text, avatar: emojiBtn.textContent,
-                uid: auth.currentUser ? auth.currentUser.uid : 'anonymous',
-                timestamp: serverTimestamp(), createdAt: Date.now(), pinned: false
-            };
-
-            if (currentReplyInfo) {
-                dataToSave.replyTo = currentReplyInfo;
+            const password = prompt("নাম পরিবর্তন করতে পাসওয়ার্ড দিন:");
+            const normalizedPass = password ? password.toLowerCase().replace(/\s+/g, '') : '';
+            if (normalizedPass === 'banglatoolbox') {
+                nameInput.disabled = false;
+                nameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                nameInput.focus();
+                editNameBtn.classList.add('hidden');
+                alert("নাম এডিট করার অনুমতি দেওয়া হয়েছে।");
+            } else {
+                alert("ভুল পাসওয়ার্ড! নাম পরিবর্তন করা যাবে না।");
             }
-
-            localStorage.setItem('bt_comment_username', name);
-            localStorage.setItem('bt_comment_avatar', dataToSave.avatar);
-            if (name !== 'বেনামী') {
-                nameInput.disabled = true;
-                nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
-                editNameBtn.classList.remove('hidden');
-            }
-
-            sendBtn.disabled = true;
-            try {
-                await addDoc(commentsRef, dataToSave);
-                msgInput.innerHTML = '';
-                currentReplyInfo = null;
-                msgInputWrapper.style.height = '40px';
-            } catch (e) {
-                console.error("Error sending comment:", e);
-                showCustomAlert("মেসেজ পাঠানো যায়নি।");
-            } finally {
-                sendBtn.disabled = false;
-            }
-        }
-
-        if (sendBtn) sendBtn.addEventListener('click', sendMessage);
-        if (msgInput) {
-            msgInput.addEventListener('keydown', (e) => { 
-                if (e.key === 'Enter' && !e.shiftKey) { 
-                    e.preventDefault(); 
-                    sendMessage(); 
-                } 
-            });
-            msgInput.addEventListener('input', function() { 
-                const wrapper = msgInputWrapper;
-                wrapper.style.height = 'auto'; 
-                wrapper.style.height = (wrapper.scrollHeight) + 'px'; 
-                if(this.innerHTML.trim() === '' || this.innerHTML.trim() === '<br>') wrapper.style.height = '40px'; 
-            });
-        }
-
-        let isInitialLoad = true;
-
-        onSnapshot(query(commentsRef, orderBy("timestamp", "asc")), (snapshot) => {
-            listContainer.innerHTML = '';
-            const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
-            const allDocs = snapshot.docs.filter(doc => {
-                const data = doc.data();
-                return data.pinned === true || (data.createdAt && data.createdAt > twentyFourHoursAgo);
-            });
-            const pinnedDocs = allDocs.filter(doc => doc.data().pinned);
-
-            if (allDocs.length === 0) {
-                listContainer.innerHTML = '<div class="text-center text-gray-400 mt-10 text-sm">কোনো মন্তব্য নেই।<br>প্রথম মন্তব্যটি আপনি করুন!</div>';
-            }
-
-            const myUid = auth.currentUser ? auth.currentUser.uid : null;
-            allDocs.forEach(doc => renderCommentCard(doc, myUid));
-            renderPinnedSection(pinnedDocs);
-
-            if (isInitialLoad || container.classList.contains('active')) {
-                listContainer.scrollTop = listContainer.scrollHeight;
-            }
-            if (!isInitialLoad) {
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === "added") {
-                        const data = change.doc.data();
-                        const isRecent = (Date.now() - data.createdAt) < 10000;
-                        if (data.uid !== myUid && isRecent) {
-                            showNewMessageNotification(data);
-                            if (!container.classList.contains('active')) {
-                                if (notificationDot) notificationDot.classList.remove('hidden');
-                            }
-                        }
-                    }
-                });
-            }
-            isInitialLoad = false; 
-        }, (error) => {
-            console.error("Snapshot Error:", error);
-            listContainer.innerHTML = '<div class="text-center text-red-400 mt-10 text-sm">ডেটা লোড করতে সমস্যা হচ্ছে।</div>';
         });
-        
-        function renderPinnedSection(pinnedDocs) {
-            if (pinnedDocs.length > 0) {
-                pinnedContainer.classList.remove('hidden');
-                pinnedWrapper.innerHTML = '';
-                pinnedDocs.forEach(doc => {
-                    const data = doc.data();
-                    const item = document.createElement('div');
-                    item.className = 'pinned-item';
-                    item.dataset.scrollToId = `comment-${doc.id}`;
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = data.text;
-                    const plainText = tempDiv.innerText;
+    }
 
-                    item.innerHTML = `
-                        <div class="pinned-avatar">${data.avatar || '👤'}</div>
-                        <div class="pinned-content">
-                            <div class="pinned-name">${escapeHtml(data.name)}</div>
-                            <div class="pinned-text">${escapeHtml(plainText)}</div>
-                        </div>
-                    `;
-                    item.onclick = () => scrollToComment(item.dataset.scrollToId);
-                    pinnedWrapper.appendChild(item);
-                });
-                totalPinned = pinnedDocs.length;
-                showPinnedComment(0);
-            } else {
-                pinnedContainer.classList.add('hidden');
-                totalPinned = 0;
+    const avatars = ['👤', '👨', '👩', '🧑‍💻', '🦸', '🦹', '🧙', '🧚', '🧛', '🧜', '🧞', '🤖', '👾', '👽', '👻', '🤡', '💩', '😺', '😸', '😹', '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯'];
+    function setupEmojiPicker() {
+        emojiContainer.innerHTML = '';
+        avatars.forEach(emoji => {
+            const btn = document.createElement('button');
+            btn.className = 'emoji-choice-btn';
+            btn.textContent = emoji;
+            btn.onclick = (e) => { e.stopPropagation(); emojiBtn.textContent = emoji; localStorage.setItem('bt_comment_avatar', emoji); emojiContainer.classList.add('hidden'); };
+            emojiContainer.appendChild(btn);
+        });
+    }
+    setupEmojiPicker();
+
+    emojiBtn.addEventListener('click', (e) => { e.stopPropagation(); emojiContainer.classList.toggle('hidden'); });
+    document.addEventListener('click', (e) => { if (!emojiContainer.contains(e.target) && e.target !== emojiBtn) emojiContainer.classList.add('hidden'); });
+
+    const commentsRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments");
+
+    function sanitizeHtml(html) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        const allowedTags = ['DIV', 'BR', 'B', 'I', 'U', 'S', 'STRONG', 'EM', 'STRIKE'];
+        const allowedClasses = ['reply-quote'];
+        const allElements = tempDiv.querySelectorAll('*');
+        allElements.forEach(el => {
+            if (!allowedTags.includes(el.tagName)) {
+                el.parentNode.replaceChild(document.createTextNode(el.textContent), el);
+                return;
             }
-        }
-        
-        function showPinnedComment(index) {
-            currentPinnedIndex = index;
-            const offset = -index * 100;
-            pinnedWrapper.style.transform = `translateX(${offset}%)`;
-            updatePinnedNavButtons();
-        }
-
-        function updatePinnedNavButtons() {
-            prevPinBtn.disabled = currentPinnedIndex === 0;
-            nextPinBtn.disabled = currentPinnedIndex >= totalPinned - 1;
-            
-            if (totalPinned <= 1) {
-                prevPinBtn.style.display = 'none';
-                nextPinBtn.style.display = 'none';
-            } else {
-                prevPinBtn.style.display = 'flex';
-                nextPinBtn.style.display = 'flex';
+            if (el.hasAttribute('class')) {
+                const classes = Array.from(el.classList);
+                const validClasses = classes.filter(c => allowedClasses.includes(c));
+                el.className = validClasses.length > 0 ? validClasses.join(' ') : '';
             }
-        }
+            Array.from(el.attributes).forEach(attr => { if (attr.name !== 'class' && attr.name !== 'data-doc-id') el.removeAttribute(attr.name); });
+        });
+        return tempDiv.innerHTML;
+    }
+    
+    // START: আপডেটেড sendMessage ফাংশন
+    async function sendMessage() {
+        const name = nameInput.value.trim() || 'বেনামী';
         
-        if(prevPinBtn) prevPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex - 1));
-        if(nextPinBtn) nextPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex + 1));
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = msgInput.innerHTML;
         
-        const handleEditComment = (docId, currentHtml) => {
-            const card = document.getElementById(`comment-${docId}`);
-            if (!card) return;
-            
-            const msgElement = card.querySelector('.comment-text-content');
-            if (!msgElement) return;
+        const text = sanitizeHtml(tempDiv.innerHTML.trim());
 
-            const originalTextContent = msgElement.innerHTML;
-            
-            msgElement.setAttribute('contenteditable', 'true');
-            msgElement.classList.add('editing');
-            msgElement.focus();
-            
-            const range = document.createRange();
-            const sel = window.getSelection();
-            range.selectNodeContents(msgElement);
-            range.collapse(false);
-            sel.removeAllRanges();
-            sel.addRange(range);
-
-            const cleanup = () => {
-                msgElement.setAttribute('contenteditable', 'false');
-                msgElement.classList.remove('editing');
-                msgElement.removeEventListener('blur', saveOnBlur);
-                msgElement.removeEventListener('keydown', saveOnEnter);
-            };
-
-            const saveChanges = async () => {
-                const newTextContent = msgElement.innerHTML.trim();
-                const quoteElement = card.querySelector('.reply-quote');
-                
-                let newFullHtml = '';
-                if (quoteElement) {
-                    newFullHtml += quoteElement.outerHTML;
-                }
-                newFullHtml += newTextContent;
-
-                const sanitizedNewHtml = sanitizeHtml(newFullHtml);
-
-                if (sanitizedNewHtml.trim() && sanitizedNewHtml !== currentHtml) {
-                    await setDoc(doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments", docId), {
-                        text: sanitizedNewHtml,
-                        editedAt: serverTimestamp()
-                    }, { merge: true });
-                } else {
-                    msgElement.innerHTML = originalTextContent;
-                }
-                cleanup();
-            };
-
-            const saveOnBlur = () => saveChanges();
-            const saveOnEnter = (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    saveChanges();
-                } else if (e.key === 'Escape') {
-                    e.preventDefault();
-                    msgElement.innerHTML = originalTextContent;
-                    cleanup();
-                }
-            };
-            
-            msgElement.addEventListener('blur', saveOnBlur, { once: true });
-            msgElement.addEventListener('keydown', saveOnEnter);
+        if (!text || text === '<br>') return;
+        
+        const dataToSave = {
+            name, text, avatar: emojiBtn.textContent,
+            uid: auth.currentUser ? auth.currentUser.uid : 'anonymous',
+            timestamp: serverTimestamp(), createdAt: Date.now(), pinned: false
         };
 
-        function renderCommentCard(doc, myUid) {
+        if (currentReplyInfo) {
+            dataToSave.replyTo = currentReplyInfo;
+        }
+
+        localStorage.setItem('bt_comment_username', name);
+        localStorage.setItem('bt_comment_avatar', dataToSave.avatar);
+        if (name !== 'বেনামী') {
+            nameInput.disabled = true;
+            nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+            editNameBtn.classList.remove('hidden');
+        }
+
+        sendBtn.disabled = true;
+        try {
+            await addDoc(commentsRef, dataToSave);
+            msgInput.innerHTML = '';
+            
+            // নতুন সংযোজন: রিপ্লাই প্রিভিউ হাইড এবং রিসেট
+            if (replyPreviewContainer) replyPreviewContainer.classList.add('hidden');
+            currentReplyInfo = null;
+
+            msgInputWrapper.style.height = '40px';
+        } catch (e) {
+            console.error("Error sending comment:", e);
+            showCustomAlert("মেসেজ পাঠানো যায়নি।");
+        } finally {
+            sendBtn.disabled = false;
+        }
+    }
+    // END: আপডেটেড sendMessage ফাংশন
+
+    if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+    
+    // START: আপডেটেড এন্টার কী লজিক
+    if (msgInput) {
+        msgInput.addEventListener('keydown', (e) => { 
+            // শুধুমাত্র Enter চাপলে এখন নতুন লাইন হবে (Shift ছাড়াও)
+            if (e.key === 'Enter' && !e.shiftKey) { 
+                e.preventDefault(); 
+                // contenteditable div-এ নতুন লাইন যোগ করার নির্ভরযোগ্য উপায়
+                document.execCommand('insertLineBreak');
+            } 
+        });
+        msgInput.addEventListener('input', function() { 
+            const wrapper = msgInputWrapper;
+            wrapper.style.height = 'auto'; 
+            wrapper.style.height = (wrapper.scrollHeight) + 'px'; 
+            if(this.innerHTML.trim() === '' || this.innerHTML.trim() === '<br>') wrapper.style.height = '40px'; 
+        });
+    }
+    // END: আপডেটেড এন্টার কী লজিক
+
+    let isInitialLoad = true;
+
+    onSnapshot(query(commentsRef, orderBy("timestamp", "asc")), (snapshot) => {
+        listContainer.innerHTML = '';
+        const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
+        const allDocs = snapshot.docs.filter(doc => {
             const data = doc.data();
-            const time = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString('bn-BD', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '...';
-            const isMe = data.uid === myUid;
-            const alignClass = isMe ? 'my-message' : 'other-message';
-            
-            const card = document.createElement('div');
-            card.id = `comment-${doc.id}`;
-            card.className = `comment-card group ${alignClass}`;
-            
-            const pinClass = data.pinned ? 'pinned' : '';
-            const pinTitle = data.pinned ? 'আনপিন করুন' : 'পিন করুন';
-            
-            card.innerHTML = `
-                <div class="comment-avatar">${data.avatar || '👤'}</div>
-                <div class="comment-content-wrapper">
-                    <div class="comment-name">${escapeHtml(data.name)}</div>
-                    <div class="comment-msg"></div>
-                    <div class="comment-time">${time}</div>
-                </div>
-                <div class="comment-actions">
-                    <button class="comment-action-btn btn-pin ${pinClass}" title="${pinTitle}">📌</button>
-                    <button class="comment-action-btn btn-reply" title="রিপ্লে">↩</button>
-                    <button class="comment-action-btn btn-copy" title="কপি">📋</button>
-                    <button class="comment-action-btn btn-delete" title="মুছুন">✖</button>
-                </div>
-            `;
+            return data.pinned === true || (data.createdAt && data.createdAt > twentyFourHoursAgo);
+        });
+        const pinnedDocs = allDocs.filter(doc => doc.data().pinned);
 
-            const msgContainer = card.querySelector('.comment-msg');
-            
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = data.text;
-            
-            let quoteHtml = '';
-            let mainTextHtml = data.text;
-            
-            const replyEl = tempDiv.querySelector('.reply-quote');
-            if (replyEl) {
-                quoteHtml = replyEl.outerHTML;
-                replyEl.remove();
-                mainTextHtml = tempDiv.innerHTML;
-            }
-            
-            if (data.replyTo && !quoteHtml) {
-                let quoteText = data.replyTo.text.split(/<br>|\n/)[0].trim().substring(0, 70) + "...";
-                quoteHtml = `<div class="reply-quote" data-doc-id="${data.replyTo.docId}" title="মূল মেসেজটি দেখুন">${escapeHtml(`@${data.replyTo.name}: "${quoteText}"`)}</div>`;
-            }
+        if (allDocs.length === 0) {
+            listContainer.innerHTML = '<div class="text-center text-gray-400 mt-10 text-sm">কোনো মন্তব্য নেই।<br>প্রথম মন্তব্যটি আপনি করুন!</div>';
+        }
 
-            msgContainer.innerHTML = `${quoteHtml}<div class="comment-text-content">${mainTextHtml}</div>`;
-            
-            listContainer.appendChild(card);
-            
-            card.querySelector('.btn-pin').addEventListener('click', async () => {
-                await setDoc(doc.ref, { pinned: !data.pinned }, { merge: true });
-            });
-            card.querySelector('.btn-delete').addEventListener('click', async () => { if(confirm('মুছে ফেলতে চান?')) await deleteDoc(doc.ref); });
-            
-            card.querySelector('.btn-copy').addEventListener('click', () => { 
-                let textToCopy = '';
-                if (data.replyTo) {
-                    textToCopy += `@${data.replyTo.name}: "${data.replyTo.text}"\n`;
+        const myUid = auth.currentUser ? auth.currentUser.uid : null;
+        allDocs.forEach(doc => renderCommentCard(doc, myUid));
+        renderPinnedSection(pinnedDocs);
+
+        if (isInitialLoad || container.classList.contains('active')) {
+            listContainer.scrollTop = listContainer.scrollHeight;
+        }
+        if (!isInitialLoad) {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added") {
+                    const data = change.doc.data();
+                    const isRecent = (Date.now() - data.createdAt) < 10000;
+                    if (data.uid !== myUid && isRecent) {
+                        showNewMessageNotification(data);
+                        if (!container.classList.contains('active')) {
+                            if (notificationDot) notificationDot.classList.remove('hidden');
+                        }
+                    }
                 }
-                textToCopy += `@${data.name}: ${msgContainer.querySelector('.comment-text-content').innerText}`;
-                
-                navigator.clipboard.writeText(textToCopy); 
-                showCustomAlert('মেসেজ কপি হয়েছে!'); 
             });
-            
-            card.querySelector('.btn-reply').addEventListener('click', () => {
-                currentReplyInfo = { docId: doc.id, name: data.name, text: msgContainer.querySelector('.comment-text-content').innerText };
-                let quoteText = msgContainer.innerText.split(/\n/)[0].trim().substring(0, 50);
-                const safeQuote = escapeHtml(`@${data.name}: "${quoteText}..."`);
-                const existingContent = msgInput.innerHTML;
+        }
+        isInitialLoad = false; 
+    }, (error) => {
+        console.error("Snapshot Error:", error);
+        listContainer.innerHTML = '<div class="text-center text-red-400 mt-10 text-sm">ডেটা লোড করতে সমস্যা হচ্ছে।</div>';
+    });
+    
+    function renderPinnedSection(pinnedDocs) {
+        if (pinnedDocs.length > 0) {
+            pinnedContainer.classList.remove('hidden');
+            pinnedWrapper.innerHTML = '';
+            pinnedDocs.forEach(doc => {
+                const data = doc.data();
+                const item = document.createElement('div');
+                item.className = 'pinned-item';
+                item.dataset.scrollToId = `comment-${doc.id}`;
                 const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = existingContent;
-                const oldQuote = tempDiv.querySelector('.reply-quote');
-                if (oldQuote) oldQuote.remove();
-                const cleanedContent = tempDiv.innerHTML.trim();
-                const quoteHtml = `<div class="reply-quote" contenteditable="false">${safeQuote}</div>`;
-                msgInput.innerHTML = quoteHtml + (cleanedContent && cleanedContent !== '<br>' ? '<br>' + cleanedContent : '');
-                msgInput.focus();
-                const range = document.createRange();
-                const sel = window.getSelection();
-                range.selectNodeContents(msgInput);
-                range.collapse(false);
-                sel.removeAllRanges();
-                sel.addRange(range);
-                const wrapper = document.getElementById('comment-message-wrapper');
-                wrapper.style.height = 'auto';
-                wrapper.style.height = (wrapper.scrollHeight) + 'px';
+                tempDiv.innerHTML = data.text;
+                const plainText = tempDiv.innerText;
+
+                item.innerHTML = `
+                    <div class="pinned-avatar">${data.avatar || '👤'}</div>
+                    <div class="pinned-content">
+                        <div class="pinned-name">${escapeHtml(data.name)}</div>
+                        <div class="pinned-text">${escapeHtml(plainText)}</div>
+                    </div>
+                `;
+                item.onclick = () => scrollToComment(item.dataset.scrollToId);
+                pinnedWrapper.appendChild(item);
             });
+            totalPinned = pinnedDocs.length;
+            showPinnedComment(0);
+        } else {
+            pinnedContainer.classList.add('hidden');
+            totalPinned = 0;
+        }
+    }
+    
+    function showPinnedComment(index) {
+        currentPinnedIndex = index;
+        const offset = -index * 100;
+        pinnedWrapper.style.transform = `translateX(${offset}%)`;
+        updatePinnedNavButtons();
+    }
+
+    function updatePinnedNavButtons() {
+        prevPinBtn.disabled = currentPinnedIndex === 0;
+        nextPinBtn.disabled = currentPinnedIndex >= totalPinned - 1;
+        
+        if (totalPinned <= 1) {
+            prevPinBtn.style.display = 'none';
+            nextPinBtn.style.display = 'none';
+        } else {
+            prevPinBtn.style.display = 'flex';
+            nextPinBtn.style.display = 'flex';
+        }
+    }
+    
+    if(prevPinBtn) prevPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex - 1));
+    if(nextPinBtn) nextPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex + 1));
+    
+    const handleEditComment = (docId, currentHtml) => {
+        const card = document.getElementById(`comment-${docId}`);
+        if (!card) return;
+        
+        const msgElement = card.querySelector('.comment-text-content');
+        if (!msgElement) return;
+
+        const originalTextContent = msgElement.innerHTML;
+        
+        msgElement.setAttribute('contenteditable', 'true');
+        msgElement.classList.add('editing');
+        msgElement.focus();
+        
+        const range = document.createRange();
+        const sel = window.getSelection();
+        range.selectNodeContents(msgElement);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        const cleanup = () => {
+            msgElement.setAttribute('contenteditable', 'false');
+            msgElement.classList.remove('editing');
+            msgElement.removeEventListener('blur', saveOnBlur);
+            msgElement.removeEventListener('keydown', saveOnEnter);
+        };
+
+        const saveChanges = async () => {
+            const newTextContent = msgElement.innerHTML.trim();
+            const quoteElement = card.querySelector('.reply-quote');
             
-            if (isMe) {
-                const textContentDiv = card.querySelector('.comment-text-content');
-                textContentDiv.addEventListener('click', (e) => {
-                    if (window.getSelection().toString().length > 0) return;
-                    if (e.target.closest('button')) return;
-                    if (textContentDiv.isContentEditable) return;
-                    handleEditComment(doc.id, data.text);
+            let newFullHtml = '';
+            if (quoteElement) {
+                newFullHtml += quoteElement.outerHTML;
+            }
+            newFullHtml += newTextContent;
+
+            const sanitizedNewHtml = sanitizeHtml(newFullHtml);
+
+            if (sanitizedNewHtml.trim() && sanitizedNewHtml !== currentHtml) {
+                await setDoc(doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments", docId), {
+                    text: sanitizedNewHtml,
+                    editedAt: serverTimestamp()
+                }, { merge: true });
+            } else {
+                msgElement.innerHTML = originalTextContent;
+            }
+            cleanup();
+        };
+
+        const saveOnBlur = () => saveChanges();
+        const saveOnEnter = (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                saveChanges();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                msgElement.innerHTML = originalTextContent;
+                cleanup();
+            }
+        };
+        
+        msgElement.addEventListener('blur', saveOnBlur, { once: true });
+        msgElement.addEventListener('keydown', saveOnEnter);
+    };
+
+    function renderCommentCard(doc, myUid) {
+        const data = doc.data();
+        const time = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString('bn-BD', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '...';
+        const isMe = data.uid === myUid;
+        const alignClass = isMe ? 'my-message' : 'other-message';
+        
+        const card = document.createElement('div');
+        card.id = `comment-${doc.id}`;
+        card.className = `comment-card group ${alignClass}`;
+        
+        const pinClass = data.pinned ? 'pinned' : '';
+        const pinTitle = data.pinned ? 'আনপিন করুন' : 'পিন করুন';
+        
+        card.innerHTML = `
+            <div class="comment-avatar">${data.avatar || '👤'}</div>
+            <div class="comment-content-wrapper">
+                <div class="comment-name">${escapeHtml(data.name)}</div>
+                <div class="comment-msg"></div>
+                <div class="comment-time">${time}</div>
+            </div>
+            <div class="comment-actions">
+                <button class="comment-action-btn btn-pin ${pinClass}" title="${pinTitle}">📌</button>
+                <button class="comment-action-btn btn-reply" title="রিপ্লে">↩</button>
+                <button class="comment-action-btn btn-copy" title="কপি">📋</button>
+                <button class="comment-action-btn btn-delete" title="মুছুন">✖</button>
+            </div>
+        `;
+
+        const msgContainer = card.querySelector('.comment-msg');
+        
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = data.text;
+        
+        let quoteHtml = '';
+        let mainTextHtml = data.text;
+        
+        const replyEl = tempDiv.querySelector('.reply-quote');
+        if (replyEl) {
+            quoteHtml = replyEl.outerHTML;
+            replyEl.remove();
+            mainTextHtml = tempDiv.innerHTML;
+        }
+        
+        if (data.replyTo && !quoteHtml) {
+            let quoteText = data.replyTo.text.split(/<br>|\n/)[0].trim().substring(0, 70) + "...";
+            quoteHtml = `<div class="reply-quote" data-doc-id="${data.replyTo.docId}" title="মূল মেসেজটি দেখুন">${escapeHtml(`@${data.replyTo.name}: "${quoteText}"`)}</div>`;
+        }
+
+        msgContainer.innerHTML = `${quoteHtml}<div class="comment-text-content">${mainTextHtml}</div>`;
+        
+        listContainer.appendChild(card);
+        
+        card.querySelector('.btn-pin').addEventListener('click', async () => {
+            await setDoc(doc.ref, { pinned: !data.pinned }, { merge: true });
+        });
+        card.querySelector('.btn-delete').addEventListener('click', async () => { if(confirm('মুছে ফেলতে চান?')) await deleteDoc(doc.ref); });
+        
+        card.querySelector('.btn-copy').addEventListener('click', () => { 
+            let textToCopy = '';
+            if (data.replyTo) {
+                textToCopy += `@${data.replyTo.name}: "${data.replyTo.text}"\n`;
+            }
+            textToCopy += `@${data.name}: ${msgContainer.querySelector('.comment-text-content').innerText}`;
+            
+            navigator.clipboard.writeText(textToCopy); 
+            showCustomAlert('মেসেজ কপি হয়েছে!'); 
+        });
+        
+        // START: আপডেটেড রিপ্লাই বাটন লজিক
+        card.querySelector('.btn-reply').addEventListener('click', () => {
+            currentReplyInfo = { docId: doc.id, name: data.name, text: msgContainer.querySelector('.comment-text-content').innerText };
+            let quoteText = msgContainer.innerText.split(/\n/)[0].trim().substring(0, 50);
+            const safeQuote = escapeHtml(`"${quoteText}..."`);
+            
+            if (replyPreviewContainer) {
+                replyPreviewContainer.innerHTML = `
+                    <button id="cancel-reply-btn" class="absolute top-1 right-1 text-gray-400 hover:text-red-500 font-bold" title="রিপ্লে বাতিল করুন">&times;</button>
+                    <p class="font-semibold text-gray-600 dark:text-gray-300"><strong>${escapeHtml(data.name)}</strong> কে রিপ্লাই করছেন:</p>
+                    <p class="truncate text-gray-500 dark:text-gray-400 italic">${safeQuote}</p>
+                `;
+                replyPreviewContainer.classList.remove('hidden');
+
+                document.getElementById('cancel-reply-btn').addEventListener('click', () => {
+                    replyPreviewContainer.classList.add('hidden');
+                    currentReplyInfo = null;
                 });
             }
-            
-            const quoteBox = msgContainer.querySelector('.reply-quote');
-            if (quoteBox && quoteBox.dataset.docId) {
-                quoteBox.addEventListener('click', () => scrollToComment('comment-' + quoteBox.dataset.docId, card.id));
-            }
+
+            msgInput.focus();
+        });
+        // END: আপডেটেড রিপ্লাই বাটন লজিক
+        
+        if (isMe) {
+            const textContentDiv = card.querySelector('.comment-text-content');
+            textContentDiv.addEventListener('click', (e) => {
+                if (window.getSelection().toString().length > 0) return;
+                if (e.target.closest('button')) return;
+                if (textContentDiv.isContentEditable) return;
+                handleEditComment(doc.id, data.text);
+            });
         }
         
-        // নতুন পরিবর্তন: sourceElementId যুক্ত করা হয়েছে
-        function scrollToComment(elementId, sourceElementId = null) {
-            document.querySelectorAll('.return-to-reply-btn').forEach(btn => btn.remove());
-
-            const targetElement = document.getElementById(elementId);
-            if (targetElement) {
-                targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                
-                targetElement.classList.add('comment-highlight');
-                setTimeout(() => targetElement.classList.remove('comment-highlight'), 3000);
-
-                if (sourceElementId) {
-                    const returnBtn = document.createElement('button');
-                    returnBtn.className = 'return-to-reply-btn';
-                    returnBtn.title = 'আগের মেসেজে ফিরে যান';
-                    // নতুন পরিবর্তন: আইকনটি আপ-অ্যারো থেকে ডাউন-অ্যারো করা হয়েছে
-                    returnBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/></svg>';
-                    returnBtn.dataset.sourceId = sourceElementId;
-                    
-                    if (targetElement.classList.contains('my-message')) {
-                        returnBtn.style.left = '-40px';
-                    } else {
-                        returnBtn.style.right = '-40px';
-                    }
-                    
-                    returnBtn.onclick = () => {
-                        scrollToComment(sourceElementId);
-                    };
-                    
-                    targetElement.appendChild(returnBtn);
-                    
-                    setTimeout(() => returnBtn.classList.add('show'), 100);
-                    setTimeout(() => {
-                        returnBtn.classList.remove('show');
-                        setTimeout(() => returnBtn.remove(), 300);
-                    }, 3000);
-                }
-            }
+        const quoteBox = msgContainer.querySelector('.reply-quote');
+        if (quoteBox && quoteBox.dataset.docId) {
+            quoteBox.addEventListener('click', () => scrollToComment('comment-' + quoteBox.dataset.docId, card.id));
         }
-
-        let notificationTimeout;
-        function showNewMessageNotification(data) {
-            const bubble = document.getElementById('comment-notification');
-            if(!bubble) return;
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = data.text;
-            let firstSentence = tempDiv.innerText.split(/[।!?\n]/)[0].trim() + "...";
-            bubble.innerHTML = `<div class="flex items-start gap-2"><div class="text-xl flex-shrink-0 pt-0.5">${data.avatar || '👤'}</div><div class="overflow-hidden"><p class="text-xs font-bold text-blue-600 dark:text-blue-400 truncate mb-0.5">${escapeHtml(data.name)}</p><p class="text-sm text-gray-700 dark:text-gray-200 leading-snug break-words font-medium">${escapeHtml(firstSentence)}</p></div></div>`;
-            bubble.classList.remove('hidden', 'opacity-0', 'translate-y-4', 'pointer-events-none');
-            if (notificationTimeout) clearTimeout(notificationTimeout);
-            notificationTimeout = setTimeout(() => { bubble.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none'); setTimeout(() => bubble.classList.add('hidden'), 300); }, 5000);
-        }
-
-        async function cleanupOldComments() {
-            const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
-            const oldDocsQuery = query(commentsRef, where("createdAt", "<", oneDayAgo), where("pinned", "==", false));
-            try {
-                const snapshot = await getDocs(oldDocsQuery);
-                if (!snapshot.empty) {
-                    const batch = writeBatch(db);
-                    snapshot.docs.forEach((doc) => batch.delete(doc.ref));
-                    await batch.commit();
-                    console.log(`${snapshot.size} টি পুরনো মেসেজ মুছে ফেলা হয়েছে।`);
-                }
-            } catch (e) { console.log("Cleanup check done. No old unpinned comments found or index needs creation."); }
-        }
-        
-        function escapeHtml(text) { return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;") : ""; }
     }
+    
+    function scrollToComment(elementId, sourceElementId = null) {
+        document.querySelectorAll('.return-to-reply-btn').forEach(btn => btn.remove());
+
+        const targetElement = document.getElementById(elementId);
+        if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            targetElement.classList.add('comment-highlight');
+            setTimeout(() => targetElement.classList.remove('comment-highlight'), 3000);
+
+            if (sourceElementId) {
+                const returnBtn = document.createElement('button');
+                returnBtn.className = 'return-to-reply-btn';
+                returnBtn.title = 'আগের মেসেজে ফিরে যান';
+                returnBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/></svg>';
+                returnBtn.dataset.sourceId = sourceElementId;
+                
+                if (targetElement.classList.contains('my-message')) {
+                    returnBtn.style.left = '-40px';
+                } else {
+                    returnBtn.style.right = '-40px';
+                }
+                
+                returnBtn.onclick = () => {
+                    scrollToComment(sourceElementId);
+                };
+                
+                targetElement.appendChild(returnBtn);
+                
+                setTimeout(() => returnBtn.classList.add('show'), 100);
+                setTimeout(() => {
+                    returnBtn.classList.remove('show');
+                    setTimeout(() => returnBtn.remove(), 300);
+                }, 3000);
+            }
+        }
+    }
+
+    let notificationTimeout;
+    function showNewMessageNotification(data) {
+        const bubble = document.getElementById('comment-notification');
+        if(!bubble) return;
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = data.text;
+        let firstSentence = tempDiv.innerText.split(/[।!?\n]/)[0].trim() + "...";
+        bubble.innerHTML = `<div class="flex items-start gap-2"><div class="text-xl flex-shrink-0 pt-0.5">${data.avatar || '👤'}</div><div class="overflow-hidden"><p class="text-xs font-bold text-blue-600 dark:text-blue-400 truncate mb-0.5">${escapeHtml(data.name)}</p><p class="text-sm text-gray-700 dark:text-gray-200 leading-snug break-words font-medium">${escapeHtml(firstSentence)}</p></div></div>`;
+        bubble.classList.remove('hidden', 'opacity-0', 'translate-y-4', 'pointer-events-none');
+        if (notificationTimeout) clearTimeout(notificationTimeout);
+        notificationTimeout = setTimeout(() => { bubble.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none'); setTimeout(() => bubble.classList.add('hidden'), 300); }, 5000);
+    }
+
+    async function cleanupOldComments() {
+        const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+        const oldDocsQuery = query(commentsRef, where("createdAt", "<", oneDayAgo), where("pinned", "==", false));
+        try {
+            const snapshot = await getDocs(oldDocsQuery);
+            if (!snapshot.empty) {
+                const batch = writeBatch(db);
+                snapshot.docs.forEach((doc) => batch.delete(doc.ref));
+                await batch.commit();
+                console.log(`${snapshot.size} টি পুরনো মেসেজ মুছে ফেলা হয়েছে।`);
+            }
+        } catch (e) { console.log("Cleanup check done. No old unpinned comments found or index needs creation."); }
+    }
+    
+    function escapeHtml(text) { return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;") : ""; }
+}
+// END: আপডেটেড পাবলিক কমেন্ট ফাংশন
     // ইনিশিয়ালাইজেশন
     // আমরা প্রথমে কাউন্টার ইনিশিয়ালাইজ করব, তারপর কমেন্টস, যাতে অথেন্টিকেশন নিশ্চিত হয়
     initializeGlobalCounter().then(() => {
@@ -33500,15 +33511,18 @@ function initializeCanvasTools() {
 	
 </div>
 
-<!-- ======================================================== -->
-<!-- START: PUBLIC COMMENTS SECTION (UPDATED) -->
-<!-- ======================================================== -->
-<div id="comment-fab" class="relative" title="মন্তব্য করুন">
+<!-- ==================================================================== -->
+<!-- START: PUBLIC COMMENTS SECTION (UPDATED & REFINED) -->
+<!-- ==================================================================== -->
+<!-- ফ্লোটিং বাটন (FAB) -->
+<div id="comment-fab" class="relative" title="মন্তব্য করুন (শর্টকাট: Alt+M)">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
     <span id="comment-notification-dot" class="absolute top-0 right-0 w-3 h-3 bg-red-600 border-2 border-white dark:border-gray-800 rounded-full hidden"></span>
 </div>
 
+<!-- কমেন্ট উইন্ডো কন্টেইনার -->
 <div id="comment-section-container">
+    <!-- হেডার -->
     <div class="comment-header">
         <span>পাবলিক মেসেজ</span>
         <span id="active-user-count" class="ml-auto mr-3 bg-white text-blue-600 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" title="ভিজিটর কাউন্টার দেখুন">
@@ -33523,6 +33537,7 @@ function initializeCanvasTools() {
         </button>
     </div>
     
+    <!-- পিন করা মেসেজ সেকশন -->
     <div id="pinned-comments-container" class="hidden">
         <button id="pinned-nav-prev" class="pinned-nav-btn" disabled>&lt;</button>
         <div class="overflow-hidden mx-8">
@@ -33531,12 +33546,17 @@ function initializeCanvasTools() {
         <button id="pinned-nav-next" class="pinned-nav-btn" disabled>&gt;</button>
     </div>
 
+    <!-- মেসেজ লিস্ট -->
     <div id="comment-list" class="comment-list">
         <div class="text-center text-gray-500 mt-10 text-sm">লোডিং...</div>
     </div>
 
+    <!-- START: আপডেটেড কমেন্ট ইনপুট এরিয়া -->
     <div class="comment-input-area">
+        <!-- ইমোজি পিকার (অপরিবর্তিত) -->
         <div id="emoji-picker-container" class="hidden"></div>
+        
+        <!-- ইউজারনেম এবং ইমোজি সেকশন (অপরিবর্তিত) -->
         <div class="flex gap-2 mb-2">
             <button id="emoji-selector-btn" class="p-2 border rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 text-xl transition-colors w-12 flex items-center justify-center" title="প্রোফাইল ইমোজি সেট করুন">👤</button>
             <div class="flex-grow flex relative">
@@ -33546,6 +33566,13 @@ function initializeCanvasTools() {
                 </button>
             </div>
         </div>
+        
+        <!-- নতুন: রিপ্লাই প্রিভিউ কন্টেইনার (টেক্সটবক্সের উপরে) -->
+        <div id="reply-preview-container" class="hidden relative bg-gray-100 dark:bg-gray-600 p-2 mb-2 rounded-lg border-l-4 border-blue-500 text-xs">
+            <!-- এখানে রিপ্লাই কনটেন্ট জাভাস্ক্রিপ্ট দ্বারা যুক্ত হবে -->
+        </div>
+    
+        <!-- টেক্সটবক্স এবং সেন্ড বাটন (অপরিবর্তিত) -->
         <div class="flex gap-2">
             <div id="comment-message-wrapper" class="flex-grow p-2 text-sm border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">
                 <div id="comment-message" contenteditable="true" data-placeholder="মেসেজ লিখুন..." class="focus:outline-none"></div>
@@ -33556,10 +33583,11 @@ function initializeCanvasTools() {
         </div>
         <p class="text-[10px] text-gray-400 mt-1 text-center">মন্তব্য ২৪ ঘণ্টা পর মুছে যাবে। যেকেউ ডিলিট করতে পারে।</p>
     </div>
+    <!-- END: আপডেটেড কমেন্ট ইনপুট এরিয়া -->
 </div>
-<!-- ======================================================== -->
+<!-- ==================================================================== -->
 <!-- END: PUBLIC COMMENTS SECTION -->
-<!-- ======================================================== -->
+<!-- ==================================================================== -->
 
 <!-- Sidebar Overlay -->
 <div id="sidebarOverlay" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-30 hidden"></div>
