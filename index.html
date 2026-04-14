@@ -7380,7 +7380,7 @@ body.sidebar-open #sidebarOverlay {
     padding: 10px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 25px; /* পরিবর্তিত: রিএকশনের জন্য গ্যাপ বাড়ানো হয়েছে */
     background-color: #f8fafc;
 }
 .dark .comment-list {
@@ -7443,7 +7443,8 @@ body.sidebar-open #sidebarOverlay {
     max-width: 85%;
     display: flex;
     gap: 8px;
-    margin-bottom: 8px;
+    /* পরিবর্তিত: রিএকশনের জন্য মার্জিন বাড়ানো হয়েছে */
+    margin-bottom: 28px;
     scroll-margin-top: 85px;
 }
 .comment-highlight {
@@ -7615,7 +7616,6 @@ body.sidebar-open #sidebarOverlay {
     -webkit-user-select: text;
     user-select: text;
 }
-/* --- নতুন: প্লেসহোল্ডার স্টাইল (জাভাস্ক্রিপ্ট ক্লাস ভিত্তিক) --- */
 #comment-message[contenteditable="true"].placeholder-visible::before {
     content: attr(data-placeholder);
     color: #9ca3af; /* Tailwind gray-400 */
@@ -7626,8 +7626,6 @@ body.sidebar-open #sidebarOverlay {
 .dark #comment-message[contenteditable="true"].placeholder-visible::before {
     color: #6b7280; /* Tailwind gray-500 */
 }
-/* --- প্লেসহোল্ডার স্টাইল শেষ --- */
-
 #comment-message-wrapper {
     min-height: 40px;
     max-height: 120px;
@@ -7636,7 +7634,6 @@ body.sidebar-open #sidebarOverlay {
     transition: all 0.2s;
 }
 
-/* নতুন: ফিরে যান বাটন স্টাইল */
 .return-to-reply-btn {
     position: absolute;
     top: 50%;
@@ -7666,6 +7663,130 @@ body.sidebar-open #sidebarOverlay {
     transform: translateY(-50%) scale(1);
     pointer-events: auto;
 }
+
+/* --- নতুন: রিয়্যাকশন স্টাইল (পরিবর্তিত) --- */
+.reactions-container {
+    position: absolute !important; /* JS ক্লাসকে ওভাররাইড করার জন্য !important যোগ করা হয়েছে */
+    bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 24px;
+}
+.my-message .reactions-container { right: 8px; }
+.other-message .reactions-container { left: 8px; }
+
+.reaction-item {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background-color: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 11px;
+    cursor: pointer;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+.dark .reaction-item {
+    background-color: #4b5563;
+    border-color: #6b7280;
+}
+.reaction-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.reaction-item.user-reacted {
+    background-color: #dbeafe;
+    border-color: #93c5fd;
+    font-weight: bold;
+    color: #1e40af;
+}
+.dark .reaction-item.user-reacted {
+    background-color: #1e3a8a;
+    border-color: #3b82f6;
+    color: #bfdbfe;
+}
+
+.add-reaction-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #e2e8f0;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+.dark .add-reaction-btn {
+    background-color: #4b5563;
+    color: #d1d5db;
+    border-color: #6b7280;
+}
+.add-reaction-btn:hover {
+    transform: scale(1.1);
+}
+.has-reactions .add-reaction-btn {
+    display: none;
+}
+
+.reaction-popup {
+    position: absolute;
+    top: 50%; /* নতুন: উল্লম্বভাবে মাঝখানে আনার জন্য */
+    transform: translateY(-50%); /* নতুন: উল্লম্বভাবে সঠিকভাবে মাঝখানে আনার জন্য */
+    background: none;
+    border-radius: 16px;
+    padding: 0;
+    box-shadow: none;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    z-index: 10;
+    animation: popup-scale-in 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popup-scale-in {
+    from { transform: translateY(-50%) scale(0.8); opacity: 0; } /* পরিবর্তিত */
+    to { transform: translateY(-50%) scale(1); opacity: 1; } /* পরিবর্তিত */
+}
+.my-message .reaction-popup {
+    right: 100%; /* নতুন: কন্টেইনারের বাম পাশে দেখাবে */
+    margin-right: 8px; /* নতুন: فاصله তৈরি করার জন্য */
+    transform-origin: right center; /* পরিবর্তিত */
+}
+.other-message .reaction-popup {
+    left: 100%; /* নতুন: কন্টেইনারের ডান পাশে দেখাবে */
+    margin-left: 8px; /* নতুন: فاصله তৈরি করার জন্য */
+    transform-origin: left center; /* পরিবর্তিত */
+}
+
+.reaction-choice {
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease-out;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.dark .reaction-choice {
+    background-color: #374151;
+    border-color: #4b5563;
+}
+.reaction-choice:hover {
+    transform: scale(1.2) rotate(10deg);
+}
+/* --- রিয়্যাকশন স্টাইল শেষ --- */
+
 /* ==================================================================== */
 /* END: PUBLIC COMMENTS SECTION CSS */
 /* ==================================================================== */
@@ -32895,7 +33016,6 @@ function initializeCanvasTools() {
 // ====================================================================
 // START: PUBLIC COMMENTS SECTION (UPDATED & REFINED)
 // ====================================================================
-// START: আপডেটেড পাবলিক কমেন্ট ফাংশন (ফুলস্ক্রিন এবং এন্টার কী ফিক্সড)
 async function initializePublicComments() {
     await ensureAuth();
 
@@ -32937,6 +33057,7 @@ async function initializePublicComments() {
     }
 
     const fabContainer = document.getElementById('floating-action-buttons');
+    const availableReactions = ['👍', '❤️', '😂', '😯', '😢', '😡'];
 
     function updateFloatingButtonsVisibility() {
         if (!fabContainer || !container) return;
@@ -33118,7 +33239,8 @@ async function initializePublicComments() {
         const dataToSave = {
             name, text, avatar: emojiBtn.textContent,
             uid: auth.currentUser ? auth.currentUser.uid : 'anonymous',
-            timestamp: serverTimestamp(), createdAt: Date.now(), pinned: false
+            timestamp: serverTimestamp(), createdAt: Date.now(), pinned: false,
+            reactions: {} // নতুন: রিয়্যাকশনের জন্য খালি অবজেক্ট
         };
 
         if (currentReplyInfo) {
@@ -33154,7 +33276,12 @@ async function initializePublicComments() {
         msgInput.addEventListener('keydown', (e) => { 
             if (e.key === 'Enter' && !e.shiftKey) { 
                 e.preventDefault(); 
-                document.execCommand('insertLineBreak');
+                // শুধুমাত্র টেক্সট থাকলে এবং কোনো কোট/রিপ্লে না থাকলে মেসেজ পাঠান
+                if (msgInput.innerText.trim() && !currentReplyInfo) {
+                    sendMessage();
+                } else {
+                    document.execCommand('insertLineBreak');
+                }
             } 
         });
         
@@ -33172,7 +33299,33 @@ async function initializePublicComments() {
     }
     
     let isInitialLoad = true;
+    
+    // ====================================================================
+    // START: UPDATED onSnapshot FUNCTION (Auto-scroll fix)
+    // ====================================================================
     onSnapshot(query(commentsRef, orderBy("timestamp", "asc")), (snapshot) => {
+        // নতুন মেসেজ এলে অটো-স্ক্রোল করার জন্য বর্তমান স্ক্রোল পজিশন সেভ করুন
+        const isScrolledToBottom = listContainer.scrollHeight - listContainer.clientHeight <= listContainer.scrollTop + 20; // 20px tolerance
+        let wasNewMessageAdded = false;
+
+        // শুধু নতুন মেসেজের জন্য নোটিফিকেশন এবং স্ক্রোল ফ্ল্যাগ সেট করুন
+        if (!isInitialLoad) {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added") {
+                    wasNewMessageAdded = true;
+                    const data = change.doc.data();
+                    const isRecent = (Date.now() - data.createdAt) < 10000;
+                    if (data.uid !== (auth.currentUser ? auth.currentUser.uid : null) && isRecent) {
+                        showNewMessageNotification(data);
+                        if (!container.classList.contains('active')) {
+                            if (notificationDot) notificationDot.classList.remove('hidden');
+                        }
+                    }
+                }
+            });
+        }
+        
+        // লিস্ট রি-রেন্ডার করুন
         listContainer.innerHTML = '';
         const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
         const allDocs = snapshot.docs.filter(doc => {
@@ -33189,29 +33342,20 @@ async function initializePublicComments() {
         allDocs.forEach(doc => renderCommentCard(doc, myUid));
         renderPinnedSection(pinnedDocs);
 
-        if (isInitialLoad || container.classList.contains('active')) {
+        // শর্তসাপেক্ষে স্ক্রোল করুন
+        if (isInitialLoad || (wasNewMessageAdded && isScrolledToBottom)) {
             listContainer.scrollTop = listContainer.scrollHeight;
         }
-        if (!isInitialLoad) {
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === "added") {
-                    const data = change.doc.data();
-                    const isRecent = (Date.now() - data.createdAt) < 10000;
-                    if (data.uid !== myUid && isRecent) {
-                        showNewMessageNotification(data);
-                        if (!container.classList.contains('active')) {
-                            if (notificationDot) notificationDot.classList.remove('hidden');
-                        }
-                    }
-                }
-            });
-        }
-        isInitialLoad = false; 
+
+        isInitialLoad = false;
     }, (error) => {
         console.error("Snapshot Error:", error);
         listContainer.innerHTML = '<div class="text-center text-red-400 mt-10 text-sm">ডেটা লোড করতে সমস্যা হচ্ছে।</div>';
     });
-    
+    // ====================================================================
+    // END: UPDATED onSnapshot FUNCTION
+    // ====================================================================
+
     function renderPinnedSection(pinnedDocs) {
         if (pinnedDocs.length > 0) {
             pinnedContainer.classList.remove('hidden');
@@ -33264,9 +33408,6 @@ async function initializePublicComments() {
     if(prevPinBtn) prevPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex - 1));
     if(nextPinBtn) nextPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex + 1));
     
-    // ========================================================
-    // START: নতুন এডিট ম্যানেজমেন্ট ভ্যারিয়েবল ও ফাংশন (আপডেট করা হয়েছে)
-    // ========================================================
     let currentlyEditing = {
         element: null,
         docRef: null,
@@ -33287,15 +33428,12 @@ async function initializePublicComments() {
                     saveCurrentEdit();
                 }
             }
-        }, true); // Use capture phase to catch the event early
+        }, true);
         editSaveListenerAdded = true;
     }
-    // ========================================================
-    // END: নতুন এডিট ম্যানেজমেন্ট ভ্যারিয়েবল ও ফাংশন
-    // ========================================================
 
     const handleEditComment = (docRef, docId, currentHtml) => {
-        saveCurrentEdit(); // অন্য কোনো এডিট চালু থাকলে সেভ করুন
+        saveCurrentEdit();
 
         const card = document.getElementById(`comment-${docId}`);
         const msgElement = card?.querySelector('.comment-text-content');
@@ -33305,7 +33443,6 @@ async function initializePublicComments() {
         msgElement.setAttribute('contenteditable', 'true');
         msgElement.classList.add('editing');
         msgElement.focus();
-        // কার্সর শেষে নিন
         const range = document.createRange();
         const sel = window.getSelection();
         range.selectNodeContents(msgElement);
@@ -33348,14 +33485,99 @@ async function initializePublicComments() {
                 document.execCommand('insertLineBreak');
             } else if (e.key === 'Escape') {
                 e.preventDefault();
-                msgElement.innerHTML = originalTextContent;
+                msgElement.innerHTML = originalHtml;
                 cleanup();
             }
         };
         
-        msgElement.addEventListener('blur', saveOnBlur, { once: true });
         msgElement.addEventListener('keydown', keydownHandler);
     };
+
+    function showReactionPopup(docId, triggerElement) {
+        // আগের কোনো পপআপ থাকলে মুছে দিন
+        document.querySelectorAll('.reaction-popup').forEach(p => p.remove());
+
+        const popup = document.createElement('div');
+        popup.className = 'reaction-popup';
+
+        availableReactions.forEach(emoji => {
+            const btn = document.createElement('button');
+            btn.className = 'reaction-choice';
+            btn.textContent = emoji;
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                handleReaction(docId, emoji);
+                popup.remove();
+            };
+            popup.appendChild(btn);
+        });
+
+        triggerElement.closest('.reactions-container').appendChild(popup);
+        
+        // বাইরে ক্লিক করলে পপআপ বন্ধ হবে
+        setTimeout(() => {
+            const closePopup = (e) => {
+                if (!popup.contains(e.target)) {
+                    popup.remove();
+                    window.removeEventListener('click', closePopup, true);
+                }
+            };
+            window.addEventListener('click', closePopup, true);
+        }, 0);
+    }
+
+    async function handleReaction(docId, emoji) {
+        const myUid = auth.currentUser ? auth.currentUser.uid : null;
+        if (!myUid) return showCustomAlert('রিয়্যাক্ট করার জন্য লগইন প্রয়োজন।');
+        
+        const docRef = doc(commentsRef, docId);
+
+        try {
+            await runTransaction(db, async (transaction) => {
+                const docSnap = await transaction.get(docRef);
+                if (!docSnap.exists()) return;
+
+                const data = docSnap.data();
+                const reactions = data.reactions || {};
+
+                // ব্যবহারকারী আগে কোনো রিয়্যাক্ট দিয়েছে কিনা চেক করুন
+                let userPreviousReaction = null;
+                for (const key in reactions) {
+                    if (reactions[key].includes(myUid)) {
+                        userPreviousReaction = key;
+                        break;
+                    }
+                }
+                
+                // যদি ব্যবহারকারী একই ইমোজিতে আবার ক্লিক করে, তাহলে রিয়্যাক্ট তুলে নিন
+                if (userPreviousReaction === emoji) {
+                    reactions[emoji] = reactions[emoji].filter(uid => uid !== myUid);
+                    // যদি কোনো ইমোজিতে আর কোনো রিয়্যাক্ট না থাকে, তাহলে সেই ইমোজিটি ম্যাপ থেকে মুছে ফেলুন
+                    if (reactions[emoji].length === 0) {
+                        delete reactions[emoji];
+                    }
+                } else {
+                    // যদি আগে অন্য রিয়্যাক্ট দিয়ে থাকে, সেটা মুছে ফেলুন
+                    if (userPreviousReaction) {
+                        reactions[userPreviousReaction] = reactions[userPreviousReaction].filter(uid => uid !== myUid);
+                        if (reactions[userPreviousReaction].length === 0) {
+                            delete reactions[userPreviousReaction];
+                        }
+                    }
+                    // নতুন রিয়্যাক্ট যোগ করুন
+                    if (!reactions[emoji]) {
+                        reactions[emoji] = [];
+                    }
+                    reactions[emoji].push(myUid);
+                }
+                
+                transaction.update(docRef, { reactions: reactions });
+            });
+        } catch (error) {
+            console.error("Reaction transaction failed: ", error);
+            showCustomAlert('রিয়্যাক্ট করতে সমস্যা হয়েছে।');
+        }
+    }
 
     function renderCommentCard(doc, myUid) {
         const data = doc.data();
@@ -33404,6 +33626,46 @@ async function initializePublicComments() {
         }
 
         msgContainer.innerHTML = `${quoteHtml}<div class="comment-text-content">${mainTextHtml}</div>`;
+
+        // --- নতুন: রিয়্যাকশন সেকশন রেন্ডার ---
+        const reactionsContainer = document.createElement('div');
+        reactionsContainer.className = 'reactions-container relative';
+
+        const reactions = data.reactions || {};
+        const hasReactions = Object.keys(reactions).length > 0;
+        if(hasReactions) reactionsContainer.classList.add('has-reactions');
+
+        Object.entries(reactions).forEach(([emoji, uids]) => {
+            if (uids.length > 0) {
+                const item = document.createElement('span');
+                item.className = 'reaction-item';
+                if (uids.includes(myUid)) {
+                    item.classList.add('user-reacted');
+                }
+                item.innerHTML = `${emoji} <span class="count">${uids.length.toLocaleString('bn-BD')}</span>`;
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showReactionPopup(doc.id, item);
+                });
+                reactionsContainer.appendChild(item);
+            }
+        });
+
+        // যদি কোনো রিয়্যাক্ট না থাকে, তবে '+' বাটন দেখান
+        if (!hasReactions) {
+            const addBtn = document.createElement('button');
+            addBtn.className = 'add-reaction-btn';
+            addBtn.innerHTML = '+';
+            addBtn.title = 'রিয়্যাক্ট দিন';
+            addBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showReactionPopup(doc.id, addBtn);
+            });
+            reactionsContainer.appendChild(addBtn);
+        }
+
+        card.appendChild(reactionsContainer);
+        // --- রিয়্যাকশন সেকশন রেন্ডার শেষ ---
         listContainer.appendChild(card);
         
         card.querySelector('.btn-pin').addEventListener('click', async () => await setDoc(doc.ref, { pinned: !data.pinned }, { merge: true }));
@@ -33441,9 +33703,7 @@ async function initializePublicComments() {
         
         if (isMe) {
             const textContentDiv = card.querySelector('.comment-text-content');
-            // --- পরিবর্তন: এখানে title অ্যাট্রিবিউট যোগ করা হয়েছে ---
             textContentDiv.setAttribute('title', 'এডিট করতে ডাবল-ক্লিক করুন');
-            // --- পরিবর্তন: click এর পরিবর্তে dblclick ব্যবহার করা হয়েছে ---
             textContentDiv.addEventListener('dblclick', (e) => {
                 if (window.getSelection().toString().length > 0) return;
                 if (e.target.closest('button')) return;
@@ -33508,7 +33768,6 @@ async function initializePublicComments() {
     
     function escapeHtml(text) { return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;") : ""; }
 }
-// END: আপডেটেড পাবলিক কমেন্ট ফাংশন
 // ====================================================================
 // END: PUBLIC COMMENTS SECTION
 // ====================================================================
