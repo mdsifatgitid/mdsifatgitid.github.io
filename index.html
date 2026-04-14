@@ -7219,572 +7219,573 @@ body.sidebar-open #sidebarOverlay {
 /* ==================================================================== */
 /* START: PUBLIC COMMENTS SECTION CSS (UPDATED & REFINED) */
 /* ==================================================================== */
-#comment-fab {
-    position: fixed;
-    bottom: 85px;
-    right: 20px;
-    z-index: 999;
-    width: 50px;
-    height: 50px;
-    background-color: #3b82f6;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    cursor: pointer;
-    transition: transform 0.3s ease, background-color 0.3s;
-}
-#comment-fab:hover {
-    transform: scale(1.1);
-    background-color: #2563eb;
-}
-#comment-section-container {
-    position: fixed;
-    bottom: 145px;
-    right: 20px;
-    width: 320px;
-    height: 500px;
-    background-color: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #e2e8f0;
-    transform: scale(0);
-    transform-origin: bottom right;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    overflow: hidden;
-}
-#comment-section-container.fullscreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw !important;
-    height: 100vh !important;
-    max-width: 100%;
-    max-height: 100%;
-    border-radius: 0;
-    bottom: auto;
-    right: auto;
-}
+    /* নতুন CSS এখানে যুক্ত করা হয়েছে */
+    #comment-fab {
+        position: fixed;
+        bottom: 85px;
+        right: 20px;
+        z-index: 999;
+        width: 50px;
+        height: 50px;
+        background-color: #3b82f6;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        cursor: pointer;
+        transition: transform 0.3s ease, background-color 0.3s;
+    }
+    #comment-fab:hover {
+        transform: scale(1.1);
+        background-color: #2563eb;
+    }
+    #comment-section-container {
+        position: fixed;
+        bottom: 145px;
+        right: 20px;
+        width: 320px;
+        height: 500px;
+        background-color: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #e2e8f0;
+        transform: scale(0);
+        transform-origin: bottom right;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow: hidden;
+    }
+    #comment-section-container.fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw !important;
+        height: 100vh !important;
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        bottom: auto;
+        right: auto;
+    }
 
-#comment-section-container.fullscreen .comment-list {
-    max-height: none; /* ফুলস্ক্রিনে উচ্চতার সীমাবদ্ধতা তুলে দেওয়া হয়েছে */
-}
-.dark #comment-section-container {
-    background-color: #1f2937;
-    border-color: #374151;
-}
-#comment-section-container.active {
-    transform: scale(1);
-}
-.comment-header {
-    padding: 12px 15px;
-    background-color: #3b82f6;
-    color: white;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-shrink: 0;
-}
+    #comment-section-container.fullscreen .comment-list {
+        max-height: none; 
+    }
+    .dark #comment-section-container {
+        background-color: #1f2937;
+        border-color: #374151;
+    }
+    #comment-section-container.active {
+        transform: scale(1);
+    }
+    .comment-header {
+        padding: 12px 15px;
+        background-color: #3b82f6;
+        color: white;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+    }
 
-#pinned-comments-container {
-    position: relative;
-    padding: 4px 8px;
-    background-color: #eef2ff;
-    border-bottom: 1px solid #e0e7ff;
-    flex-shrink: 0;
-    height: 65px;
-}
-.dark #pinned-comments-container {
-    background-color: #374151;
-    border-bottom-color: #4b5563;
-}
-#pinned-comments-wrapper {
-    display: flex;
-    transition: transform 0.3s ease-in-out;
-}
-.pinned-item {
-    flex: 0 0 100%;
-    padding: 4px 6px;
-    background-color: #fff;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    border: 1px solid #ddd;
-    overflow: hidden;
-    height: 55px;
-}
-.dark .pinned-item {
-    background-color: #1f2937;
-    border-color: #4b5563;
-}
-.pinned-avatar {
-    font-size: 1.2rem;
-    flex-shrink: 0;
-}
-.pinned-content {
-    overflow: hidden;
-}
-.pinned-name {
-    font-size: 0.65rem;
-    font-weight: bold;
-    color: #4f46e5;
-    white-space: nowrap;
-}
-.dark .pinned-name {
-    color: #818cf8;
-}
-.pinned-text {
-    font-size: 0.75rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: #374151;
-}
-.dark .pinned-text {
-    color: #d1d5db;
-}
-.pinned-nav-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.2);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-}
-.pinned-nav-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-}
-#pinned-nav-prev { left: 8px; }
-#pinned-nav-next { right: 8px; }
+    #pinned-comments-container {
+        position: relative;
+        padding: 4px 8px;
+        background-color: #eef2ff;
+        border-bottom: 1px solid #e0e7ff;
+        flex-shrink: 0;
+        height: 65px;
+    }
+    .dark #pinned-comments-container {
+        background-color: #374151;
+        border-bottom-color: #4b5563;
+    }
+    #pinned-comments-wrapper {
+        display: flex;
+        transition: transform 0.3s ease-in-out;
+    }
+    .pinned-item {
+        flex: 0 0 100%;
+        padding: 4px 6px;
+        background-color: #fff;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        border: 1px solid #ddd;
+        overflow: hidden;
+        height: 55px;
+    }
+    .dark .pinned-item {
+        background-color: #1f2937;
+        border-color: #4b5563;
+    }
+    .pinned-avatar {
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+    .pinned-content {
+        overflow: hidden;
+    }
+    .pinned-name {
+        font-size: 0.65rem;
+        font-weight: bold;
+        color: #4f46e5;
+        white-space: nowrap;
+    }
+    .dark .pinned-name {
+        color: #818cf8;
+    }
+    .pinned-text {
+        font-size: 0.75rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #374151;
+    }
+    .dark .pinned-text {
+        color: #d1d5db;
+    }
+    .pinned-nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.2);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+    }
+    .pinned-nav-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+    #pinned-nav-prev { left: 8px; }
+    #pinned-nav-next { right: 8px; }
 
-.comment-list {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 25px; /* পরিবর্তিত: রিএকশনের জন্য গ্যাপ বাড়ানো হয়েছে */
-    background-color: #f8fafc;
-}
-.dark .comment-list {
-    background-color: #111827;
-}
-.comment-input-area {
-    padding: 10px;
-    border-top: 1px solid #e2e8f0;
-    background-color: #fff;
-    position: relative;
-    flex-shrink: 0;
-}
-.dark .comment-input-area {
-    background-color: #1f2937;
-    border-color: #374151;
-}
-#emoji-picker-container {
-    position: absolute;
-    bottom: 100%;
-    left: 10px;
-    width: 280px;
-    background: white;
-    border: 1px solid #e2e8f0;
-    padding: 10px;
-    border-radius: 8px;
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 5px;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
-    z-index: 1001;
-}
-.dark #emoji-picker-container {
-    background: #374151;
-    border-color: #4b5563;
-}
-.emoji-choice-btn {
-    font-size: 1.4rem;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 6px;
-    border: none;
-    background: transparent;
-    transition: background 0.2s;
-    text-align: center;
-}
-.emoji-choice-btn:hover {
-    background-color: #f3f4f6;
-    transform: scale(1.2);
-}
-.dark .emoji-choice-btn:hover {
-    background-color: #4b5563;
-}
-.comment-card {
-    background-color: white;
-    padding: 10px;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    position: relative;
-    border: 1px solid #e2e8f0;
-    max-width: 85%;
-    display: flex;
-    gap: 8px;
-    /* পরিবর্তিত: রিএকশনের জন্য মার্জিন বাড়ানো হয়েছে */
-    margin-bottom: 28px;
-    scroll-margin-top: 85px;
-}
-.comment-highlight {
-    transition: background-color 0.3s ease-in-out;
-    background-color: #dbeafe !important;
-}
-.dark .comment-highlight {
-    background-color: #1e3a8a !important;
-}
-.dark .comment-card {
-    background-color: #374151;
-    border-color: #4b5563;
-    color: #e2e8f0;
-}
-.comment-card.my-message {
-    align-self: flex-end;
-    background-color: #e0e7ff;
-    border-bottom-right-radius: 2px;
-    flex-direction: row-reverse;
-    text-align: right;
-}
-.comment-card.my-message .comment-msg {
-    text-align: left;
-}
-.dark .comment-card.my-message {
-    background-color: #1e3a8a;
-    border-color: #1d4ed8;
-}
-.comment-card.other-message {
-    align-self: flex-start;
-    border-bottom-left-radius: 2px;
-}
-.comment-avatar {
-    font-size: 1.6rem;
-    flex-shrink: 0;
-    padding-top: 2px;
-}
-.comment-content-wrapper {
-    flex-grow: 1;
-    min-width: 0;
-}
-.comment-name {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #3b82f6;
-    margin-bottom: 2px;
-}
-.dark .comment-name {
-    color: #60a5fa;
-}
-.comment-card.my-message .comment-name {
-    color: #4f46e5;
-}
-.dark .comment-card.my-message .comment-name {
-    color: #818cf8;
-}
-.comment-msg {
-    font-size: 0.95rem;
-    word-wrap: break-word;
-    white-space: pre-wrap;
-    line-height: 1.4;
-}
-.comment-text-content {
-    /* For JS targeting */
-}
-.comment-card.my-message .comment-text-content {
-    cursor: pointer;
-    transition: background-color: 0.2s;
-    border-radius: 4px;
-    padding: 2px 4px;
-    margin: -2px -4px;
-}
-.comment-card.my-message .comment-text-content:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-.dark .comment-card.my-message .comment-text-content:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-.comment-text-content.editing {
-    outline: 2px solid #3b82f6;
-    background-color: #eff6ff;
-    border-radius: 4px;
-    padding: 2px 4px;
-    margin: -2px -4px;
-}
-.dark .comment-text-content.editing {
-    background-color: #374151;
-}
+    .comment-list {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        background-color: #f8fafc;
+    }
+    .dark .comment-list {
+        background-color: #111827;
+    }
+    .comment-input-area {
+        padding: 10px;
+        border-top: 1px solid #e2e8f0;
+        background-color: #fff;
+        position: relative;
+        flex-shrink: 0;
+    }
+    .dark .comment-input-area {
+        background-color: #1f2937;
+        border-color: #374151;
+    }
+    #emoji-picker-container {
+        position: absolute;
+        bottom: 100%;
+        left: 10px;
+        width: 280px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        padding: 10px;
+        border-radius: 8px;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 5px;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+        z-index: 1001;
+    }
+    .dark #emoji-picker-container {
+        background: #374151;
+        border-color: #4b5563;
+    }
+    .emoji-choice-btn {
+        font-size: 1.4rem;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 6px;
+        border: none;
+        background: transparent;
+        transition: background 0.2s;
+        text-align: center;
+    }
+    .emoji-choice-btn:hover {
+        background-color: #f3f4f6;
+        transform: scale(1.2);
+    }
+    .dark .emoji-choice-btn:hover {
+        background-color: #4b5563;
+    }
+    
+    .comment-card {
+        background-color: white;
+        padding: 10px; /* ডিফল্ট প্যাডিং */
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        position: relative;
+        border: 1px solid #e2e8f0;
+        max-width: 85%;
+        display: flex;
+        gap: 8px;
+        margin-bottom: 0;
+        scroll-margin-top: 85px;
+    }
+    /* নতুন: একাধিক রিয়্যাকশন থাকলে কার্ডের নিচে অতিরিক্ত প্যাডিং */
+    .comment-card.has-multiple-reactions {
+        padding-bottom: 38px;
+    }
+    .comment-highlight {
+        transition: background-color 0.3s ease-in-out;
+        background-color: #dbeafe !important;
+    }
+    .dark .comment-highlight {
+        background-color: #1e3a8a !important;
+    }
+    .dark .comment-card {
+        background-color: #374151;
+        border-color: #4b5563;
+        color: #e2e8f0;
+    }
+    .comment-card.my-message {
+        align-self: flex-end;
+        background-color: #e0e7ff;
+        border-bottom-right-radius: 2px;
+        flex-direction: row-reverse;
+        text-align: right;
+    }
+    .comment-card.my-message .comment-msg {
+        text-align: left;
+    }
+    .dark .comment-card.my-message {
+        background-color: #1e3a8a;
+        border-color: #1d4ed8;
+    }
+    .comment-card.other-message {
+        align-self: flex-start;
+        border-bottom-left-radius: 2px;
+    }
+    .comment-avatar {
+        font-size: 1.6rem;
+        flex-shrink: 0;
+        padding-top: 2px;
+    }
+    .comment-content-wrapper {
+        flex-grow: 1;
+        min-width: 0;
+    }
+    .comment-name {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #3b82f6;
+        margin-bottom: 2px;
+    }
+    .dark .comment-name {
+        color: #60a5fa;
+    }
+    .comment-card.my-message .comment-name {
+        color: #4f46e5;
+    }
+    .dark .comment-card.my-message .comment-name {
+        color: #818cf8;
+    }
+    .comment-msg {
+        font-size: 0.95rem;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        line-height: 1.4;
+    }
+    .comment-card.my-message .comment-text-content {
+        cursor: pointer;
+        transition: background-color: 0.2s;
+        border-radius: 4px;
+        padding: 2px 4px;
+        margin: -2px -4px;
+    }
+    .comment-card.my-message .comment-text-content:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    .dark .comment-card.my-message .comment-text-content:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    .comment-text-content.editing {
+        outline: 2px solid #3b82f6;
+        background-color: #eff6ff;
+        border-radius: 4px;
+        padding: 2px 4px;
+        margin: -2px -4px;
+    }
+    .dark .comment-text-content.editing {
+        background-color: #374151;
+    }
 
-.comment-time {
-    font-size: 0.65rem;
-    color: #64748b;
-    margin-top: 4px;
-    display: block;
-}
-.dark .comment-time {
-    color: #94a3b8;
-}
-.comment-actions {
-    position: absolute;
-    top: -15px;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 20px;
-    padding: 3px 6px;
-    display: flex;
-    gap: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    opacity: 0;
-    transition: opacity 0.2s, top 0.2s;
-    pointer-events: none;
-    border: 1px solid #e2e8f0;
-    z-index: 5;
-}
-.comment-card.my-message .comment-actions { left: 5px; right: auto; }
-.comment-card.other-message .comment-actions { right: 5px; left: auto; }
-.dark .comment-actions { background: rgba(31, 41, 55, 0.95); border-color: #4b5563; }
-.comment-card:hover .comment-actions { opacity: 1; top: -12px; pointer-events: auto; }
-.comment-action-btn {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 12px;
-    color: #4b5563;
-    background-color: #f3f4f6;
-    transition: all 0.2s;
-}
-.dark .comment-action-btn { background-color: #4b5563; color: #e5e7eb; }
-.comment-action-btn:hover { transform: scale(1.15); }
-.btn-reply:hover { background-color: #3b82f6; color: white; }
-.btn-copy:hover { background-color: #10b981; color: white; }
-.btn-delete:hover { background-color: #ef4444; color: white; }
-.btn-pin:hover { background-color: #f59e0b; color: white; }
-.btn-pin.pinned { background-color: #f59e0b; color: white; transform: rotate(45deg); }
+    .comment-time {
+        font-size: 0.65rem;
+        color: #64748b;
+        margin-top: 4px;
+        display: block;
+    }
+    .dark .comment-time {
+        color: #94a3b8;
+    }
+    .comment-actions {
+        position: absolute;
+        top: -15px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 3px 6px;
+        display: flex;
+        gap: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        opacity: 0;
+        transition: opacity 0.2s, top 0.2s;
+        pointer-events: none;
+        border: 1px solid #e2e8f0;
+        z-index: 5;
+    }
+    .comment-card.my-message .comment-actions { left: 5px; right: auto; }
+    .comment-card.other-message .comment-actions { right: 5px; left: auto; }
+    .dark .comment-actions { background: rgba(31, 41, 55, 0.95); border-color: #4b5563; }
+    .comment-card:hover .comment-actions { opacity: 1; top: -12px; pointer-events: auto; }
+    .comment-action-btn {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 12px;
+        color: #4b5563;
+        background-color: #f3f4f6;
+        transition: all 0.2s;
+    }
+    .dark .comment-action-btn { background-color: #4b5563; color: #e5e7eb; }
+    .comment-action-btn:hover { transform: scale(1.15); }
+    .btn-reply:hover { background-color: #3b82f6; color: white; }
+    .btn-copy:hover { background-color: #10b981; color: white; }
+    .btn-delete:hover { background-color: #ef4444; color: white; }
+    .btn-pin:hover { background-color: #f59e0b; color: white; }
+    .btn-pin.pinned { background-color: #f59e0b; color: white; transform: rotate(45deg); }
 
-.section-highlight {
-    animation: highlight-fade 2s ease-out;
-    border-radius: 1rem;
-    padding-top: 1rem;
-    margin-top: 1.5rem !important;
-    border-top: none !important;
-}
+    .section-highlight {
+        animation: highlight-fade 2s ease-out;
+        border-radius: 1rem;
+        padding-top: 1rem;
+        margin-top: 1.5rem !important;
+        border-top: none !important;
+    }
 
-.reply-quote {
-    display: block;
-    background-color: #f3f4f6;
-    padding: 8px 12px;
-    margin-bottom: 8px;
-    border-left: 3px solid #60a5fa;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    color: #4b5563;
-    white-space: normal;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    cursor: pointer;
-}
-.dark .reply-quote {
-    background-color: #374151;
-    border-left-color: #93c5fd;
-    color: #d1d5db;
-}
+    .reply-quote {
+        display: block;
+        background-color: #f3f4f6;
+        padding: 8px 12px;
+        margin-bottom: 8px;
+        border-left: 3px solid #60a5fa;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        color: #4b5563;
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+    }
+    .dark .reply-quote {
+        background-color: #374151;
+        border-left-color: #93c5fd;
+        color: #d1d5db;
+    }
 
-#comment-message[contenteditable="true"] {
-    -webkit-user-select: text;
-    user-select: text;
-}
-#comment-message[contenteditable="true"].placeholder-visible::before {
-    content: attr(data-placeholder);
-    color: #9ca3af; /* Tailwind gray-400 */
-    pointer-events: none;
-    -webkit-user-select: none;
-    user-select: none;
-}
-.dark #comment-message[contenteditable="true"].placeholder-visible::before {
-    color: #6b7280; /* Tailwind gray-500 */
-}
-#comment-message-wrapper {
-    min-height: 40px;
-    max-height: 120px;
-    overflow-y: auto;
-    resize: none;
-    transition: all 0.2s;
-}
+    #comment-message[contenteditable="true"] {
+        -webkit-user-select: text;
+        user-select: text;
+    }
+    #comment-message[contenteditable="true"].placeholder-visible::before {
+        content: attr(data-placeholder);
+        color: #9ca3af; 
+        pointer-events: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    .dark #comment-message[contenteditable="true"].placeholder-visible::before {
+        color: #6b7280; 
+    }
+    #comment-message-wrapper {
+        min-height: 40px;
+        max-height: 120px;
+        overflow-y: auto;
+        resize: none;
+        transition: all 0.2s;
+    }
 
-.return-to-reply-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%) scale(0.8);
-    background-color: #dbeafe;
-    color: #1d4ed8;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1px solid #bfdbfe;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s, transform 0.3s;
-    z-index: 6;
-}
-.dark .return-to-reply-btn {
-    background-color: #1e3a8a;
-    color: #93c5fd;
-    border-color: #3b82f6;
-}
-.return-to-reply-btn.show {
-    opacity: 1;
-    transform: translateY(-50%) scale(1);
-    pointer-events: auto;
-}
+    .return-to-reply-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%) scale(0.8);
+        background-color: #dbeafe;
+        color: #1d4ed8;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid #bfdbfe;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s, transform 0.3s;
+        z-index: 6;
+    }
+    .dark .return-to-reply-btn {
+        background-color: #1e3a8a;
+        color: #93c5fd;
+        border-color: #3b82f6;
+    }
+    .return-to-reply-btn.show {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+        pointer-events: auto;
+    }
+   
+    .reactions-container {
+        position: absolute !important;
+        bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        height: 24px;
+    }
+    .my-message .reactions-container { right: 8px; }
+    .other-message .reactions-container { left: 8px; }
 
-/* --- নতুন: রিয়্যাকশন স্টাইল (পরিবর্তিত) --- */
-.reactions-container {
-    position: absolute !important; /* JS ক্লাসকে ওভাররাইড করার জন্য !important যোগ করা হয়েছে */
-    bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    height: 24px;
-}
-.my-message .reactions-container { right: 8px; }
-.other-message .reactions-container { left: 8px; }
+    .reaction-item {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        background-color: #f1f5f9;
+        padding: 2px 6px;
+        border-radius: 12px;
+        font-size: 11px;
+        cursor: pointer;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
+    }
+    .dark .reaction-item {
+        background-color: #4b5563;
+        border-color: #6b7280;
+    }
+    .reaction-item:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .reaction-item.user-reacted {
+        background-color: #dbeafe;
+        border-color: #93c5fd;
+        font-weight: bold;
+        color: #1e40af;
+    }
+    .dark .reaction-item.user-reacted {
+        background-color: #1e3a8a;
+        border-color: #3b82f6;
+        color: #bfdbfe;
+    }
 
-.reaction-item {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    background-color: #f1f5f9;
-    padding: 2px 6px;
-    border-radius: 12px;
-    font-size: 11px;
-    cursor: pointer;
-    border: 1px solid #e2e8f0;
-    transition: all 0.2s ease;
-}
-.dark .reaction-item {
-    background-color: #4b5563;
-    border-color: #6b7280;
-}
-.reaction-item:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-.reaction-item.user-reacted {
-    background-color: #dbeafe;
-    border-color: #93c5fd;
-    font-weight: bold;
-    color: #1e40af;
-}
-.dark .reaction-item.user-reacted {
-    background-color: #1e3a8a;
-    border-color: #3b82f6;
-    color: #bfdbfe;
-}
+    .add-reaction-btn {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #e2e8f0;
+        color: #64748b;
+        border: 1px solid #cbd5e1;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+    .dark .add-reaction-btn {
+        background-color: #4b5563;
+        color: #d1d5db;
+        border-color: #6b7280;
+    }
+    .add-reaction-btn:hover {
+        transform: scale(1.1);
+    }
+    .has-reactions .add-reaction-btn {
+        display: none;
+    }
 
-.add-reaction-btn {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: #e2e8f0;
-    color: #64748b;
-    border: 1px solid #cbd5e1;
-    cursor: pointer;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-.dark .add-reaction-btn {
-    background-color: #4b5563;
-    color: #d1d5db;
-    border-color: #6b7280;
-}
-.add-reaction-btn:hover {
-    transform: scale(1.1);
-}
-.has-reactions .add-reaction-btn {
-    display: none;
-}
+    .reaction-popup {
+        position: absolute;
+        top: 50%; 
+        transform: translateY(-50%); 
+        background: none;
+        border-radius: 16px;
+        padding: 0;
+        box-shadow: none;
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        z-index: 10;
+        animation: popup-scale-in 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
 
-.reaction-popup {
-    position: absolute;
-    top: 50%; /* নতুন: উল্লম্বভাবে মাঝখানে আনার জন্য */
-    transform: translateY(-50%); /* নতুন: উল্লম্বভাবে সঠিকভাবে মাঝখানে আনার জন্য */
-    background: none;
-    border-radius: 16px;
-    padding: 0;
-    box-shadow: none;
-    display: flex;
-    gap: 4px;
-    align-items: center;
-    z-index: 10;
-    animation: popup-scale-in 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+    @keyframes popup-scale-in {
+        from { transform: translateY(-50%) scale(0.8); opacity: 0; } 
+        to { transform: translateY(-50%) scale(1); opacity: 1; } 
+    }
+    .my-message .reaction-popup {
+        right: 100%; 
+        margin-right: 8px; 
+        transform-origin: right center; 
+    }
+    .other-message .reaction-popup {
+        left: 100%; 
+        margin-left: 8px; 
+        transform-origin: left center; 
+    }
 
-@keyframes popup-scale-in {
-    from { transform: translateY(-50%) scale(0.8); opacity: 0; } /* পরিবর্তিত */
-    to { transform: translateY(-50%) scale(1); opacity: 1; } /* পরিবর্তিত */
-}
-.my-message .reaction-popup {
-    right: 100%; /* নতুন: কন্টেইনারের বাম পাশে দেখাবে */
-    margin-right: 8px; /* নতুন: فاصله তৈরি করার জন্য */
-    transform-origin: right center; /* পরিবর্তিত */
-}
-.other-message .reaction-popup {
-    left: 100%; /* নতুন: কন্টেইনারের ডান পাশে দেখাবে */
-    margin-left: 8px; /* নতুন: فاصله তৈরি করার জন্য */
-    transform-origin: left center; /* পরিবর্তিত */
-}
-
-.reaction-choice {
-    font-size: 16px;
-    cursor: pointer;
-    background-color: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 50%;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.15s ease-out;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-.dark .reaction-choice {
-    background-color: #374151;
-    border-color: #4b5563;
-}
-.reaction-choice:hover {
-    transform: scale(1.2) rotate(10deg);
-}
+    .reaction-choice {
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.15s ease-out;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .dark .reaction-choice {
+        background-color: #374151;
+        border-color: #4b5563;
+    }
+    .reaction-choice:hover {
+        transform: scale(1.2) rotate(10deg);
+    }
 /* --- রিয়্যাকশন স্টাইল শেষ --- */
 
 /* ==================================================================== */
@@ -32971,7 +32972,6 @@ function initializeCanvasTools() {
             onSnapshot(counterDocRef, (doc) => {
                 const allTodayVisitsEl = document.getElementById('all-today-visits');
                 const allTotalVisitsEl = document.getElementById('all-total-visits');
-                // New Elements
                 const thisMonthVisitsEl = document.getElementById('this-month-visits');
                 const lastMonthVisitsEl = document.getElementById('last-month-visits');
                 const thisYearVisitsEl = document.getElementById('this-year-visits');
@@ -32979,27 +32979,19 @@ function initializeCanvasTools() {
 
                 if (doc.exists()) {
                     const data = doc.data();
-                    
-                    // Existing counters
                     if (allTotalVisitsEl) allTotalVisitsEl.textContent = (data.totalVisits || 0).toLocaleString('bn-BD');
                     if (allTodayVisitsEl) allTodayVisitsEl.textContent = ((data.dailyVisits || {})[todayString] || 0).toLocaleString('bn-BD');
 
-                    // New counters logic
                     const monthlyData = data.monthlyVisits || {};
                     const yearlyData = data.yearlyVisits || {};
-                    
-                    // This Month
                     if (thisMonthVisitsEl) thisMonthVisitsEl.textContent = (monthlyData[thisMonthString] || 0).toLocaleString('bn-BD');
                     
-                    // Last Month
                     const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
                     const lastMonthString = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth() + 1).padStart(2, '0')}`;
                     if (lastMonthVisitsEl) lastMonthVisitsEl.textContent = (monthlyData[lastMonthString] || 0).toLocaleString('bn-BD');
                     
-                    // This Year
                     if (thisYearVisitsEl) thisYearVisitsEl.textContent = (yearlyData[thisYearString] || 0).toLocaleString('bn-BD');
                     
-                    // Last Year
                     const lastYearString = `${now.getFullYear() - 1}`;
                     if (lastYearVisitsEl) lastYearVisitsEl.textContent = (yearlyData[lastYearString] || 0).toLocaleString('bn-BD');
                 }
@@ -33012,23 +33004,18 @@ function initializeCanvasTools() {
         } catch (error) { console.error("Global Counter Init Failed:", error); }
     }
 
-// ২. পাবলিক কমেন্ট সেকশন ফাংশন (অবতার, পাসওয়ার্ড প্রটেকশন, অ্যালাইনমেন্ট ও নোটিফিকেশন ডট এবং একটিভ কাউন্টার সহ)
-// ====================================================================
-// START: PUBLIC COMMENTS SECTION (UPDATED & REFINED)
-// ====================================================================
+// ২. পাবলিক কমেন্ট সেকশন ফাংশন
 async function initializePublicComments() {
     await ensureAuth();
-
-    // DOM Elements
     const fab = document.getElementById('comment-fab');
     const container = document.getElementById('comment-section-container');
     const closeBtn = document.getElementById('close-comment-btn');
-    const fullscreenBtn = document.getElementById('toggle-fullscreen-comment-btn'); 
-    const iconEnter = document.getElementById('icon-fullscreen-enter'); 
-    const iconExit = document.getElementById('icon-fullscreen-exit'); 
+    const fullscreenBtn = document.getElementById('toggle-fullscreen-comment-btn');
+    const iconEnter = document.getElementById('icon-fullscreen-enter');
+    const iconExit = document.getElementById('icon-fullscreen-exit');
     const sendBtn = document.getElementById('send-comment-btn');
     const nameInput = document.getElementById('comment-username');
-    const editNameBtn = document.getElementById('edit-username-btn'); 
+    const editNameBtn = document.getElementById('edit-username-btn');
     const msgInput = document.getElementById('comment-message');
     const msgInputWrapper = document.getElementById('comment-message-wrapper');
     const listContainer = document.getElementById('comment-list');
@@ -33037,16 +33024,13 @@ async function initializePublicComments() {
     const activeCountEl = document.getElementById('active-user-count');
     const replyPreviewContainer = document.getElementById('reply-preview-container');
     const msgPlaceholder = document.getElementById('comment-placeholder');
-
     const pinnedContainer = document.getElementById('pinned-comments-container');
     const pinnedWrapper = document.getElementById('pinned-comments-wrapper');
     const prevPinBtn = document.getElementById('pinned-nav-prev');
     const nextPinBtn = document.getElementById('pinned-nav-next');
     let currentPinnedIndex = 0;
     let totalPinned = 0;
-    
     let currentReplyInfo = null;
-
     const notificationDot = document.getElementById('comment-notification-dot');
     let notificationBubble = document.getElementById('comment-notification');
     if (!notificationBubble) {
@@ -33055,7 +33039,6 @@ async function initializePublicComments() {
         notificationBubble.className = "fixed bottom-36 right-5 z-[1002] bg-white dark:bg-gray-800 p-3 rounded-lg shadow-xl border-l-4 border-blue-500 max-w-[250px] transition-all duration-300 transform translate-y-4 opacity-0 pointer-events-none hidden";
         document.body.appendChild(notificationBubble);
     }
-
     const fabContainer = document.getElementById('floating-action-buttons');
     const availableReactions = ['👍', '❤️', '😂', '😯', '😢', '😡'];
 
@@ -33064,15 +33047,14 @@ async function initializePublicComments() {
         const shouldHideFabs = container.classList.contains('active') && container.classList.contains('fullscreen');
         fabContainer.classList.toggle('hidden', shouldHideFabs);
     }
-    
     function checkPlaceholder() {
         if (msgInput && msgPlaceholder) {
+            msgPlaceholder.innerText = "মেসেজ লিখুন";
             const hasText = msgInput.textContent.trim() !== '';
             const hasContent = msgInput.innerHTML.trim() !== '' && msgInput.innerHTML.trim() !== '<br>';
             msgPlaceholder.classList.toggle('hidden', hasText || hasContent);
         }
     }
-
     if (activeCountEl) {
         activeCountEl.onclick = () => {
             const importantLinksTabButton = document.getElementById('importantLinksTab');
@@ -33093,9 +33075,7 @@ async function initializePublicComments() {
                 if (counterSection) {
                     counterSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     counterSection.classList.add('section-highlight');
-                    setTimeout(() => {
-                        counterSection.classList.remove('section-highlight');
-                    }, 2000);
+                    setTimeout(() => counterSection.classList.remove('section-highlight'), 2000);
                 }
             }, 300);
         };
@@ -33114,7 +33094,6 @@ async function initializePublicComments() {
             }
         });
     }
-
     if (fab && container && closeBtn) {
         fab.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -33138,7 +33117,6 @@ async function initializePublicComments() {
         });
         container.addEventListener('click', (e) => e.stopPropagation());
     }
-
     if (fullscreenBtn) {
         fullscreenBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -33149,7 +33127,6 @@ async function initializePublicComments() {
             updateFloatingButtonsVisibility();
         });
     }
-
     function loadSavedUserData() {
         const savedName = localStorage.getItem('bt_comment_username');
         const savedAvatar = localStorage.getItem('bt_comment_avatar');
@@ -33166,7 +33143,6 @@ async function initializePublicComments() {
         }
         if (savedAvatar) emojiBtn.textContent = savedAvatar;
     }
-
     if (editNameBtn) {
         editNameBtn.addEventListener('click', () => {
             const currentName = nameInput.value.trim();
@@ -33190,7 +33166,6 @@ async function initializePublicComments() {
             }
         });
     }
-    
     const avatars = ['👤', '👨', '👩', '🧑‍💻', '🦸', '🦹', '🧙', '🧚', '🧛', '🧜', '🧞', '🤖', '👾', '👽', '👻', '🤡', '💩', '😺', '😸', '😹', '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯'];
     function setupEmojiPicker() {
         emojiContainer.innerHTML = '';
@@ -33204,9 +33179,7 @@ async function initializePublicComments() {
     }
     setupEmojiPicker();
     emojiBtn.addEventListener('click', (e) => { e.stopPropagation(); emojiContainer.classList.toggle('hidden'); });
-
     const commentsRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments");
-    
     function sanitizeHtml(html) {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = html;
@@ -33227,26 +33200,14 @@ async function initializePublicComments() {
         });
         return tempDiv.innerHTML;
     }
-
     async function sendMessage() {
         const name = nameInput.value.trim() || 'বেনামী';
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = msgInput.innerHTML;
         const text = sanitizeHtml(tempDiv.innerHTML.trim());
-
         if (!text || text === '<br>') return;
-        
-        const dataToSave = {
-            name, text, avatar: emojiBtn.textContent,
-            uid: auth.currentUser ? auth.currentUser.uid : 'anonymous',
-            timestamp: serverTimestamp(), createdAt: Date.now(), pinned: false,
-            reactions: {} // নতুন: রিয়্যাকশনের জন্য খালি অবজেক্ট
-        };
-
-        if (currentReplyInfo) {
-            dataToSave.replyTo = currentReplyInfo;
-        }
-
+        const dataToSave = { name, text, avatar: emojiBtn.textContent, uid: auth.currentUser ? auth.currentUser.uid : 'anonymous', timestamp: serverTimestamp(), createdAt: Date.now(), pinned: false, reactions: {} };
+        if (currentReplyInfo) { dataToSave.replyTo = currentReplyInfo; }
         localStorage.setItem('bt_comment_username', name);
         localStorage.setItem('bt_comment_avatar', dataToSave.avatar);
         if (name !== 'বেনামী') {
@@ -33254,7 +33215,6 @@ async function initializePublicComments() {
             nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
             editNameBtn.classList.remove('hidden');
         }
-
         sendBtn.disabled = true;
         try {
             await addDoc(commentsRef, dataToSave);
@@ -33263,6 +33223,8 @@ async function initializePublicComments() {
             if (replyPreviewContainer) replyPreviewContainer.classList.add('hidden');
             currentReplyInfo = null;
             msgInputWrapper.style.height = '40px';
+            // JavaScript পরিবর্তন: মেসেজ পাঠানোর পর অটো-স্ক্রল
+            listContainer.scrollTop = listContainer.scrollHeight;
         } catch (e) {
             console.error("Error sending comment:", e);
             showCustomAlert("মেসেজ পাঠানো যায়নি।");
@@ -33271,20 +33233,16 @@ async function initializePublicComments() {
         }
     }
     if (sendBtn) sendBtn.addEventListener('click', sendMessage);
-
     if (msgInput) {
         msgInput.addEventListener('keydown', (e) => { 
-            if (e.key === 'Enter' && !e.shiftKey) { 
+            if (e.key === 'Enter' && (e.shiftKey || e.ctrlKey)) { 
                 e.preventDefault(); 
-                // শুধুমাত্র টেক্সট থাকলে এবং কোনো কোট/রিপ্লে না থাকলে মেসেজ পাঠান
-                if (msgInput.innerText.trim() && !currentReplyInfo) {
-                    sendMessage();
-                } else {
-                    document.execCommand('insertLineBreak');
-                }
-            } 
+                sendMessage();
+            } else if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
+                e.preventDefault();
+                document.execCommand('insertLineBreak');
+            }
         });
-        
         msgInput.addEventListener('input', function() { 
             checkPlaceholder();
             const wrapper = msgInputWrapper;
@@ -33294,21 +33252,12 @@ async function initializePublicComments() {
                 wrapper.style.height = '40px';
             }
         });
-        
         checkPlaceholder();
     }
-    
     let isInitialLoad = true;
-    
-    // ====================================================================
-    // START: UPDATED onSnapshot FUNCTION (Auto-scroll fix)
-    // ====================================================================
     onSnapshot(query(commentsRef, orderBy("timestamp", "asc")), (snapshot) => {
-        // নতুন মেসেজ এলে অটো-স্ক্রোল করার জন্য বর্তমান স্ক্রোল পজিশন সেভ করুন
-        const isScrolledToBottom = listContainer.scrollHeight - listContainer.clientHeight <= listContainer.scrollTop + 20; // 20px tolerance
+        const isScrolledToBottom = listContainer.scrollHeight - listContainer.clientHeight <= listContainer.scrollTop + 20;
         let wasNewMessageAdded = false;
-
-        // শুধু নতুন মেসেজের জন্য নোটিফিকেশন এবং স্ক্রোল ফ্ল্যাগ সেট করুন
         if (!isInitialLoad) {
             snapshot.docChanges().forEach((change) => {
                 if (change.type === "added") {
@@ -33324,8 +33273,6 @@ async function initializePublicComments() {
                 }
             });
         }
-        
-        // লিস্ট রি-রেন্ডার করুন
         listContainer.innerHTML = '';
         const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
         const allDocs = snapshot.docs.filter(doc => {
@@ -33333,29 +33280,20 @@ async function initializePublicComments() {
             return data.pinned === true || (data.createdAt && data.createdAt > twentyFourHoursAgo);
         });
         const pinnedDocs = allDocs.filter(doc => doc.data().pinned);
-
         if (allDocs.length === 0) {
             listContainer.innerHTML = '<div class="text-center text-gray-400 mt-10 text-sm">কোনো মন্তব্য নেই।<br>প্রথম মন্তব্যটি আপনি করুন!</div>';
         }
-
         const myUid = auth.currentUser ? auth.currentUser.uid : null;
         allDocs.forEach(doc => renderCommentCard(doc, myUid));
         renderPinnedSection(pinnedDocs);
-
-        // শর্তসাপেক্ষে স্ক্রোল করুন
         if (isInitialLoad || (wasNewMessageAdded && isScrolledToBottom)) {
             listContainer.scrollTop = listContainer.scrollHeight;
         }
-
         isInitialLoad = false;
     }, (error) => {
         console.error("Snapshot Error:", error);
         listContainer.innerHTML = '<div class="text-center text-red-400 mt-10 text-sm">ডেটা লোড করতে সমস্যা হচ্ছে।</div>';
     });
-    // ====================================================================
-    // END: UPDATED onSnapshot FUNCTION
-    // ====================================================================
-
     function renderPinnedSection(pinnedDocs) {
         if (pinnedDocs.length > 0) {
             pinnedContainer.classList.remove('hidden');
@@ -33368,7 +33306,6 @@ async function initializePublicComments() {
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = data.text;
                 const plainText = tempDiv.innerText;
-
                 item.innerHTML = `
                     <div class="pinned-avatar">${data.avatar || '👤'}</div>
                     <div class="pinned-content">
@@ -33386,7 +33323,6 @@ async function initializePublicComments() {
             totalPinned = 0;
         }
     }
-    
     function showPinnedComment(index) {
         currentPinnedIndex = index;
         const offset = -index * 100;
@@ -33396,7 +33332,6 @@ async function initializePublicComments() {
     function updatePinnedNavButtons() {
         prevPinBtn.disabled = currentPinnedIndex === 0;
         nextPinBtn.disabled = currentPinnedIndex >= totalPinned - 1;
-        
         if (totalPinned <= 1) {
             prevPinBtn.style.display = 'none';
             nextPinBtn.style.display = 'none';
@@ -33407,19 +33342,12 @@ async function initializePublicComments() {
     }
     if(prevPinBtn) prevPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex - 1));
     if(nextPinBtn) nextPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex + 1));
-    
-    let currentlyEditing = {
-        element: null,
-        docRef: null,
-        saveFunction: null
-    };
-
+    let currentlyEditing = { element: null, docRef: null, saveFunction: null };
     function saveCurrentEdit() {
         if (currentlyEditing.element && typeof currentlyEditing.saveFunction === 'function') {
             currentlyEditing.saveFunction();
         }
     }
-
     let editSaveListenerAdded = false;
     if (!editSaveListenerAdded) {
         document.addEventListener('mousedown', (e) => {
@@ -33431,14 +33359,11 @@ async function initializePublicComments() {
         }, true);
         editSaveListenerAdded = true;
     }
-
     const handleEditComment = (docRef, docId, currentHtml) => {
         saveCurrentEdit();
-
         const card = document.getElementById(`comment-${docId}`);
         const msgElement = card?.querySelector('.comment-text-content');
         if (!msgElement) return;
-
         const originalHtml = msgElement.innerHTML;
         msgElement.setAttribute('contenteditable', 'true');
         msgElement.classList.add('editing');
@@ -33449,38 +33374,32 @@ async function initializePublicComments() {
         range.collapse(false);
         sel.removeAllRanges();
         sel.addRange(range);
-
         const cleanup = () => {
             msgElement.setAttribute('contenteditable', 'false');
             msgElement.classList.remove('editing');
             msgElement.removeEventListener('keydown', keydownHandler);
             currentlyEditing = { element: null, docRef: null, saveFunction: null };
         };
-
         const saveChanges = async () => {
             if (!msgElement.classList.contains('editing')) return;
-
             const newHtml = msgElement.innerHTML.trim();
             const quoteEl = card.querySelector('.reply-quote');
             let fullHtml = quoteEl ? quoteEl.outerHTML + newHtml : newHtml;
             const sanitizedHtml = sanitizeHtml(fullHtml);
-
             if (sanitizedHtml.trim() && sanitizedHtml !== currentHtml) {
                 await setDoc(docRef, { text: sanitizedHtml, editedAt: serverTimestamp() }, { merge: true });
+                showCustomAlert('মেসেজ আপডেট করা হয়েছে।');
             } else {
                 msgElement.innerHTML = originalHtml;
             }
             cleanup();
         };
-
-        currentlyEditing = {
-            element: msgElement,
-            docRef: docRef,
-            saveFunction: saveChanges
-        };
-        
+        currentlyEditing = { element: msgElement, docRef: docRef, saveFunction: saveChanges };
         const keydownHandler = (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
+            if ((e.shiftKey || e.ctrlKey) && e.key === 'Enter') {
+                e.preventDefault();
+                saveChanges();
+            } else if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
                 e.preventDefault();
                 document.execCommand('insertLineBreak');
             } else if (e.key === 'Escape') {
@@ -33489,17 +33408,12 @@ async function initializePublicComments() {
                 cleanup();
             }
         };
-        
         msgElement.addEventListener('keydown', keydownHandler);
     };
-
     function showReactionPopup(docId, triggerElement) {
-        // আগের কোনো পপআপ থাকলে মুছে দিন
         document.querySelectorAll('.reaction-popup').forEach(p => p.remove());
-
         const popup = document.createElement('div');
         popup.className = 'reaction-popup';
-
         availableReactions.forEach(emoji => {
             const btn = document.createElement('button');
             btn.className = 'reaction-choice';
@@ -33511,10 +33425,7 @@ async function initializePublicComments() {
             };
             popup.appendChild(btn);
         });
-
         triggerElement.closest('.reactions-container').appendChild(popup);
-        
-        // বাইরে ক্লিক করলে পপআপ বন্ধ হবে
         setTimeout(() => {
             const closePopup = (e) => {
                 if (!popup.contains(e.target)) {
@@ -33525,22 +33436,16 @@ async function initializePublicComments() {
             window.addEventListener('click', closePopup, true);
         }, 0);
     }
-
     async function handleReaction(docId, emoji) {
         const myUid = auth.currentUser ? auth.currentUser.uid : null;
         if (!myUid) return showCustomAlert('রিয়্যাক্ট করার জন্য লগইন প্রয়োজন।');
-        
         const docRef = doc(commentsRef, docId);
-
         try {
             await runTransaction(db, async (transaction) => {
                 const docSnap = await transaction.get(docRef);
                 if (!docSnap.exists()) return;
-
                 const data = docSnap.data();
                 const reactions = data.reactions || {};
-
-                // ব্যবহারকারী আগে কোনো রিয়্যাক্ট দিয়েছে কিনা চেক করুন
                 let userPreviousReaction = null;
                 for (const key in reactions) {
                     if (reactions[key].includes(myUid)) {
@@ -33548,29 +33453,23 @@ async function initializePublicComments() {
                         break;
                     }
                 }
-                
-                // যদি ব্যবহারকারী একই ইমোজিতে আবার ক্লিক করে, তাহলে রিয়্যাক্ট তুলে নিন
                 if (userPreviousReaction === emoji) {
                     reactions[emoji] = reactions[emoji].filter(uid => uid !== myUid);
-                    // যদি কোনো ইমোজিতে আর কোনো রিয়্যাক্ট না থাকে, তাহলে সেই ইমোজিটি ম্যাপ থেকে মুছে ফেলুন
                     if (reactions[emoji].length === 0) {
                         delete reactions[emoji];
                     }
                 } else {
-                    // যদি আগে অন্য রিয়্যাক্ট দিয়ে থাকে, সেটা মুছে ফেলুন
                     if (userPreviousReaction) {
                         reactions[userPreviousReaction] = reactions[userPreviousReaction].filter(uid => uid !== myUid);
                         if (reactions[userPreviousReaction].length === 0) {
                             delete reactions[userPreviousReaction];
                         }
                     }
-                    // নতুন রিয়্যাক্ট যোগ করুন
                     if (!reactions[emoji]) {
                         reactions[emoji] = [];
                     }
                     reactions[emoji].push(myUid);
                 }
-                
                 transaction.update(docRef, { reactions: reactions });
             });
         } catch (error) {
@@ -33578,7 +33477,6 @@ async function initializePublicComments() {
             showCustomAlert('রিয়্যাক্ট করতে সমস্যা হয়েছে।');
         }
     }
-
     function renderCommentCard(doc, myUid) {
         const data = doc.data();
         const time = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString('bn-BD', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '...';
@@ -33589,9 +33487,17 @@ async function initializePublicComments() {
         card.id = `comment-${doc.id}`;
         card.className = `comment-card group ${alignClass}`;
         
+        // JavaScript পরিবর্তন: রিয়্যাকশনের ধরন গণনা করা
+        const reactions = data.reactions || {};
+        const reactionTypeCount = Object.keys(reactions).filter(key => reactions[key] && reactions[key].length > 0).length;
+        if (reactionTypeCount > 1) {
+            card.classList.add('has-multiple-reactions');
+        }
+
         const pinClass = data.pinned ? 'pinned' : '';
         const pinTitle = data.pinned ? 'আনপিন করুন' : 'পিন করুন';
         
+        // JavaScript পরিবর্তন: timeClass মুছে ফেলা হয়েছে
         card.innerHTML = `
             <div class="comment-avatar">${data.avatar || '👤'}</div>
             <div class="comment-content-wrapper">
@@ -33612,29 +33518,21 @@ async function initializePublicComments() {
         tempDiv.innerHTML = data.text;
         let quoteHtml = '';
         let mainTextHtml = data.text;
-        
         const replyEl = tempDiv.querySelector('.reply-quote');
         if (replyEl) {
             quoteHtml = replyEl.outerHTML;
             replyEl.remove();
             mainTextHtml = tempDiv.innerHTML;
         }
-        
         if (data.replyTo && !quoteHtml) {
             let quoteText = data.replyTo.text.split(/<br>|\n/)[0].trim().substring(0, 70) + "...";
             quoteHtml = `<div class="reply-quote" data-doc-id="${data.replyTo.docId}" title="মূল মেসেজটি দেখুন">${escapeHtml(`@${data.replyTo.name}: "${quoteText}"`)}</div>`;
         }
-
         msgContainer.innerHTML = `${quoteHtml}<div class="comment-text-content">${mainTextHtml}</div>`;
-
-        // --- নতুন: রিয়্যাকশন সেকশন রেন্ডার ---
         const reactionsContainer = document.createElement('div');
         reactionsContainer.className = 'reactions-container relative';
-
-        const reactions = data.reactions || {};
         const hasReactions = Object.keys(reactions).length > 0;
         if(hasReactions) reactionsContainer.classList.add('has-reactions');
-
         Object.entries(reactions).forEach(([emoji, uids]) => {
             if (uids.length > 0) {
                 const item = document.createElement('span');
@@ -33650,8 +33548,6 @@ async function initializePublicComments() {
                 reactionsContainer.appendChild(item);
             }
         });
-
-        // যদি কোনো রিয়্যাক্ট না থাকে, তবে '+' বাটন দেখান
         if (!hasReactions) {
             const addBtn = document.createElement('button');
             addBtn.className = 'add-reaction-btn';
@@ -33663,14 +33559,10 @@ async function initializePublicComments() {
             });
             reactionsContainer.appendChild(addBtn);
         }
-
         card.appendChild(reactionsContainer);
-        // --- রিয়্যাকশন সেকশন রেন্ডার শেষ ---
         listContainer.appendChild(card);
-        
         card.querySelector('.btn-pin').addEventListener('click', async () => await setDoc(doc.ref, { pinned: !data.pinned }, { merge: true }));
         card.querySelector('.btn-delete').addEventListener('click', async () => { if(confirm('মুছে ফেলতে চান?')) await deleteDoc(doc.ref); });
-        
         card.querySelector('.btn-copy').addEventListener('click', () => { 
             let textToCopy = '';
             if (data.replyTo) textToCopy += `@${data.replyTo.name}: "${data.replyTo.text}"\n`;
@@ -33678,12 +33570,10 @@ async function initializePublicComments() {
             navigator.clipboard.writeText(textToCopy); 
             showCustomAlert('মেসেজ কপি হয়েছে!'); 
         });
-        
         card.querySelector('.btn-reply').addEventListener('click', () => {
             currentReplyInfo = { docId: doc.id, name: data.name, text: msgContainer.querySelector('.comment-text-content').innerText };
             let quoteText = msgContainer.innerText.split(/\n/)[0].trim().substring(0, 50);
             const safeQuote = escapeHtml(`"${quoteText}..."`);
-            
             if (replyPreviewContainer) {
                 replyPreviewContainer.innerHTML = `
                     <button id="cancel-reply-btn" class="absolute top-1 right-1 text-gray-400 hover:text-red-500 font-bold p-1 leading-none" title="রিপ্লে বাতিল করুন">&times;</button>
@@ -33691,33 +33581,28 @@ async function initializePublicComments() {
                     <p class="truncate text-gray-500 dark:text-gray-400 italic">${safeQuote}</p>
                 `;
                 replyPreviewContainer.classList.remove('hidden');
-
                 document.getElementById('cancel-reply-btn').addEventListener('click', () => {
                     replyPreviewContainer.classList.add('hidden');
                     currentReplyInfo = null;
                 });
             }
-
             msgInput.focus();
         });
-        
         if (isMe) {
             const textContentDiv = card.querySelector('.comment-text-content');
-            textContentDiv.setAttribute('title', 'এডিট করতে ডাবল-ক্লিক করুন');
-            textContentDiv.addEventListener('dblclick', (e) => {
+            textContentDiv.setAttribute('title', 'এডিট করতে ক্লিক করুন');
+            textContentDiv.addEventListener('click', (e) => {
                 if (window.getSelection().toString().length > 0) return;
                 if (e.target.closest('button')) return;
                 if (textContentDiv.isContentEditable) return;
                 handleEditComment(doc.ref, doc.id, data.text);
             });
         }
-        
         const quoteBox = msgContainer.querySelector('.reply-quote');
         if (quoteBox && quoteBox.dataset.docId) {
             quoteBox.addEventListener('click', () => scrollToComment('comment-' + quoteBox.dataset.docId, card.id));
         }
     }
-    
     function scrollToComment(elementId, sourceElementId = null) {
         document.querySelectorAll('.return-to-reply-btn').forEach(btn => btn.remove());
         const targetElement = document.getElementById(elementId);
@@ -33751,7 +33636,6 @@ async function initializePublicComments() {
         if (notificationTimeout) clearTimeout(notificationTimeout);
         notificationTimeout = setTimeout(() => { bubble.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none'); setTimeout(() => bubble.classList.add('hidden'), 300); }, 5000);
     }
-
     async function cleanupOldComments() {
         const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
         const oldDocsQuery = query(commentsRef, where("createdAt", "<", oneDayAgo), where("pinned", "==", false));
@@ -33765,7 +33649,6 @@ async function initializePublicComments() {
             }
         } catch (e) { console.log("Cleanup check done. No old unpinned comments found or index needs creation."); }
     }
-    
     function escapeHtml(text) { return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;") : ""; }
 }
 // ====================================================================
@@ -33773,7 +33656,6 @@ async function initializePublicComments() {
 // ====================================================================
 
     // ইনিশিয়ালাইজেশন
-    // আমরা প্রথমে কাউন্টার ইনিশিয়ালাইজ করব, তারপর কমেন্টস, যাতে অথেন্টিকেশন নিশ্চিত হয়
     initializeGlobalCounter().then(() => {
         initializePublicComments();
     });
@@ -33781,10 +33663,6 @@ async function initializePublicComments() {
 </script>
 <!-- ====================================================================-->
 <!-- END: FIREBASE SCRIPT -->
-<!-- ====================================================================-->
-	
-<!-- ====================================================================-->
-<!-- START: SIDEBAR SCRIPT-->
 <!-- ====================================================================-->
 
 <!-- Sidebar Toggle Button -->
@@ -33849,10 +33727,7 @@ async function initializePublicComments() {
         <span>পাবলিক মেসেজ</span>
         <div class="flex items-center gap-2 ml-auto">
              <span id="active-user-count" class="bg-white text-blue-600 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" title="ভিজিটর কাউন্টার দেখুন">
-                <span class="relative flex h-2 w-2">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                </span>
+                <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span>
                 একটিভ: ১
             </span>
             <!-- নতুন: ফুলস্ক্রিন বাটন -->
@@ -33897,7 +33772,7 @@ async function initializePublicComments() {
         <!-- এই wrapper div-কে relative করা হয়েছে -->
         <div id="comment-message-wrapper" class="flex-grow p-2 text-sm border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent relative">
             <!-- নতুন প্লেসহোল্ডার এলিমেন্ট -->
-            <div id="comment-placeholder" class="absolute top-2 left-2 text-gray-400 dark:text-gray-500 pointer-events-none select-none">মেসেজ লিখুন...</div>
+            <div id="comment-placeholder" class="absolute top-2 left-2 text-gray-400 dark:text-gray-500 pointer-events-none select-none">মেসেজ লিখুন</div>
             <!-- contenteditable div (অপরিবর্তিত, শুধু data-placeholder অ্যাট্রিবিউট সরানো হয়েছে) -->
             <div id="comment-message" contenteditable="true" class="focus:outline-none"></div>
         </div>
