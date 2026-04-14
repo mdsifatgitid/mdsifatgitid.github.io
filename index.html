@@ -32916,8 +32916,6 @@ async function initializePublicComments() {
     const emojiContainer = document.getElementById('emoji-picker-container');
     const activeCountEl = document.getElementById('active-user-count');
     const replyPreviewContainer = document.getElementById('reply-preview-container');
-    
-    // --- নতুন: প্লেসহোল্ডার এলিমেন্ট ---
     const msgPlaceholder = document.getElementById('comment-placeholder');
 
     const pinnedContainer = document.getElementById('pinned-comments-container');
@@ -32942,29 +32940,17 @@ async function initializePublicComments() {
 
     function updateFloatingButtonsVisibility() {
         if (!fabContainer || !container) return;
-        
         const shouldHideFabs = container.classList.contains('active') && container.classList.contains('fullscreen');
-        
         fabContainer.classList.toggle('hidden', shouldHideFabs);
     }
     
-    // ========================================================
-    // START: নতুন প্লেসহোল্ডার ম্যানেজমেন্ট কোড (এখানে যুক্ত করা হয়েছে)
-    // ========================================================
     function checkPlaceholder() {
         if (msgInput && msgPlaceholder) {
-            // .textContent অথবা innerHTML চেক করা যায়।
-            // এছাড়াও, কোনো ছবি ট্যাগ থাকলে প্লেসহোল্ডার হাইড করা উচিত।
             const hasText = msgInput.textContent.trim() !== '';
             const hasContent = msgInput.innerHTML.trim() !== '' && msgInput.innerHTML.trim() !== '<br>';
-
-            // যদি টেক্সট বা অন্য কোনো কন্টেন্ট (যেমন ছবি) থাকে, তাহলে প্লেসহোল্ডার হাইড করুন
             msgPlaceholder.classList.toggle('hidden', hasText || hasContent);
         }
     }
-    // ========================================================
-    // END: নতুন প্লেসহোল্ডার ম্যানেজমেন্ট কোড
-    // ========================================================
 
     if (activeCountEl) {
         activeCountEl.onclick = () => {
@@ -33036,11 +33022,9 @@ async function initializePublicComments() {
         fullscreenBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             container.classList.toggle('fullscreen');
-            
             const isFullscreen = container.classList.contains('fullscreen');
             iconEnter.classList.toggle('hidden', isFullscreen);
             iconExit.classList.toggle('hidden', !isFullscreen);
-            
             updateFloatingButtonsVisibility();
         });
     }
@@ -33099,7 +33083,6 @@ async function initializePublicComments() {
     }
     setupEmojiPicker();
     emojiBtn.addEventListener('click', (e) => { e.stopPropagation(); emojiContainer.classList.toggle('hidden'); });
-    document.addEventListener('click', (e) => { if (!emojiContainer.contains(e.target) && e.target !== emojiBtn) emojiContainer.classList.add('hidden'); });
 
     const commentsRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments");
     
@@ -33154,10 +33137,9 @@ async function initializePublicComments() {
         try {
             await addDoc(commentsRef, dataToSave);
             msgInput.innerHTML = '';
-            
+            checkPlaceholder();
             if (replyPreviewContainer) replyPreviewContainer.classList.add('hidden');
             currentReplyInfo = null;
-
             msgInputWrapper.style.height = '40px';
         } catch (e) {
             console.error("Error sending comment:", e);
@@ -33178,7 +33160,6 @@ async function initializePublicComments() {
         
         msgInput.addEventListener('input', function() { 
             checkPlaceholder();
-            
             const wrapper = msgInputWrapper;
             wrapper.style.height = 'auto'; 
             wrapper.style.height = (wrapper.scrollHeight) + 'px'; 
@@ -33283,16 +33264,48 @@ async function initializePublicComments() {
     if(prevPinBtn) prevPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex - 1));
     if(nextPinBtn) nextPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex + 1));
     
-    const handleEditComment = (docId, currentHtml) => {
+    // ========================================================
+    // START: নতুন এডিট ম্যানেজমেন্ট ভ্যারিয়েবল ও ফাংশন (আপডেট করা হয়েছে)
+    // ========================================================
+    let currentlyEditing = {
+        element: null,
+        docRef: null,
+        saveFunction: null
+    };
+
+    function saveCurrentEdit() {
+        if (currentlyEditing.element && typeof currentlyEditing.saveFunction === 'function') {
+            currentlyEditing.saveFunction();
+        }
+    }
+
+    let editSaveListenerAdded = false;
+    if (!editSaveListenerAdded) {
+        document.addEventListener('mousedown', (e) => {
+            if (currentlyEditing.element) {
+                if (!currentlyEditing.element.contains(e.target) && !e.target.closest('.comment-actions')) {
+                    saveCurrentEdit();
+                }
+            }
+        }, true); // Use capture phase to catch the event early
+        editSaveListenerAdded = true;
+    }
+    // ========================================================
+    // END: নতুন এডিট ম্যানেজমেন্ট ভ্যারিয়েবল ও ফাংশন
+    // ========================================================
+
+    const handleEditComment = (docRef, docId, currentHtml) => {
+        saveCurrentEdit(); // অন্য কোনো এডিট চালু থাকলে সেভ করুন
+
         const card = document.getElementById(`comment-${docId}`);
-        if (!card) return;
-        const msgElement = card.querySelector('.comment-text-content');
+        const msgElement = card?.querySelector('.comment-text-content');
         if (!msgElement) return;
 
-        const originalTextContent = msgElement.innerHTML;
+        const originalHtml = msgElement.innerHTML;
         msgElement.setAttribute('contenteditable', 'true');
         msgElement.classList.add('editing');
         msgElement.focus();
+        // কার্সর শেষে নিন
         const range = document.createRange();
         const sel = window.getSelection();
         range.selectNodeContents(msgElement);
@@ -33303,25 +33316,31 @@ async function initializePublicComments() {
         const cleanup = () => {
             msgElement.setAttribute('contenteditable', 'false');
             msgElement.classList.remove('editing');
-            msgElement.removeEventListener('blur', saveOnBlur);
             msgElement.removeEventListener('keydown', keydownHandler);
+            currentlyEditing = { element: null, docRef: null, saveFunction: null };
         };
 
         const saveChanges = async () => {
-            const newTextContent = msgElement.innerHTML.trim();
-            const quoteElement = card.querySelector('.reply-quote');
-            let newFullHtml = quoteElement ? quoteElement.outerHTML + newTextContent : newTextContent;
-            const sanitizedNewHtml = sanitizeHtml(newFullHtml);
+            if (!msgElement.classList.contains('editing')) return;
 
-            if (sanitizedNewHtml.trim() && sanitizedNewHtml !== currentHtml) {
-                await setDoc(doc.ref, { text: sanitizedNewHtml, editedAt: serverTimestamp() }, { merge: true });
+            const newHtml = msgElement.innerHTML.trim();
+            const quoteEl = card.querySelector('.reply-quote');
+            let fullHtml = quoteEl ? quoteEl.outerHTML + newHtml : newHtml;
+            const sanitizedHtml = sanitizeHtml(fullHtml);
+
+            if (sanitizedHtml.trim() && sanitizedHtml !== currentHtml) {
+                await setDoc(docRef, { text: sanitizedHtml, editedAt: serverTimestamp() }, { merge: true });
             } else {
-                msgElement.innerHTML = originalTextContent;
+                msgElement.innerHTML = originalHtml;
             }
             cleanup();
         };
 
-        const saveOnBlur = () => saveChanges();
+        currentlyEditing = {
+            element: msgElement,
+            docRef: docRef,
+            saveFunction: saveChanges
+        };
         
         const keydownHandler = (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -33422,11 +33441,14 @@ async function initializePublicComments() {
         
         if (isMe) {
             const textContentDiv = card.querySelector('.comment-text-content');
-            textContentDiv.addEventListener('click', (e) => {
+            // --- পরিবর্তন: এখানে title অ্যাট্রিবিউট যোগ করা হয়েছে ---
+            textContentDiv.setAttribute('title', 'এডিট করতে ডাবল-ক্লিক করুন');
+            // --- পরিবর্তন: click এর পরিবর্তে dblclick ব্যবহার করা হয়েছে ---
+            textContentDiv.addEventListener('dblclick', (e) => {
                 if (window.getSelection().toString().length > 0) return;
                 if (e.target.closest('button')) return;
                 if (textContentDiv.isContentEditable) return;
-                handleEditComment(doc.id, data.text);
+                handleEditComment(doc.ref, doc.id, data.text);
             });
         }
         
