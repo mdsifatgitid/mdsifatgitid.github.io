@@ -31471,6 +31471,9 @@ function initializeKeyboardLayoutManager() {
     const indicator = document.getElementById('currentLayoutIndicator');
     
     let currentLayout = 'english';
+    let typeBuffer = ''; // নতুন: বাফার টাইপিং ট্র্যাক করার জন্য
+    let activePreKar = ''; // নতুন: প্রি-কার ট্র্যাক করার জন্য
+    let karJumpState = 0; // নতুন: স্টেট ম্যানেজমেন্টের জন্য
     
     if (layoutBtn) {
         layoutBtn.addEventListener('click', (e) => {
@@ -31534,6 +31537,9 @@ function initializeKeyboardLayoutManager() {
 
     function setKeyboardLayout(layout, notify = false) {
         currentLayout = layout;
+        typeBuffer = ''; // লেআউট চেঞ্জ হলে বাফার ক্লিয়ার
+        activePreKar = '';
+        karJumpState = 0;
         updateLayoutUI(notify);
     }
 
@@ -31551,6 +31557,54 @@ function initializeKeyboardLayoutManager() {
             }
         }
     }
+
+    // হেল্পার ফাংশন (সি++ এর লজিক অনুযায়ী)
+    const isConsonant = (s) => {
+        const cons = "কখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহড়ঢ়য়ৎ";
+        return (s.length === 1 && cons.includes(s));
+    };
+
+    const isHasantOrPhala = (s) => {
+        return (s === "্" || s === "্র" || s === "্য");
+    };
+
+    // টেক্সট ইনসার্ট করার নতুন ফাংশন
+    function insertTextToElement(target, text, backspaceCount = 0) {
+        if (!text && backspaceCount === 0) return;
+
+        let start, end, value;
+        if (target.isContentEditable) {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            const range = selection.getRangeAt(0);
+            value = target.innerText || "";
+            start = range.startOffset;
+            end = range.endOffset;
+        } else {
+            start = target.selectionStart;
+            end = target.selectionEnd;
+            value = target.value;
+        }
+
+        // ব্যাকস্পেস প্রয়োগ
+        start = Math.max(0, start - backspaceCount);
+
+        let tempValueBeforeCursor = value.substring(0, start) + text;
+        let newCursorPos = tempValueBeforeCursor.length;
+        let finalValue = tempValueBeforeCursor + value.substring(end);
+
+        if (target.isContentEditable) {
+            target.innerText = finalValue;
+            setContentEditableCursor(target, newCursorPos);
+        } else {
+            target.value = finalValue;
+            target.selectionStart = target.selectionEnd = newCursorPos;
+        }
+        
+        // input ইভেন্ট ফায়ার করা (লাইভ কনভার্ট বা ওয়ার্ড কাউন্টারের জন্য)
+        target.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
 
     document.addEventListener('keydown', function(e) {
         const target = e.target;
@@ -31573,13 +31627,54 @@ function initializeKeyboardLayoutManager() {
             if (['button', 'checkbox', 'radio', 'range', 'color', 'file', 'submit', 'reset', 'image', 'hidden'].includes(type)) return;
         }
 
+        // স্পেস, এন্টার বা অ্যারো কীতে বাফার রিসেট
+        if (e.key === 'Enter' || e.key === ' ' || e.key.startsWith('Arrow')) {
+            if (currentLayout === 'bijoy_unicode' && karJumpState === 1 && activePreKar !== '') {
+                // আটকে থাকা প্রি-কার বসিয়ে দেওয়া
+                insertTextToElement(target, activePreKar);
+            }
+            typeBuffer = '';
+            activePreKar = '';
+            karJumpState = 0;
+            return; // স্বাভাবিক আচরণ চলতে দিন
+        }
+
+        // ব্যাকস্পেস লজিক (C++ এর মতো)
+        if (e.key === 'Backspace') {
+            if (currentLayout === 'bijoy_unicode') {
+                if (karJumpState === 1 && activePreKar !== '') {
+                    e.preventDefault(); // ওএস-এর ব্যাকস্পেস ব্লক করুন
+                    // শুধু বাফার থেকে মুছুন, স্ক্রিন থেকে নয় (কারণ স্ক্রিনে এখনো লেখা হয়নি)
+                    if (typeBuffer.length > 0) typeBuffer = typeBuffer.slice(0, -1);
+                    activePreKar = '';
+                    karJumpState = 0;
+                    return;
+                }
+
+                if (typeBuffer.length > 0) {
+                    if (karJumpState === 2 && typeBuffer.length >= 2) {
+                        typeBuffer = typeBuffer.slice(0, -2) + typeBuffer.slice(-1);
+                    } else if (karJumpState === 3 && typeBuffer.length >= 3) {
+                        typeBuffer = typeBuffer.slice(0, -1);
+                        typeBuffer = typeBuffer.slice(0, -2) + typeBuffer.slice(-1);
+                    } else {
+                        typeBuffer = typeBuffer.slice(0, -1);
+                    }
+                }
+            }
+            activePreKar = '';
+            karJumpState = 0;
+            return; // ওএস-এর ব্যাকস্পেস স্বাভাবিকভাবে কাজ করবে
+        }
+
+
         if (e.key.length > 1) return;
         e.preventDefault(); 
 
-        let charToInsert = '';
         const key = e.key;
+        let isShiftPressed = e.shiftKey;
 
-        // গেট বিজয় চার ম্যাপ (ইউনিকোড ভিত্তিক)
+        // গেট বিজয় চার ম্যাপ
         const getBijoyChar = (k) => {
             const map = {
                 'a':'ৃ', 'A':'র্', 'd':'ি', 'D':'ী', 's':'ু', 'S':'ূ', 'f':'া', 'F':'অ',
@@ -31596,6 +31691,7 @@ function initializeKeyboardLayoutManager() {
             return map[k] || k;
         };
 
+        // বর্তমান কার্সর এবং মান
         let start, end, value;
         if (target.isContentEditable) {
             const selection = window.getSelection();
@@ -31609,214 +31705,167 @@ function initializeKeyboardLayoutManager() {
             end = target.selectionEnd;
             value = target.value;
         }
-
         const prevChar = start > 0 ? value.substring(start - 1, start) : '';
 
+
         if (currentLayout === 'bijoy_unicode') {
-            let mappedChar = getBijoyChar(key);
+            let outputChar = getBijoyChar(key);
 
-            // স্পেসের পর সিঙ্গেল বা ডাবল কোট লজিক
+            // কোটেশন ফিক্স
             if (key === '\'' && (start === 0 || prevChar === ' ' || prevChar === '\n' || prevChar === '\t')) {
-                mappedChar = '‘';
+                outputChar = '‘';
             } else if (key === '"' && (start === 0 || prevChar === ' ' || prevChar === '\n' || prevChar === '\t')) {
-                mappedChar = '“';
+                outputChar = '“';
             }
 
-            const precedingVowels = ['ি', 'ে', 'ৈ'];
-            const vowelToNoun = { 'ি':'ই', 'ে':'এ', 'ৈ':'ঐ', 'া':'আ', 'ু':'উ', 'ূ':'ঊ','ী':'ঈ', 'ৗ':'ঔ', 'ৃ':'ঋ' };
-            const zwnj = '\u200C';
-            const unicodeHasanta = '্';
-            const unicodeRa = 'র';
-            const unicodeYaPhala = '্য';
-            const unicodeRef = 'র্';
-            const chandrabindhu = 'ঁ'; 
-            const swapWithChandrabindhu = ['া', 'ু', 'ূ', 'ৃ', 'ে', 'ৈ', 'ো', 'ৌ', 'ৗ'];
-            
-            if (typeof start === 'number') {
-                const prevPrevChar = start >= 2 ? value.substring(start - 2, start - 1) : '';
-                const isConsonant = (ch) => /^[\u0995-\u09B9\u09DC-\u09DF]/.test(ch);
+            if (outputChar !== '') {
+                // C++ এর মতো কম্বিনেশন লজিক (unicodeCombinations এর সমতুল্য)
+                // এখানে প্রয়োজনীয় কম্বিনেশনগুলো দেওয়া হলো, প্রয়োজনে আরও যোগ করতে পারেন
+                const combinations = {
+                    " ু": " ‍ু", " ূ": " ‍ূ", " ৃ": " ‍ৃ", "ঁা": "াঁ", "ঁু": "ুঁ", "ঁূ": "ূঁ", "ঁৃ": "ৃঁ", "অা": "আ", "র‌ে্য": "র‌্যে", "র‌ৈ্য": "র‌্যৈ", "ু্য": "্যু", "ু্র": "্রু", "ূ্য": "্যূ", "ূ্র": "্রূ", "ৃ্য": "্যৃ", "ৃ্র": "্রৃ", "েঁা": "োঁ", "েঁৗ": "ৌঁ", "ো": "ো", "েো": " ো", "েৌ": "ৌ", "ৌ": "ৌ", "্া": "আ", "্ি": "ই", "্িি": "ই", "্িী": "ঈ", "্ী": "ঈ", "্ু": "উ", "্ূ": "ঊ", "্ৃ": "ঋ", "্ে": "এ", "্েে": "এ", "্েৈ": "ঐ", "্ৈ": "ঐ", "্ৈে": "ঐ", "্ৈৈ": "ঐ", "্্": "্‌", "্ৗ": "ঔ"
+                };
 
-                // চন্দ্রবিন্দু ফিক্স
-                if (swapWithChandrabindhu.includes(mappedChar) && start > 0 && prevChar === chandrabindhu) {
-                    const newVal = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(start);
-                    if (target.isContentEditable) {
-                        target.innerText = newVal;
-                        setContentEditableCursor(target, start + mappedChar.length);
-                    } else {
-                        target.value = newVal;
-                        target.selectionStart = target.selectionEnd = start + mappedChar.length;
-                    }
-                    target.dispatchEvent(new Event('input'));
+                // র্য ফিক্স
+                if (outputChar === '্য' && typeBuffer.length > 0 && typeBuffer.slice(-1) === 'র') {
+                    insertTextToElement(target, "র‌্য", 1);
+                    typeBuffer = typeBuffer.slice(0, -1) + "র‌্য";
                     return;
                 }
 
-                // য-ফলা ফিক্স
-                if (mappedChar === unicodeYaPhala && start > 0 && (prevChar === 'ু' || prevChar === 'ূ')) {
-                    const newVal = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(start);
-                    if (target.isContentEditable) {
-                        target.innerText = newVal;
-                        setContentEditableCursor(target, start + mappedChar.length);
-                    } else {
-                        target.value = newVal;
-                        target.selectionStart = target.selectionEnd = start + mappedChar.length;
-                    }
-                    target.dispatchEvent(new Event('input'));
-                    return;
-                }
-
-                // অ + া = আ ফিক্স
-                if (mappedChar === 'া' && start > 0 && (prevChar === 'অ' || prevChar === unicodeHasanta)) {
-                    const newVal = value.substring(0, start - 1) + 'আ' + value.substring(start);
-                    if (target.isContentEditable) {
-                        target.innerText = newVal;
-                        setContentEditableCursor(target, start);
-                    } else {
-                        target.value = newVal;
-                        target.selectionStart = target.selectionEnd = start;
-                    }
-                    target.dispatchEvent(new Event('input'));
-                    return;
-                }
-
-                // একার/ইকার/ঐকার ক্লাস্টার ফিক্স
-                if (precedingVowels.includes(mappedChar) && start < value.length) {
-                    const nextText = value.substring(start);
-                    const clusterMatch = nextText.match(/^([ক-হড়ঢ়য়](?:্[ক-হড়ঢ়য়])*)(.*)/s);
-                    if (clusterMatch && clusterMatch[1] !== "") {
-                        const cluster = clusterMatch[1];
-                        const newVal = value.substring(0, start) + cluster + mappedChar + value.substring(start + cluster.length);
-                        if (target.isContentEditable) {
-                             target.innerText = newVal;
-                             setContentEditableCursor(target, start + cluster.length + mappedChar.length);
+                // র্ (রেফ) ফিক্স
+                if (outputChar === 'র্') {
+                    let clusterLen = 0;
+                    let expectConsonant = true;
+                    for (let i = typeBuffer.length - 1; i >= 0; --i) {
+                        let s = typeBuffer[i];
+                        if (expectConsonant) {
+                            if (isConsonant(s)) { clusterLen++; expectConsonant = false; }
+                            else break;
                         } else {
-                            target.value = newVal;
-                            target.selectionStart = target.selectionEnd = start + cluster.length + mappedChar.length;
+                            if (s === "্") { clusterLen++; expectConsonant = true; }
+                            else break;
                         }
-                        target.dispatchEvent(new Event('input'));
+                    }
+
+                    if (clusterLen > 0) {
+                        let cluster = typeBuffer.slice(typeBuffer.length - clusterLen);
+                        if (karJumpState > 0 && activePreKar !== '') {
+                            insertTextToElement(target, "র্" + cluster + activePreKar, clusterLen + activePreKar.length);
+                        } else {
+                            insertTextToElement(target, "র্" + cluster, clusterLen);
+                        }
+                        typeBuffer = typeBuffer.slice(0, typeBuffer.length - clusterLen) + "র্" + cluster;
                         return;
                     }
                 }
 
-                if (vowelToNoun[mappedChar] && start > 0 && prevChar === unicodeHasanta) {
-                    if (!(precedingVowels.includes(prevPrevChar) && value.substring(start-3, start-2) !== zwnj)) {
-                        const newVal = value.substring(0, start - 1) + vowelToNoun[mappedChar] + value.substring(start);
-                        if (target.isContentEditable) {
-                            target.innerText = newVal;
-                            setContentEditableCursor(target, start);
+                // কম্বিনেশন চেক
+                let combinedBuffer = typeBuffer + outputChar;
+                let matchLen = 0;
+                let bestOutput = "";
+                for (const [pattern, replacement] of Object.entries(combinations)) {
+                    if (combinedBuffer.length >= pattern.length &&
+                        combinedBuffer.slice(-pattern.length) === pattern) {
+                        if (pattern.length > matchLen) {
+                            matchLen = pattern.length;
+                            bestOutput = replacement;
+                        }
+                    }
+                }
+
+                if (matchLen > 0) {
+                    if (karJumpState === 1) {
+                        // যদি এটি প্রি-কার কম্বিনেশন না হয়, তবে আটকে থাকা 'ে' আউটপুট করে দিন
+                        if (bestOutput === "ো" || bestOutput === "ৌ" || bestOutput === "োঁ" || bestOutput === "ৌঁ") {
+                            insertTextToElement(target, bestOutput);
+                            activePreKar = '';
+                            karJumpState = 0;
                         } else {
-                            target.value = newVal;
-                            target.selectionStart = target.selectionEnd = start;
+                            insertTextToElement(target, activePreKar);
+                            activePreKar = '';
+                            karJumpState = 0;
+                            insertTextToElement(target, bestOutput, matchLen - 1);
                         }
-                        target.dispatchEvent(new Event('input'));
-                        return;
-                    }
-                }
-
-                if (mappedChar === unicodeHasanta && start > 0 && precedingVowels.includes(prevChar)) {
-                    let newVal;
-                    let cursorOffset;
-                    if (prevPrevChar === zwnj) {
-                         newVal = value.substring(0, start - 2) + mappedChar + prevChar + value.substring(start);
-                         cursorOffset = start;
+                    } else if (karJumpState === 3) {
+                         // "সেই" এর বাগ ফিক্স: হারিয়ে যাওয়া 'ে' পুনরুদ্ধার
+                         insertTextToElement(target, activePreKar + bestOutput, matchLen - 1);
+                         activePreKar = '';
+                         karJumpState = 0;
                     } else {
-                         newVal = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(start);
-                         cursorOffset = start + 1;
+                        insertTextToElement(target, bestOutput, matchLen - 1);
                     }
-                    if (target.isContentEditable) {
-                        target.innerText = newVal;
-                        setContentEditableCursor(target, cursorOffset);
-                    } else {
-                        target.value = newVal;
-                        target.selectionStart = target.selectionEnd = cursorOffset;
-                    }
-                    target.dispatchEvent(new Event('input'));
+                    typeBuffer = combinedBuffer.slice(0, combinedBuffer.length - matchLen) + bestOutput;
                     return;
                 }
 
-                if (mappedChar === unicodeYaPhala && start > 0 && prevChar === unicodeRa) {
-                    const newVal = value.substring(0, start) + zwnj + mappedChar + value.substring(start);
-                    if (target.isContentEditable) {
-                        target.innerText = newVal;
-                        setContentEditableCursor(target, start + 1 + mappedChar.length);
-                    } else {
-                        target.value = newVal;
-                        target.selectionStart = target.selectionEnd = start + 1 + mappedChar.length;
+                // C++ এর মূল State Machine লজিক
+                if (outputChar === 'ে' || outputChar === 'ৈ' || outputChar === 'ি') {
+                    if (karJumpState === 1 && activePreKar !== '') {
+                        insertTextToElement(target, activePreKar);
                     }
-                    target.dispatchEvent(new Event('input'));
-                    return;
+                    activePreKar = outputChar;
+                    karJumpState = 1;
                 }
-
-                if (mappedChar === unicodeRef && start > 0 && isConsonant(prevChar)) {
-                    const newVal = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(start);
-                    if (target.isContentEditable) {
-                        target.innerText = newVal;
-                        setContentEditableCursor(target, start + mappedChar.length);
+                else if (isConsonant(outputChar)) {
+                    if (karJumpState === 1 || karJumpState === 3) {
+                        insertTextToElement(target, outputChar + activePreKar);
+                        karJumpState = 2;
                     } else {
-                        target.value = newVal;
-                        target.selectionStart = target.selectionEnd = start + mappedChar.length; 
+                        activePreKar = '';
+                        karJumpState = 0;
+                        insertTextToElement(target, outputChar);
                     }
-                    target.dispatchEvent(new Event('input'));
-                    return;
                 }
-
-                if ((mappedChar === '্র' || mappedChar === '্য') && start > 0 && precedingVowels.includes(prevChar)) {
-                    const newVal = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(start);
-                    if (target.isContentEditable) {
-                        target.innerText = newVal;
-                        setContentEditableCursor(target, start + mappedChar.length);
-                    } else {
-                        target.value = newVal;
-                        target.selectionStart = target.selectionEnd = start + mappedChar.length;
-                    }
-                    target.dispatchEvent(new Event('input'));
-                    return;
-                }
-
-                if (isConsonant(mappedChar) && start >= 2 && precedingVowels.includes(prevChar) && (prevPrevChar === unicodeHasanta || prevPrevChar === '্র' || prevPrevChar === '্য')) {
-                    const newVal = value.substring(0, start - 1) + mappedChar + prevChar + value.substring(start);
-                    if (target.isContentEditable) {
-                        target.innerText = newVal;
-                        setContentEditableCursor(target, start + mappedChar.length);
-                    } else {
-                        target.value = newVal;
-                        target.selectionStart = target.selectionEnd = start + mappedChar.length;
-                    }
-                    target.dispatchEvent(new Event('input'));
-                    return;
-                }
-
-                if (precedingVowels.includes(mappedChar)) {
-                    if (start === value.length || value[start] === " " || value[start] === "\n") {
-                        charToInsert = zwnj + mappedChar;
-                    } else {
-                        charToInsert = mappedChar;
-                    }
-                } else {
-                    if (start >= 2) {
-                        const prevTwo = value.substring(start - 2, start);
-                        if (prevTwo[0] === zwnj && precedingVowels.includes(prevTwo[1])) {
-                            const vowel = prevTwo[1];
-                            const newVal = value.substring(0, start - 2) + mappedChar + vowel + value.substring(start);
-                            if (target.isContentEditable) {
-                                target.innerText = newVal;
-                                setContentEditableCursor(target, start);
-                            } else {
-                                target.value = newVal;
-                                target.selectionStart = target.selectionEnd = start;
-                            }
-                            target.dispatchEvent(new Event('input'));
-                            return;
+                else if (isHasantOrPhala(outputChar)) {
+                    if (karJumpState === 2) {
+                        insertTextToElement(target, outputChar, activePreKar.length);
+                        if (outputChar === '্') {
+                            karJumpState = 3;
+                        } else {
+                            insertTextToElement(target, activePreKar);
+                            karJumpState = 2;
                         }
+                    } else {
+                        if (karJumpState === 1 && activePreKar !== '') {
+                            insertTextToElement(target, activePreKar);
+                            activePreKar = '';
+                            karJumpState = 0;
+                        }
+                        insertTextToElement(target, outputChar);
                     }
-                    charToInsert = mappedChar;
                 }
-            } else {
-                charToInsert = mappedChar;
+                else {
+                    if (karJumpState === 1 && activePreKar !== '') {
+                        insertTextToElement(target, activePreKar);
+                    } else if (karJumpState === 3 && activePreKar !== '') {
+                        // હসন্তের পর অন্য কিছু (যেমন স্বরবর্ণ) আসলে হসন্ত মুছে যাবে না
+                        insertTextToElement(target, activePreKar, 1);
+                    }
+                    
+                    insertTextToElement(target, outputChar);
+
+                    // সরাসরি স্বরবর্ণ বা কার টাইপ করলে শেষে আউটপুট
+                    const swarobornoToKar = {
+                        "আ": "া", "ই": "ি", "ঈ": "ী", "উ": "ু",
+                        "ঊ": "ূ", "ঋ": "ৃ", "এ": "ে", "ঐ": "ৈ",
+                        "ও": "ো", "ঔ": "ৌ"
+                    };
+                    if (swarobornoToKar[outputChar]) {
+                        insertTextToElement(target, swarobornoToKar[outputChar]);
+                    }
+
+                    activePreKar = '';
+                    karJumpState = 0;
+                }
+                
+                typeBuffer += outputChar;
+
             }
-        } else if (currentLayout === 'bijoy_ansi') {
+        } 
+        else if (currentLayout === 'bijoy_ansi') {
+            // আনসি মোড (আগের মতোই থাকবে)
             let unicodeChar = getBijoyChar(key);
 
-            // আনসিতে স্পেসের পর কোটেশন এবং একসেন্ট লজিক
             if (key === '`') unicodeChar = 'Ô';
             else if (key === '~') unicodeChar = 'Ò';
             else if (key === '\'' && (start === 0 || prevChar === ' ' || prevChar === '\n' || prevChar === '\t')) {
@@ -31825,21 +31874,12 @@ function initializeKeyboardLayoutManager() {
                 unicodeChar = 'Ò';
             }
 
-            charToInsert = (typeof unicodeToBijoyMap !== 'undefined' && unicodeToBijoyMap[unicodeChar]) ? unicodeToBijoyMap[unicodeChar] : unicodeChar;
-        }
+            let charToInsert = (typeof unicodeToBijoyMap !== 'undefined' && unicodeToBijoyMap[unicodeChar]) ? unicodeToBijoyMap[unicodeChar] : unicodeChar;
 
-        if (target.isContentEditable) {
-            document.execCommand('insertText', false, charToInsert);
-        } else {
-            const s = target.selectionStart;
-            const e_pos = target.selectionEnd;
-            let val = target.value;
-            let before = val.substring(0, s);
-            let after = val.substring(e_pos);
+            let tempValueBeforeCursor = value.substring(0, start) + charToInsert;
             
-            let tempValueBeforeCursor = before + charToInsert;
-            
-            if (currentLayout === 'bijoy_ansi' && typeof manualAnsiReplacements !== 'undefined') {
+            // আনসি রিপ্লেসমেন্ট ম্যাপ
+            if (typeof manualAnsiReplacements !== 'undefined') {
                 let bestMatch = null;
                 for (const pattern in manualAnsiReplacements) {
                     if (tempValueBeforeCursor.endsWith(pattern)) {
@@ -31854,10 +31894,19 @@ function initializeKeyboardLayoutManager() {
                 }
             }
 
-            target.value = tempValueBeforeCursor + after;
-            target.selectionStart = target.selectionEnd = tempValueBeforeCursor.length;
-            target.dispatchEvent(new Event('input'));
+            let finalValue = tempValueBeforeCursor + value.substring(end);
+            let newCursorPos = tempValueBeforeCursor.length;
+
+            if (target.isContentEditable) {
+                target.innerText = finalValue;
+                setContentEditableCursor(target, newCursorPos);
+            } else {
+                target.value = finalValue;
+                target.selectionStart = target.selectionEnd = newCursorPos;
+            }
+            target.dispatchEvent(new Event('input', { bubbles: true }));
         }
+
     });
 
     updateLayoutUI(false);
