@@ -8158,7 +8158,15 @@ body.sidebar-open #sidebarOverlay {
                 <span>বিজয় আনসি (ANSI)</span>
                 <svg class="w-4 h-4 text-indigo-600 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
             </button>
-            
+        
+		<!-- পিসি ভয়েস টাইপিং ক্লায়েন্ট বাটন -->
+            <div class="border-t border-gray-200 dark:border-gray-600 mt-1 pt-1">
+                <button id="pcVoiceClientTab" class="w-full text-left px-4 py-2 text-sm text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-gray-600 flex items-center gap-2 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
+                    <span>পিসি ভয়েস টাইপিং</span>
+                </button>
+            </div>
+			
             <!-- নতুন যুক্ত করা উইন্ডোজ অ্যাপ ডাউনলোড লিংক -->
             <div class="border-t border-gray-200 dark:border-gray-600 mt-1 pt-1 has-tooltip" data-tooltip="উইন্ডোজ কীবোর্ড ডাউনলোড করুন">
                 <a href="https://drive.google.com/drive/folders/1saIx04GYJ0nCtGrFedzpL8nfdeU7Phu4?usp=sharing" target="_blank" class="w-full text-left px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-600 flex items-center gap-2 group transition-colors">
@@ -12612,6 +12620,67 @@ body.sidebar-open #sidebarOverlay {
 <!-- END: Canvas Tab Content -->
 <!-- ======================================================== -->
 
+
+<!-- START: PC Voice Client Content -->
+<div id="pcVoiceClientContent" class="calculator-content">
+    <div class="text-assistant-content">
+        <h3 class="text-xl font-bold text-gray-700 mb-4 dark:text-gray-200 flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
+            পিসি ভয়েস টাইপিং ক্লায়েন্ট
+        </h3>
+        
+        <!-- আইপি ইনপুট এবং কানেক্ট বাটন -->
+        <div class="bg-indigo-50 dark:bg-gray-700 p-4 rounded-lg mb-4 text-left border border-indigo-100 dark:border-gray-600">
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">পিসির আইপি (IP) এড্রেস দিন:</label>
+            <div class="flex gap-2">
+                <input type="text" id="pcVoiceIpInput" placeholder="যেমন: 192.168.0.100:5050" class="flex-grow p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <button id="pcVoiceConnectBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2 min-w-[110px]">
+                    কানেক্ট
+                </button>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">পিসির কীবোর্ড অ্যাপের 'ভয়েস টাইপিং' অপশনে ক্লিক করলে আইপি দেখতে পাবেন।</p>
+        </div>
+
+        <div class="flex justify-center gap-4 mb-4">
+            <button id="pcVoiceBnBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg flex items-center gap-2 transition-colors">🎤 বাংলা</button>
+            <button id="pcVoiceEnBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg flex items-center gap-2 transition-colors">🎤 English</button>
+        </div>
+
+        <div class="flex items-center justify-center gap-2 mb-4">
+            <input type="checkbox" id="pcVoiceAutoSend" checked class="w-4 h-4 text-indigo-600">
+            <label for="pcVoiceAutoSend" class="text-sm font-bold text-gray-700 dark:text-gray-300 cursor-pointer">অটো সেন্ড (কথা থামালেই পিসিতে যাবে)</label>
+        </div>
+
+        <textarea id="pcVoiceTextBox" rows="4" placeholder="মাইক বাটনে ক্লিক করে কথা বলুন..." class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white mb-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow"></textarea>
+
+        <div class="flex justify-center gap-2 mb-4">
+            <button id="pcVoiceUndoBtn" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-bold transition-colors">↶ আনডু</button>
+            <button id="pcVoiceRedoBtn" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-bold transition-colors">↷ রিডু</button>
+            <button id="pcVoiceClearBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold transition-colors">মুছুন</button>
+        </div>
+
+        <button id="pcVoiceSendBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg mb-4 transition-transform transform hover:scale-[1.02]">পিসিতে পাঠান (Send to PC)</button>
+
+        <!-- Mixed Content Warning -->
+        <div id="pcVoiceWarningBox" class="hidden bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4 text-left rounded-lg shadow-sm">
+            <p class="text-red-700 dark:text-red-400 font-bold mb-1 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                ডেটা পিসিতে যাচ্ছে না?
+            </p>
+            <p class="text-red-600 dark:text-red-300 text-sm mb-2">যেহেতু ওয়েবসাইটটি HTTPS এবং পিসির আইপি HTTP, তাই ব্রাউজার সুরক্ষার জন্য ডেটা ব্লক করছে। এটি সমাধান করতে:</p>
+            <ol class="list-decimal ml-5 text-sm text-red-600 dark:text-red-300 space-y-1">
+                <li>অ্যাড্রেস বারের বামে <b>Lock/Tune আইকনে</b> ক্লিক করুন।</li>
+                <li><b>Site Settings</b> (সাইট সেটিংস) এ যান।</li>
+                <li><b>Insecure content</b> খুঁজে সেটি <b>Allow</b> করে পেজটি রিলোড দিন।</li>
+            </ol>
+        </div>
+    </div>
+</div>
+<!-- END: PC Voice Client Content -->
+
+
+
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের HTML Content কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
 
 <!-- ======================================================== -->
@@ -15598,7 +15667,8 @@ try {
 				const contactUsTab = document.getElementById('contactUsTab');
 				const privacyPolicyTab = document.getElementById('privacyPolicyTab');
 				const termsTab = document.getElementById('termsTab');
-
+				const pcVoiceClientTab = document.getElementById('pcVoiceClientTab');
+				const pcVoiceClientContent = document.getElementById('pcVoiceClientContent');
 				const aboutUsContent = document.getElementById('aboutUsContent');
 				const contactUsContent = document.getElementById('contactUsContent');
 				const privacyPolicyContent = document.getElementById('privacyPolicyContent');
@@ -16037,7 +16107,7 @@ function stopOtherTabActivities() {
 function showTab(tabId) {
     const tabs = [
         basicCalcTab,colorPickerTab, dashboardTab,imageResizerTab,moreSettingsTab,historyTab,currencyTab, emiCalcTab, ipInfoTab, recipeTab, pdfToolsTab,screenRecorderTab, jsonFormatterTab, memeGenTab, speedTestTab,
-        ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,barcodeGenTab, randomPickerTab,
+        ageCalcTab, dateCalcTab, scientificCalcTab,  converterTab, measurementTab, typingTestTab, zakatCalcTab,healthLifestyleTab,donateTab,barcodeGenTab, randomPickerTab,pcVoiceClientTab,
         translatorTab, mapTab, prayerTimeTab, imageToTextTab, wordCounterTab, weatherTab, notepadTab, clockTab,playerTab,daysObservancesTab,canvasTab,
         qrCodeTab,emergencyNumbersTab, spellCheckTab, textBeautifierTab, wordMeaningTab, ttsTab, sttTab, importantLinksTab,invoiceTab, webSearchTab, seoMetaGenTab,
         textAssistantTab,holidayListTab,quizTab,unitPriceTab,tasbeehTab,diffCheckerTab,expenseTrackerTab,textEncryptionTab,aboutUsTab, contactUsTab, privacyPolicyTab, termsTab,
@@ -16046,7 +16116,7 @@ function showTab(tabId) {
     const contents = [
         basicCalculatorContent,colorPickerContent,dashboardContent,imageResizerContent,moreSettingsContent,historyContent,currencyContent, emiCalcContent, ipInfoContent, recipeContent, pdfToolsContent,screenRecorderContent, jsonFormatterContent, memeGenContent, speedTestContent,
         ageCalculatorContent, dateCalculatorContent, emergencyNumbersContent,scientificCalculatorContent,  converterContent,healthLifestyleContent,daysObservancesContent,holidayListContent,quizContent,invoiceContent, webSearchContent,
-        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent, barcodeGenContent, randomPickerContent,
+        measurementContent, typingTestContent, translatorContent, mapContent,  prayerTimeContent, imageToTextContent, wordCounterContent, donateContent, barcodeGenContent, randomPickerContent,pcVoiceClientContent,
         weatherContent, notepadContent, clockContent, playerContent,qrCodeContent, spellCheckerContent, textBeautifierContent, wordMeaningContent, seoMetaGenContent,
         textToSpeechContent, speechToTextContent, textAssistantContent, zakatCalculatorContent,importantLinksContent,unitPriceContent,tasbeehContent,canvasContent,
 		diffCheckerContent,expenseTrackerContent,textEncryptionContent,aboutUsContent, contactUsContent, privacyPolicyContent, termsContent,
@@ -16148,6 +16218,11 @@ case 'basic':
             activeTab = measurementTab;
             activeContent = measurementContent;
             break;
+		case 'pcVoiceClient':
+			activeTab = pcVoiceClientTab;
+			activeContent = pcVoiceClientContent;
+			initializePcVoiceClient(); // এই ফাংশনটি আমরা নিচে বানাবো
+		break;
         case 'typingTest':
             activeTab = typingTestTab;
             activeContent = typingTestContent;
@@ -16494,6 +16569,14 @@ initializeBackButtons();
         await initializeNotepad(); // Notepad চালু করার জন্য এই ফাংশন কল করুন
     });
     if (webSearchTab) webSearchTab.addEventListener('click', () => showTab('webSearch'));
+	if (pcVoiceClientTab) {
+    pcVoiceClientTab.addEventListener('click', () => {
+        showTab('pcVoiceClient');
+        // লেআউট ড্রপডাউন বন্ধ করার জন্য
+        const layoutDropdown = document.getElementById('keyboardLayoutDropdown');
+        if (layoutDropdown) layoutDropdown.classList.add('hidden');
+    });
+}
     if (healthLifestyleTab) healthLifestyleTab.addEventListener('click', () => {showTab('healthLifestyle');	initializeHealthLifestyleTab();});
     if (clockTab) clockTab.addEventListener('click', () => showTab('clock'));
     if (playerTab) playerTab.addEventListener('click', () => showTab('player'));
@@ -32916,6 +32999,241 @@ function initializeCanvasTools() {
 // ========================================================
 // END: CANVAS TOOLS SCRIPT
 // ========================================================
+
+// ====================================================================
+// START: PC VOICE CLIENT SCRIPT (WITH CONNECT BUTTON)
+// ====================================================================
+function initializePcVoiceClient() {
+    const ipInput = document.getElementById('pcVoiceIpInput');
+    const connectBtn = document.getElementById('pcVoiceConnectBtn');
+    const textBox = document.getElementById('pcVoiceTextBox');
+    const autoSendCheck = document.getElementById('pcVoiceAutoSend');
+    const warningBox = document.getElementById('pcVoiceWarningBox');
+    
+    const btnBn = document.getElementById('pcVoiceBnBtn');
+    const btnEn = document.getElementById('pcVoiceEnBtn');
+    const btnSend = document.getElementById('pcVoiceSendBtn');
+    const btnUndo = document.getElementById('pcVoiceUndoBtn');
+    const btnRedo = document.getElementById('pcVoiceRedoBtn');
+    const btnClear = document.getElementById('pcVoiceClearBtn');
+
+    // আগে সেভ করা আইপি লোড করা
+    if (ipInput && !ipInput.value) {
+        ipInput.value = localStorage.getItem('lastPcVoiceIp') || '';
+    }
+
+    // কানেক্ট বাটন লজিক
+    if (connectBtn) {
+        connectBtn.addEventListener('click', async () => {
+            let ip = ipInput.value.trim();
+            if (!ip) {
+                showCustomAlert('অনুগ্রহ করে পিসির আইপি এড্রেস দিন।');
+                return;
+            }
+
+            ip = ip.replace(/^https?:\/\//, '').split(':')[0];
+            localStorage.setItem('lastPcVoiceIp', ip);
+            
+            const baseUrl = `http://${ip}:5050`;
+
+            // লোডিং স্টেট
+            connectBtn.disabled = true;
+            connectBtn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> চেকিং...`;
+            connectBtn.className = "bg-indigo-400 text-white font-bold py-2 px-4 rounded-lg shadow flex items-center justify-center gap-2 min-w-[110px]";
+
+            try {
+                // ১. GET রিকোয়েস্ট (C++ এর isVoiceConnected=true করার জন্য)
+                // 'no-cors' মোড দিচ্ছি কারণ GET রেসপন্সে C++ কোনো CORS হেডার দেয় না।
+                await fetch(`${baseUrl}/`, { mode: 'no-cors' });
+
+                // ২. সামান্য বিরতি দিয়ে POST রিকোয়েস্ট (আসল কানেকশন চেক করার জন্য)
+                // POST রেসপন্সে CORS হেডার আছে, তাই স্ট্যাটাস কোড (200 OK) চেক করা যাবে।
+                await new Promise(resolve => setTimeout(resolve, 300));
+                const res = await fetch(`${baseUrl}/type`, { 
+                    method: 'POST', 
+                    body: ' ' // ফাঁকা স্পেস পাঠিয়ে চেক করা হচ্ছে
+                });
+
+                if (res.ok || res.status === 200) {
+                    // কানেক্টেড!
+                    connectBtn.className = "bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-1 min-w-[110px]";
+                    connectBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                        কানেক্টেড
+                    `;
+                    warningBox.classList.add('hidden');
+                    showCustomAlert('পিসির সাথে সফলভাবে কানেক্ট হয়েছে!');
+                } else {
+                    throw new Error('Server rejected');
+                }
+            } catch (err) {
+                console.error("Connection Check Error:", err);
+                connectBtn.className = "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-1 min-w-[110px]";
+                connectBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                    ব্যর্থ
+                `;
+                warningBox.classList.remove('hidden');
+                showCustomAlert('কানেক্ট করা যায়নি! নিচের ওয়ার্নিং বক্সটি পড়ুন।');
+            } finally {
+                connectBtn.disabled = false;
+            }
+        });
+
+        // আইপি ইনপুটে এন্টার চাপলেও কানেক্ট হবে
+        ipInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') connectBtn.click();
+        });
+    }
+
+    let history = [''];
+    let historyIndex = 0;
+    let typingTimer;
+    const doneTypingInterval = 1000;
+
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    function saveState() {
+        if (history[historyIndex] !== textBox.value) {
+            history = history.slice(0, historyIndex + 1);
+            history.push(textBox.value);
+            if (history.length > 50) history.shift();
+            historyIndex = history.length - 1;
+        }
+    }
+
+    if (btnUndo) btnUndo.onclick = () => {
+        if (historyIndex > 0) {
+            historyIndex--;
+            textBox.value = history[historyIndex];
+        }
+    };
+
+    if (btnRedo) btnRedo.onclick = () => {
+        if (historyIndex < history.length - 1) {
+            historyIndex++;
+            textBox.value = history[historyIndex];
+        }
+    };
+
+    if (btnClear) btnClear.onclick = () => {
+        textBox.value = '';
+        saveState();
+    };
+
+    // কীবোর্ডের মাইক দিয়ে টাইপ করলে
+    if (textBox) {
+        textBox.addEventListener('input', () => {
+            saveState();
+            if (autoSendCheck.checked) {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(autoSendToPC, doneTypingInterval);
+            }
+        });
+    }
+
+    function getServerUrl() {
+        let ip = ipInput.value.trim();
+        if (!ip) return null;
+        ip = ip.replace(/^https?:\/\//, '').split(':')[0];
+        return `http://${ip}:5050/type`;
+    }
+
+    function autoSendToPC() {
+        const text = textBox.value.trim();
+        if(text) sendDataToPCFetch(text, true);
+    }
+
+    function sendDataToPCFetch(text, isAuto) {
+        const url = getServerUrl();
+        if (!url) {
+            showCustomAlert('অনুগ্রহ করে পিসির আইপি দিন।');
+            return;
+        }
+
+        fetch(url, { 
+            method: 'POST', 
+            body: text
+        })
+        .then((res) => {
+            if (res.status === 403) {
+                showCustomAlert("পিসি থেকে সংযোগ বিচ্ছিন্ন করা হয়েছে। আবার কানেক্ট বাটনে চাপুন।");
+                if (connectBtn) {
+                    connectBtn.className = "bg-red-500 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-1 min-w-[110px]";
+                    connectBtn.innerHTML = 'বিচ্ছিন্ন ✖';
+                }
+            } else {
+                textBox.value = '';
+                saveState();
+            }
+        }).catch(err => {
+            console.error(err);
+            if(!isAuto) showCustomAlert('পিসিতে পাঠানো যায়নি! কানেকশন চেক করুন।');
+        });
+    }
+
+// বাটনের আসল টেক্সট একবারই সেভ করে রাখা হচ্ছে
+    const originalBtnTextBn = btnBn ? btnBn.innerHTML : '🎤 বাংলা';
+    const originalBtnTextEn = btnEn ? btnEn.innerHTML : '🎤 English';
+
+    // ওয়েব এপিআই ভয়েস বাটন
+    const startVoice = (lang) => {
+        if (!SpeechRec) {
+            showCustomAlert("আপনার ব্রাউজারটি ওয়েব ভয়েস সাপোর্ট করে না। কীবোর্ডের মাইক ব্যবহার করুন।");
+            return;
+        }
+        
+        const rec = new SpeechRec();
+        rec.lang = lang;
+        rec.continuous = false;
+        rec.interimResults = false;
+
+        rec.onstart = () => {
+            if(lang === 'bn-BD') {
+                btnBn.innerText = 'শুনছি...';
+            } else {
+                btnEn.innerText = 'Listening...';
+            }
+        };
+
+        rec.onresult = (e) => {
+            const newText = e.results[0][0].transcript;
+            if (autoSendCheck.checked) {
+                sendDataToPCFetch(newText, true);
+                textBox.value = newText + " (Sent ✓)";
+                saveState();
+            } else {
+                if (textBox.value) textBox.value += ' ' + newText;
+                else textBox.value = newText;
+                saveState();
+            }
+        };
+
+        rec.onerror = (e) => {
+            if(e.error === 'not-allowed') {
+                showCustomAlert('মাইক্রোফোনের পারমিশন নেই! ব্রাউজার সেটিং চেক করুন।');
+            }
+        };
+
+        rec.onend = () => {
+            // কথা বলা শেষ হলে বা এরর হলে আবার আগের অবস্থায় ফিরে যাবে
+            if(btnBn) btnBn.innerHTML = originalBtnTextBn;
+            if(btnEn) btnEn.innerHTML = originalBtnTextEn;
+        };
+
+        try { rec.start(); } catch(err) {}
+    };
+
+    if (btnBn) btnBn.onclick = () => startVoice('bn-BD');
+    if (btnEn) btnEn.onclick = () => startVoice('en-US');
+    if (btnSend) btnSend.onclick = () => {
+        const text = textBox.value.replace(" (Sent ✓)", "").trim();
+        if(text) sendDataToPCFetch(text, false);
+    };
+}
+// ====================================================================
+// END: PC VOICE CLIENT SCRIPT
+// ====================================================================
 
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
