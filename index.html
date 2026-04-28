@@ -12631,14 +12631,22 @@ body.sidebar-open #sidebarOverlay {
         
         <!-- আইপি ইনপুট এবং কানেক্ট বাটন -->
         <div class="bg-indigo-50 dark:bg-gray-700 p-4 rounded-lg mb-4 text-left border border-indigo-100 dark:border-gray-600">
-            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">পিসির আইপি (IP) এড্রেস দিন:</label>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">পিসির আইপি (IP) বা লিংক দিন:</label>
             <div class="flex gap-2">
-                <input type="text" id="pcVoiceIpInput" placeholder="যেমন: 192.168.0.100:5050" class="flex-grow p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <button id="pcVoiceConnectBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2 min-w-[110px]">
-                    কানেক্ট
-                </button>
+                <input type="text" id="pcVoiceIpInput" placeholder="যেমন: http://192.168.0.100:5050" class="flex-grow p-2 border rounded-lg dark:bg-gray-600 dark:border-gray-500 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                
+                <div class="flex gap-1">
+                    <button id="pcVoiceConnectBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2 min-w-[110px]">
+                        কানেক্ট
+                    </button>
+                    <!-- ডিসকানেক্ট বাটন (ডিফল্টভাবে লুকানো) -->
+                    <button id="pcVoiceDisconnectBtn" class="hidden bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg shadow transition-colors flex items-center justify-center" title="সংযোগ বিচ্ছিন্ন করুন">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                    </button>
+                </div>
+
             </div>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">পিসির কীবোর্ড (Bangla Keyboard CS) অ্যাপের টপবার থেকে লেআউট লেখাটিতে ডাবল ক্লিক করে অথবা ট্রে আইকন থেকে 'ভয়েস টাইপিং' অপশনে ক্লিক করলে আইপি দেখতে পাবেন। মোবাইলে Chrome অথবা Via Browser এ বাংলা টুলবক্স এর এই পেজটি ওপেন করে আইপি অ্যাড্রেসটি বসাতে হবে।</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">পিসির কীবোর্ড অ্যাপের 'ভয়েস টাইপিং' অপশনে দেখানো লিংকটি এখানে কপি করে পেস্ট করুন।</p>
         </div>
 
         <div class="flex justify-center gap-4 mb-4">
@@ -33001,11 +33009,12 @@ function initializeCanvasTools() {
 // ========================================================
 
 // ====================================================================
-// START: PC VOICE CLIENT SCRIPT (WITH CONNECT BUTTON)
+// START: PC VOICE CLIENT SCRIPT
 // ====================================================================
 function initializePcVoiceClient() {
     const ipInput = document.getElementById('pcVoiceIpInput');
     const connectBtn = document.getElementById('pcVoiceConnectBtn');
+    const disconnectBtn = document.getElementById('pcVoiceDisconnectBtn');
     const textBox = document.getElementById('pcVoiceTextBox');
     const autoSendCheck = document.getElementById('pcVoiceAutoSend');
     const warningBox = document.getElementById('pcVoiceWarningBox');
@@ -33017,12 +33026,10 @@ function initializePcVoiceClient() {
     const btnRedo = document.getElementById('pcVoiceRedoBtn');
     const btnClear = document.getElementById('pcVoiceClearBtn');
 
-    // আগে সেভ করা আইপি লোড করা
     if (ipInput && !ipInput.value) {
         ipInput.value = localStorage.getItem('lastPcVoiceIp') || '';
     }
 
-    // কানেক্ট বাটন লজিক
     if (connectBtn) {
         connectBtn.addEventListener('click', async () => {
             let ip = ipInput.value.trim();
@@ -33036,51 +33043,55 @@ function initializePcVoiceClient() {
             
             const baseUrl = `http://${ip}:5050`;
 
-            // লোডিং স্টেট
             connectBtn.disabled = true;
-            connectBtn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> চেকিং...`;
+            connectBtn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> অপেক্ষা করুন...`;
             connectBtn.className = "bg-indigo-400 text-white font-bold py-2 px-4 rounded-lg shadow flex items-center justify-center gap-2 min-w-[110px]";
 
             try {
-                // ১. GET রিকোয়েস্ট (C++ এর isVoiceConnected=true করার জন্য)
-                // 'no-cors' মোড দিচ্ছি কারণ GET রেসপন্সে C++ কোনো CORS হেডার দেয় না।
-                await fetch(`${baseUrl}/`, { mode: 'no-cors' });
-
-                // ২. সামান্য বিরতি দিয়ে POST রিকোয়েস্ট (আসল কানেকশন চেক করার জন্য)
-                // POST রেসপন্সে CORS হেডার আছে, তাই স্ট্যাটাস কোড (200 OK) চেক করা যাবে।
-                await new Promise(resolve => setTimeout(resolve, 300));
                 const res = await fetch(`${baseUrl}/type`, { 
                     method: 'POST', 
-                    body: ' ' // ফাঁকা স্পেস পাঠিয়ে চেক করা হচ্ছে
+                    body: ' ' 
                 });
 
                 if (res.ok || res.status === 200) {
-                    // কানেক্টেড!
-                    connectBtn.className = "bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-1 min-w-[110px]";
-                    connectBtn.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                        কানেক্টেড
-                    `;
+                    connectBtn.className = "bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-1 min-w-[110px]";
+                    connectBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg> কানেক্টেড`;
                     warningBox.classList.add('hidden');
+                    disconnectBtn.classList.remove('hidden');
                     showCustomAlert('পিসির সাথে সফলভাবে কানেক্ট হয়েছে!');
+                } else if (res.status === 403) {
+                    throw new Error('Rejected by PC user');
                 } else {
-                    throw new Error('Server rejected');
+                    throw new Error('Connection failed');
                 }
             } catch (err) {
-                console.error("Connection Check Error:", err);
+                console.error("Connection Error:", err);
                 connectBtn.className = "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-1 min-w-[110px]";
-                connectBtn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                    ব্যর্থ
-                `;
-                warningBox.classList.remove('hidden');
-                showCustomAlert('কানেক্ট করা যায়নি! নিচের ওয়ার্নিং বক্সটি পড়ুন।');
+                connectBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg> ব্যর্থ`;
+                
+                if (err.message === 'Rejected by PC user') {
+                    showCustomAlert('পিসি থেকে কানেকশন রিকোয়েস্ট বাতিল করা হয়েছে!');
+                } else {
+                    warningBox.classList.remove('hidden');
+                    showCustomAlert('কানেক্ট করা যায়নি! নিচের ওয়ার্নিং বক্সটি পড়ুন।');
+                }
             } finally {
                 connectBtn.disabled = false;
             }
         });
 
-        // আইপি ইনপুটে এন্টার চাপলেও কানেক্ট হবে
+        disconnectBtn.addEventListener('click', () => {
+            let ip = ipInput.value.trim().replace(/^https?:\/\//, '').split(':')[0];
+            const baseUrl = `http://${ip}:5050`;
+
+            fetch(`${baseUrl}/disconnect`, { method: 'POST' }).catch(e => console.log(e));
+
+            connectBtn.className = "bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2 min-w-[110px]";
+            connectBtn.innerHTML = 'কানেক্ট';
+            disconnectBtn.classList.add('hidden');
+            showCustomAlert('পিসি থেকে সংযোগ বিচ্ছিন্ন করা হয়েছে।');
+        });
+
         ipInput.addEventListener('keypress', (e) => {
             if(e.key === 'Enter') connectBtn.click();
         });
@@ -33090,7 +33101,6 @@ function initializePcVoiceClient() {
     let historyIndex = 0;
     let typingTimer;
     const doneTypingInterval = 1000;
-
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
 
     function saveState() {
@@ -33102,26 +33112,10 @@ function initializePcVoiceClient() {
         }
     }
 
-    if (btnUndo) btnUndo.onclick = () => {
-        if (historyIndex > 0) {
-            historyIndex--;
-            textBox.value = history[historyIndex];
-        }
-    };
+    if (btnUndo) btnUndo.onclick = () => { if (historyIndex > 0) { historyIndex--; textBox.value = history[historyIndex]; } };
+    if (btnRedo) btnRedo.onclick = () => { if (historyIndex < history.length - 1) { historyIndex++; textBox.value = history[historyIndex]; } };
+    if (btnClear) btnClear.onclick = () => { textBox.value = ''; saveState(); };
 
-    if (btnRedo) btnRedo.onclick = () => {
-        if (historyIndex < history.length - 1) {
-            historyIndex++;
-            textBox.value = history[historyIndex];
-        }
-    };
-
-    if (btnClear) btnClear.onclick = () => {
-        textBox.value = '';
-        saveState();
-    };
-
-    // কীবোর্ডের মাইক দিয়ে টাইপ করলে
     if (textBox) {
         textBox.addEventListener('input', () => {
             saveState();
@@ -33151,16 +33145,14 @@ function initializePcVoiceClient() {
             return;
         }
 
-        fetch(url, { 
-            method: 'POST', 
-            body: text
-        })
+        fetch(url, { method: 'POST', body: text })
         .then((res) => {
             if (res.status === 403) {
                 showCustomAlert("পিসি থেকে সংযোগ বিচ্ছিন্ন করা হয়েছে। আবার কানেক্ট বাটনে চাপুন।");
                 if (connectBtn) {
                     connectBtn.className = "bg-red-500 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-1 min-w-[110px]";
                     connectBtn.innerHTML = 'বিচ্ছিন্ন ✖';
+                    disconnectBtn.classList.add('hidden');
                 }
             } else {
                 textBox.value = '';
@@ -33172,11 +33164,9 @@ function initializePcVoiceClient() {
         });
     }
 
-// বাটনের আসল টেক্সট একবারই সেভ করে রাখা হচ্ছে
     const originalBtnTextBn = btnBn ? btnBn.innerHTML : '🎤 বাংলা';
     const originalBtnTextEn = btnEn ? btnEn.innerHTML : '🎤 English';
 
-    // ওয়েব এপিআই ভয়েস বাটন
     const startVoice = (lang) => {
         if (!SpeechRec) {
             showCustomAlert("আপনার ব্রাউজারটি ওয়েব ভয়েস সাপোর্ট করে না। কীবোর্ডের মাইক ব্যবহার করুন।");
@@ -33189,11 +33179,8 @@ function initializePcVoiceClient() {
         rec.interimResults = false;
 
         rec.onstart = () => {
-            if(lang === 'bn-BD') {
-                btnBn.innerText = 'শুনছি...';
-            } else {
-                btnEn.innerText = 'Listening...';
-            }
+            if(lang === 'bn-BD') btnBn.innerText = 'শুনছি...';
+            else btnEn.innerText = 'Listening...';
         };
 
         rec.onresult = (e) => {
@@ -33210,13 +33197,10 @@ function initializePcVoiceClient() {
         };
 
         rec.onerror = (e) => {
-            if(e.error === 'not-allowed') {
-                showCustomAlert('মাইক্রোফোনের পারমিশন নেই! ব্রাউজার সেটিং চেক করুন।');
-            }
+            if(e.error === 'not-allowed') showCustomAlert('মাইক্রোফোনের পারমিশন নেই! ব্রাউজার সেটিং চেক করুন।');
         };
 
         rec.onend = () => {
-            // কথা বলা শেষ হলে বা এরর হলে আবার আগের অবস্থায় ফিরে যাবে
             if(btnBn) btnBn.innerHTML = originalBtnTextBn;
             if(btnEn) btnEn.innerHTML = originalBtnTextEn;
         };
