@@ -12737,10 +12737,11 @@ body.sidebar-open #sidebarOverlay {
 এই ফিচার ব্যবহারের সময় ক্রোম ব্রাউজার বাংলা টুলবক্স অ্যাপকে নন সিকিউরড দেখাতে পারে। ব্যবহার শেষে ব্রাউজার ক্লোজ করে আবার ওপেন করে পেজটি রিফ্রেশ দিলে বাংলা টুলবক্সকে আবার সিকিউরড দেখাবে।</p>
         </div>
 
-        <div class="flex justify-center gap-4 mb-4">
-            <button id="pcVoiceBnBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg flex items-center gap-2 transition-colors">🎤 বাংলা</button>
-            <button id="pcVoiceEnBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg flex items-center gap-2 transition-colors">🎤 English</button>
-        </div>
+<div class="flex justify-center gap-2 sm:gap-4 mb-4 flex-wrap">
+    <button id="pcVoiceBnBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 sm:px-6 rounded-lg flex items-center gap-2 transition-colors">🎤 বাংলা</button>
+    <button id="pcVoiceEnBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 sm:px-6 rounded-lg flex items-center gap-2 transition-colors">🎤 English</button>
+    <button id="pcVoiceArBtn" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 sm:px-6 rounded-lg flex items-center gap-2 transition-colors">🎤 Arabic</button>
+</div>
 
         <div class="flex items-center justify-center gap-2 mb-4">
             <input type="checkbox" id="pcVoiceAutoSend" checked class="w-4 h-4 text-indigo-600">
@@ -33123,6 +33124,7 @@ function initializePcVoiceClient() {
     
     const btnBn = document.getElementById('pcVoiceBnBtn');
     const btnEn = document.getElementById('pcVoiceEnBtn');
+	const btnAr = document.getElementById('pcVoiceArBtn');
     const btnSend = document.getElementById('pcVoiceSendBtn');
     const btnUndo = document.getElementById('pcVoiceUndoBtn');
     const btnRedo = document.getElementById('pcVoiceRedoBtn');
@@ -33268,6 +33270,7 @@ function initializePcVoiceClient() {
 
     const originalBtnTextBn = btnBn ? btnBn.innerHTML : '🎤 বাংলা';
     const originalBtnTextEn = btnEn ? btnEn.innerHTML : '🎤 English';
+	const originalBtnTextAr = btnAr ? btnAr.innerHTML : '🎤 Arabic';
 
     const startVoice = (lang) => {
         if (!SpeechRec) {
@@ -33280,10 +33283,11 @@ function initializePcVoiceClient() {
         rec.continuous = false;
         rec.interimResults = false;
 
-        rec.onstart = () => {
-            if(lang === 'bn-BD') btnBn.innerText = 'শুনছি...';
-            else btnEn.innerText = 'Listening...';
-        };
+rec.onstart = () => {
+    if(lang === 'bn-BD') btnBn.innerText = 'শুনছি...';
+    else if(lang === 'ar-SA') btnAr.innerText = 'أستمع...';
+    else btnEn.innerText = 'Listening...';
+};
 
         rec.onresult = (e) => {
             const newText = e.results[0][0].transcript;
@@ -33302,16 +33306,18 @@ function initializePcVoiceClient() {
             if(e.error === 'not-allowed') showCustomAlert('মাইক্রোফোনের পারমিশন নেই! ব্রাউজার সেটিং চেক করুন।');
         };
 
-        rec.onend = () => {
-            if(btnBn) btnBn.innerHTML = originalBtnTextBn;
-            if(btnEn) btnEn.innerHTML = originalBtnTextEn;
-        };
+rec.onend = () => {
+    if(btnBn) btnBn.innerHTML = originalBtnTextBn;
+    if(btnEn) btnEn.innerHTML = originalBtnTextEn;
+    if(btnAr) btnAr.innerHTML = originalBtnTextAr;
+};
 
         try { rec.start(); } catch(err) {}
     };
 
     if (btnBn) btnBn.onclick = () => startVoice('bn-BD');
     if (btnEn) btnEn.onclick = () => startVoice('en-US');
+	if (btnAr) btnAr.onclick = () => startVoice('ar-SA');
     if (btnSend) btnSend.onclick = () => {
         const text = textBox.value.replace(" (Sent ✓)", "").trim();
         if(text) sendDataToPCFetch(text, false);
