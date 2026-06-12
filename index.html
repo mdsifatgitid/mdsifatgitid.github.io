@@ -33846,6 +33846,7 @@ async function initializePublicComments() {
     let currentReplyInfo = null;
     const notificationDot = document.getElementById('comment-notification-dot');
     let notificationBubble = document.getElementById('comment-notification');
+    
     if (!notificationBubble) {
         notificationBubble = document.createElement('div');
         notificationBubble.id = 'comment-notification';
@@ -33855,7 +33856,7 @@ async function initializePublicComments() {
     const fabContainer = document.getElementById('floating-action-buttons');
     const availableReactions = ['👍', '❤️', '😂', '😯', '😢', '😡'];
 
-    // মেসেজ লিমিট কনস্ট্যান্ট
+    // সর্বোচ্চ মেসেজ রাখার লিমিট
     const MAX_MESSAGES = 100;
 
     function updateFloatingButtonsVisibility() {
@@ -33863,6 +33864,7 @@ async function initializePublicComments() {
         const shouldHideFabs = container.classList.contains('active') && container.classList.contains('fullscreen');
         fabContainer.classList.toggle('hidden', shouldHideFabs);
     }
+
     function checkPlaceholder() {
         if (msgInput && msgPlaceholder) {
             msgPlaceholder.innerText = "মেসেজ লিখুন";
@@ -33871,6 +33873,7 @@ async function initializePublicComments() {
             msgPlaceholder.classList.toggle('hidden', hasText || hasContent);
         }
     }
+
     if (activeCountEl) {
         activeCountEl.onclick = () => {
             const importantLinksTabButton = document.getElementById('importantLinksTab');
@@ -33896,6 +33899,7 @@ async function initializePublicComments() {
             }, 300);
         };
     }
+
     if (auth.currentUser) {
         const presenceRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "presence", auth.currentUser.uid);
         const updatePresence = async () => { try { await setDoc(presenceRef, { uid: auth.currentUser.uid, last_active: Date.now() }, { merge: true }); } catch (e) { console.error("Presence update failed", e); } };
@@ -33910,6 +33914,7 @@ async function initializePublicComments() {
             }
         });
     }
+
     if (fab && container && closeBtn) {
         fab.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -33922,7 +33927,6 @@ async function initializePublicComments() {
             if (container.classList.contains('active')) {
                 if (notificationDot) notificationDot.classList.add('hidden');
                 loadSavedUserData();
-                cleanupOldComments();
                 setTimeout(() => listContainer.scrollTop = listContainer.scrollHeight, 300);
             }
             updateFloatingButtonsVisibility();
@@ -33933,6 +33937,7 @@ async function initializePublicComments() {
         });
         container.addEventListener('click', (e) => e.stopPropagation());
     }
+
     if (fullscreenBtn) {
         fullscreenBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -33943,6 +33948,7 @@ async function initializePublicComments() {
             updateFloatingButtonsVisibility();
         });
     }
+
     function loadSavedUserData() {
         const savedName = localStorage.getItem('bt_comment_username');
         const savedAvatar = localStorage.getItem('bt_comment_avatar');
@@ -33959,6 +33965,7 @@ async function initializePublicComments() {
         }
         if (savedAvatar) emojiBtn.textContent = savedAvatar;
     }
+
     if (editNameBtn) {
         editNameBtn.addEventListener('click', () => {
             const currentName = nameInput.value.trim();
@@ -33982,6 +33989,7 @@ async function initializePublicComments() {
             }
         });
     }
+
     const avatars = ['👤', '👨', '👩', '🧑‍💻', '🦸', '🦹', '🧙', '🧚', '🧛', '🧜', '🧞', '🤖', '👾', '👽', '👻', '🤡', '💩', '😺', '😸', '😹', '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯'];
     function setupEmojiPicker() {
         emojiContainer.innerHTML = '';
@@ -33995,7 +34003,9 @@ async function initializePublicComments() {
     }
     setupEmojiPicker();
     emojiBtn.addEventListener('click', (e) => { e.stopPropagation(); emojiContainer.classList.toggle('hidden'); });
+    
     const commentsRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "public_comments");
+    
     function sanitizeHtml(html) {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = html;
@@ -34016,21 +34026,35 @@ async function initializePublicComments() {
         });
         return tempDiv.innerHTML;
     }
+
     async function sendMessage() {
         const name = nameInput.value.trim() || 'বেনামী';
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = msgInput.innerHTML;
         const text = sanitizeHtml(tempDiv.innerHTML.trim());
         if (!text || text === '<br>') return;
-        const dataToSave = { name, text, avatar: emojiBtn.textContent, uid: auth.currentUser ? auth.currentUser.uid : 'anonymous', timestamp: serverTimestamp(), createdAt: Date.now(), pinned: false, reactions: {} };
+        
+        const dataToSave = { 
+            name, text, 
+            avatar: emojiBtn.textContent, 
+            uid: auth.currentUser ? auth.currentUser.uid : 'anonymous', 
+            timestamp: serverTimestamp(), 
+            createdAt: Date.now(), 
+            pinned: false, 
+            reactions: {} 
+        };
+        
         if (currentReplyInfo) { dataToSave.replyTo = currentReplyInfo; }
+        
         localStorage.setItem('bt_comment_username', name);
         localStorage.setItem('bt_comment_avatar', dataToSave.avatar);
+        
         if (name !== 'বেনামী') {
             nameInput.disabled = true;
             nameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
             editNameBtn.classList.remove('hidden');
         }
+        
         sendBtn.disabled = true;
         try {
             await addDoc(commentsRef, dataToSave);
@@ -34047,6 +34071,7 @@ async function initializePublicComments() {
             sendBtn.disabled = false;
         }
     }
+
     if (sendBtn) sendBtn.addEventListener('click', sendMessage);
     if (msgInput) {
         msgInput.addEventListener('keydown', (e) => { 
@@ -34069,16 +34094,20 @@ async function initializePublicComments() {
         });
         checkPlaceholder();
     }
+
     let isInitialLoad = true;
+
+    // --- রিয়েলটাইম লিসেনার এবং অটোমেটিক ডিলিট লজিক ---
     onSnapshot(query(commentsRef, orderBy("timestamp", "asc")), (snapshot) => {
         const isScrolledToBottom = listContainer.scrollHeight - listContainer.clientHeight <= listContainer.scrollTop + 20;
         let wasNewMessageAdded = false;
+
         if (!isInitialLoad) {
             snapshot.docChanges().forEach((change) => {
                 if (change.type === "added") {
                     wasNewMessageAdded = true;
                     const data = change.doc.data();
-                    const isRecent = (Date.now() - data.createdAt) < 10000;
+                    const isRecent = (Date.now() - (data.createdAt || 0)) < 10000;
                     if (data.uid !== (auth.currentUser ? auth.currentUser.uid : null) && isRecent) {
                         showNewMessageNotification(data);
                         if (!container.classList.contains('active')) {
@@ -34088,26 +34117,49 @@ async function initializePublicComments() {
                 }
             });
         }
+        
         listContainer.innerHTML = '';
         
-        // --- নতুন ফিল্টারিং লজিক (সর্বশেষ ১০০টি মেসেজ) ---
-        let unpinnedDocs = snapshot.docs.filter(doc => !doc.data().pinned);
-        
-        // ক্লায়েন্ট সাইডে শুধু শেষের ১০০টি দেখানোর জন্য স্লাইস করা হচ্ছে
+        let unpinnedDocs = [];
+        let pinnedDocs = [];
+
+        // মেসেজগুলো পিন এবং আনপিনে আলাদা করা
+        snapshot.docs.forEach(doc => {
+            if (doc.data().pinned) {
+                pinnedDocs.push(doc);
+            } else {
+                unpinnedDocs.push(doc);
+            }
+        });
+
+        // --- নতুন লজিক: ইনডেক্স ছাড়াই ১০০ মেসেজের লিমিট এবং ডিলিট ---
         if (unpinnedDocs.length > MAX_MESSAGES) {
-            unpinnedDocs = unpinnedDocs.slice(unpinnedDocs.length - MAX_MESSAGES);
+            const docsToDeleteCount = unpinnedDocs.length - MAX_MESSAGES;
+            // সবচেয়ে পুরনো মেসেজগুলো আলাদা করা
+            const docsToDelete = unpinnedDocs.slice(0, docsToDeleteCount);
+            
+            // ডাটাবেস থেকে মুছে ফেলার কমান্ড (ব্যাকগ্রাউন্ডে চলবে)
+            const batch = writeBatch(db);
+            docsToDelete.forEach(d => batch.delete(d.ref));
+            batch.commit().catch(e => console.error("Auto delete error:", e));
+
+            // স্ক্রিনে দেখানোর জন্য শুধু শেষের ১০০টি রাখা
+            unpinnedDocs = unpinnedDocs.slice(docsToDeleteCount);
         }
 
-        // পিন করা মেসেজ এবং সর্বশেষ ১০০টি মেসেজ একত্রে রেন্ডার করার জন্য
-        const allDocs = snapshot.docs.filter(doc => doc.data().pinned || unpinnedDocs.includes(doc));
-        const pinnedDocs = allDocs.filter(doc => doc.data().pinned);
-        
-        if (allDocs.length === 0) {
+        // পিন করা এবং আনপিন করা মেসেজ মিলিয়ে রেন্ডার করার জন্য প্রস্তুত করা
+        const allDocsToRender = [...pinnedDocs, ...unpinnedDocs].sort((a, b) => {
+            const timeA = a.data().timestamp ? a.data().timestamp.toMillis() : 0;
+            const timeB = b.data().timestamp ? b.data().timestamp.toMillis() : 0;
+            return timeA - timeB;
+        });
+
+        if (allDocsToRender.length === 0) {
             listContainer.innerHTML = '<div class="text-center text-gray-400 mt-10 text-sm">কোনো মন্তব্য নেই।<br>প্রথম মন্তব্যটি আপনি করুন!</div>';
         }
         
         const myUid = auth.currentUser ? auth.currentUser.uid : null;
-        allDocs.forEach(doc => renderCommentCard(doc, myUid));
+        allDocsToRender.forEach(doc => renderCommentCard(doc, myUid));
         renderPinnedSection(pinnedDocs);
         
         if (isInitialLoad || (wasNewMessageAdded && isScrolledToBottom)) {
@@ -34118,7 +34170,7 @@ async function initializePublicComments() {
         console.error("Snapshot Error:", error);
         listContainer.innerHTML = '<div class="text-center text-red-400 mt-10 text-sm">ডেটা লোড করতে সমস্যা হচ্ছে।</div>';
     });
-    
+
     function renderPinnedSection(pinnedDocs) {
         if (pinnedDocs.length > 0) {
             pinnedContainer.classList.remove('hidden');
@@ -34148,12 +34200,14 @@ async function initializePublicComments() {
             totalPinned = 0;
         }
     }
+
     function showPinnedComment(index) {
         currentPinnedIndex = index;
         const offset = -index * 100;
         pinnedWrapper.style.transform = `translateX(${offset}%)`;
         updatePinnedNavButtons();
     }
+
     function updatePinnedNavButtons() {
         prevPinBtn.disabled = currentPinnedIndex === 0;
         nextPinBtn.disabled = currentPinnedIndex >= totalPinned - 1;
@@ -34165,14 +34219,17 @@ async function initializePublicComments() {
             nextPinBtn.style.display = 'flex';
         }
     }
+
     if(prevPinBtn) prevPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex - 1));
     if(nextPinBtn) nextPinBtn.addEventListener('click', () => showPinnedComment(currentPinnedIndex + 1));
+
     let currentlyEditing = { element: null, docRef: null, saveFunction: null };
     function saveCurrentEdit() {
         if (currentlyEditing.element && typeof currentlyEditing.saveFunction === 'function') {
             currentlyEditing.saveFunction();
         }
     }
+
     let editSaveListenerAdded = false;
     if (!editSaveListenerAdded) {
         document.addEventListener('mousedown', (e) => {
@@ -34184,6 +34241,7 @@ async function initializePublicComments() {
         }, true);
         editSaveListenerAdded = true;
     }
+
     const handleEditComment = (docRef, docId, currentHtml) => {
         saveCurrentEdit();
         const card = document.getElementById(`comment-${docId}`);
@@ -34193,24 +34251,28 @@ async function initializePublicComments() {
         msgElement.setAttribute('contenteditable', 'true');
         msgElement.classList.add('editing');
         msgElement.focus();
+        
         const range = document.createRange();
         const sel = window.getSelection();
         range.selectNodeContents(msgElement);
         range.collapse(false);
         sel.removeAllRanges();
         sel.addRange(range);
+        
         const cleanup = () => {
             msgElement.setAttribute('contenteditable', 'false');
             msgElement.classList.remove('editing');
             msgElement.removeEventListener('keydown', keydownHandler);
             currentlyEditing = { element: null, docRef: null, saveFunction: null };
         };
+        
         const saveChanges = async () => {
             if (!msgElement.classList.contains('editing')) return;
             const newHtml = msgElement.innerHTML.trim();
             const quoteEl = card.querySelector('.reply-quote');
             let fullHtml = quoteEl ? quoteEl.outerHTML + newHtml : newHtml;
             const sanitizedHtml = sanitizeHtml(fullHtml);
+            
             if (sanitizedHtml.trim() && sanitizedHtml !== currentHtml) {
                 await setDoc(docRef, { text: sanitizedHtml, editedAt: serverTimestamp() }, { merge: true });
                 showCustomAlert('মেসেজ আপডেট করা হয়েছে।');
@@ -34219,7 +34281,9 @@ async function initializePublicComments() {
             }
             cleanup();
         };
+        
         currentlyEditing = { element: msgElement, docRef: docRef, saveFunction: saveChanges };
+        
         const keydownHandler = (e) => {
             if ((e.shiftKey || e.ctrlKey) && e.key === 'Enter') {
                 e.preventDefault();
@@ -34235,6 +34299,7 @@ async function initializePublicComments() {
         };
         msgElement.addEventListener('keydown', keydownHandler);
     };
+
     function showReactionPopup(docId, triggerElement) {
         document.querySelectorAll('.reaction-popup').forEach(p => p.remove());
         const popup = document.createElement('div');
@@ -34261,6 +34326,7 @@ async function initializePublicComments() {
             window.addEventListener('click', closePopup, true);
         }, 0);
     }
+
     async function handleReaction(docId, emoji) {
         const myUid = auth.currentUser ? auth.currentUser.uid : null;
         if (!myUid) return showCustomAlert('রিয়্যাক্ট করার জন্য লগইন প্রয়োজন।');
@@ -34302,6 +34368,7 @@ async function initializePublicComments() {
             showCustomAlert('রিয়্যাক্ট করতে সমস্যা হয়েছে।');
         }
     }
+
     function renderCommentCard(doc, myUid) {
         const data = doc.data();
         const time = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString('bn-BD', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '...';
@@ -34342,6 +34409,7 @@ async function initializePublicComments() {
         let quoteHtml = '';
         let mainTextHtml = data.text;
         const replyEl = tempDiv.querySelector('.reply-quote');
+        
         if (replyEl) {
             quoteHtml = replyEl.outerHTML;
             replyEl.remove();
@@ -34352,10 +34420,13 @@ async function initializePublicComments() {
             quoteHtml = `<div class="reply-quote" data-doc-id="${data.replyTo.docId}" title="মূল মেসেজটি দেখুন">${escapeHtml(`@${data.replyTo.name}: "${quoteText}"`)}</div>`;
         }
         msgContainer.innerHTML = `${quoteHtml}<div class="comment-text-content">${mainTextHtml}</div>`;
+        
         const reactionsContainer = document.createElement('div');
         reactionsContainer.className = 'reactions-container relative';
         const hasReactions = Object.keys(reactions).length > 0;
+        
         if(hasReactions) reactionsContainer.classList.add('has-reactions');
+        
         Object.entries(reactions).forEach(([emoji, uids]) => {
             if (uids.length > 0) {
                 const item = document.createElement('span');
@@ -34371,6 +34442,7 @@ async function initializePublicComments() {
                 reactionsContainer.appendChild(item);
             }
         });
+        
         if (!hasReactions) {
             const addBtn = document.createElement('button');
             addBtn.className = 'add-reaction-btn';
@@ -34382,8 +34454,10 @@ async function initializePublicComments() {
             });
             reactionsContainer.appendChild(addBtn);
         }
+        
         card.appendChild(reactionsContainer);
         listContainer.appendChild(card);
+        
         card.querySelector('.btn-pin').addEventListener('click', async () => await setDoc(doc.ref, { pinned: !data.pinned }, { merge: true }));
         card.querySelector('.btn-delete').addEventListener('click', async () => { if(confirm('মুছে ফেলতে চান?')) await deleteDoc(doc.ref); });
         card.querySelector('.btn-copy').addEventListener('click', () => { 
@@ -34393,6 +34467,7 @@ async function initializePublicComments() {
             navigator.clipboard.writeText(textToCopy); 
             showCustomAlert('মেসেজ কপি হয়েছে!'); 
         });
+        
         card.querySelector('.btn-reply').addEventListener('click', () => {
             currentReplyInfo = { docId: doc.id, name: data.name, text: msgContainer.querySelector('.comment-text-content').innerText };
             let quoteText = msgContainer.innerText.split(/\n/)[0].trim().substring(0, 50);
@@ -34411,6 +34486,7 @@ async function initializePublicComments() {
             }
             msgInput.focus();
         });
+        
         if (isMe) {
             const textContentDiv = card.querySelector('.comment-text-content');
             textContentDiv.setAttribute('title', 'এডিট করতে ক্লিক করুন');
@@ -34421,25 +34497,32 @@ async function initializePublicComments() {
                 handleEditComment(doc.ref, doc.id, data.text);
             });
         }
+        
         const quoteBox = msgContainer.querySelector('.reply-quote');
         if (quoteBox && quoteBox.dataset.docId) {
             quoteBox.addEventListener('click', () => scrollToComment('comment-' + quoteBox.dataset.docId, card.id));
         }
     }
+
     function scrollToComment(elementId, sourceElementId = null) {
         document.querySelectorAll('.return-to-reply-btn').forEach(btn => btn.remove());
         const targetElement = document.getElementById(elementId);
+        
         if (targetElement) {
             targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
             targetElement.classList.add('comment-highlight');
             setTimeout(() => targetElement.classList.remove('comment-highlight'), 3000);
+            
             if (sourceElementId) {
                 const returnBtn = document.createElement('button');
                 returnBtn.className = 'return-to-reply-btn';
                 returnBtn.title = 'আগের মেসেজে ফিরে যান';
                 returnBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/></svg>';
                 returnBtn.dataset.sourceId = sourceElementId;
-                if (targetElement.classList.contains('my-message')) returnBtn.style.left = '-40px'; else returnBtn.style.right = '-40px';
+                
+                if (targetElement.classList.contains('my-message')) returnBtn.style.left = '-40px'; 
+                else returnBtn.style.right = '-40px';
+                
                 returnBtn.onclick = () => scrollToComment(sourceElementId);
                 targetElement.appendChild(returnBtn);
                 setTimeout(() => returnBtn.classList.add('show'), 100);
@@ -34447,6 +34530,7 @@ async function initializePublicComments() {
             }
         }
     }
+
     let notificationTimeout;
     function showNewMessageNotification(data) {
         const bubble = document.getElementById('comment-notification');
@@ -34456,32 +34540,9 @@ async function initializePublicComments() {
         let firstSentence = tempDiv.innerText.split(/[।!?\n]/)[0].trim() + "...";
         bubble.innerHTML = `<div class="flex items-start gap-2"><div class="text-xl flex-shrink-0 pt-0.5">${data.avatar || '👤'}</div><div class="overflow-hidden"><p class="text-xs font-bold text-blue-600 dark:text-blue-400 truncate mb-0.5">${escapeHtml(data.name)}</p><p class="text-sm text-gray-700 dark:text-gray-200 leading-snug break-words font-medium">${escapeHtml(firstSentence)}</p></div></div>`;
         bubble.classList.remove('hidden', 'opacity-0', 'translate-y-4', 'pointer-events-none');
+        
         if (notificationTimeout) clearTimeout(notificationTimeout);
         notificationTimeout = setTimeout(() => { bubble.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none'); setTimeout(() => bubble.classList.add('hidden'), 300); }, 5000);
-    }
-    
-    // --- নতুন: ডাটাবেজ থেকে অতিরিক্ত মেসেজ ডিলিট করার ফাংশন ---
-    async function cleanupOldComments() {
-        // পিন করা মেসেজ বাদে পুরনো মেসেজগুলো নিয়ে আসা হচ্ছে
-        const oldDocsQuery = query(commentsRef, where("pinned", "==", false), orderBy("createdAt", "asc"));
-        try {
-            const snapshot = await getDocs(oldDocsQuery);
-            // যদি ডাটাবেজে ১০০ এর বেশি মেসেজ থাকে
-            if (snapshot.size > MAX_MESSAGES) {
-                const docsToDeleteCount = snapshot.size - MAX_MESSAGES;
-                const batch = writeBatch(db);
-                
-                // সবচেয়ে পুরনো মেসেজগুলো ডিলিট ব্যাচে যোগ করা
-                for (let i = 0; i < docsToDeleteCount; i++) {
-                    batch.delete(snapshot.docs[i].ref);
-                }
-                
-                await batch.commit();
-                console.log(`${docsToDeleteCount} টি পুরনো মেসেজ মুছে ফেলা হয়েছে।`);
-            }
-        } catch (e) { 
-            console.log("Cleanup Error or missing index. Firebase might need a composite index for this query.", e); 
-        }
     }
 
     function escapeHtml(text) { return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;") : ""; }
