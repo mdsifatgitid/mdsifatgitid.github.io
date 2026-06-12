@@ -33855,6 +33855,9 @@ async function initializePublicComments() {
     const fabContainer = document.getElementById('floating-action-buttons');
     const availableReactions = ['👍', '❤️', '😂', '😯', '😢', '😡'];
 
+    // মেসেজ লিমিট কনস্ট্যান্ট
+    const MAX_MESSAGES = 100;
+
     function updateFloatingButtonsVisibility() {
         if (!fabContainer || !container) return;
         const shouldHideFabs = container.classList.contains('active') && container.classList.contains('fullscreen');
@@ -34036,7 +34039,6 @@ async function initializePublicComments() {
             if (replyPreviewContainer) replyPreviewContainer.classList.add('hidden');
             currentReplyInfo = null;
             msgInputWrapper.style.height = '40px';
-            // JavaScript পরিবর্তন: মেসেজ পাঠানোর পর অটো-স্ক্রল
             listContainer.scrollTop = listContainer.scrollHeight;
         } catch (e) {
             console.error("Error sending comment:", e);
@@ -34087,18 +34089,27 @@ async function initializePublicComments() {
             });
         }
         listContainer.innerHTML = '';
-        const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
-        const allDocs = snapshot.docs.filter(doc => {
-            const data = doc.data();
-            return data.pinned === true || (data.createdAt && data.createdAt > twentyFourHoursAgo);
-        });
+        
+        // --- নতুন ফিল্টারিং লজিক (সর্বশেষ ১০০টি মেসেজ) ---
+        let unpinnedDocs = snapshot.docs.filter(doc => !doc.data().pinned);
+        
+        // ক্লায়েন্ট সাইডে শুধু শেষের ১০০টি দেখানোর জন্য স্লাইস করা হচ্ছে
+        if (unpinnedDocs.length > MAX_MESSAGES) {
+            unpinnedDocs = unpinnedDocs.slice(unpinnedDocs.length - MAX_MESSAGES);
+        }
+
+        // পিন করা মেসেজ এবং সর্বশেষ ১০০টি মেসেজ একত্রে রেন্ডার করার জন্য
+        const allDocs = snapshot.docs.filter(doc => doc.data().pinned || unpinnedDocs.includes(doc));
         const pinnedDocs = allDocs.filter(doc => doc.data().pinned);
+        
         if (allDocs.length === 0) {
             listContainer.innerHTML = '<div class="text-center text-gray-400 mt-10 text-sm">কোনো মন্তব্য নেই।<br>প্রথম মন্তব্যটি আপনি করুন!</div>';
         }
+        
         const myUid = auth.currentUser ? auth.currentUser.uid : null;
         allDocs.forEach(doc => renderCommentCard(doc, myUid));
         renderPinnedSection(pinnedDocs);
+        
         if (isInitialLoad || (wasNewMessageAdded && isScrolledToBottom)) {
             listContainer.scrollTop = listContainer.scrollHeight;
         }
@@ -34107,6 +34118,7 @@ async function initializePublicComments() {
         console.error("Snapshot Error:", error);
         listContainer.innerHTML = '<div class="text-center text-red-400 mt-10 text-sm">ডেটা লোড করতে সমস্যা হচ্ছে।</div>';
     });
+    
     function renderPinnedSection(pinnedDocs) {
         if (pinnedDocs.length > 0) {
             pinnedContainer.classList.remove('hidden');
@@ -34300,7 +34312,6 @@ async function initializePublicComments() {
         card.id = `comment-${doc.id}`;
         card.className = `comment-card group ${alignClass}`;
         
-        // JavaScript পরিবর্তন: রিয়্যাকশনের ধরন গণনা করা
         const reactions = data.reactions || {};
         const reactionTypeCount = Object.keys(reactions).filter(key => reactions[key] && reactions[key].length > 0).length;
         if (reactionTypeCount > 1) {
@@ -34310,7 +34321,6 @@ async function initializePublicComments() {
         const pinClass = data.pinned ? 'pinned' : '';
         const pinTitle = data.pinned ? 'আনপিন করুন' : 'পিন করুন';
         
-        // JavaScript পরিবর্তন: timeClass মুছে ফেলা হয়েছে
         card.innerHTML = `
             <div class="comment-avatar">${data.avatar || '👤'}</div>
             <div class="comment-content-wrapper">
@@ -34449,19 +34459,31 @@ async function initializePublicComments() {
         if (notificationTimeout) clearTimeout(notificationTimeout);
         notificationTimeout = setTimeout(() => { bubble.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none'); setTimeout(() => bubble.classList.add('hidden'), 300); }, 5000);
     }
+    
+    // --- নতুন: ডাটাবেজ থেকে অতিরিক্ত মেসেজ ডিলিট করার ফাংশন ---
     async function cleanupOldComments() {
-        const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
-        const oldDocsQuery = query(commentsRef, where("createdAt", "<", oneDayAgo), where("pinned", "==", false));
+        // পিন করা মেসেজ বাদে পুরনো মেসেজগুলো নিয়ে আসা হচ্ছে
+        const oldDocsQuery = query(commentsRef, where("pinned", "==", false), orderBy("createdAt", "asc"));
         try {
             const snapshot = await getDocs(oldDocsQuery);
-            if (!snapshot.empty) {
+            // যদি ডাটাবেজে ১০০ এর বেশি মেসেজ থাকে
+            if (snapshot.size > MAX_MESSAGES) {
+                const docsToDeleteCount = snapshot.size - MAX_MESSAGES;
                 const batch = writeBatch(db);
-                snapshot.docs.forEach((doc) => batch.delete(doc.ref));
+                
+                // সবচেয়ে পুরনো মেসেজগুলো ডিলিট ব্যাচে যোগ করা
+                for (let i = 0; i < docsToDeleteCount; i++) {
+                    batch.delete(snapshot.docs[i].ref);
+                }
+                
                 await batch.commit();
-                console.log(`${snapshot.size} টি পুরনো মেসেজ মুছে ফেলা হয়েছে।`);
+                console.log(`${docsToDeleteCount} টি পুরনো মেসেজ মুছে ফেলা হয়েছে।`);
             }
-        } catch (e) { console.log("Cleanup check done. No old unpinned comments found or index needs creation."); }
+        } catch (e) { 
+            console.log("Cleanup Error or missing index. Firebase might need a composite index for this query.", e); 
+        }
     }
+
     function escapeHtml(text) { return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;") : ""; }
 }
 // ====================================================================
@@ -34593,7 +34615,7 @@ async function initializePublicComments() {
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
         </button>
     </div>
-    <p class="text-[10px] text-gray-400 mt-1 text-center">মন্তব্য ২৪ ঘণ্টা পর মুছে যাবে। যেকেউ ডিলিট করতে পারে।</p>
+    <p class="text-[10px] text-gray-400 mt-1 text-center">সর্বশেষ ১০০টি মেসেজ সেভ থাকবে। যেকেউ ডিলিট করতে পারে।</p>
 </div>
 </div>
 <!-- ==================================================================== -->
