@@ -13068,7 +13068,7 @@ async function clearExpiredItems() {
 // হিজরি তারিখ অ্যাডজাস্টমেন্টের জন্য সেন্ট্রাল ফাংশন
 function getGlobalHijriAdjustment() {
     // যদি সেটিংসে ইউজার কিছু সেট না করে থাকে, তবে এই ভ্যালুটি কাজ করবে।
-    const defaultValue = '-2'; 
+    const defaultValue = '-1'; 
     
     return parseInt(localStorage.getItem('hijriDateAdjustment') || defaultValue, 10);
 }
@@ -15007,36 +15007,38 @@ function initializePrayerTimeTab() {
 // ====================================================================
 // START: NEW FILE UPLOAD SCRIPT FOR TEXT ASSISTANT
 // ====================================================================
-    // জেমিনিকে জিজ্ঞাসা করার ফাংশন আপডেট করুন
+// জেমিনিকে জিজ্ঞাসা করার ফাংশন আপডেট করুন (Smart Auto-Fallback সহ)
     async function handleAskGemini() {
         const assistantInput = document.getElementById('assistantInput');
         const assistantLoading = document.getElementById('assistantLoading');
         const askGeminiBtn = document.getElementById('askGeminiBtn');
         const chatWindow = document.getElementById('chatWindow');
-        const modelSelection = document.getElementById('modelSelection');
         
         let chatHistory = window.chatHistory || [];
 
         const promptText = assistantInput.value.trim();
-        if (!promptText && !uploadedFile) return;
+        // uploadedFile গ্লোবাল ভেরিয়েবল থেকে আসছে
+        if (!promptText && typeof uploadedFile === 'undefined' && !uploadedFile) return;
 
         // ব্যবহারকারীর বার্তা প্রদর্শন করুন
-        addMessageToChat(promptText, 'user', uploadedFile);
+        addMessageToChat(promptText, 'user', typeof uploadedFile !== 'undefined' ? uploadedFile : null);
         assistantInput.value = '';
 
         let userParts = [];
         if (promptText) {
-            userParts.push({
-                text: promptText
-            });
+            userParts.push({ text: promptText });
         }
-        if (uploadedFile) {
+        
+        // ফাইল থাকলে যুক্ত করা
+        let hasFile = false;
+        if (typeof uploadedFile !== 'undefined' && uploadedFile) {
             userParts.push({
                 inlineData: {
                     mimeType: uploadedFile.type,
                     data: uploadedFile.base64
                 }
             });
+            hasFile = true;
         }
 
         chatHistory.push({
@@ -15046,7 +15048,7 @@ function initializePrayerTimeTab() {
         window.chatHistory = chatHistory;
 
         // ফাইল পাঠানোর পর প্রিভিউ সরিয়ে ফেলুন
-        removeFile();
+        if (typeof removeFile === 'function') removeFile();
 
         if (assistantLoading) assistantLoading.style.display = 'block';
         if (askGeminiBtn) askGeminiBtn.disabled = true;
@@ -15055,52 +15057,76 @@ function initializePrayerTimeTab() {
             const apiKey = localStorage.getItem('geminiApiKey');
             if (!apiKey) {
                 addMessageToChat('জেমিনি API কী সেট করা হয়নি। অনুগ্রহ করে "API কী সেট করুন" বাটনে ক্লিক করে কী সেট করুন।', 'gemini-error');
+                if (assistantLoading) assistantLoading.style.display = 'none';
+                if (askGeminiBtn) askGeminiBtn.disabled = false;
                 return;
             }
 
-            const payload = {
+            let payload = {
                 contents: chatHistory
             };
 
-            // --- আপডেট: সেটিংস থেকে Google সার্চ স্ট্যাটাস চেক করুন (ডিফল্ট: চালু) ---
+            // সেটিংস থেকে গুগল সার্চ স্ট্যাটাস চেক করুন
             const isGoogleSearchEnabled = localStorage.getItem('googleSearchEnabled') !== 'false';
 
-            // যদি সেটিংস চালু থাকে, তাহলে payload-এ 'tools' যুক্ত করুন
-            if (isGoogleSearchEnabled) {
-                payload.tools = [{ "google_search": {} }];
+            // Google Search টুল যুক্ত করা (ফাইল না থাকলেই কেবল সার্চ কাজ করবে)
+            if (isGoogleSearchEnabled && !hasFile) {
+                // v1beta এর সঠিক সার্চ টুল ফরম্যাট
+                payload.tools = [{ "googleSearch": {} }];
             }
-            // --- শেষ: আপডেট ---
 
-
-			// --- সেটিংস থেকে গ্লোবাল মডেল ব্যবহার ---
             const model = localStorage.getItem('geminiModel') || "gemini-flash-latest";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-            // --- পরিবর্তন শেষ ---
 
-            const response = await fetch(apiUrl, {
+            let response = await fetch(apiUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload) // পরিবর্তিত payload এখানে ব্যবহৃত হচ্ছে
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
             });
 
-            const result = await response.json();
+            let result = await response.json();
+
+            // --- AUTO FALLBACK LOGIC ---
+            // যদি গুগল সার্চের কারণে API কোটা এরর বা ব্লক করে দেয়, তবে সার্চ টুলটি রিমুভ করে আবার চেষ্টা করবে
+            if (!response.ok && isGoogleSearchEnabled && !hasFile && result.error) {
+                console.warn('Google Search API limits reached or blocked. Retrying without search...', result.error.message);
+                
+                // সার্চ টুল পেলোড থেকে মুছে ফেলা হলো
+                delete payload.tools;
+
+                // পুনরায় সাধারণ রিকোয়েস্ট পাঠানো
+                response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                result = await response.json();
+                
+                // ইউজারকে জানিয়ে দেওয়া যে সার্চ ছাড়া উত্তর দেওয়া হচ্ছে
+                if (response.ok) {
+                    addMessageToChat('⚠️ আপনার API Key-তে গুগল সার্চের কোটা শেষ বা বিলিং নেই। তাই সাধারণ এআই হিসেবে উত্তর দেওয়া হচ্ছে... এই মেসেজটি দেখতে না চাইলে সেটিংস থেকে গুগল সার্চ অপশনটি বন্ধ রাখুন।', 'gemini-error');
+                }
+            }
+            // --- END FALLBACK ---
+
             let geminiText;
 
-            if (result.candidates && result.candidates[0]?.content?.parts?.[0]?.text) {
+            if (response.ok && result.candidates && result.candidates[0]?.content?.parts?.[0]?.text) {
                 geminiText = result.candidates[0].content.parts[0].text;
+                
+                // চ্যাট হিস্টোরিতে উত্তরটি সেভ করা
                 chatHistory.push({
                     role: "model",
-                    parts: [{
-                        text: geminiText
-                    }]
+                    parts: [{ text: geminiText }]
                 });
                 window.chatHistory = chatHistory;
             } else {
-                geminiText = 'দুঃখিত, এই মুহূর্তে উত্তর দেওয়া সম্ভব হচ্ছেনা। অনুগ্রহ করে কানেকশন চেক করে আবার চেষ্টা করুন অথবা এপিআইটি বৈধ বা সঠিক নয়, চেক করে দেখুন অথবা সেটিংস থেকে জেমিনি মডেল পরিবর্তন করে আবার চেষ্টা করুন।';
+                const errorMsg = result?.error?.message || 'অজানা ত্রুটি';
+                geminiText = `দুঃখিত, উত্তর দেওয়া সম্ভব হয়নি। এরর: ${errorMsg}`;
                 console.error('API Response Error:', result);
             }
+            
             addMessageToChat(geminiText, 'gemini');
 
         } catch (error) {
