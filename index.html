@@ -15007,7 +15007,7 @@ function initializePrayerTimeTab() {
 // ====================================================================
 // START: NEW FILE UPLOAD SCRIPT FOR TEXT ASSISTANT
 // ====================================================================
-// জেমিনিকে জিজ্ঞাসা করার ফাংশন আপডেট করুন (Smart Auto-Fallback সহ)
+// জেমিনিকে জিজ্ঞাসা করার ফাংশন আপডেট করুন (System Instruction ও Auto-Fallback সহ)
     async function handleAskGemini() {
         const assistantInput = document.getElementById('assistantInput');
         const assistantLoading = document.getElementById('assistantLoading');
@@ -15017,7 +15017,6 @@ function initializePrayerTimeTab() {
         let chatHistory = window.chatHistory || [];
 
         const promptText = assistantInput.value.trim();
-        // uploadedFile গ্লোবাল ভেরিয়েবল থেকে আসছে
         if (!promptText && typeof uploadedFile === 'undefined' && !uploadedFile) return;
 
         // ব্যবহারকারীর বার্তা প্রদর্শন করুন
@@ -15047,7 +15046,6 @@ function initializePrayerTimeTab() {
         });
         window.chatHistory = chatHistory;
 
-        // ফাইল পাঠানোর পর প্রিভিউ সরিয়ে ফেলুন
         if (typeof removeFile === 'function') removeFile();
 
         if (assistantLoading) assistantLoading.style.display = 'block';
@@ -15062,16 +15060,25 @@ function initializePrayerTimeTab() {
                 return;
             }
 
+            // --- নতুন: বর্তমান তারিখ ও সময় জেনারেট করা ---
+            const now = new Date();
+            const todayBn = now.toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Dhaka' });
+            const timeBn = now.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Dhaka' });
+
+            // সিস্টেম প্রম্পট তৈরি করা (যাতে জেমিনি সবসময় আপডেট থাকে)
+            const sysInstruction = `তুমি 'বাংলা টুলবক্স' এর একজন বুদ্ধিমান এআই অ্যাসিস্ট্যান্ট। ব্যবহারকারী যদি আজকের তারিখ বা সময় জানতে চায়, তবে মনে রাখবে: আজ ${todayBn} এবং এখন সময় ${timeBn} (বাংলাদেশ সময়)। তুমি সবসময় বাংলায় সুন্দর ও সাবলীল উত্তর দেবে।`;
+
             let payload = {
+                systemInstruction: {
+                    parts: [{ text: sysInstruction }]
+                },
                 contents: chatHistory
             };
 
             // সেটিংস থেকে গুগল সার্চ স্ট্যাটাস চেক করুন
             const isGoogleSearchEnabled = localStorage.getItem('googleSearchEnabled') !== 'false';
 
-            // Google Search টুল যুক্ত করা (ফাইল না থাকলেই কেবল সার্চ কাজ করবে)
             if (isGoogleSearchEnabled && !hasFile) {
-                // v1beta এর সঠিক সার্চ টুল ফরম্যাট
                 payload.tools = [{ "googleSearch": {} }];
             }
 
@@ -15087,14 +15094,11 @@ function initializePrayerTimeTab() {
             let result = await response.json();
 
             // --- AUTO FALLBACK LOGIC ---
-            // যদি গুগল সার্চের কারণে API কোটা এরর বা ব্লক করে দেয়, তবে সার্চ টুলটি রিমুভ করে আবার চেষ্টা করবে
             if (!response.ok && isGoogleSearchEnabled && !hasFile && result.error) {
-                console.warn('Google Search API limits reached or blocked. Retrying without search...', result.error.message);
+                console.warn('Google Search API limits reached. Retrying without search...');
                 
-                // সার্চ টুল পেলোড থেকে মুছে ফেলা হলো
-                delete payload.tools;
+                delete payload.tools; // সার্চ টুল রিমুভ করে আবার চেষ্টা
 
-                // পুনরায় সাধারণ রিকোয়েস্ট পাঠানো
                 response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -15102,20 +15106,13 @@ function initializePrayerTimeTab() {
                 });
                 
                 result = await response.json();
-                
-                // ইউজারকে জানিয়ে দেওয়া যে সার্চ ছাড়া উত্তর দেওয়া হচ্ছে
-                if (response.ok) {
-                    addMessageToChat('⚠️ আপনার API Key-তে গুগল সার্চের কোটা শেষ বা বিলিং নেই। তাই সাধারণ এআই হিসেবে উত্তর দেওয়া হচ্ছে... এই মেসেজটি দেখতে না চাইলে সেটিংস থেকে গুগল সার্চ অপশনটি বন্ধ রাখুন।', 'gemini-error');
-                }
             }
-            // --- END FALLBACK ---
 
             let geminiText;
 
             if (response.ok && result.candidates && result.candidates[0]?.content?.parts?.[0]?.text) {
                 geminiText = result.candidates[0].content.parts[0].text;
                 
-                // চ্যাট হিস্টোরিতে উত্তরটি সেভ করা
                 chatHistory.push({
                     role: "model",
                     parts: [{ text: geminiText }]
@@ -15124,7 +15121,6 @@ function initializePrayerTimeTab() {
             } else {
                 const errorMsg = result?.error?.message || 'অজানা ত্রুটি';
                 geminiText = `দুঃখিত, উত্তর দেওয়া সম্ভব হয়নি। এরর: ${errorMsg}`;
-                console.error('API Response Error:', result);
             }
             
             addMessageToChat(geminiText, 'gemini');
@@ -15132,7 +15128,6 @@ function initializePrayerTimeTab() {
         } catch (error) {
             const errorMessage = 'একটি ত্রুটি ঘটেছে: ' + error.message;
             addMessageToChat(errorMessage, 'gemini-error');
-            console.error('API Call Error:', error);
         } finally {
             if (assistantLoading) assistantLoading.style.display = 'none';
             if (askGeminiBtn) askGeminiBtn.disabled = false;
