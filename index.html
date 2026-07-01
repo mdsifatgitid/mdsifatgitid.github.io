@@ -8115,109 +8115,106 @@ body.sidebar-open #sidebarOverlay {
 
 
 <!-- টাইটেল এবং ভয়েস কমান্ড বাটন এরিয়া শুরু -->
-        <div class="flex justify-center items-center gap-2 mb-2 mt-2">
-		    <!-- Voice Command Button -->
-                <button id="voiceCommandBtn" type="button" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm has-tooltip" data-tooltip=" ভয়েজ কমান্ড ও টিটিএস (শর্টকাট: Alt+V)">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
-                </button>
+<div class="flex justify-center items-center gap-2 mb-2 mt-2">
+    
+    <!-- বামপাশের আইকন গ্রুপ (ভয়েজ এবং কীবোর্ড) -->
+    <div class="flex items-center gap-1">
+        <!-- Voice Command Button -->
+        <button id="voiceCommandBtn" type="button" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm has-tooltip" data-tooltip=" ভয়েজ কমান্ড ও টিটিএস (শর্টকাট: Alt+V)">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
+        </button>
 
-<!-- Keyboard Layout Toggle -->
-<div class="relative inline-block text-left ml-1" id="keyboard-layout-container">
-    <button id="keyboardLayoutBtn" type="button" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm has-tooltip" data-tooltip="কীবোর্ড লেআউট (Ctrl+Space/Ctrl+K)">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-        </svg>
-        <!-- Indicator Dot -->
-        <span id="currentLayoutIndicator" class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-gray-400 ring-2 ring-white transform translate-x-1/4 -translate-y-1/4 hidden"></span>
-    </button>
-
-    <!-- Dropdown Menu -->
-    <div id="keyboardLayoutDropdown" class="hidden absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none z-50 origin-top-right transform transition-all duration-200 border border-gray-200 dark:border-gray-600">
-        <div class="py-1" role="menu">
-            <div class="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b dark:border-gray-600">
-                লেআউট নির্বাচন করুন
-            </div>
-            <button class="layout-option w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between group active" data-layout="english">
-                <span>English (Default)</span>
-                <svg class="w-4 h-4 text-indigo-600 check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-            </button>
-            <button class="layout-option w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between group" data-layout="bijoy_unicode">
-                <span>বিজয় ইউনিকোড</span>
-                <svg class="w-4 h-4 text-indigo-600 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-            </button>
-            <button class="layout-option w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between group" data-layout="bijoy_ansi">
-                <span>বিজয় আনসি (ANSI)</span>
-                <svg class="w-4 h-4 text-indigo-600 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-            </button>
-        
-		            <!-- নতুন যুক্ত করা উইন্ডোজ অ্যাপ ডাউনলোড লিংক -->
-            <div class="border-t border-gray-200 dark:border-gray-600 mt-1 pt-1 has-tooltip" data-tooltip="উইন্ডোজ কীবোর্ড Kotha Keyboard ডাউনলোড করুন">
-                <a href="https://kothakeyboard.github.io/" target="_blank" class="w-full text-left px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-600 flex items-center gap-2 group transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.951-1.801"/>
-                    </svg>
-                    <span>Bangla Keyboard (Kotha)</span>
-                </a>
-            </div>
-			
-			<!-- পিসি ফাইল ট্রান্সফার বাটন -->
-<div class="border-t border-gray-200 dark:border-gray-600 mt-1 pt-1 has-tooltip" data-tooltip="পিসির সাথে লোকাল নেটওয়ার্কে ফাইল আদান-প্রদান করুন">
-    <button id="fileTransferTab" class="w-full text-left px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-600 flex items-center gap-2 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
-        <span>পিসি ফাইল ট্রান্সফার</span>
-    </button>
-</div>
-
-<!-- পিসি ভয়েস টাইপিং ক্লায়েন্ট বাটন -->
-            <div class="border-t border-gray-200 dark:border-gray-600 mt-1 pt-1 has-tooltip" data-tooltip="মোবাইলে Bangla Toolbox ওপেন করে পিসিতে Kotha Keyboard এর মাধ্যমে ভয়েজ টাইপিং করুন">
-                <button id="pcVoiceClientTab" class="w-full text-left px-4 py-2 text-sm text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-gray-600 flex items-center gap-2 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
-                    <span>পিসি ভয়েস টাইপিং</span>
-                </button>
-            </div>
-
-        </div>
-    </div>
-</div>
-<!-- End Keyboard Layout Toggle -->
-
-		 <!-- PWA Install Button -->
-                <!-- ক্লাস voice-command-btn যুক্ত করা হয়েছে -->
-                <button id="pwaInstallBtn" type="button" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm" title="অ্যাপটি ইন্সটল করুন" style="display: none;">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                </button>
-            <h2 id="main-heading" class="text-2xl font-bold text-gray-800 dark:text-white mb-0">বাংলা টুলবক্স</h2>
-			
-		<div class="flex items-center gap-1"> <!-- বাটন দুটিকে একটি গ্রুপে রাখা হয়েছে এবং গ্যাপ কমানো হয়েছে -->
-
-
-                <!-- নতুন: উইন্ডোজ কীবোর্ড ডাউনলোড বাটন -->
-                <a href="https://kothakeyboard.github.io/" target="_blank" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm has-tooltip ml-1" data-tooltip="Kotha Keyboard ডাউনলোড করুন">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.951-1.801"/>
-                    </svg>
-                </a>
-
-<!-- ********** নতুন যুক্ত করা টেলিগ্রাম আইকন বাটন ********** -->
-            <a href="https://t.me/kothakeyboard" target="_blank" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-[#2AABEE] rounded-full flex justify-center items-center transition-all duration-300 shadow-sm has-tooltip ml-1" data-tooltip="টেলিগ্রাম গ্রুপে যুক্ত হোন">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.287 5.906c-.778.324-2.334.994-4.666 2.01-.378.15-.577.298-.595.442-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294.26.006.549-.1.868-.32 2.179-1.471 3.304-2.214 3.374-2.23.05-.012.12-.026.166.016.047.041.042.12.037.141-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8.154 8.154 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629.093.06.183.125.27.187.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.426 1.426 0 0 0-.013-.315.337.337 0 0 0-.114-.217.526.526 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09z"/>
+        <!-- Keyboard Layout Toggle -->
+        <div class="relative inline-block text-left" id="keyboard-layout-container">
+            <button id="keyboardLayoutBtn" type="button" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm has-tooltip" data-tooltip="কীবোর্ড লেআউট (Ctrl+Space/Ctrl+K)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
-            </a>
-            <!-- ********** টেলিগ্রাম আইকন শেষ ********** -->
-			
-			        <!-- নতুন ডোনেট আইকন বাটন -->
+                <!-- Indicator Dot -->
+                <span id="currentLayoutIndicator" class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-gray-400 ring-2 ring-white transform translate-x-1/4 -translate-y-1/4 hidden"></span>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div id="keyboardLayoutDropdown" class="hidden absolute left-0 md:right-0 md:left-auto mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none z-50 origin-top-left md:origin-top-right transform transition-all duration-200 border border-gray-200 dark:border-gray-600">
+                <div class="py-1" role="menu">
+                    <div class="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b dark:border-gray-600">
+                        লেআউট নির্বাচন করুন
+                    </div>
+                    <button class="layout-option w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between group active" data-layout="english">
+                        <span>English (Default)</span>
+                        <svg class="w-4 h-4 text-indigo-600 check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </button>
+                    <button class="layout-option w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between group" data-layout="bijoy_unicode">
+                        <span>বিজয় ইউনিকোড</span>
+                        <svg class="w-4 h-4 text-indigo-600 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </button>
+                    <button class="layout-option w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between group" data-layout="bijoy_ansi">
+                        <span>বিজয় আনসি (ANSI)</span>
+                        <svg class="w-4 h-4 text-indigo-600 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </button>
+                
+                    <!-- নতুন যুক্ত করা উইন্ডোজ অ্যাপ ডাউনলোড লিংক -->
+                    <div class="border-t border-gray-200 dark:border-gray-600 mt-1 pt-1 has-tooltip" data-tooltip="উইন্ডোজ কীবোর্ড Kotha Keyboard ডাউনলোড করুন">
+                        <a href="https://kothakeyboard.github.io/" target="_blank" class="w-full text-left px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-600 flex items-center gap-2 group transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.951-1.801"/>
+                            </svg>
+                            <span>Bangla Keyboard (Kotha)</span>
+                        </a>
+                    </div>
+                    
+                    <!-- পিসি ফাইল ট্রান্সফার বাটন -->
+                    <div class="border-t border-gray-200 dark:border-gray-600 mt-1 pt-1 has-tooltip" data-tooltip="পিসির সাথে লোকাল নেটওয়ার্কে ফাইল আদান-প্রদান করুন">
+                        <button id="fileTransferTab" class="w-full text-left px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-600 flex items-center gap-2 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                            <span>পিসি ফাইল ট্রান্সফার</span>
+                        </button>
+                    </div>
+
+                    <!-- পিসি ভয়েস টাইপিং ক্লায়েন্ট বাটন -->
+                    <div class="border-t border-gray-200 dark:border-gray-600 mt-1 pt-1 has-tooltip" data-tooltip="মোবাইলে Bangla Toolbox ওপেন করে পিসিতে Kotha Keyboard এর মাধ্যমে ভয়েজ টাইপিং করুন">
+                        <button id="pcVoiceClientTab" class="w-full text-left px-4 py-2 text-sm text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-gray-600 flex items-center gap-2 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
+                            <span>পিসি ভয়েস টাইপিং</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div> <!-- বামপাশের গ্রুপ শেষ -->
+
+    <!-- টাইটেল (মাঝে) -->
+    <h2 id="main-heading" class="text-2xl font-bold text-gray-800 dark:text-white mb-0">বাংলা টুলবক্স</h2>
+    
+    <!-- ডানপাশের আইকন গ্রুপ (উইন্ডোজ, টেলিগ্রাম, ডোনেট) -->
+    <div class="flex items-center gap-1"> 
+
+        <!-- নতুন: উইন্ডোজ কীবোর্ড ডাউনলোড বাটন -->
+        <a href="https://kothakeyboard.github.io/" target="_blank" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm has-tooltip" data-tooltip="Kotha Keyboard ডাউনলোড করুন">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.951-1.801"/>
+            </svg>
+        </a>
+
+        <!-- ********** টেলিগ্রাম আইকন বাটন ********** -->
+        <a href="https://t.me/kothakeyboard" target="_blank" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-[#2AABEE] rounded-full flex justify-center items-center transition-all duration-300 shadow-sm has-tooltip" data-tooltip="টেলিগ্রাম গ্রুপে যুক্ত হোন">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.287 5.906c-.778.324-2.334.994-4.666 2.01-.378.15-.577.298-.595.442-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294.26.006.549-.1.868-.32 2.179-1.471 3.304-2.214 3.374-2.23.05-.012.12-.026.166.016.047.041.042.12.037.141-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8.154 8.154 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629.093.06.183.125.27.187.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.426 1.426 0 0 0-.013-.315.337.337 0 0 0-.114-.217.526.526 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09z"/>
+            </svg>
+        </a>
+
+        <!-- ডোনেট আইকন বাটন -->
         <button id="donateIconBtn" type="button" class="voice-command-btn w-9 h-9 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm has-tooltip" data-tooltip="ডোনেট করুন (সহায়তা করুন)">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
             </svg>
         </button>
-        <!-- নতুন বাটন শেষ -->
-		
-            </div> <!-- এই div টি flex items-center gap-1 এর শেষ -->
+        
+    </div> <!-- ডানপাশের গ্রুপ শেষ -->
 
-        </div>
-        <!-- টাইটেল এবং ভয়েস কমান্ড বাটন এরিয়া শেষ -->
+</div>
+<!-- টাইটেল এবং ভয়েস কমান্ড বাটন এরিয়া শেষ -->
 
 <div class="tab-buttons">
             <!-- থিম টগল বাটন কন্টেইনার শুরু -->
