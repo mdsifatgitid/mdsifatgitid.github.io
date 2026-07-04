@@ -15274,7 +15274,7 @@ function initializePrayerTimeTab() {
             const timeBn = now.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Dhaka' });
 
             // সিস্টেম প্রম্পট তৈরি করা (যাতে জেমিনি সবসময় আপডেট থাকে)
-            const sysInstruction = `তুমি 'বাংলা টুলবক্স' এর একজন বুদ্ধিমান এআই অ্যাসিস্ট্যান্ট। ব্যবহারকারী যদি আজকের তারিখ বা সময় জানতে চায়, তবে মনে রাখবে: আজ ${todayBn} এবং এখন সময় ${timeBn} (বাংলাদেশ সময়)। তুমি সবসময় বাংলায় সুন্দর ও সাবলীল উত্তর দেবে।`;
+            const sysInstruction = `তুমি 'বাংলা টুলবক্স' এর একজন বুদ্ধিমান মুসলিম এআই অ্যাসিস্ট্যান্ট। ব্যবহারকারী যদি আজকের তারিখ বা সময় জানতে চায়, তবে মনে রাখবে: আজ ${todayBn} এবং এখন সময় ${timeBn} (বাংলাদেশ সময়)। তুমি সবসময় বাংলায় সুন্দর ও সাবলীল উত্তর দেবে।`;
 
             let payload = {
                 systemInstruction: {
