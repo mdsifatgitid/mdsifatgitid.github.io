@@ -8179,6 +8179,18 @@ body.sidebar-open #sidebarOverlay {
     <span>আরবি (International)</span>
     <svg class="w-4 h-4 text-indigo-600 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
 </button>
+<!-- Custom Voice Section -->
+<div class="border-t dark:border-gray-600 mt-1 pt-1">
+    <button class="layout-option w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between group" data-layout="custom_voice">
+        <span>কাস্টম (Custom Voice)</span>
+        <svg class="w-4 h-4 text-indigo-600 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+    </button>
+    <!-- কাস্টম ইনপুট বক্স (সিলেক্ট করলে দেখাবে) -->
+    <div id="customVoiceInputContainer" class="hidden px-4 py-2 bg-indigo-50 dark:bg-gray-800 rounded-b-md">
+        <input type="text" id="topbarCustomVoiceCode" placeholder="কোড দিন (যেমন: bn-BD)" class="w-full p-1.5 border rounded dark:bg-gray-700 dark:border-gray-500 dark:text-white text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500 text-center font-bold">
+    </div>
+</div>
+
 					
                 </div>
             </div>
@@ -31391,10 +31403,29 @@ voiceBtn.addEventListener('click', () => {
                     const activeLayoutBtn = document.querySelector('.layout-option.active');
                     const currentLayoutName = activeLayoutBtn ? activeLayoutBtn.getAttribute('data-layout') : 'english';
 
-                    if (currentLayoutName === 'english') {
+if (currentLayoutName === 'english') {
                         recognition.lang = 'en-US';
                     } else if (currentLayoutName === 'arabic_phonetic' || currentLayoutName === 'arabic_101') {
                         recognition.lang = 'ar-SA';
+} else if (currentLayoutName === 'custom_voice') {
+                        // +++ ফিক্স ২: কাস্টম ভয়েস কোড ভ্যালিডেশন এবং লেআউট ফলব্যাক লজিক +++
+                        const customInput = document.getElementById('topbarCustomVoiceCode');
+                        const cCode = customInput ? customInput.value.trim() : '';
+                        const rx = /^[a-z]{2,3}-[A-Z]{2}$/;
+                        
+                        // সঠিক ফরম্যাট (যেমন hi-IN, ar-SA) হলে সেটা নেবে
+                        if (rx.test(cCode)) {
+                            recognition.lang = cCode; 
+                        } else {
+                            // ভুল হলে ব্যবহারকারীকে অ্যালার্ট দিয়ে ডিফল্ট ইংলিশ লেআউটে ফলব্যাক করানো হবে
+                            showCustomAlert('ভুল ভয়েস কোড! ডিফল্ট ইংলিশ লেআউটে রিসেট করা হলো। (সঠিক ফরম্যাট: bn-BD, en-US)');
+                            recognition.lang = 'en-US';
+                            
+                            // কীবোর্ড লেআউট UI এবং স্টেট রিসেট করা (ড্রপডাউন থেকে কাস্টম বক্স হাইড হয়ে যাবে)
+                            if (typeof setKeyboardLayout === 'function') {
+                                setKeyboardLayout('english', false);
+                            }
+                        }
                     } else {
                         recognition.lang = 'bn-BD'; // বাংলা (ইউনিকোড, ফনেটিক, আন্সি)
                     }
@@ -32368,8 +32399,21 @@ const indVowMap = {
             layoutDropdown.classList.add('hidden');
         });
     });
+	
+	// কাস্টম ভয়েস ইনপুটের ইভেন্ট
+    const customVoiceInput = document.getElementById('topbarCustomVoiceCode');
+    if (customVoiceInput) {
+        customVoiceInput.value = localStorage.getItem('topbarCustomVoiceCode') || '';
+        // ক্লিক করলে বা টাইপ করলে যেন ড্রপডাউন বন্ধ না হয়
+        customVoiceInput.addEventListener('click', (e) => e.stopPropagation());
+        customVoiceInput.addEventListener('keydown', (e) => e.stopPropagation());
+        // টাইপ করার সাথে সাথে সেভ হবে
+        customVoiceInput.addEventListener('input', (e) => {
+            localStorage.setItem('topbarCustomVoiceCode', e.target.value.trim());
+        });
+    }
 
-    function updateLayoutUI(notify = false) {
+function updateLayoutUI(notify = false) {
         layoutOptions.forEach(opt => {
             const checkIcon = opt.querySelector('.check-icon');
             if (opt.dataset.layout === currentLayout) {
@@ -32381,7 +32425,23 @@ const indVowMap = {
             }
         });
 
-if (indicator && layoutBtn) {
+        // +++ ফিক্স ১: কাস্টম ভয়েস বক্স শো/হাইড করার লজিক এখানে যুক্ত করতে হবে +++
+        const customContainer = document.getElementById('customVoiceInputContainer');
+        if (customContainer) {
+            if (currentLayout === 'custom_voice') {
+                customContainer.classList.remove('hidden');
+                // বক্স ওপেন হলে অটোমেটিক ফোকাস দেওয়ার জন্য
+                setTimeout(() => {
+                    const customInput = document.getElementById('topbarCustomVoiceCode');
+                    if (customInput) customInput.focus();
+                }, 50);
+            } else {
+                customContainer.classList.add('hidden');
+            }
+        }
+        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        if (indicator && layoutBtn) {
             indicator.classList.remove('hidden');
             const shortcutHint = '(Ctrl+Space / Ctrl+K)';
             if (currentLayout === 'english') {
@@ -32409,7 +32469,8 @@ if (indicator && layoutBtn) {
                 'bijoy_ansi': 'বিজয় আনসি',
                 'phonetic': 'বাংলা ফনেটিক (Avro)',
                 'arabic_phonetic': 'Arabic Phonetic',
-                'arabic_101': 'Arabic 101'
+                'arabic_101': 'Arabic 101',
+				'custom_voice': 'Custom Voice'
             };
             showCustomAlert(`কীবোর্ড লেআউট: ${layoutNames[currentLayout]}`);
         }
@@ -32529,7 +32590,7 @@ if (e.ctrlKey && !e.altKey && !e.shiftKey) {
         if (isToggleShortcut) {
             e.preventDefault();
             // যদি বর্তমানে ইংরেজি থাকে, তবে সর্বশেষ ব্যবহৃত বাংলা লেআউটে যাবে, অন্যথায় ইংরেজিতে ফিরবে
-            if (currentLayout === 'english') {
+if (currentLayout === 'english' || currentLayout === 'custom_voice') {
                 setKeyboardLayout(lastNonEnglishLayout, true);
             } else {
                 setKeyboardLayout('english', true);
@@ -32537,7 +32598,7 @@ if (e.ctrlKey && !e.altKey && !e.shiftKey) {
             return;
         }
 
-        if (currentLayout === 'english' || e.ctrlKey || e.altKey || e.metaKey || !isEditable) return;
+if (currentLayout === 'english' || currentLayout === 'custom_voice' || e.ctrlKey || e.altKey || e.metaKey || !isEditable) return;
         
         if (target.tagName === 'INPUT') {
             const type = target.type.toLowerCase();
