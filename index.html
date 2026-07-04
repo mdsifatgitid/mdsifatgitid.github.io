@@ -7144,6 +7144,21 @@ body.sidebar-open #sidebarOverlay {
 }
 /* কীবোর্ড ড্রপডাউন এনিমেশন */
 
+/* উইন্ডোজ ড্রপডাউন এনিমেশন */
+#windowsMenuDropdown {
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+}
+#windowsMenuDropdown.hidden {
+    opacity: 0;
+    transform: scale(0.95);
+    pointer-events: none;
+}
+#windowsMenuDropdown:not(.hidden) {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
 /* --- Live Cricket Ticker Styles (New) --- */
 #cricket-ticker-container {
     transition: all 0.5s ease;
@@ -8152,9 +8167,43 @@ body.sidebar-open #sidebarOverlay {
                         <span>বিজয় আনসি (ANSI)</span>
                         <svg class="w-4 h-4 text-indigo-600 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                     </button>
-                
-                    <!-- নতুন যুক্ত করা উইন্ডোজ অ্যাপ ডাউনলোড লিংক -->
-                    <div class="border-t border-gray-200 dark:border-gray-600 mt-1 pt-1 has-tooltip" data-tooltip="উইন্ডোজ কীবোর্ড Kotha Keyboard ডাউনলোড করুন">
+<button class="layout-option w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between group" data-layout="phonetic">
+                        <span>বাংলা ফনেটিক (Avro)</span>
+                        <svg class="w-4 h-4 text-indigo-600 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </button>
+					
+                </div>
+            </div>
+        </div>
+        <!-- End Keyboard Layout Toggle -->
+
+        <!-- PWA Install Button -->
+        <!-- ক্লাস voice-command-btn যুক্ত করা হয়েছে -->
+        <button id="pwaInstallBtn" type="button" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm" title="অ্যাপটি ইন্সটল করুন" style="display: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+        </button>
+
+    </div> <!-- বামপাশের গ্রুপ শেষ -->
+
+    <!-- টাইটেল (মাঝে) -->
+    <h2 id="main-heading" class="text-2xl font-bold text-gray-800 dark:text-white mb-0">বাংলা টুলবক্স</h2>
+    
+<!-- ডানপাশের আইকন গ্রুপ (উইন্ডোজ, টেলিগ্রাম, ডোনেট) -->
+    <div class="flex items-center gap-1"> 
+
+        <!-- নতুন: উইন্ডোজ মেনু ড্রপডাউন -->
+        <div class="relative inline-block text-left" id="windows-menu-container">
+            <button id="windowsMenuBtn" type="button" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm has-tooltip" data-tooltip="উইন্ডোজ টুলস">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.951-1.801"/>
+                </svg>
+            </button>
+
+            <!-- Windows Dropdown Menu -->
+            <div id="windowsMenuDropdown" class="hidden absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none z-50 origin-top-right transform transition-all duration-200 border border-gray-200 dark:border-gray-600">
+                <div class="py-1" role="menu">
+                    <!-- উইন্ডোজ অ্যাপ ডাউনলোড লিংক -->
+                    <div class="has-tooltip" data-tooltip="উইন্ডোজ কীবোর্ড Kotha Keyboard ডাউনলোড করুন">
                         <a href="https://kothakeyboard.github.io/" target="_blank" class="w-full text-left px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-600 flex items-center gap-2 group transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.951-1.801"/>
@@ -8178,32 +8227,9 @@ body.sidebar-open #sidebarOverlay {
                             <span>পিসি ভয়েস টাইপিং</span>
                         </button>
                     </div>
-
                 </div>
             </div>
         </div>
-        <!-- End Keyboard Layout Toggle -->
-
-        <!-- PWA Install Button -->
-        <!-- ক্লাস voice-command-btn যুক্ত করা হয়েছে -->
-        <button id="pwaInstallBtn" type="button" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm" title="অ্যাপটি ইন্সটল করুন" style="display: none;">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-        </button>
-
-    </div> <!-- বামপাশের গ্রুপ শেষ -->
-
-    <!-- টাইটেল (মাঝে) -->
-    <h2 id="main-heading" class="text-2xl font-bold text-gray-800 dark:text-white mb-0">বাংলা টুলবক্স</h2>
-    
-    <!-- ডানপাশের আইকন গ্রুপ (উইন্ডোজ, টেলিগ্রাম, ডোনেট) -->
-    <div class="flex items-center gap-1"> 
-
-        <!-- নতুন: উইন্ডোজ কীবোর্ড ডাউনলোড বাটন -->
-        <a href="https://kothakeyboard.github.io/" target="_blank" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 rounded-full flex justify-center items-center transition-all duration-300 shadow-sm has-tooltip" data-tooltip="Kotha Keyboard ডাউনলোড করুন">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.951-1.801"/>
-            </svg>
-        </a>
 
         <!-- ********** টেলিগ্রাম আইকন বাটন ********** -->
         <a href="https://t.me/kothakeyboard" target="_blank" class="voice-command-btn w-9 h-9 bg-indigo-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 text-[#2AABEE] rounded-full flex justify-center items-center transition-all duration-300 shadow-sm has-tooltip" data-tooltip="টেলিগ্রাম গ্রুপে যুক্ত হোন">
@@ -14025,6 +14051,153 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 
 // ====================================================================
+// START: PHONETIC MAPPING OBJECTS
+// ====================================================================
+const phoneticCombinations = {
+    "Allah": "আল্লাহ", "allah": "আল্লাহ", "cch": "চ্ছ", "SH": "ষ", "sH": "ষ", "sifat": "সিফাত",
+    "amra": "আমরা", "amrao": "আমরাও", "amraO": "আমরাও", "choto": "ছোট", "chotoder": "ছোটদের",
+    "chotoderke": "ছোটদেরকে", "chotoke": "ছোটকে", "chotora": "ছোটরা", "korben": "করবেন",
+    "korten": "করতেন", "bolte": "বলতে", "bolten": "বলতেন", "boltam": "বলতাম", "jete": "যেতে",
+    "jaite": "যাইতে", "bolchi": "বলছি", "bolchilen": "বলছিলেন", "bolchilam": "বলছিলাম",
+    "seta": "সেটা", "setai": "সেটাই", "ektu": "একটু", "ektur": "একটুর", "apnake": "আপনাকে",
+    "eti": "এটি", "etii": "এটিই", "etir": "এটির", "etike": "এটিকে", "shothik": "সঠিক",
+    "sothik": "সঠিক", "thik": "ঠিক", "ekti": "একটি", "ektir": "একটির", "ekta": "একটা",
+    "ektar": "একটার", "ektake": "একটাকে", "ashol": "আসল", "asholei": "আসলেই", "ashole": "আসলে",
+    "okhane": "ওখানে", "ektike": "একটিকে", "sothikvabe": "সঠিকভাবে", "apnii": "আপনিই",
+    "apnie": "আপনিই", "tomra": "তোমরা", "tomrao": "তোমরাও", "tomraO": "তোমরাও", "jonno": "জন্য়",
+    "krishi": "কৃষি", "krishikaj": "কৃষিকাজ", "krishijibi": "কৃষিজীবী", "krishok": "কৃষক",
+    "krrishok": "কৃষক", "krishokder": "কৃষকদের", "krishokke": "কৃষককে", "krishoker": "কৃষকের",
+    "tomrai": "তোমরাই", "tomay": "তোমায়", "sonar": "সোনার", "apni": "আপনি", "apnar": "আপনার",
+    "apnke": "আপনাকে", "apnader": "আপনাদের", "apnaderke": "আপনাদেরকে",
+    "sm.": "সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম", "brrikk": "বৃক্ষ", "nishThur": "নিষ্ঠুর",
+    "klanto": "ক্লান্ত", "brriShTi": "বৃষ্টি", "rokto": "রক্ত", "bhokto": "ভক্ত", "iccha": "ইচ্ছা",
+    "shikkha": "শিক্ষা", "gunjon": "গুঞ্জন", "biggan": "বিজ্ঞান", "sustho": "সুস্থ",
+    "dogdho": "দগ্ধ", "borSha": "বর্ষা", "KHoma": "ক্ষমা", "Khoy": "ক্ষয়", "ko`s": "কস্\u200Cস",
+    "kos`meTikos`": "কস্\u200Cমেটিকস্\u200C", "krom": "ক্রম", "aDDa": "আড্ডা", "onko": "অঙ্ক",
+    "oNgg": "অঙ্গ", "pdma": "পদ্মা", "kanD": "কান্ড", "bishw": "বিশ্ব", "oncl": "অঞ্চল",
+    "ogni": "অগ্নি", "sHsbcch": "স্বচ্ছ", "ondh": "অন্ধ", "ajke": "আজকে", "kalke": "কালকে",
+    "kobe": "কবে", "kobecar": "কবেকার", "kothay": "কোথায়", "kotha": "কথা", "ktha": "কথা",
+    "kmn": "কেমন", "emn": "এমন", "tmn": "তেমন", "jmn": "যেমন", "ekhn": "এখন", "tkhn": "তখন",
+    "shobai": "সবাই", "sobai": "সবাই", "nijke": "নিজকে", "kosto": "কষ্ট", "koshto": "কষ্ট",
+    "misti": "মিষ্টি", "mishti": "মিষ্টি", "bristi": "বৃষ্টি", "brishti": "বৃষ্টি",
+    "korchi": "করছি", "korche": "করছে", "korchen": "করছেন", "korbe": "করবে", "korlam": "করলাম",
+    "korle": "করলে", "korlen": "করলেন", "korte": "করতে", "bolche": "বলছে", "bolchen": "বলছেন",
+    "bolbe": "বলবে", "bolben": "বলবেন", "bolle": "বললে", "bollam": "বললাম", "aschi": "আসছি",
+    "ashchi": "আসছি", "asche": "আসছে", "ashche": "আসছে", "aschen": "আসছেন", "ashchen": "আসছেন",
+    "asbe": "আসবে", "ashbe": "আসবে", "asben": "আসবেন", "ashben": "আসবেন", "aslam": "আসলাম",
+    "ashlam": "আসলাম", "asle": "আসলে", "ashle": "আসলে", "aslen": "আসলেন", "ashlen": "আসলেন",
+    "ashte": "আসতে", "shunchi": "শুনছি", "shunche": "শুনছে", "shunchen": "শুনছেন",
+    "shunbe": "শুনবে", "shunben": "শুনবেন", "shunlam": "শুনলাম", "shunle": "শunle",
+    "shunlen": "শুনলেন", "shunte": "শুনতে", "thakchi": "থাকছি", "thakche": "থাকছে",
+    "thakchen": "থাকছেন", "thakbe": "থাকবে", "thakben": "থাকবেন", "thaklam": "থাকলাম",
+    "thakle": "থাকলে", "thaklen": "থাকলেন", "thakte": "থাকতে", "laglam": "লাগলাম",
+    "lagle": "লাগলে", "laglen": "লাগলেন", "lagte": "লাগতে", "rakhchi": "রাখছি",
+    "rakhche": "রাখছে", "rakhchen": "রাখছেন", "rakhbe": "রাখবে", "rakhben": "রাখবেন",
+    "rakhlam": "রাখলাম", "rakhle": "রাখলে", "rakhlen": "রাখলেন", "rakhte": "রাখতে",
+    "likhle": "লিখলে", "likhlen": "লিখলেন", "likhte": "লিখতে", "janbe": "জানবে",
+    "janben": "জানবেন", "janlam": "জানলাম", "janle": "জানলে", "janlen": "জানলেন",
+    "jante": "জানতে", "cholchi": "চলছি", "cholche": "চলছে", "cholchen": "চলছেন",
+    "cholbe": "চলবে", "cholben": "চলবেন", "chollam": "চললাম", "cholle": "চললে",
+    "chollen": "চললেন", "cholte": "চলতে", "khelchi": "খেলছি", "khelche": "খেলছে",
+    "khelchen": "খেলছেন", "khelbo": "খেলবো", "khelbe": "খেলবে", "khelben": "খেলবেন",
+    "khellam": "খেললাম", "khelle": "খেললে", "khellen": "খেললেন", "khelte": "খেলতে",
+    "bhabchi": "ভাবছি", "bhabche": "ভাবছে", "bhabchen": "ভাবছেন", "bhabbo": "ভাববো",
+    "bhabbe": "ভাববে", "bhabben": "ভাববেন", "bhablam": "ভাবলাম", "bhable": "ভাবলে",
+    "bhablen": "ভাবলেন", "bhabte": "ভাবতে", "vabchi": "ভাবছি", "vabche": "ভাবছে",
+    "vabchen": "ভাবছেন", "vabbo": "ভাববো", "vabbe": "ভাববে", "vabben": "ভাববেন",
+    "vablam": "ভাবলাম", "vable": "ভাবলে", "vablen": "ভাবলেন", "vabte": "ভাবতে",
+    "hashchi": "হাসছি", "hashche": "হাসছে", "hashchen": "হাসছেন", "hashbo": "হাসবো",
+    "hashbe": "হাসবে", "hashben": "হাসবেন", "hashlam": "হাসলাম", "hashle": "হাসলে",
+    "hashlen": "হাসলেন", "hashte": "হাসতে", "haschi": "হাসছি", "hasche": "হাসছে",
+    "haschen": "হাসছেন", "hasbo": "হাসবো", "hasbe": "হাসবে", "hasben": "হাসবেন",
+    "haslam": "হাসলাম", "hasle": "হাসলে", "haslen": "হাসলেন", "haste": "হাসতে",
+    "boshchi": "বসছি", "boshche": "বসছে", "boshchen": "বসছেন", "boshbe": "বসবে",
+    "boshben": "বসবেন", "boshlam": "বসলাম", "boshle": "বসলে", "boshlen": "বসলেন",
+    "boshte": "বসতে", "boschi": "বসছি", "bosche": "বসছে", "boschen": "বসছেন",
+    "bosbe": "বসবে", "bosben": "বসবেন", "boslam": "বসলাম", "bosle": "বসলে",
+    "boslen": "বসলেন", "boste": "বসতে", "dhonno": "ধন্য", "dhnno": "ধন্য",
+    "dhnnobad": "ধন্যবাদ", "dhonnobad": "ধন্যবাদ", "shagotom": "স্বাগতম",
+    "nomoshkar": "নমস্কার", "hello": "হ্যালো", "subho": "শুভ", "inshallah": "ইনশাআল্লাহ",
+    "mashallah": "মাশাআল্লাহ", "inshaallah": "ইনশাআল্লাহ", "mashaallah": "মাশাআল্লাহ",
+    "assalamualaikum": "আসসালামু আলাইকুম", "bondhu": "বন্ধু", "bndhu": "বন্ধু",
+    "sotti": "সত্যি", "shotti": "সত্যি", "sotyi": "সত্যি", "please": "প্লিজ",
+    "plz": "প্লিজ", "dukkho": "দুঃখ", "dukkhito": "দুঃখিত", "osadharon": "অসাধারণ",
+    "oshadharon": "অসাধারণ", "shomossha": "সমস্যা", "somossa": "সমস্যা",
+    "somoshya": "সমস্যা", "oboshshoi": "অবশ্যই", "obossoi": "অবশ্যই", "kintu": "কিন্তু",
+    "karon": "কারণ", "karn": "কারণ", "jnno": "জন্য", "ruti": "রুটি", "konta": "কোনটা",
+    "konti": "কোনটি", "hya": "হ্যাঁ", "haa": "হ্যাঁ", "taratari": "তাড়াতাড়ি",
+    "tartari": "তাড়াতাড়ি", "joss": "জোস", "fatafati": "ফাটাফাটি", "ashen": "আসেন",
+    "jao": "যাও", "pic": "পিক", "inbox": "ইনবক্স", "message": "মেসেজ", "ofis": "অফিস",
+    "office": "অফিস", "kaj": "কাজ", "kaaj": "কাজ", "busy": "বিজি", "free": "ফ্রি",
+    "bujhchi": "বুঝছি", "bujhche": "বুঝছে", "bujhchen": "বুঝছেন", "bujhbe": "বুঝবে",
+    "bujhben": "বুঝবেন", "bujhle": "বুঝলে", "bujhlam": "বুঝলাম", "bujhte": "বুঝতে",
+    "cholbo": "চলবো", "dakchi": "ডাকছি", "dakche": "ডাকছে", "dakchen": "ডাকছেন",
+    "dakbe": "ডাকবে", "dakben": "ডাকবেন", "dakle": "ডাকলে", "daklam": "ডাকলাম",
+    "dakte": "ডাকতে", "katchi": "কাটছি", "katche": "কাটছে", "katchen": "কাটছেন",
+    "katbe": "কাটবে", "katben": "কাটবেন", "katle": "কাটলে", "katlam": "কাটলাম",
+    "katte": "কাটতে", "kadchi": "কাঁদছি", "kadche": "কাঁদছে", "kadbe": "কাঁদবে",
+    "kadle": "কাঁদলে", "kadte": "কাঁদতে", "facebook": "ফেসবুক", "messenger": "মেসেঞ্জার",
+    "whatsapp": "হোয়াটসঅ্যাপ", "youtube": "ইউটিউব", "google": "গুগল", "internet": "ইন্টারনেট",
+    "online": "অনলাইন", "offline": "অফলাইন", "link": "লিংক", "comment": "কমেন্ট",
+    "profile": "প্রোফাইল", "picture": "পিকচার", "photo": "ফটো", "video": "ভিডিও",
+    "sms": "এসএমএস", "class": "ক্লাস", "school": "স্কুল", "college": "কলেজ",
+    "versity": "ভার্সিটি", "university": "ইউনিভার্সিটি", "exam": "এক্সাম", "test": "টেস্ট",
+    "result": "রেজাল্ট", "madam": "ম্যাডাম", "boss": "বস", "duty": "ডিউটি", "phone": "ফোন",
+    "mobile": "মোবাইল", "number": "নাম্বার", "bye": "বাই", "okay": "ওকে",
+    "thanks": "থ্যাংকস", "thank": "থ্যাংক", "you": "ইউ", "welcome": "ওয়েলকাম",
+    "morning": "মর্নিং", "night": "নাইট", "happy": "হ্যাপি", "birthday": "বার্থডে",
+    "party": "পার্টি", "problem": "প্রবলেম", "wait": "ওয়েট", "ready": "রেডি",
+    "cancel": "ক্যান্সেল", "miss": "মিস", "chill": "চিল", "relax": "রিল্যাক্স",
+    "update": "আপডেট", "download": "ডাউনলোড", "upload": "আপলোড", "group": "গ্রুপ",
+    "app": "অ্যাপ", "apps": "অ্যাপস", "software": "সফটওয়্যার", "game": "গেম",
+    "games": "গেমস", "train": "ট্রেন", "ticket": "টিকেট", "tour": "ট্যুর",
+    "trip": "ট্রিপ", "shopping": "শপিং", "market": "মার্কেট", "price": "প্রাইস",
+    "offer": "অফার", "discount": "ডিসকাউন্ট", "payment": "পেমেন্ট", "structure": "স্ট্রাকচার",
+    "stucture": "স্ট্রাকচার", "paypal": "পেপাল", "payoneer": "পেওনিয়ার",
+    "freelancer": "ফ্রিল্যান্সার", "freelancing": "ফ্রিল্যান্সিং", "client": "ক্লায়েন্ট",
+    "project": "প্রজেক্ট", "order": "অর্ডার", "review": "রিভিউ", "rating": "রেটিং",
+    "news": "নিউজ", "media": "মিডিয়া", "press": "প্রেস", "reporter": "রিপোর্টার",
+    "report": "রিপোর্ট", "article": "আর্টিকেল", "blogger": "ব্লগার", "interview": "ইন্টারভিউ",
+    "breaking": "ব্রেকিং", "headline": "হেডলাইন", "topic": "টপিক", "publish": "পাবলিশ",
+    "editor": "এডিটর", "writer": "রাইটার", "journal": "জার্নাল", "magazine": "ম্যাগাজিন",
+    "column": "কলাম", "content": "কন্টেন্ট", "story": "স্টোরি", "draft": "ড্রাফট",
+    "script": "স্ক্রিপ্ট", "copy": "কপি", "print": "প্রিন্ট", "account": "একাউন্ট",
+    "password": "পাসওয়ার্ড", "login": "লগইন", "logout": "লগআউট", "website": "ওয়েবসাইট",
+    "server": "সার্ভার", "domain": "ডোমেইন", "hosting": "হোস্টিং", "network": "নেটওয়ার্ক",
+    "folder": "ফোল্ডার", "system": "সিস্টেম", "design": "ডিজাইন", "developer": "ডেভেলপার",
+    "hardware": "হার্ডওয়্যার", "keyboard": "কীবোর্ড", "mouse": "মাউস", "screen": "স্ক্রিন",
+    "meeting": "মিটিং", "manager": "ম্যানেজার", "target": "টার্গেট", "bonus": "বোনাস",
+    "salary": "স্যালারি", "company": "কোম্পানি", "brand": "ব্র্যান্ড", "marketing": "মার্কেটিং",
+    "business": "বিজনেস", "plan": "প্ল্যান", "idea": "আইডিয়া", "support": "সাপোর্ট",
+    "help": "হেল্প", "clear": "ক্লিয়ার", "confirm": "কনফার্ম", "list": "লিস্ট",
+    "final": "ফাইনাল", "total": "টোটাল", "normal": "নরমাল", "simple": "সিম্পল",
+    "special": "স্পেশাল", "smart": "স্মার্ট", "style": "স্টাইল", "fashion": "ফ্যাশন",
+    "address": "এড্রেস", "location": "লোকেশন", "road": "রোড", "block": "ব্লক",
+    "building": "বিল্ডিং", "room": "রুম", "friend": "ফ্রেন্ড", "awesome": "অসাম",
+    "crazy": "ক্রেজি", "serious": "সিরিয়াস", "mind": "মাইন্ড", "careful": "কেয়ারফুল",
+    "warning": "ওয়ার্নিং", "notice": "নোটিশ", "event": "ইভেন্ট", "program": "প্রোগ্রাম",
+    "function": "ফাংশন", "language": "ল্যাঙ্গুয়েজ", "english": "ইংলিশ",
+    "inglish": "ইংলিশ", "engreji": "ইংরেজি", "ingreji": "ইংরেজি", "engrezi": "ইংরেজী",
+    "ingrezi": "ইংরেজী", "bangla": "বাংলা", "bengali": "বেঙ্গলি", "ortho": "অর্থ",
+    "shobdo": "শব্দ", "bhasha": "ভাষা", "bakko": "বাক্য", "ekdm": "একদম",
+    "insert": "ইনসার্ট", "view": "ভিউ", "layout": "লেআউট", "graphic": "গ্রাফিক",
+    "graphics": "গ্রাফিক্স", "replace": "রিপ্লেস", "find": "ফাইন্ড", "paste": "পেস্ট",
+    "select": "সিলেক্ট", "selection": "সিলেকশন", "bold": "বোল্ড", "italic": "ইটালিক",
+    "underline": "আন্ডারলাইন", "edit": "এডিট", "format": "ফরম্যাট", "delete": "ডিলিট",
+    "remove": "রিমুভ", "font": "ফন্ট", "image": "ইমেজ", "layer": "লেয়ার", "table": "টেবিল",
+    "margin": "মার্জিন", "padding": "প্যাডিং", "zoom": "জুম", "export": "এক্সপোর্ট",
+    "import": "ইমপোর্ট", "setting": "সেটিং", "settings": "সেটিংস", "option": "অপশন",
+    "options": "অপশনস", "panel": "প্যানেল", "click": "ক্লিক", "scroll": "স্ক্রল",
+    "search": "সার্চ", "type": "টাইপ", "typing": "টাইপিং", "align": "এলাইন",
+    "center": "সেন্টার", "left": "লেফট", "right": "রাইট", "top": "টপ", "audio": "অডিও",
+    "sound": "সাউন্ড", "music": "মিউজিক", "display": "ডিসপ্লে", "monitor": "মনিটর",
+    "laptop": "ল্যাপটপ", "desktop": "ডেস্কটপ", "device": "ডিভাইস"
+};
+// ====================================================================
+// END: PHONETIC MAPPING OBJECTS
+// ====================================================================
+
+// ====================================================================
 // START: FONT CONVERTER SCRIPT
 // ====================================================================
         // ইউনিকোড থেকে বিজয় রূপান্তরের জন্য ম্যাপিং
@@ -16245,6 +16418,28 @@ window.addEventListener('click', (e) => {
         settingsMenuBtn.querySelector('svg').classList.remove('rotate-180');
     }
 });
+
+// START: WINDOWS DROPDOWN LOGIC
+
+const windowsMenuBtn = document.getElementById('windowsMenuBtn');
+const windowsMenuDropdown = document.getElementById('windowsMenuDropdown');
+
+if (windowsMenuBtn) {
+    windowsMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        windowsMenuDropdown.classList.toggle('hidden');
+    });
+}
+
+window.addEventListener('click', (e) => {
+    if (windowsMenuDropdown && !windowsMenuDropdown.classList.contains('hidden')) {
+        if (!windowsMenuDropdown.contains(e.target) && !windowsMenuBtn.contains(e.target)) {
+            windowsMenuDropdown.classList.add('hidden');
+        }
+    }
+});
+// END: WINDOWS DROPDOWN LOGIC
+
 // ====================================================================
 // END: DROPDOWN MENU LOGIC
 // ====================================================================
@@ -16736,22 +16931,22 @@ initializeBackButtons();
         showTab('notepad');
         await initializeNotepad(); // Notepad চালু করার জন্য এই ফাংশন কল করুন
     });
-	if (fileTransferTab) {
+if (fileTransferTab) {
 		fileTransferTab.addEventListener('click', () => {
         showTab('fileTransfer');
-        const layoutDropdown = document.getElementById('keyboardLayoutDropdown');
+        const layoutDropdown = document.getElementById('windowsMenuDropdown'); // পরিবর্তিত
         if (layoutDropdown) layoutDropdown.classList.add('hidden');
 		});
-		}
+    }
+
     if (webSearchTab) webSearchTab.addEventListener('click', () => showTab('webSearch'));
 	if (pcVoiceClientTab) {
-    pcVoiceClientTab.addEventListener('click', () => {
-        showTab('pcVoiceClient');
-        // লেআউট ড্রপডাউন বন্ধ করার জন্য
-        const layoutDropdown = document.getElementById('keyboardLayoutDropdown');
-        if (layoutDropdown) layoutDropdown.classList.add('hidden');
-    });
-}
+        pcVoiceClientTab.addEventListener('click', () => {
+            showTab('pcVoiceClient');
+            const layoutDropdown = document.getElementById('windowsMenuDropdown'); // পরিবর্তিত
+            if (layoutDropdown) layoutDropdown.classList.add('hidden');
+        });
+    }
     if (healthLifestyleTab) healthLifestyleTab.addEventListener('click', () => {showTab('healthLifestyle');	initializeHealthLifestyleTab();});
     if (clockTab) clockTab.addEventListener('click', () => showTab('clock'));
     if (playerTab) playerTab.addEventListener('click', () => showTab('player'));
@@ -31742,10 +31937,344 @@ function initializeKeyboardLayoutManager() {
     const layoutOptions = document.querySelectorAll('.layout-option');
     const indicator = document.getElementById('currentLayoutIndicator');
     
-    let currentLayout = 'english';
+let currentLayout = 'english';
+    let lastNonEnglishLayout = 'phonetic'; // ডিফল্টভাবে ফনেটিক বা আপনার পছন্দেরটি রাখতে পারেন
     let typeBuffer = ''; // নতুন: বাফার টাইপিং ট্র্যাক করার জন্য
     let activePreKar = ''; // নতুন: প্রি-কার ট্র্যাক করার জন্য
     let karJumpState = 0; // নতুন: স্টেট ম্যানেজমেন্টের জন্য
+	let phoneticEnglishBuffer = '';
+    let phoneticBanglaBuffer = '';
+
+    // ====================================================================
+    // START: PARSE PHONETIC ENGINE (Avro Style)
+    // ====================================================================
+    function parsePhonetic(englishText) {
+        if (!englishText) return "";
+
+        let result = "";
+        let lastWasConsonant = false;
+        let i = 0;
+
+        const consonants = [
+            "kkh", "Kkh", "KKH", "kKH", "cch", "Cch", "CCH", "cCH", "nch", "Nch", "NCH", "nCH",
+            "ng", "Ng", "nG", "NG", "nc", "Nc", "NC", "nC", "nj", "Nj", "NJ", "nJ", "nk", "Nk", "NK", "nK",
+            "gg", "Gg", "GG", "gG", "Jg", "JG", "jg", "jG", "kh", "Kh", "KH", "kH", "gh", "Gh", "GH", "gH",
+            "ch", "Ch", "CH", "cH", "jh", "Jh", "JH", "jH", "Th", "TH", "th", "tH", "Dh", "DH", "dh", "dH",
+            "ph", "Ph", "PH", "pH", "bh", "Bh", "BH", "bH", "sh", "sH", "Sh", "SH", "rh", "Rh", "RH", "rH",
+            "rr", "RR", "Rr", "rR",
+            "k", "K", "g", "G", "c", "C", "j", "J", "T", "D", "N", "t", "d", "n", "p", "P",
+            "f", "F", "b", "B", "v", "V", "m", "M", "z", "Z", "r", "l", "L", "S", "s",
+            "h", "H", "R", "y", "Y", "w", "W", "q", "Q", "x", "X"
+        ];
+
+const consMap = {
+            "kkh": "ক্ষ", "Kkh": "ক্ষ", "KKH": "ক্ষ", "kKH": "ক্ষ", "cch": "চ্ছ", "Cch": "চ্ছ", "CCH": "চ্ছ", "cCH": "চ্ছ",
+            "nch": "ঞ্ছ", "Nch": "ঞ্ছ", "NCH": "ঞ্ছ", "nCH": "ঞ্ছ", "ng": "ং", "Ng": "ঙ", "nG": "ং", "NG": "ঞ",
+            "nc": "ঞ্চ", "Nc": "ঞ্চ", "NC": "ঞ্চ", "nC": "ঞ্চ", "nj": "ঞ্জ", "Nj": "ঞ্জ", "NJ": "ঞ্জ", "nJ": "ঞ্জ",
+            "nk": "ঙ্ক", "Nk": "ঙ্ক", "NK": "ঙ্ক", "nK": "ঙ্ক", "gg": "জ্ঞ", "Gg": "জ্ঞ", "GG": "জ্ঞ", "gG": "জ্ঞ",
+            "Jg": "জ্ঞ", "JG": "জ্ঞ", "jg": "জ্ঞ", "jG": "জ্ঞ", "kh": "খ", "Kh": "খ", "KH": "খ", "kH": "খ",
+            "gh": "ঘ", "Gh": "ঘ", "GH": "ঘ", "gH": "ঘ", "ch": "ছ", "Ch": "ছ", "CH": "ছ", "cH": "ছ",
+            "jh": "ঝ", "Jh": "ঝ", "JH": "ঝ", "jH": "ঝ", "Th": "ঠ", "TH": "ৎ", "th": "থ", "tH": "থ",
+            "Dh": "ঢ", "DH": "ঢ", "dh": "ধ", "dH": "ধ", "ph": "ফ", "Ph": "ফ", "PH": "ফ", "pH": "ফ",
+            "bh": "ভ", "Bh": "ভ", "BH": "ভ", "bH": "ভ", "sh": "শ", "sH": "শ", "Sh": "ষ", "SH": "ষ",
+            "rh": "ঢ়", "Rh": "ঢ়", "RH": "ঢ়", "rH": "ঢ়", "k": "ক", "K": "খ", "g": "গ", "G": "ঘ", "c": "চ", "C": "ছ",
+            "j": "জ", "J": "জ", "T": "ট", "D": "ড", "N": "ণ", "t": "ত", "d": "দ", "n": "ন",
+            "p": "প", "P": "ফ", "f": "ফ", "F": "ফ", "b": "ব", "B": "ব",
+            "v": "ভ", "V": "ভ", "m": "ম", "M": "ম", "z": "য", "Z": "য",
+            "r": "র", "l": "ল", "L": "ল", "S": "শ", "s": "স", "h": "হ", "H": "হ",
+            "R": "ড়", "y": "য়", "Y": "য়", "w": "ব", "W": "ব", "x": "ক্স", "X": "ক্স",
+            "q": "্", "Q": "্"
+        };
+
+        const vowels = [
+            "rri", "Rri", "RRI", "OU", "OI",
+            "ee", "Ee", "EE", "oo", "Oo", "OO",
+            "a", "i", "I", "u", "U", "e", "E", "o", "O"
+        ];
+
+const indVowMap = {
+            "a": "আ", "i": "ই", "I": "ঈ", "ee": "ঈ", "Ee": "ঈ", "EE": "ঈ",
+            "u": "উ", "U": "ঊ", "oo": "ঊ", "Oo": "ওও", "OO": "ওও",
+            "e": "এ", "E": "ঈ", "o": "অ", "O": "ও", "OI": "ঐ", "OU": "ঔ",
+            "rri": "ঋ", "Rri": "ঋ", "RRI": "ঋ"
+        };
+
+        const karMap = {
+            "a": "া", "i": "ি", "I": "ী", "ee": "ী", "Ee": "ী", "EE": "ী",
+            "u": "ু", "U": "ূ", "oo": "ূ", "Oo": "োও", "OO": "োও",
+            "e": "ে", "E": "ী", "o": "", "O": "ো", "OI": "ৈ", "OU": "ৌ",
+            "rri": "ৃ", "Rri": "ৃ", "RRI": "ৃ"
+        };
+
+        const canJoin = (nextCons, engKey = "") => {
+            if (!result) return false;
+            let doubleCons = nextCons + "্" + nextCons;
+            if (result.endsWith(doubleCons)) return false;
+
+            let currentCluster = "";
+            let consCount = 0;
+            let hasRef = false;
+
+            for (let j = result.length - 1; j >= 0;) {
+                let c = result.charCodeAt(j);
+                if (c === 0x09CD) {
+                    j--;
+                    if (j >= 0) {
+                        let prev = result.charCodeAt(j);
+                        let isCons = (prev >= 0x0995 && prev <= 0x09B9) || (prev >= 0x09DC && prev <= 0x09DF) || prev === 0x09CE;
+                        if (isCons) {
+                            currentCluster = String.fromCharCode(0x09CD) + currentCluster;
+                            currentCluster = String.fromCharCode(prev) + currentCluster;
+                            consCount++;
+                            j--;
+                        } else break;
+                    } else break;
+                } else {
+                    let isCons = (c >= 0x0995 && c <= 0x09B9) || (c >= 0x09DC && c <= 0x09DF) || c === 0x09CE;
+                    if (isCons && currentCluster === "") {
+                        currentCluster = String.fromCharCode(c) + currentCluster;
+                        consCount = 1;
+                        j--;
+                    } else break;
+                }
+            }
+
+            if (currentCluster.startsWith(String.fromCharCode(0x09B0) + String.fromCharCode(0x09CD))) {
+                hasRef = true;
+                consCount--;
+            }
+
+            if (consCount >= 3) {
+                let proposed = currentCluster + String.fromCharCode(0x09CD) + nextCons;
+                if (hasRef) proposed = proposed.substring(2);
+                const allowed4Cons = ["ক্ষ্ম্য", "ন্ত্র্য", "ম্প্র্য", "স্ট্র্য", "ষ্ক্র্য"];
+                if (!allowed4Cons.includes(proposed)) return false;
+            } else if (consCount === 2) {
+                let proposed = currentCluster + String.fromCharCode(0x09CD) + nextCons;
+                if (hasRef) proposed = proposed.substring(2);
+                const allowed3Cons = ["ক্ট্র", "ক্ত্ব", "ক্ত্র", "ক্ল্য", "ক্ষ্ণ", "ক্ষ্ম", "ক্ষ্র", "ক্ষ্ব", "ক্ষ্য", "গ্ধ্য", "গ্ধ্র", "গ্ন্য", "গ্র্য", "গ্ল্য", "ঙ্ক্ত", "ঙ্ক্য", "ঙ্ক্ষ", "ঙ্ক্র", "ঙ্গ্য", "ঙ্ঘ্য", "ঙ্ঘ্র", "চ্ছ্ব", "চ্ছ্র", "চ্ছ্য", "জ্জ্ব", "জ্ঞ্য", "জ্র্য", "ণ্ত্র", "ণ্ড্র", "ণ্ঠ্য", "ণ্ড্য", "ণ্ট্য", "ত্ত্ব", "ত্ত্য", "ত্থ্য", "ত্ন্য", "ত্ব্য", "ত্ম্য", "ত্র্য", "দ্দ্ব", "দ্ধ্ব", "দ্ভ্র", "দ্ঘ্য", "দ্গ্য", "দ্ব্য", "দ্র্য", "ধ্য", "ন্ট্র", "ন্ড্র", "ন্ড্য", "ন্ত্ব", "ন্ত্র", "ন্দ্র", "ন্ধ্র", "ন্ত্য", "ন্ধ্য", "ন্ন্য", "ন্ব্য", "ন্ম্য", "ন্স্য", "প্ত্র", "প্ত্য", "প্ন্য", "প্প্য", "প্র্য", "প্স্য", "প্ল্য", "ম্প্র", "ম্ব্র", "ম্ভ্র", "ম্প্য", "ম্ব্য", "ম্ভ্য", "ম্ন্য", "ম্ল্য", "ম্র্য", "ল্ক্য", "ল্গ্য", "ল্ট্য", "ল্ড্য", "ল্প্য", "ল্ব্য", "ল্ম্য", "ল্ল্য", "ষ্ট্য", "ষ্ট্র", "ষ্ঠ্য", "ষ্ক্র", "ষ্প্য", "ষ্ণ্য", "ষ্ম্য", "স্ক্র", "স্ট্র", "স্ত্র", "স্ত্ব", "স্থ্য", "স্ন্য", "স্প্র", "স্প্য", "স্ব্য", "স্ম্য", "স্ল্য", "স্ট্য", "হ্ন্য", "হ্ম্য"];
+                if (!allowed3Cons.includes(proposed)) return false;
+            }
+
+            let uniVal = result.charCodeAt(result.length - 1);
+            let engKeyLower = engKey.toLowerCase();
+
+            if (engKeyLower === "y" || engKeyLower === "z" || engKeyLower === "w" || engKey === "r") {
+                if (uniVal === 0x09DC || uniVal === 0x09DD || uniVal === 0x0982 || uniVal === 0x0983 || uniVal === 0x09CE || uniVal === 0x0981) return false;
+                if (uniVal === 0x09DF) {
+                    if (engKeyLower === "y" || engKeyLower === "z") return true;
+                    return false;
+                }
+                if (engKey === "r" && uniVal === 0x09B0) return false;
+                return true;
+            }
+
+            if (uniVal === 0x09DF || uniVal === 0x09DC || uniVal === 0x09DD || uniVal === 0x0982 || uniVal === 0x0983 || uniVal === 0x09CE || uniVal === 0x0981) {
+                if (uniVal === 0x09DC && nextCons === "গ") return true;
+                return false;
+            }
+
+            const isBase = (bases) => bases.includes(uniVal);
+
+            if (nextCons === "ক") return isBase([0x0995, 0x0999, 0x09B2, 0x09B7, 0x09B8]);
+            if (nextCons === "খ") return isBase([0x0999, 0x09B8]);
+            if (nextCons === "গ") return isBase([0x0997, 0x0999, 0x09B2, 0x09A6, 0x09DC]);
+            if (nextCons === "ঘ") return isBase([0x0999, 0x09A6]);
+            if (nextCons === "ঙ") return false;
+            if (nextCons === "চ") return isBase([0x099A, 0x099E, 0x09B6]);
+            if (nextCons === "ছ") return isBase([0x099A, 0x099E, 0x09B6]);
+            if (nextCons === "জ") return isBase([0x099C, 0x099E, 0x09AC, 0x09A8]);
+            if (nextCons === "ঝ") return isBase([0x099C, 0x099E]);
+            if (nextCons === "ঞ") return isBase([0x099A, 0x099C]);
+            if (nextCons === "ট") return isBase([0x0995, 0x099F, 0x09A3, 0x09A8, 0x09AA, 0x09AB, 0x09B2, 0x09B7, 0x09B8]);
+            if (nextCons === "ঠ") return isBase([0x09A3, 0x09A8, 0x09B7]);
+            if (nextCons === "ড") return isBase([0x09A1, 0x09A3, 0x09A8, 0x09B2]);
+            if (nextCons === "ঢ") return isBase([0x09A3]);
+            if (nextCons === "ণ") return isBase([0x09A3, 0x09B7, 0x09B9]);
+            if (nextCons === "ত") return isBase([0x0995, 0x09A4, 0x09A8, 0x09AA, 0x09B8]);
+            if (nextCons === "থ") return isBase([0x09A4, 0x09A8, 0x09B8]);
+            if (nextCons === "দ") return isBase([0x0997, 0x09A6, 0x09A8, 0x09AC]);
+            if (nextCons === "ধ") return isBase([0x0997, 0x09A6, 0x09A8, 0x09AC]);
+            if (nextCons === "ন") return isBase([0x0995, 0x0997, 0x0998, 0x09A4, 0x09A6, 0x09A7, 0x09A8, 0x09AA, 0x09AE, 0x09B6, 0x09B8, 0x09B9]);
+            if (nextCons === "প") return isBase([0x09AA, 0x09B2, 0x09B7, 0x09B8, 0x09AE]);
+            if (nextCons === "ফ") return isBase([0x09AE, 0x09B2, 0x09B7, 0x09B8]);
+            if (nextCons === "ব") {
+                if (engKeyLower === "w") return true;
+                return isBase([0x099C, 0x09A6, 0x09A7, 0x09AC, 0x09AE, 0x09B2]);
+            }
+            if (nextCons === "ভ") return isBase([0x09A6, 0x09AE]);
+            if (nextCons === "ম") return isBase([0x0995, 0x0997, 0x0999, 0x099F, 0x09A3, 0x09A4, 0x09A6, 0x09A7, 0x09A8, 0x09AE, 0x09B2, 0x09B6, 0x09B7, 0x09B8, 0x09B9]);
+            if (nextCons === "য") return true;
+            if (nextCons === "র") return true;
+            if (nextCons === "ল") return isBase([0x0995, 0x0997, 0x09A4, 0x09A5, 0x09AA, 0x09AB, 0x09AC, 0x09AD, 0x09AE, 0x09B6, 0x09B8, 0x09B9, 0x09B2]);
+            if (nextCons === "শ") return false;
+            if (nextCons === "ষ" || nextCons === "ক্ষ") return isBase([0x0995, 0x0999]);
+            if (nextCons === "স") return isBase([0x0995, 0x09A8, 0x09AA, 0x09B2]);
+            if (nextCons === "হ") return false;
+
+            return false;
+        };
+
+        while (i < englishText.length) {
+            let remaining = englishText.substring(i);
+
+            if (remaining.startsWith("::")) { result += ":"; i += 2; lastWasConsonant = false; continue; }
+            if (remaining.startsWith("///")) { result += "//"; i += 3; lastWasConsonant = false; continue; }
+            if (remaining.startsWith("//")) { result += "\u200C"; i += 2; lastWasConsonant = false; continue; }
+
+            if (remaining.startsWith("*t") || remaining.startsWith("*T")) { result += "ৎ"; i += 2; lastWasConsonant = false; continue; }
+            if (remaining.startsWith("*a") || remaining.startsWith("*A")) { result += "ঁ"; i += 2; lastWasConsonant = false; continue; }
+            if (englishText[i] === 'A') { result += "ঁ"; i += 1; lastWasConsonant = false; continue; }
+            if (remaining.startsWith("*g") || remaining.startsWith("*G")) { result += "্"; i += 2; lastWasConsonant = false; continue; }
+            if (remaining.startsWith("*l") || remaining.startsWith("*L") || remaining.startsWith("*I") || remaining.startsWith("*i") || remaining.startsWith("hh") || remaining.startsWith("HH")) { result += "ঃ"; i += 2; lastWasConsonant = false; continue; }
+
+            if (remaining.substring(0, 3).toLowerCase() === "eai") { if (!lastWasConsonant) { result += "এআই"; i += 3; continue; } }
+            if (remaining.substring(0, 3).toLowerCase() === "wae") { if (!lastWasConsonant) { result += "ওয়্যা"; i += 3; continue; } }
+            if (remaining.substring(0, 2).toLowerCase() === "wa") { if (!lastWasConsonant) { result += "ওয়া"; i += 2; continue; } }
+            if (remaining.substring(0, 2).toLowerCase() === "we") { if (!lastWasConsonant) { result += "ওয়ে"; i += 2; continue; } }
+            
+            if (remaining.substring(0, 2).toLowerCase() === "ry" || remaining.substring(0, 2).toLowerCase() === "rz") {
+                if (!lastWasConsonant) { result += "র‌্য"; i += 2; lastWasConsonant = true; continue; }
+            }
+            if (remaining.substring(0, 3).toLowerCase() === "rya" || remaining.substring(0, 3).toLowerCase() === "rza" || remaining.substring(0, 3).toLowerCase() === "rea" || remaining.substring(0, 3).toLowerCase() === "rae") {
+                if (!lastWasConsonant) { result += "র‌্যা"; i += 3; continue; }
+            }
+            if (remaining.substring(0, 3).toLowerCase() === "oya" || (remaining.substring(0, 3).toLowerCase() === "oza" && remaining[1] === 'Z')) {
+                if (!lastWasConsonant) { result += "অ্যা"; i += 3; continue; }
+            }
+            if (remaining.substring(0, 3).toLowerCase() === "eya" || (remaining.substring(0, 3).toLowerCase() === "eza" && remaining[1] === 'Z')) {
+                if (!lastWasConsonant) { result += "এ্যা"; i += 3; continue; }
+            }
+            if (remaining.substring(0, 2).toLowerCase() === "ea") {
+                if (!lastWasConsonant) { result += "এ্যা"; i += 2; continue; }
+            }
+            if (remaining.substring(0, 2).toLowerCase() === "ae") {
+                result += lastWasConsonant ? "্যা" : "অ্যা"; i += 2; lastWasConsonant = false; continue;
+            }
+
+            if (remaining.startsWith("..")) { result += "."; i += 2; lastWasConsonant = false; continue; }
+            if (remaining.startsWith("``")) { result += "্\u200C"; i += 2; lastWasConsonant = false; continue; }
+            if (englishText[i] === '.') { result += "।"; i++; lastWasConsonant = false; continue; }
+            if (remaining.startsWith("t`")) { result += "ৎ"; i += 2; lastWasConsonant = false; continue; }
+
+            if (englishText[i] === ':') { result += "ঃ"; i++; lastWasConsonant = false; continue; }
+            if (englishText[i] === '^') { result += "ঁ"; i++; lastWasConsonant = false; continue; }
+            if (englishText[i] === '$') { result += "৳"; i++; lastWasConsonant = false; continue; }
+            if (englishText[i] === '`') { result += "্"; i++; lastWasConsonant = false; continue; }
+            if (englishText[i] === '~') { result += "\u200C"; i++; lastWasConsonant = false; continue; }
+            if (englishText[i] === '&') { result += "ঁ"; i++; lastWasConsonant = false; continue; }
+
+            if (englishText[i] >= '0' && englishText[i] <= '9') {
+                const bnDigits = "০১২৩৪৫৬৭৮৯";
+                result += bnDigits[englishText[i].charCodeAt(0) - 48];
+                lastWasConsonant = false;
+                i++;
+                continue;
+            }
+
+            // Smart Quotes
+            if (englishText[i] === '\'' || englishText[i] === '"') {
+                let isOpening = false;
+                if (i === 0) {
+                    if (typeBuffer.length > 0) {
+                        let last = typeBuffer.slice(-1);
+                        if ([' ', '\n', '\t', '\r', '(', '[', '{', '-'].includes(last)) isOpening = true;
+                    }
+                } else {
+                    let prev = englishText[i - 1];
+                    if ([' ', '\n', '\t', '\r', '(', '[', '{', '-'].includes(prev)) isOpening = true;
+                }
+                if (englishText[i] === '\'') result += isOpening ? "‘" : "’";
+                else result += isOpening ? "“" : "”";
+                lastWasConsonant = false;
+                i++;
+                continue;
+            }
+
+            let vMatch = "";
+            for (const s of vowels) {
+                if (remaining.startsWith(s)) { vMatch = s; break; }
+            }
+
+            if (vMatch !== "") {
+                if (lastWasConsonant) result += karMap[vMatch];
+                else result += indVowMap[vMatch];
+                lastWasConsonant = false;
+                i += vMatch.length;
+                continue;
+            }
+
+            let cMatch = "";
+            for (const s of consonants) {
+                if (remaining.startsWith(s)) { cMatch = s; break; }
+            }
+
+            if (cMatch !== "") {
+                if (cMatch === "q" || cMatch === "Q") {
+                    result += "্";
+                    lastWasConsonant = false;
+                } else if (cMatch === "ng" || cMatch === "nG") {
+                    result += "ং";
+                    lastWasConsonant = false;
+                } else if (cMatch.toLowerCase() === "rr") {
+                    if (lastWasConsonant) {
+                        result += "্র";
+                        lastWasConsonant = true;
+                    } else {
+                        result += "র্";
+                        lastWasConsonant = false;
+                    }
+                } else if (cMatch === "Z") {
+                    result += "্য";
+                    lastWasConsonant = true;
+                } else if (cMatch.toLowerCase() === "y" || cMatch === "z") {
+                    if (lastWasConsonant && canJoin("য", cMatch)) result += "্য";
+                    else result += consMap[cMatch];
+                    lastWasConsonant = true;
+                } else if (cMatch.toLowerCase() === "w") {
+                    if (lastWasConsonant && canJoin("ব", "w")) {
+                        result += "্ব";
+                        lastWasConsonant = true;
+                    } else {
+                        result += "ও";
+                        lastWasConsonant = false;
+                    }
+                } else if (cMatch === "x" || cMatch === "X") {
+                    if (result === "") {
+                        result += "এক্স";
+                    } else {
+                        if (lastWasConsonant && canJoin(consMap[cMatch], cMatch)) result += "্" + consMap[cMatch];
+                        else result += consMap[cMatch];
+                    }
+                    lastWasConsonant = true;
+                } else {
+                    if (lastWasConsonant && canJoin(consMap[cMatch], cMatch)) result += "্" + consMap[cMatch];
+                    else result += consMap[cMatch];
+                    lastWasConsonant = true;
+                }
+                i += cMatch.length;
+                continue;
+            }
+
+            result += englishText[i];
+            lastWasConsonant = false;
+            i++;
+        }
+        return result;
+    }
+    // ====================================================================
+    // END: PARSE PHONETIC ENGINE
+    // ====================================================================
+
+    function setKeyboardLayout(layout, notify = false) {
+        currentLayout = layout;
+        typeBuffer = ''; 
+        activePreKar = '';
+        karJumpState = 0;
+        phoneticEnglishBuffer = ''; // ফনেটিক বাফার ক্লিয়ার
+        phoneticBanglaBuffer = '';  // ফনেটিক বাফার ক্লিয়ার
+        updateLayoutUI(notify);
+    }
     
     if (layoutBtn) {
         layoutBtn.addEventListener('click', (e) => {
@@ -31801,13 +32330,18 @@ function initializeKeyboardLayoutManager() {
             const layoutNames = {
                 'english': 'English',
                 'bijoy_unicode': 'বিজয় ইউনিকোড',
-                'bijoy_ansi': 'বিজয় আনসি'
+                'bijoy_ansi': 'বিজয় আনসি',
+				'phonetic': 'বাংলা ফনেটিক (Avro)'
             };
             showCustomAlert(`কীবোর্ড লেআউট: ${layoutNames[currentLayout]}`);
         }
     }
 
-    function setKeyboardLayout(layout, notify = false) {
+function setKeyboardLayout(layout, notify = false) {
+        // যদি সিলেক্ট করা লেআউটটি ইংরেজি না হয়, তবে সেটি মনে রাখুন
+        if (layout !== 'english') {
+            lastNonEnglishLayout = layout;
+        }
         currentLayout = layout;
         typeBuffer = ''; // লেআউট চেঞ্জ হলে বাফার ক্লিয়ার
         activePreKar = '';
@@ -31878,17 +32412,42 @@ function initializeKeyboardLayoutManager() {
     }
 
 
-    document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function(e) {
         const target = e.target;
         const isEditable = target.tagName === 'TEXTAREA' || target.tagName === 'INPUT' || target.isContentEditable;
         
+        // --- নতুন: ডিরেক্ট লেআউট শর্টকাট (Ctrl + 1, 2, 3, 4) ---
+        if (e.ctrlKey && !e.altKey && !e.shiftKey) {
+            if (e.key === '1') {
+                e.preventDefault();
+                setKeyboardLayout('bijoy_unicode', true);
+                return;
+            } else if (e.key === '2') {
+                e.preventDefault();
+                setKeyboardLayout('english', true);
+                return;
+            } else if (e.key === '3') {
+                e.preventDefault();
+                setKeyboardLayout('bijoy_ansi', true);
+                return;
+            } else if (e.key === '4') {
+                e.preventDefault();
+                setKeyboardLayout('phonetic', true);
+                return;
+            }
+        }
+        // -----------------------------------------------------
+
         const isToggleShortcut = e.ctrlKey && (e.code === 'Space' || e.key.toLowerCase() === 'k');
         
         if (isToggleShortcut) {
             e.preventDefault();
-            const layouts = ['english', 'bijoy_unicode', 'bijoy_ansi'];
-            const nextLayout = layouts[(layouts.indexOf(currentLayout) + 1) % layouts.length];
-            setKeyboardLayout(nextLayout, true);
+            // যদি বর্তমানে ইংরেজি থাকে, তবে সর্বশেষ ব্যবহৃত বাংলা লেআউটে যাবে, অন্যথায় ইংরেজিতে ফিরবে
+            if (currentLayout === 'english') {
+                setKeyboardLayout(lastNonEnglishLayout, true);
+            } else {
+                setKeyboardLayout('english', true);
+            }
             return;
         }
 
@@ -31899,7 +32458,7 @@ function initializeKeyboardLayoutManager() {
             if (['button', 'checkbox', 'radio', 'range', 'color', 'file', 'submit', 'reset', 'image', 'hidden'].includes(type)) return;
         }
 
-        // স্পেস, এন্টার বা অ্যারো কীতে বাফার রিসেট
+// স্পেস, এন্টার বা অ্যারো কীতে বাফার রিসেট
         if (e.key === 'Enter' || e.key === ' ' || e.key.startsWith('Arrow')) {
             if (currentLayout === 'bijoy_unicode' && karJumpState === 1 && activePreKar !== '') {
                 // আটকে থাকা প্রি-কার বসিয়ে দেওয়া
@@ -31908,11 +32467,80 @@ function initializeKeyboardLayoutManager() {
             typeBuffer = '';
             activePreKar = '';
             karJumpState = 0;
-            return; // স্বাভাবিক আচরণ চলতে দিন
+            phoneticEnglishBuffer = ''; // স্পেস দিলে ফনেটিক বাফারও ক্লিয়ার
+            phoneticBanglaBuffer = '';  // স্পেস দিলে ফনেটিক বাফারও ক্লিয়ার
+            return; 
         }
+
 
         // ব্যাকস্পেস লজিক (C++ এর মতো)
         if (e.key === 'Backspace') {
+            if (currentLayout === 'phonetic') {
+                if (phoneticEnglishBuffer.length > 0) {
+                    e.preventDefault();
+                    if (phoneticEnglishBuffer.endsWith("//")) {
+                        phoneticEnglishBuffer = phoneticEnglishBuffer.slice(0, -2);
+                        if (phoneticEnglishBuffer.length > 0) phoneticEnglishBuffer = phoneticEnglishBuffer.slice(0, -1);
+                    } else {
+                        let lastChar = phoneticEnglishBuffer.slice(-1);
+                        phoneticEnglishBuffer = phoneticEnglishBuffer.slice(0, -1);
+                        if (lastChar === '/' && phoneticEnglishBuffer.endsWith("/")) {
+                            phoneticEnglishBuffer = phoneticEnglishBuffer.slice(0, -1);
+                        }
+                    }
+
+                    // রি-ক্যালকুলেট
+                    let matchLen = 0;
+                    let matchedBangla = "";
+                    let bufferToMatch = phoneticEnglishBuffer;
+                    let trailingPunct = "";
+
+                    if (phoneticCombinations[bufferToMatch]) {
+                        matchLen = bufferToMatch.length;
+                        matchedBangla = phoneticCombinations[bufferToMatch];
+                    }
+
+                    if (matchLen === 0) {
+                        let tempBuffer = bufferToMatch;
+                        while (tempBuffer.length > 0) {
+                            let lastChar = tempBuffer.slice(-1);
+                            if (/[a-zA-Z]/.test(lastChar)) break;
+                            trailingPunct = lastChar + trailingPunct;
+                            tempBuffer = tempBuffer.slice(0, -1);
+                        }
+                        if (phoneticCombinations[tempBuffer]) {
+                            matchLen = tempBuffer.length;
+                            matchedBangla = phoneticCombinations[tempBuffer];
+                            bufferToMatch = tempBuffer; // Update bufferToMatch for prefix calculation
+                        }
+                    }
+
+                    let bangla = "";
+                    if (matchLen > 0) {
+                        let prefix = phoneticEnglishBuffer.substring(0, phoneticEnglishBuffer.length - matchLen - trailingPunct.length);
+                        bangla = parsePhonetic(prefix) + matchedBangla + parsePhonetic(trailingPunct);
+                    } else {
+                        bangla = parsePhonetic(phoneticEnglishBuffer);
+                    }
+
+                    let commonLen = 0;
+                    let minLen = Math.min(phoneticBanglaBuffer.length, bangla.length);
+                    while (commonLen < minLen && phoneticBanglaBuffer[commonLen] === bangla[commonLen]) {
+                        commonLen++;
+                    }
+
+                    let backspaceCount = phoneticBanglaBuffer.length - commonLen;
+                    let newCharsToType = bangla.substring(commonLen);
+
+                    if (backspaceCount > 0 || newCharsToType.length > 0) {
+                        insertTextToElement(target, newCharsToType, backspaceCount);
+                    }
+
+                    phoneticBanglaBuffer = bangla;
+                    typeBuffer = bangla;
+                    return;
+                }
+            }
             if (currentLayout === 'bijoy_unicode') {
                 if (karJumpState === 1 && activePreKar !== '') {
                     e.preventDefault(); // ওএস-এর ব্যাকস্পেস ব্লক করুন
@@ -31978,7 +32606,74 @@ function initializeKeyboardLayoutManager() {
             value = target.value;
         }
         const prevChar = start > 0 ? value.substring(start - 1, start) : '';
+        // --- ফনেটিক টাইপিং লজিক শুরু ---
+        if (currentLayout === 'phonetic') {
+            // শুধুমাত্র অক্ষর, সংখ্যা এবং নির্দিষ্ট যতিচিহ্ন প্রসেস করবে
+            if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+                e.preventDefault();
+                let inputChar = e.key;
 
+                phoneticEnglishBuffer += inputChar;
+
+                let matchLen = 0;
+                let matchedBangla = "";
+                let bufferToMatch = phoneticEnglishBuffer;
+                let trailingPunct = "";
+
+                // ম্যাক্রো চেক (যেমন: "facebook", "Allah")
+                if (phoneticCombinations[bufferToMatch]) {
+                    matchLen = bufferToMatch.length;
+                    matchedBangla = phoneticCombinations[bufferToMatch];
+                }
+
+                if (matchLen === 0) {
+                    let tempBuffer = bufferToMatch;
+                    while (tempBuffer.length > 0) {
+                        let lastChar = tempBuffer.slice(-1);
+                        if (/[a-zA-Z]/.test(lastChar)) break;
+                        trailingPunct = lastChar + trailingPunct;
+                        tempBuffer = tempBuffer.slice(0, -1);
+                    }
+                    if (phoneticCombinations[tempBuffer]) {
+                        matchLen = tempBuffer.length;
+                        matchedBangla = phoneticCombinations[tempBuffer];
+                        bufferToMatch = tempBuffer; // Update for prefix
+                    }
+                }
+
+                let bangla = "";
+                if (matchLen > 0) {
+                    let prefix = phoneticEnglishBuffer.substring(0, phoneticEnglishBuffer.length - matchLen - trailingPunct.length);
+                    bangla = parsePhonetic(prefix) + matchedBangla + parsePhonetic(trailingPunct);
+                } else {
+                    bangla = parsePhonetic(phoneticEnglishBuffer);
+                }
+
+                let commonLen = 0;
+                let minLen = Math.min(phoneticBanglaBuffer.length, bangla.length);
+                while (commonLen < minLen && phoneticBanglaBuffer[commonLen] === bangla[commonLen]) {
+                    commonLen++;
+                }
+
+                let backspaceCount = phoneticBanglaBuffer.length - commonLen;
+                let newCharsToType = bangla.substring(commonLen);
+
+                if (backspaceCount > 0 || newCharsToType.length > 0) {
+                    insertTextToElement(target, newCharsToType, backspaceCount);
+                }
+
+                phoneticBanglaBuffer = bangla;
+                typeBuffer = bangla;
+
+                if (phoneticEnglishBuffer.endsWith("///")) {
+                    phoneticEnglishBuffer = "";
+                    phoneticBanglaBuffer = "";
+                    typeBuffer = "";
+                }
+                return;
+            }
+        }
+        // --- ফনেটিক টাইপিং লজিক শেষ ---
 
         if (currentLayout === 'bijoy_unicode') {
             let outputChar = getBijoyChar(key);
