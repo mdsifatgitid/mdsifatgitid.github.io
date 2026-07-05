@@ -13474,7 +13474,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pauseResumeTypingBtn.innerText = 'থামান';
         }
     };
-
+	
     const endTest = async () => {
         clearInterval(timer);
         isTestActive = false;
@@ -24003,7 +24003,7 @@ function initializeEmergencyNumbers() {
                 const allCustomNumbers = await idbGet('customEmergencyNumbers') || {};
                 const originalDefaultItem = defaultNumbers.find(d => `${location}-${defaultNumbers.indexOf(d)}` === key);
 
-                // যদি কোনো কিছু পরিবর্তন হয়, তবেই সেভ করুন
+                // যদি কোনো কিছু পরিবর্তন হয়, তবেই সেভ করুন।
                 if (newName !== item.name || newNumber !== item.number) {
                     allCustomNumbers[key] = { name: newName, number: newNumber };
                     await idbSet('customEmergencyNumbers', allCustomNumbers);
