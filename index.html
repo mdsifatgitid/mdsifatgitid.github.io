@@ -7947,6 +7947,31 @@ body.sidebar-open #sidebarOverlay {
 /* END: Canvas Tab Styles */
 /* ======================================================== */
 
+/* ======================================================== */
+/* START: Font Converter Expand/Collapse Styles */
+/* ======================================================== */
+.font-section-hidden {
+    display: none !important;
+}
+.textarea-expanded {
+    height: 60vh; /* !important সরানো হয়েছে যাতে ড্র্যাগ করে রিসাইজ করা যায় */
+    transition: height 0.3s ease-in-out;
+}
+.clickable-header {
+    cursor: pointer;
+    transition: color 0.3s ease;
+    display: inline-block;
+}
+.clickable-header:hover {
+    color: #3b82f6; 
+}
+.dark .clickable-header:hover {
+    color: #60a5fa;
+}
+/* ======================================================== */
+/* END: Font Converter Expand/Collapse Styles */
+/* ======================================================== */
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
 </head>
@@ -14216,6 +14241,66 @@ const phoneticCombinations = {
 };
 // ====================================================================
 // END: PHONETIC MAPPING OBJECTS
+// ====================================================================
+
+// ====================================================================
+// START: FONT CONVERTER FULLSCREEN TOGGLE SCRIPT
+// ====================================================================
+const textAreaLeftForToggle = document.getElementById('textAreaLeft');
+const textAreaRightForToggle = document.getElementById('textAreaRight');
+
+if (textAreaLeftForToggle && textAreaRightForToggle) {
+    const leftSection = textAreaLeftForToggle.closest('.font-converter-section');
+    const rightSection = textAreaRightForToggle.closest('.font-converter-section');
+    
+    const unicodeHeader = leftSection.querySelector('.font-section-header h2');
+    const bijoyHeader = rightSection.querySelector('.font-section-header h2');
+
+    unicodeHeader.classList.add('clickable-header');
+    bijoyHeader.classList.add('clickable-header');
+    unicodeHeader.title = "ক্লিক করে বক্সটি বড় বা ছোট করুন";
+    bijoyHeader.title = "ক্লিক করে বক্সটি বড় বা ছোট করুন";
+
+    let currentExpanded = 'none';
+
+    unicodeHeader.addEventListener('click', () => {
+        // আপনি নিজে ড্র্যাগ করে সাইজ পরিবর্তন করলে যে ইনলাইন স্টাইল বসে, তা ক্লিয়ার করা হচ্ছে
+        textAreaLeftForToggle.style.height = ''; 
+        textAreaRightForToggle.style.height = '';
+
+        if (currentExpanded === 'left') {
+            rightSection.classList.remove('font-section-hidden');
+            textAreaLeftForToggle.classList.remove('textarea-expanded');
+            currentExpanded = 'none';
+        } else {
+            rightSection.classList.add('font-section-hidden');
+            leftSection.classList.remove('font-section-hidden');
+            textAreaLeftForToggle.classList.add('textarea-expanded');
+            textAreaRightForToggle.classList.remove('textarea-expanded');
+            currentExpanded = 'left';
+        }
+    });
+
+    bijoyHeader.addEventListener('click', () => {
+        // ইনলাইন হাইট ক্লিয়ার করা হচ্ছে
+        textAreaLeftForToggle.style.height = ''; 
+        textAreaRightForToggle.style.height = '';
+
+        if (currentExpanded === 'right') {
+            leftSection.classList.remove('font-section-hidden');
+            textAreaRightForToggle.classList.remove('textarea-expanded');
+            currentExpanded = 'none';
+        } else {
+            leftSection.classList.add('font-section-hidden');
+            rightSection.classList.remove('font-section-hidden');
+            textAreaRightForToggle.classList.add('textarea-expanded');
+            textAreaLeftForToggle.classList.remove('textarea-expanded');
+            currentExpanded = 'right';
+        }
+    });
+}
+// ====================================================================
+// END: FONT CONVERTER FULLSCREEN TOGGLE SCRIPT
 // ====================================================================
 
 // ====================================================================
