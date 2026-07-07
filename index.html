@@ -8185,7 +8185,7 @@ body.sidebar-open #sidebarOverlay {
                         <svg class="w-4 h-4 text-indigo-600 check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                     </button>
                     <button class="layout-option w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between group" data-layout="bijoy_unicode">
-                        <span>বিজয় ইউনিকোড</span>
+                        <span>বাংলা ইউনিকোড</span>
                         <svg class="w-4 h-4 text-indigo-600 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                     </button>
                     <button class="layout-option w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between group" data-layout="bijoy_ansi">
@@ -32763,7 +32763,7 @@ function updateLayoutUI(notify = false) {
                 layoutBtn.setAttribute('data-tooltip', `English ${shortcutHint}`);
             } else if (currentLayout === 'bijoy_unicode') {
                 indicator.className = "absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white transform translate-x-1/4 -translate-y-1/4";
-                layoutBtn.setAttribute('data-tooltip', `বিজয় ইউনিকোড ${shortcutHint}`);
+                layoutBtn.setAttribute('data-tooltip', `বাংলা ইউনিকোড ${shortcutHint}`);
             } else if (currentLayout === 'bijoy_ansi') {
                 indicator.className = "absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-blue-500 ring-2 ring-white transform translate-x-1/4 -translate-y-1/4";
                 layoutBtn.setAttribute('data-tooltip', `বিজয় আনসি ${shortcutHint}`);
@@ -32779,7 +32779,7 @@ function updateLayoutUI(notify = false) {
         if (notify) {
             const layoutNames = {
                 'english': 'English',
-                'bijoy_unicode': 'বিজয় ইউনিকোড',
+                'bijoy_unicode': 'বাংলা ইউনিকোড',
                 'bijoy_ansi': 'বিজয় আনসি',
                 'phonetic': 'বাংলা ফনেটিক (Avro)',
                 'arabic_phonetic': 'Arabic Phonetic',
