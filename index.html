@@ -22916,43 +22916,44 @@ async function pasteFromClipboard(textareaId) {
                 break;
             }
 			
-	// START: JS PASTE LOGIC FOR V5 (FINAL FIX FOR QUOTATION SPACING)
+// START: JS PASTE LOGIC FOR V5 (FINAL FIX FOR QUOTATION SPACING & LRM)
 			case 'double-enter-v5': {
-                // ১. বেসিক ক্লিনআপ (একাধিক লাইন এবং স্পেস কমানো)
-                let processedText = clipboardText.trim()
-                    .replace(/(\r?\n\s*){2,}/g, '\n')
-                    .replace(/^\s+/gm, '')
-                    .replace(/ {2,}/g, ' ');
+                // [নতুন সংযোজন] LRM (\u200E) হ্যান্ডলিং
+                // ১. লাইনের শুরুতে থাকা LRM (এবং তার আশেপাশের স্পেস) সম্পূর্ণ মুছে ফেলা হবে
+                let processedText = clipboardText.replace(/^[ \t]*\u200E+[ \t\u200E]*/gm, '');
+                
+                // ২. শব্দের মাঝে বা শেষে থাকা বাকি LRM-গুলোকে স্পেসে রূপান্তর করা হবে
+                processedText = processedText.replace(/\u200E/g, ' ');
 
-                // ২. চিহ্নের আগের বাড়তি স্পেস মুছে ফেলা (ফ্যান্সি কোটসহ)
+                // ৩. বেসিক ক্লিনআপ (একাধিক লাইন এবং স্পেস কমানো)
+                processedText = processedText.trim()
+                    .replace(/(\r?\n\s*){2,}/g, '\n')
+                    .replace(/^\s+/gm, '') // লাইনের শুরুতে থাকা যেকোনো স্পেস মোছা
+                    .replace(/ {2,}/g, ' '); // LRM থেকে তৈরি হওয়া ডাবল স্পেস থাকলে তা সিঙ্গেল স্পেস হয়ে যাবে
+
+                // ৪. চিহ্নের আগের বাড়তি স্পেস মুছে ফেলা (ফ্যান্সি কোটসহ)
                 processedText = processedText.replace(/\s+([।|,|’|”|Õ|Ó])/g, '$1');
 
-                // ৩. দাড়ি ও পাইপের পরের স্পেস এবং এন্টার হ্যান্ডেলিং
-                // এখানে ' এবং " এর জন্য এক্সক্লুশন লজিক যোগ করা হয়েছে
+                // ৫. দাড়ি ও পাইপের পরের স্পেস এবং এন্টার হ্যান্ডেলিং
                 processedText = processedText.replace(/([।|])([”’ÓÕ]?)(\s*)/g, (match, dandi, quote, whitespace, offset, fullText) => {
                     const quoteChar = quote || '';
                     
-                    // চেক: দাড়ি/পাইপের ঠিক পরেই (বা স্পেসের পরে) ' অথবা " আছে কিনা
                     const nextChar = fullText[offset + match.length];
                     if (nextChar === "'" || nextChar === '"') {
-                        // যদি ' বা " পাওয়া যায়, তবে যা আছে তাই থাকবে (কোনো পরিবর্তন হবে না)
                         return match;
                     }
 
-                    // সাধারণ ভিউ ৫ লজিক (অন্যান্য ক্ষেত্রে কাজ করবে)
                     if (/\n|\r/.test(whitespace)) {
-                        // যদি এন্টার থাকে, তবে একটি স্পেস এবং একটি এন্টার নিশ্চিত করবে
                         return `${dandi}${quoteChar} \n`;
                     } else {
-                        // অন্যথায় শুধু একটি স্পেস নিশ্চিত করবে
                         return `${dandi}${quoteChar} `;
                     }
                 });
 
-                // ৪. কমা (,) চিহ্নের পরে একটি স্পেস নিশ্চিত করা
+                // ৬. কমা (,) চিহ্নের পরে একটি স্পেস নিশ্চিত করা
                 processedText = processedText.replace(/([,])(?!\s|$|[”’ÓÕ])/g, '$1 ');
 
-                // ৫. শেষে ডাবল এন্টার হ্যান্ডলিং
+                // ৭. শেষে ডাবল এন্টার হ্যান্ডলিং
                 if (textarea.value.trim() !== '') {
                     textToInsert = '\n\n' + processedText;
                 } else {
@@ -22960,7 +22961,7 @@ async function pasteFromClipboard(textareaId) {
                 }
                 break;
             }
-		// END: JS PASTE LOGIC FOR V5 (FINAL FIX FOR QUOTATION SPACING)
+		// END: JS PASTE LOGIC FOR V5 (FINAL FIX FOR QUOTATION SPACING & LRM)
 
             case 'custom-serial': {
                 const prefix = customValue ? customValue.replace(/\{serial\}/g, serialCounter) : '';
