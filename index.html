@@ -14339,7 +14339,7 @@ if (textAreaLeftForToggle && textAreaRightForToggle) {
             "্": "&",
 
             // বিবিধ
-            "।": "|",        "॥": "||",       "‘": "Ô",        "’": "Õ",        "“": "Ò",        "”": "Ó",        "৷": "৷",        "৥": "৥",
+            "।": "|",        "॥": "\\",      "‘": "Ô",        "’": "Õ",        "“": "Ò",        "”": "Ó",        "৷": "৷",        "৥": "৥",
 
 
 			
@@ -14402,7 +14402,7 @@ if (textAreaLeftForToggle && textAreaRightForToggle) {
             "&": "্",
 
             // বিবিধ
-           	"¯’": "¯’",		"”Q": "”Q",		 "|": "।",        "||": "॥",       "Ô": "‘",        "Õ": "’",        "Ò": "“",        "Ó": "”",        " ": " ",        ".": ".",        ",": ",",        "-": "-",
+           	"¯’": "¯’",		"”Q": "”Q",		 "|": "।",        "\\": "॥",       "Ô": "‘",        "Õ": "’",        "Ò": "“",        "Ó": "”",        " ": " ",        ".": ".",        ",": ",",        "-": "-",
             "?": "?",        "!": "!",        "'": "'",        "(": "(",        ")": ")",	"iæ": "রু",	"eªæ": "ব্রু", 	"Zz": "তু",	"nŸ": "হ্ব",
 
             // যুক্তবর্ণ সেকশন
@@ -14527,7 +14527,7 @@ if (textAreaLeftForToggle && textAreaRightForToggle) {
 			"wwó": "wów",	"šÔ": "š‘",	"dÖ": "d«",  "f’": "f‚",	"šÕ": "š’", "¯Ô": "¯‘",	"ÓP": "”P", "ÓT": "”T", "e«": "eª", 	"g…": "g„",	"e…" : "e„",	"U«" : "Uª",	"d«" : "d«",	"k«" : "kÖ",	"'‡" : "'†",	"D`¨vc": "D`&&hvc", "D`¨vwc": "D`&&hvwc", "D`¨vcx": "D`&&hvcx",
 			"'‰" : "'ˆ",		"gœ": "¤œ",		"Auv": "Avu",		"iÒ": "iæ",		"M«": "MÖ",	"KÍ¡": "³¦", "¯-":"¯Í", 	"U©y": "Uz©",	"¨~": "‚¨", 		"©¨y": "y©¨", "©¨~": "~¨",	"¨©": "©¨",	"©¨z": "z©¨", "©¨‚": "‚©¨",	"©z": "z©",	"©‚": "‚©",	"©y": "y©", "©~": "~©", "P‚©Ó": "P‚©",	"MÖÒ": "MÖæ",	"Ê": "æ",	"­": "ø",
 			"b‚": "b~", "”Q¦": "”Q¡", "h়": "q","h‡়v": "‡qv","h‡়": "‡q","Ww়": "wo", "›`«": "›`ª", "fÕZ": "f‚Z", "fÕwg": "f‚wg", "fÕgx": "f‚gx", "fÕ‡g": "f‚‡g", "fÕ†g": "f‚‡g", "bz": "by",
-			"ÎÒ": "Îæ", "_ªÒ": "_ªæ", "×Ÿ": "×¦", "`ªÒ": "`ªæ", "š-": "šÍ", "š-¡": "šÍ¦", "c&Î": "ßª", "cÖÒ": "cÖæ", "eªÒ": "eªæ", "åÒ": "åæ", "kÖÒ": "kÖæ", "¯ªÒ": "¯ªæ", "c«": "cÖ",	"÷«": "÷ª",	"U«": "Uª", "n¦": "nŸ",
+			"ÎÒ": "Îæ", "_ªÒ": "_ªæ", "×Ÿ": "×¦", "`ªÒ": "`ªæ", "š-": "šÍ", "š-¡": "šÍ¦", "c&Î": "ßª", "cÖÒ": "cÖæ", "eªÒ": "eªæ", "åÒ": "åæ", "kÖÒ": "kÖæ", "¯ªÒ": "¯ªæ", "c«": "cÖ",	"÷«": "÷ª",	"U«": "Uª", "n¦": "nŸ", "||": "\\",
 			"Z¨z" : "Zz¨", "wL«": "wLª", "`«": "`ª",  "c…": "c„",  "¯§…": "¯§„", "N«": "Nª", "h©ve": "i¨ve", "h©vg": "i¨vg", "h©v‡e": "i¨v‡e", "h©v‡g": "i¨v‡g",
         };
 
@@ -18483,32 +18483,47 @@ if (expenseTrackerTab) expenseTrackerTab.addEventListener('click', () => {    sh
                 if (textAreaLeft) {
                     addState('textAreaLeft');
                     textAreaLeft.addEventListener('input', () => {
-                        // অটোমেটিক অক্ষর রিপ্লেসমেন্ট
+                        // ইউনিকোড বক্সের অটোমেটিক অক্ষর রিপ্লেসমেন্ট
                         const value = textAreaLeft.value;
                         const selectionStart = textAreaLeft.selectionStart;
 
-                        // রিপ্লেসমেন্টের তালিকা
-                        // decomposed form (letter + nukta) থেকে precomposed form-এ পরিবর্তন করা হচ্ছে
                         let newValue = value
                             .replace(/য়/g, 'য়') // U+09AF U+09BC  -> U+09DF
                             .replace(/ড়/g, 'ড়') // U+09A1 U+09BC  -> U+09DC
                             .replace(/ঢ়/g, 'ঢ়') // U+09A2 U+09BC  -> U+09DD
-							.replace(/্।/g, '॥')
-							.replace(/।।/g, '॥');
+                            .replace(/্।/g, '॥') // হসন্ত + দাঁড়ি -> ডাবল দাঁড়ি
+                            .replace(/।।/g, '॥'); // দাঁড়ি + দাঁড়ি -> ডাবল দাঁড়ি
                         
-                        // যদি কোনো পরিবর্তন হয়ে থাকে, তাহলে টেক্সটবক্স আপডেট করুন
                         if (newValue !== value) {
                             textAreaLeft.value = newValue;
-                            // টাইপ করার সময় কার্সরের অবস্থান ঠিক রাখার জন্য
-                            textAreaLeft.setSelectionRange(selectionStart, selectionStart);
+                            const diff = value.length - newValue.length;
+                            const newPos = Math.max(0, selectionStart - diff);
+                            textAreaLeft.setSelectionRange(newPos, newPos);
                         }
 
-                        addState('textAreaLeft'); // আপনার বিদ্যমান আনডু/রিডু কার্যকারিতার জন্য
+                        addState('textAreaLeft');
                     });
                 }
                 if (textAreaRight) {
                     addState('textAreaRight');
-                    textAreaRight.addEventListener('input', () => addState('textAreaRight'));
+                    textAreaRight.addEventListener('input', () => {
+                        // বিজয় (ANSI) বক্সের অটোমেটিক অক্ষর রিপ্লেসমেন্ট
+                        const value = textAreaRight.value;
+                        const selectionStart = textAreaRight.selectionStart;
+
+                        // || টাইপ করলে \ (ব্যাকস্ল্যাশ) হবে
+                        // (জাভাস্ক্রিপ্টে ব্যাকস্ল্যাশ বোঝাতে \\ ব্যবহার করতে হয়)
+                        let newValue = value.replace(/\|\|/g, '\\');
+
+                        if (newValue !== value) {
+                            textAreaRight.value = newValue;
+                            const diff = value.length - newValue.length;
+                            const newPos = Math.max(0, selectionStart - diff);
+                            textAreaRight.setSelectionRange(newPos, newPos);
+                        }
+
+                        addState('textAreaRight');
+                    });
                 }
 // ====================================================================
 // END: AUTO REPLACE FOR FONT CONVERTER য় ড় ঢ়
@@ -33187,7 +33202,7 @@ if (currentLayout === 'english' || currentLayout === 'custom_voice' || e.ctrlKey
                 // C++ এর মতো কম্বিনেশন লজিক (unicodeCombinations এর সমতুল্য)
                 // এখানে প্রয়োজনীয় কম্বিনেশনগুলো দেওয়া হলো, প্রয়োজনে আরও যোগ করতে পারেন
                 const combinations = {
-                    " ু": " ‍ু", " ূ": " ‍ূ", " ৃ": " ‍ৃ", "ঁা": "াঁ", "ঁু": "ুঁ", "ঁূ": "ূঁ", "ঁৃ": "ৃঁ", "অা": "আ", "র‌ে্য": "র‌্যে", "র‌ৈ্য": "র‌্যৈ", "ু্য": "্যু", "ু্র": "্রু", "ূ্য": "্যূ", "ূ্র": "্রূ", "ৃ্য": "্যৃ", "ৃ্র": "্রৃ", "েঁা": "োঁ", "েঁৗ": "ৌঁ", "ো": "ো", "েো": " ো", "েৌ": "ৌ", "ৌ": "ৌ", "্া": "আ", "্ি": "ই", "্িি": "ই", "্িী": "ঈ", "্ী": "ঈ", "্ু": "উ", "্ূ": "ঊ", "্ৃ": "ঋ", "্ে": "এ", "্েে": "এ", "্েৈ": "ঐ", "্ৈ": "ঐ", "্ৈে": "ঐ", "্ৈৈ": "ঐ", "্্": "্‌", "্ৗ": "ঔ", "্।": "॥"
+                    " ু": " ‍ু", " ূ": " ‍ূ", " ৃ": " ‍ৃ", "ঁা": "াঁ", "ঁু": "ুঁ", "ঁূ": "ূঁ", "ঁৃ": "ৃঁ", "অা": "আ", "র‌ে্য": "র‌্যে", "র‌ৈ্য": "র‌্যৈ", "ু্য": "্যু", "ু্র": "্রু", "ূ্য": "্যূ", "ূ্র": "্রূ", "ৃ্য": "্যৃ", "ৃ্র": "্রৃ", "েঁা": "োঁ", "েঁৗ": "ৌঁ", "ো": "ো", "েো": " ো", "েৌ": "ৌ", "ৌ": "ৌ", "্া": "আ", "্ি": "ই", "্িি": "ই", "্িী": "ঈ", "্ী": "ঈ", "্ু": "উ", "্ূ": "ঊ", "্ৃ": "ঋ", "্ে": "এ", "্েে": "এ", "্েৈ": "ঐ", "্ৈ": "ঐ", "্ৈে": "ঐ", "্ৈৈ": "ঐ", "্্": "্‌", "্ৗ": "ঔ", "্।": "॥", "।।": "॥"
                 };
 
                 // র্য ফিক্স
