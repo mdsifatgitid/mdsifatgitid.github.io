@@ -33422,15 +33422,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const customExportMenu = document.getElementById('customExportMenu');
     const exportBtnText = document.getElementById('exportBtnText');
 
-    let currentFile = null;
+let currentFile = null;
     let currentFileType = null;
-    // পরিবর্তন: ডিফল্ট ফরম্যাট এখন 'doc' করা হয়েছে যাতে পুরানো ওয়ার্ডে সমস্যা না হয়
-    let selectedExportFormat = 'doc'; 
+    
+    // --- নতুন: লোকাল স্টোরেজ থেকে সেভ করা ফরম্যাট লোড করা, না থাকলে ডিফল্ট 'doc' ---
+    let selectedExportFormat = localStorage.getItem('bt_export_format') || 'doc'; 
+
+    const formatLabels = {
+        'default': 'Default (DOC)',
+        'docx': 'DOCX',
+        'doc': 'DOC (Legacy)',
+        'xlsx': 'Excel',
+        'txt': 'TXT'
+    };
 
     // --- Dropdown Logic ---
     if (customExportDropdownBtn) {
-        // শুরুতে বাটন টেক্সট আপডেট করা
-        if (exportBtnText) exportBtnText.textContent = `ফরম্যাট: Default (DOC)`;
+        // শুরুতে সেভ করা ফরম্যাট অনুযায়ী বাটন টেক্সট আপডেট করা
+        if (exportBtnText) {
+            exportBtnText.textContent = `ফরম্যাট: ${formatLabels[selectedExportFormat] || 'DOC (Legacy)'}`;
+        }
 
         customExportDropdownBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -33446,17 +33457,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 'default' সিলেক্ট করলে আমরা 'doc' কে ডিফল্ট হিসেবে ধরব
                 selectedExportFormat = value === 'default' ? 'doc' : value;
                 
-                // বাটন টেক্সট আপডেট
-                const formatLabels = {
-                    'default': 'Default (DOC)',
-                    'docx': 'DOCX',
-                    'doc': 'DOC (Legacy)',
-                    'xlsx': 'Excel',
-                    'txt': 'TXT'
-                };
-                // ভ্যালু যদি লিস্টে না থাকে (যেমন default এর আসল মান)
-                const label = formatLabels[value] || formatLabels[selectedExportFormat] || 'DOC';
+                // --- নতুন: সিলেক্ট করা ফরম্যাট লোকাল স্টোরেজে সেভ করা ---
+                localStorage.setItem('bt_export_format', selectedExportFormat);
                 
+                // বাটন টেক্সট আপডেট
+                const label = formatLabels[value] || formatLabels[selectedExportFormat] || 'DOC (Legacy)';
                 if (exportBtnText) exportBtnText.textContent = `ফরম্যাট: ${label}`;
                 customExportMenu.classList.add('hidden');
             });
@@ -33933,28 +33938,76 @@ document.addEventListener('DOMContentLoaded', () => {
                 const blob = new Blob([convertedText], { type: "text/plain;charset=utf-8" });
                 saveAs(blob, outputFileName);
             }
-            // Case 3: DOCX to DOCX (Structure Preserving - Text Only for now)
+// Case 3: DOCX to DOCX (100% Structure & Formatting Preserving)
             else if (currentFileType === 'docx' && finalFormat === 'docx') {
                 const arrayBuffer = await currentFile.arrayBuffer();
                 const zip = await JSZip.loadAsync(arrayBuffer);
-                const docXml = await zip.file("word/document.xml").async("string");
                 
+                // মূল ডকুমেন্ট ফাইল রিড করা
+                const docXml = await zip.file("word/document.xml").async("string");
                 const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(docXml, "text/xml");
+                const xmlDoc = parser.parseFromString(docXml, "application/xml"); // XML পার্সিং
+                
+                const wNS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
                 const textNodes = xmlDoc.getElementsByTagName("w:t");
 
                 for (let i = 0; i < textNodes.length; i++) {
-                    const originalText = textNodes[i].textContent;
+                    const tNode = textNodes[i];
+                    const originalText = tNode.textContent;
+                    
                     if (originalText.trim()) {
-                        // লজিক প্রয়োগ
-                        textNodes[i].textContent = performUserRequestedConversion(originalText);
+                        // ১. টেক্সট কনভার্ট করা
+                        tNode.textContent = performUserRequestedConversion(originalText);
+
+                        // ২. যদি বিজয়ে কনভার্ট হয়, তবে ফন্ট SutonnyMJ করে দেওয়া
+                        if (targetType === 'bijoy') {
+                            let rNode = tNode.parentNode; // <w:r> ট্যাগ খোঁজা
+                            if (rNode && rNode.nodeName === "w:r") {
+                                
+                                // <w:rPr> (Run Properties) খোঁজা বা তৈরি করা
+                                let rPrNode = null;
+                                for (let j = 0; j < rNode.childNodes.length; j++) {
+                                    if (rNode.childNodes[j].nodeName === "w:rPr") {
+                                        rPrNode = rNode.childNodes[j];
+                                        break;
+                                    }
+                                }
+                                if (!rPrNode) {
+                                    rPrNode = xmlDoc.createElementNS(wNS, "w:rPr");
+                                    rNode.insertBefore(rPrNode, rNode.firstChild);
+                                }
+
+                                // <w:rFonts> খোঁজা বা তৈরি করা
+                                let rFontsNode = null;
+                                for (let j = 0; j < rPrNode.childNodes.length; j++) {
+                                    if (rPrNode.childNodes[j].nodeName === "w:rFonts") {
+                                        rFontsNode = rPrNode.childNodes[j];
+                                        break;
+                                    }
+                                }
+                                if (!rFontsNode) {
+                                    rFontsNode = xmlDoc.createElementNS(wNS, "w:rFonts");
+                                    rPrNode.appendChild(rFontsNode);
+                                }
+
+                                // ফন্ট প্রপার্টি SutonnyMJ সেট করা এবং থিম ফন্ট রিমুভ করা
+                                rFontsNode.setAttribute("w:ascii", "SutonnyMJ");
+                                rFontsNode.setAttribute("w:hAnsi", "SutonnyMJ");
+                                rFontsNode.setAttribute("w:cs", "SutonnyMJ");
+                                rFontsNode.removeAttribute("w:asciiTheme");
+                                rFontsNode.removeAttribute("w:hAnsiTheme");
+                                rFontsNode.removeAttribute("w:cstheme");
+                            }
+                        }
                     }
                 }
 
+                // আপডেট করা XML কে স্ট্রিংয়ে রূপান্তর করে আবার জিপে রিপ্লেস করা
                 const serializer = new XMLSerializer();
                 const newDocXml = serializer.serializeToString(xmlDoc);
                 zip.file("word/document.xml", newDocXml);
                 
+                // নতুন DOCX ফাইল জেনারেট করে ডাউনলোড করা
                 const blob = await zip.generateAsync({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
                 saveAs(blob, outputFileName);
             }
