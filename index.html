@@ -33938,75 +33938,90 @@ let currentFile = null;
                 const blob = new Blob([convertedText], { type: "text/plain;charset=utf-8" });
                 saveAs(blob, outputFileName);
             }
-// Case 3: DOCX to DOCX (100% Structure & Formatting Preserving)
+// Case 3: DOCX to DOCX (100% Structure & Formatting Preserving incl. Headers/Footers/Footnotes)
             else if (currentFileType === 'docx' && finalFormat === 'docx') {
                 const arrayBuffer = await currentFile.arrayBuffer();
                 const zip = await JSZip.loadAsync(arrayBuffer);
                 
-                // মূল ডকুমেন্ট ফাইল রিড করা
-                const docXml = await zip.file("word/document.xml").async("string");
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(docXml, "application/xml"); // XML পার্সিং
-                
                 const wNS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
-                const textNodes = xmlDoc.getElementsByTagName("w:t");
+                const parser = new DOMParser();
+                const serializer = new XMLSerializer();
 
-                for (let i = 0; i < textNodes.length; i++) {
-                    const tNode = textNodes[i];
-                    const originalText = tNode.textContent;
-                    
-                    if (originalText.trim()) {
-                        // ১. টেক্সট কনভার্ট করা
-                        tNode.textContent = performUserRequestedConversion(originalText);
+                // যেসব XML ফাইলে টেক্সট থাকতে পারে সেগুলো ফিল্টার করা (বডি, ফুটনোট, এন্ডনোট, হেডার, ফুটার)
+                const filesToProcess = [];
+                zip.forEach((relativePath, file) => {
+                    if (relativePath.match(/^word\/(document|footnotes|endnotes|header\d+|footer\d+)\.xml$/)) {
+                        filesToProcess.push(relativePath);
+                    }
+                });
 
-                        // ২. যদি বিজয়ে কনভার্ট হয়, তবে ফন্ট SutonnyMJ করে দেওয়া
-                        if (targetType === 'bijoy') {
-                            let rNode = tNode.parentNode; // <w:r> ট্যাগ খোঁজা
-                            if (rNode && rNode.nodeName === "w:r") {
-                                
-                                // <w:rPr> (Run Properties) খোঁজা বা তৈরি করা
-                                let rPrNode = null;
-                                for (let j = 0; j < rNode.childNodes.length; j++) {
-                                    if (rNode.childNodes[j].nodeName === "w:rPr") {
-                                        rPrNode = rNode.childNodes[j];
-                                        break;
+                // প্রতিটি ফাইলে লুপ চালিয়ে কনভার্ট করা
+                for (const filePath of filesToProcess) {
+                    const xmlString = await zip.file(filePath).async("string");
+                    const xmlDoc = parser.parseFromString(xmlString, "application/xml"); // XML পার্সিং
+                    const textNodes = xmlDoc.getElementsByTagName("w:t");
+
+                    let fileModified = false;
+
+                    for (let i = 0; i < textNodes.length; i++) {
+                        const tNode = textNodes[i];
+                        const originalText = tNode.textContent;
+                        
+                        if (originalText.trim()) {
+                            // ১. টেক্সট কনভার্ট করা
+                            tNode.textContent = performUserRequestedConversion(originalText);
+                            fileModified = true;
+
+                            // ২. যদি বিজয়ে কনভার্ট হয়, তবে ফন্ট SutonnyMJ করে দেওয়া
+                            if (targetType === 'bijoy') {
+                                let rNode = tNode.parentNode; // <w:r> ট্যাগ খোঁজা
+                                if (rNode && rNode.nodeName === "w:r") {
+                                    
+                                    // <w:rPr> (Run Properties) খোঁজা বা তৈরি করা
+                                    let rPrNode = null;
+                                    for (let j = 0; j < rNode.childNodes.length; j++) {
+                                        if (rNode.childNodes[j].nodeName === "w:rPr") {
+                                            rPrNode = rNode.childNodes[j];
+                                            break;
+                                        }
                                     }
-                                }
-                                if (!rPrNode) {
-                                    rPrNode = xmlDoc.createElementNS(wNS, "w:rPr");
-                                    rNode.insertBefore(rPrNode, rNode.firstChild);
-                                }
-
-                                // <w:rFonts> খোঁজা বা তৈরি করা
-                                let rFontsNode = null;
-                                for (let j = 0; j < rPrNode.childNodes.length; j++) {
-                                    if (rPrNode.childNodes[j].nodeName === "w:rFonts") {
-                                        rFontsNode = rPrNode.childNodes[j];
-                                        break;
+                                    if (!rPrNode) {
+                                        rPrNode = xmlDoc.createElementNS(wNS, "w:rPr");
+                                        rNode.insertBefore(rPrNode, rNode.firstChild);
                                     }
-                                }
-                                if (!rFontsNode) {
-                                    rFontsNode = xmlDoc.createElementNS(wNS, "w:rFonts");
-                                    rPrNode.appendChild(rFontsNode);
-                                }
 
-                                // ফন্ট প্রপার্টি SutonnyMJ সেট করা এবং থিম ফন্ট রিমুভ করা
-                                rFontsNode.setAttribute("w:ascii", "SutonnyMJ");
-                                rFontsNode.setAttribute("w:hAnsi", "SutonnyMJ");
-                                rFontsNode.setAttribute("w:cs", "SutonnyMJ");
-                                rFontsNode.removeAttribute("w:asciiTheme");
-                                rFontsNode.removeAttribute("w:hAnsiTheme");
-                                rFontsNode.removeAttribute("w:cstheme");
+                                    // <w:rFonts> খোঁজা বা তৈরি করা
+                                    let rFontsNode = null;
+                                    for (let j = 0; j < rPrNode.childNodes.length; j++) {
+                                        if (rPrNode.childNodes[j].nodeName === "w:rFonts") {
+                                            rFontsNode = rPrNode.childNodes[j];
+                                            break;
+                                        }
+                                    }
+                                    if (!rFontsNode) {
+                                        rFontsNode = xmlDoc.createElementNS(wNS, "w:rFonts");
+                                        rPrNode.appendChild(rFontsNode);
+                                    }
+
+                                    // ফন্ট প্রপার্টি SutonnyMJ সেট করা এবং থিম ফন্ট রিমুভ করা
+                                    rFontsNode.setAttribute("w:ascii", "SutonnyMJ");
+                                    rFontsNode.setAttribute("w:hAnsi", "SutonnyMJ");
+                                    rFontsNode.setAttribute("w:cs", "SutonnyMJ");
+                                    rFontsNode.removeAttribute("w:asciiTheme");
+                                    rFontsNode.removeAttribute("w:hAnsiTheme");
+                                    rFontsNode.removeAttribute("w:cstheme");
+                                }
                             }
                         }
                     }
+
+                    // যদি ফাইলটিতে কোনো পরিবর্তন হয়, তবে সেটি আপডেট করে জিপে রিপ্লেস করা
+                    if (fileModified) {
+                        const newXml = serializer.serializeToString(xmlDoc);
+                        zip.file(filePath, newXml);
+                    }
                 }
 
-                // আপডেট করা XML কে স্ট্রিংয়ে রূপান্তর করে আবার জিপে রিপ্লেস করা
-                const serializer = new XMLSerializer();
-                const newDocXml = serializer.serializeToString(xmlDoc);
-                zip.file("word/document.xml", newDocXml);
-                
                 // নতুন DOCX ফাইল জেনারেট করে ডাউনলোড করা
                 const blob = await zip.generateAsync({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
                 saveAs(blob, outputFileName);
