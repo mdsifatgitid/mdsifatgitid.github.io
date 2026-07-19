@@ -28462,7 +28462,19 @@ function initCricketTicker() {
     tickerContainer.classList.remove('hidden');
     tickerContainer.style.display = 'flex';
     
-    // বাকি কোড অপরিবর্তিত থাকবে...
+    tickerContainer.classList.add('cursor-pointer'); // মাউস নিলে হাতের মতো আইকন দেখাবে
+    tickerContainer.onclick = () => {
+        // যদি ব্যবহারকারী টেক্সট সিলেক্ট করে থাকে, তবে লিংক ওপেন হবে না
+        const selectedText = window.getSelection().toString();
+        if (selectedText.length > 0) {
+            return; // এখানেই থেমে যাবে
+        }
+
+        if (savedUrl) {
+            window.open(savedUrl, '_blank'); // নতুন ট্যাবে লিংক ওপেন হবে
+        }
+    };
+	
     // লোডিং বা প্রাথমিক অবস্থা (প্রথমবার)
     if (!lastCricketState.isInitialized) {
         ctMatchStatus.innerText = ""; // লাইভ লেখা সরানো হয়েছে
