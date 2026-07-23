@@ -30130,15 +30130,18 @@ document.addEventListener('DOMContentLoaded', () => {
 // ====================================================================
 (function() {
     const _hexName = "\x4d\x64\x20\x53\x68\x61\x68\x69\x64\x75\x7a\x7a\x61\x6d\x61\x6e\x20\x53\x69\x66\x61\x74";
-    function setAndProtectName(name) {
+    
+    function setAndProtectName(jsonName) {
         const targets = [
-            document.getElementById('preloader-name'), 
-            //document.querySelector('.important-links-container h2') 
+            { el: document.getElementById('preloader-name'), nameToSet: jsonName }, 
+            { el: document.querySelector('.important-links-container h2'), nameToSet: _hexName } 
         ];
 
-        targets.forEach(element => {
+        targets.forEach(target => {
+            const element = target.el;
+            const name = target.nameToSet;
+
             if (element) {
-                
                 element.innerText = name;
                 const observer = new MutationObserver((mutations) => {
                     mutations.forEach((mutation) => {
@@ -30157,6 +30160,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
     async function initIdentity() {
         const githubUrl = 'https://raw.githubusercontent.com/mdsifatgitid/mdsifatgitid.github.io/main/author.json';
         try {
@@ -30174,6 +30178,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setAndProtectName(_hexName);
         }
     }
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initIdentity);
     } else {
