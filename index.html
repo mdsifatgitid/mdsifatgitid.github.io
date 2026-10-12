@@ -9168,7 +9168,7 @@ body.sidebar-open #sidebarOverlay {
         </div>
 
         <!-- কথা এনকোডিং টগল বাটন -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 has-tooltip" data-tooltip="কথা এনকোডিংয়ের ক্ষেত্রে Kothamala ফন্ট ব্যবহার করতে হবে">
             <label class="switch">
                 <input type="checkbox" id="kotha-encoding-toggle">
                 <span class="slider round"></span>
@@ -16444,7 +16444,7 @@ try {
         const isKothaSaved = localStorage.getItem('isKothaEncodingEnabled') === 'true';
         kothaEncodingToggle.checked = isKothaSaved;
 
-        // ২. UI আপডেট করার ফাংশন
+// ২. UI আপডেট করার ফাংশন
         const updateKothaUI = (isChecked) => {
             if (rightBoxTitle) {
                 rightBoxTitle.innerText = isChecked ? "কথা" : "বিজয়";
@@ -16455,6 +16455,13 @@ try {
             if (btnToUnicode) {
                 btnToUnicode.innerText = isChecked ? "কথা থেকে ইউনিকোড" : "বিজয় থেকে ইউনিকোড";
             }
+
+            // +++ নতুন: প্লেসহোল্ডার টেক্সট আপডেট +++
+            const textAreaRightObj = document.getElementById('textAreaRight');
+            if (textAreaRightObj) {
+                textAreaRightObj.placeholder = isChecked ? "এখানে কথা টেক্সট লিখুন" : "এখানে বিজয় টেক্সট লিখুন";
+            }
+
             // +++ নতুন: ফাইল কনভার্টার বাটন আপডেট +++
             const exportBijoyBtn = document.getElementById('exportBijoyBtn');
             const importToBijoyBtn = document.getElementById('importToBijoyBtn');
@@ -16468,6 +16475,7 @@ try {
             if (importToBijoyBtn) {
                 importToBijoyBtn.innerText = isChecked ? "কথা টেক্সটবক্সে নিন" : "বিজয় টেক্সটবক্সে নিন";
             }
+
             // যদি লাইভ কনভার্ট অন থাকে, তবে সাথে সাথে কনভার্ট করে বক্স আপডেট করবে
             const liveConvertToggle = document.getElementById('live-convert-toggle');
             if (liveConvertToggle && liveConvertToggle.checked) {
@@ -16483,7 +16491,7 @@ try {
             const isChecked = kothaEncodingToggle.checked;
             localStorage.setItem('isKothaEncodingEnabled', isChecked);
             updateKothaUI(isChecked);
-            showCustomAlert(`কথা এনকোডিং: ${isChecked ? 'চালু' : 'বন্ধ'} করা হয়েছে।`);
+            showCustomAlert(`কথা এনকোডিং: ${isChecked ? 'চালু করা হয়েছে। ফন্ট: Kothamala' : 'বন্ধ করা হয়েছে ফন্ট: Sutonnymj'}`);
         });
     }
     // ==========================================
