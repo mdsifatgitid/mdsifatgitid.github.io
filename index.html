@@ -7981,6 +7981,198 @@ body.sidebar-open #sidebarOverlay {
 /* END: Font Converter Expand/Collapse Styles */
 /* ======================================================== */
 
+/* ======================================================== */
+/* START: Right Side Feature Slider Styles (Overlap Fixed) */
+/* ======================================================== */
+.right-slider-wrapper {
+    display: none; /* ডিফল্টভাবে লুকানো */
+}
+
+/* যখন স্ক্রিন ১২৫০px বা তার বড় হবে তখন দেখাবে */
+@media (min-width: 1250px) {
+    .right-slider-wrapper {
+        display: block;
+        position: fixed;
+        top: 90px;
+        right: 10px; /* ডানপাশ থেকে ১০পিক্সেল গ্যাপ */
+        
+        /* ম্যাজিক ট্রিক: মূল কন্টেইনার (1000px) বাদে ডানে যে জায়গা থাকবে, ঠিক ততটুকু চওড়া হবে */
+        width: calc(((100vw - 1000px) / 2) - 25px);
+        min-width: 150px; /* সর্বনিম্ন ১৫পিক্সেল যেন একেবারে গায়েব না হয় */
+        max-width: 320px; /* সর্বোচ্চ ৩২০পিক্সেল */
+        
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e2e8f0;
+        z-index: 40;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        height: auto; /* কন্টেন্ট অনুযায়ী হাইট বাড়বে */
+    }
+    
+    .dark .right-slider-wrapper {
+        background-color: rgba(31, 41, 55, 0.95);
+        border-color: #374151;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+}
+
+.slider-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
+}
+
+.slide-item {
+    min-width: 100%;
+    padding: 20px 15px 40px 15px; /* প্যাডিং কমানো হয়েছে ছোট জায়গার জন্য */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    word-wrap: break-word; /* লেখা ভেঙে নিচে যাবে */
+}
+
+.slide-icon-box {
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.slide-title {
+    font-size: 1rem; /* ফন্ট সাইজ রেস্পন্সিভ করা হলো */
+    font-weight: 700;
+    color: #3f51b5;
+    margin-bottom: 8px;
+    font-family: 'Bornomala', sans-serif;
+    line-height: 1.2;
+}
+
+.dark .slide-title {
+    color: #60a5fa;
+}
+
+.slide-desc {
+    font-size: 0.85rem; /* ফন্ট সাইজ কমানো হলো */
+    color: #4b5563;
+    line-height: 1.5;
+    text-align: justify;
+}
+
+.dark .slide-desc {
+    color: #d1d5db;
+}
+
+/* Navigation & Dots */
+.slider-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #3f51b5;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease, background-color 0.2s;
+    z-index: 10;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+.dark .slider-nav-btn { background-color: #4f46e5; }
+.slider-nav-btn:hover { background-color: #303f9f; }
+.right-slider-wrapper:hover .slider-nav-btn { opacity: 1; }
+
+.slider-dots {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    z-index: 10;
+}
+.slider-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #cbd5e1;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.dark .slider-dot { background-color: #4b5563; }
+.slider-dot.active { background-color: #3f51b5; width: 14px; border-radius: 4px; }
+.dark .slider-dot.active { background-color: #60a5fa; }
+/* ======================================================== */
+/* END: Right Side Feature Slider Styles */
+/* ======================================================== */
+/* ======================================================== */
+/* START: Slide Content Animations (Glass Reveal Effect) */
+/* ======================================================== */
+/* ডিফল্ট অবস্থায় লেখাগুলো একটু নিচে ও অদৃশ্য থাকবে */
+.slide-item .slide-icon-box,
+.slide-item .slide-title,
+.slide-item .slide-desc {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* যখন স্লাইডটি স্ক্রিনে আসবে (active-slide), তখন এগুলো একে একে ভেসে উঠবে */
+.slide-item.active-slide .slide-icon-box {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.1s;
+}
+
+.slide-item.active-slide .slide-title {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.2s;
+    
+    /* গ্লাস শিমার/শাইন (Glass Shine) ইফেক্ট */
+    background: linear-gradient(120deg, #3f51b5 30%, #38bdf8 50%, #3f51b5 70%);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: textShine 2.5s linear infinite;
+}
+
+.dark .slide-item.active-slide .slide-title {
+    background: linear-gradient(120deg, #60a5fa 30%, #ffffff 50%, #60a5fa 70%);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.slide-item.active-slide .slide-desc {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.3s;
+}
+
+/* শাইন মুভ করার এনিমেশন */
+@keyframes textShine {
+    0% { background-position: 200% center; }
+    100% { background-position: -200% center; }
+}
+/* ======================================================== */
+/* END: Slide Content Animations */
+/* ======================================================== */
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
 </head>
@@ -12932,6 +13124,7 @@ body.sidebar-open #sidebarOverlay {
 
 
 
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের HTML Content কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
 
 <!-- ======================================================== -->
@@ -13097,6 +13290,29 @@ body.sidebar-open #sidebarOverlay {
 		
     </div>
 	
+	<!-- ======================================================== -->
+<!-- START: Right Side Feature Slider (Desktop Only) -->
+<!-- ======================================================== -->
+<div id="featureSliderWrapper" class="right-slider-wrapper group">
+    <!-- Slider Track -->
+    <div class="slider-track" id="sliderTrack">
+        <!-- স্লাইডগুলো জাভাস্ক্রিপ্ট দিয়ে এখানে যুক্ত হবে -->
+    </div>
+
+    <!-- Navigation Arrows -->
+    <button id="sliderPrevBtn" class="slider-nav-btn left-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+    </button>
+    <button id="sliderNextBtn" class="slider-nav-btn right-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+    </button>
+
+    <!-- Pagination Dots -->
+    <div class="slider-dots" id="sliderDots"></div>
+</div>
+<!-- ======================================================== -->
+<!-- END: Right Side Feature Slider -->
+<!-- ======================================================== -->
 <!--css style End-->
 
 <!--Script started from here-->
@@ -34625,6 +34841,7 @@ async function downloadTextboxContent(type) {
 // END: FILE CONVERTER SCRIPT (DOCX, DOC, XLSX, TXT) - DRAG DROP & FORMATTING
 // ====================================================================
 
+
 // ========================================================
 // START: CANVAS TOOLS SCRIPT
 // ========================================================
@@ -35551,6 +35768,159 @@ function getBaseUrl() {
 // END: PC FILE TRANSFER SCRIPT
 // ====================================================================
 
+
+// ====================================================================
+// START: RIGHT SIDE FEATURE SLIDER SCRIPT
+// ====================================================================
+function initializeRightSlider() {
+    const sliderWrapper = document.getElementById('featureSliderWrapper');
+    const sliderTrack = document.getElementById('sliderTrack');
+    const dotsContainer = document.getElementById('sliderDots');
+    const prevBtn = document.getElementById('sliderPrevBtn');
+    const nextBtn = document.getElementById('sliderNextBtn');
+
+    if (!sliderWrapper || !sliderTrack) return;
+
+    // আপনার স্লাইডারের ডেটা (ভিডিওর মতো করে কাস্টমাইজ করা)
+    const slidesData = [
+        {
+            icon: "🅰️",
+            iconBg: "bg-pink-100 text-pink-600 dark:bg-pink-900/50 dark:text-pink-400",
+            title: "নতুন 'কথা কীবোর্ড'",
+            desc: 'অভ্র, বিজয়, বর্ণ, কণ্ঠ এর বেস্ট অল্টারনেটিভ! সাথে রয়েছে অসংখ্য ফিচার!'
+        },
+        {
+            icon: "🤖",
+            iconBg: "bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400",
+            title: "Kotha AI Hub",
+            desc: 'কথা কীবোন্ডে রয়েছে Kotha AI Hub! কীবের্ডেই রয়েছে <strong class="text-orange-500">AI এর শক্তি!</strong> বানান শুদ্ধিকরণ, গ্রামার কারেকশন, OCR (টেক্সট এক্সট্রাক্ট) এবং বিল্ট-ইন এআই অ্যাসিস্ট্যান্ট।'
+        },
+        {
+            icon: "🎙️",
+            iconBg: "bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400",
+            title: "ওয়াইফাই ভয়েস টাইপিং",
+            desc: 'কথা কীবোর্ড এর মাধ্যমে পিসিতে কোনো মাইক্রোফোন ছাড়াই মোবাইল দিয়ে স্ক্যান করে <strong class="text-orange-500">বাংলা, ইংরেজি, আরবিসহ</strong> পৃথিবীর যেকোনো ভাষায় নিখুঁত টাইপ করুন!'
+        }
+    ];
+
+    let currentSlideIndex = 0;
+    let autoSlideInterval;
+
+    // স্লাইডগুলো HTML এ জেনারেট করা
+    function renderSlides() {
+        sliderTrack.innerHTML = '';
+        dotsContainer.innerHTML = '';
+
+        slidesData.forEach((slide, index) => {
+            // Slide Item
+            const slideEl = document.createElement('div');
+            slideEl.className = 'slide-item';
+            slideEl.innerHTML = `
+                <div class="slide-icon-box ${slide.iconBg}">${slide.icon}</div>
+                <h4 class="slide-title">${slide.title}</h4>
+                <p class="slide-desc">${slide.desc}</p>
+            `;
+            sliderTrack.appendChild(slideEl);
+
+            // Dot Indicator
+            const dot = document.createElement('div');
+            dot.className = `slider-dot ${index === 0 ? 'active' : ''}`;
+            dot.addEventListener('click', () => goToSlide(index));
+            dotsContainer.appendChild(dot);
+        });
+    }
+
+// স্লাইড পরিবর্তন করার ফাংশন (এনিমেশন ট্রিগার সহ)
+    function goToSlide(index) {
+        currentSlideIndex = index;
+        
+        // Circular Logic (শেষে গেলে প্রথমে, প্রথমে গেলে শেষে)
+        if (currentSlideIndex < 0) currentSlideIndex = slidesData.length - 1;
+        if (currentSlideIndex >= slidesData.length) currentSlideIndex = 0;
+
+        // স্লাইডারের ট্র্যাক ঘোরানো
+        sliderTrack.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+
+        // ডটস আপডেট করা
+        const dots = dotsContainer.querySelectorAll('.slider-dot');
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentSlideIndex);
+        });
+
+        // +++ নতুন: প্রতিটি স্লাইডে এনিমেশন রি-ট্রিগার করার জন্য active-slide ক্লাস যুক্ত ও রিমুভ করা +++
+        const slides = sliderTrack.querySelectorAll('.slide-item');
+        slides.forEach((slide, i) => {
+            if (i === currentSlideIndex) {
+                slide.classList.add('active-slide');
+            } else {
+                slide.classList.remove('active-slide');
+            }
+        });
+    }
+
+    // ইনিশিয়ালাইজেশন এর সময় প্রথম স্লাইডটিতে এনিমেশন দিতে
+    function renderSlides() {
+        sliderTrack.innerHTML = '';
+        dotsContainer.innerHTML = '';
+
+        slidesData.forEach((slide, index) => {
+            const slideEl = document.createElement('div');
+            // প্রথম স্লাইডে ডিফল্টভাবে active-slide ক্লাসটি থাকবে
+            slideEl.className = `slide-item ${index === 0 ? 'active-slide' : ''}`;
+            slideEl.innerHTML = `
+                <div class="slide-icon-box ${slide.iconBg}">${slide.icon}</div>
+                <h4 class="slide-title">${slide.title}</h4>
+                <p class="slide-desc">${slide.desc}</p>
+            `;
+            sliderTrack.appendChild(slideEl);
+
+            const dot = document.createElement('div');
+            dot.className = `slider-dot ${index === 0 ? 'active' : ''}`;
+            dot.addEventListener('click', () => {
+                goToSlide(index);
+                resetAutoSlide();
+            });
+            dotsContainer.appendChild(dot);
+        });
+    }
+
+    // বাটন ইভেন্ট
+    if (prevBtn) prevBtn.addEventListener('click', () => {
+        goToSlide(currentSlideIndex - 1);
+        resetAutoSlide(); // ক্লিক করলে টাইমার রিসেট হবে
+    });
+
+    if (nextBtn) nextBtn.addEventListener('click', () => {
+        goToSlide(currentSlideIndex + 1);
+        resetAutoSlide();
+    });
+
+    // অটো স্লাইড ফাংশন (প্রতি ৫ সেকেন্ডে)
+    function startAutoSlide() {
+        autoSlideInterval = setInterval(() => {
+            goToSlide(currentSlideIndex + 1);
+        }, 5000); // ৫০০০ মিলিসেকেন্ড = ৫ সেকেন্ড
+    }
+
+    function resetAutoSlide() {
+        clearInterval(autoSlideInterval);
+        startAutoSlide();
+    }
+
+    // হোভার করলে স্লাইডার থেমে যাবে, মাউস সরালে আবার চলবে
+    sliderWrapper.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
+    sliderWrapper.addEventListener('mouseleave', startAutoSlide);
+
+    // ইনিশিয়ালাইজেশন
+    renderSlides();
+    startAutoSlide();
+}
+
+// পেজ লোড হলে স্লাইডার চালু করুন
+initializeRightSlider();
+// ====================================================================
+// END: RIGHT SIDE FEATURE SLIDER SCRIPT
+// ====================================================================
 
 
 //এই কমেন্টের আগেও নতুন ট্যাব এর স্ক্রিপ্ট বসানো যাবে বা বসাতে হয় ।
@@ -37266,5 +37636,6 @@ async function initializePublicComments() {
 <!-- ============================================== -->
 <!-- END: প্রোফাইল, স্টোরেজ উইন্ডো এবং নোটিফিকেশন Experimental -->
 <!-- ============================================== -->
+
 </body>
 </html>
