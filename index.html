@@ -106,6 +106,15 @@
     font-weight: normal;
     font-style: normal;
 }
+
+        /* 'Kothamala' ফন্টটি লোড করার জন্য @font-face যুক্ত করা হয়েছে। */
+        @font-face {
+            font-family: 'Kothamala';
+            src: url('https://cdn.jsdelivr.net/gh/mdsifatgitid/mdsifatgitid.github.io/Kothamala.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+		
 /* নতুন ফন্ট সেকশন শেষ */
 /* Preloader Styles (পরিবর্তিত) */
 #preloader {
@@ -8192,6 +8201,10 @@ body.sidebar-open #sidebarOverlay {
                         <span>বিজয় আনসি (ANSI)</span>
                         <svg class="w-4 h-4 text-indigo-600 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                     </button>
+					<button class="layout-option w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between group" data-layout="kotha_encoding">
+    <span>কথা এনকোডিং (Kotha)</span>
+    <svg class="w-4 h-4 text-indigo-600 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+</button>
 <button class="layout-option w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-between group" data-layout="phonetic">
                         <span>বাংলা ফনেটিক (Avro)</span>
                         <svg class="w-4 h-4 text-indigo-600 hidden check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -8256,7 +8269,15 @@ body.sidebar-open #sidebarOverlay {
                             <span>Bangla Keyboard (Kotha)</span>
                         </a>
                     </div>
-                    
+                    <!-- কথামালা ফন্ট ডাউনলোড লিংক -->
+                    <div class="has-tooltip" data-tooltip="Kotha Encoding এর জন্য Kothamala ফন্ট ডাউনলোড করুন">
+                        <a href="https://kothakeyboard.github.io/" target="_blank" class="w-full text-left px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-600 flex items-center gap-2 group transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.951-1.801"/>
+                            </svg>
+                            <span>Kothamala Font</span>
+                        </a>
+                    </div>                    
                     <!-- পিসি ফাইল ট্রান্সফার বাটন -->
                     <div class="border-t border-gray-200 dark:border-gray-600 mt-1 pt-1 has-tooltip" data-tooltip="পিসির সাথে লোকাল নেটওয়ার্কে ফাইল আদান-প্রদান করুন">
                         <button id="fileTransferTab" class="w-full text-left px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-600 flex items-center gap-2 transition-colors">
@@ -9106,6 +9127,11 @@ body.sidebar-open #sidebarOverlay {
 
 
 <!-- লাইভ টগল কনভার্টার অপশনস এবং কনভার্টার ওয়ার্ড কাউন্টার কন্টেইনার -->
+<style>
+    /* কথা এনকোডিং টগলের জন্য সবুজ রঙ */
+    #kotha-encoding-toggle:checked + .slider { background-color: #10b981 !important; }
+    #kotha-encoding-toggle:focus + .slider { box-shadow: 0 0 1px #10b981 !important; }
+</style>
 
 <div class="relative flex justify-center items-center">
     <!-- START: Unicode Textbox Word Counter (বামে থাকবে) -->
@@ -9129,14 +9155,26 @@ body.sidebar-open #sidebarOverlay {
     </div>
     <!-- END: Unicode Textbox Word Counter -->
 
-    <!-- লাইভ কনভার্টার টগল বাটন (সবসময় মাঝখানে থাকবে) -->
-    <div id="converter-options" class="flex items-center gap-3">
-        <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">ম্যানুয়াল কনভার্ট</span>
-        <label class="switch">
-            <input type="checkbox" id="live-convert-toggle">
-            <span class="slider round"></span>
-        </label>
-        <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">লাইভ কনভার্ট</span>
+    <!-- টগল বাটনস (সবসময় মাঝখানে থাকবে) -->
+    <div class="flex items-center gap-6">
+        <!-- লাইভ কনভার্টার টগল বাটন -->
+        <div id="converter-options" class="flex items-center gap-3">
+            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">ম্যানুয়াল কনভার্ট</span>
+            <label class="switch">
+                <input type="checkbox" id="live-convert-toggle">
+                <span class="slider round"></span>
+            </label>
+            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">লাইভ কনভার্ট</span>
+        </div>
+
+        <!-- কথা এনকোডিং টগল বাটন -->
+        <div class="flex items-center gap-2">
+            <label class="switch">
+                <input type="checkbox" id="kotha-encoding-toggle">
+                <span class="slider round"></span>
+            </label>
+            <span class="text-sm font-bold text-green-600 dark:text-green-400" style="font-family: 'Kothamala', sans-serif;">কথা এনকোডিং</span>
+        </div>
     </div>
 </div>
         <div class="font-converter-sections-wrapper">
@@ -9185,7 +9223,7 @@ body.sidebar-open #sidebarOverlay {
             <!-- ডান টেক্সটএরিয়া -->
             <div class="font-converter-section">
                 <div class="font-section-header">
-                    <h2>বিজয়</h2>
+                    <h2 id="rightBoxTitle">বিজয়</h2>
                     <div class="flex items-center gap-2">
                          <!-- Preset Dropdown Right -->
                         <div class="relative inline-block text-left">
@@ -12836,6 +12874,7 @@ body.sidebar-open #sidebarOverlay {
 <select id="liveMicLangCombo" class="p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-500 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
                 <option value="bn-BD" selected>বাংলা (Bangla)</option>
                 <option value="bijoy_ansi">বিজয় আন্সি (Bijoy Ansi)</option>
+				<option value="kotha_encoding">কথা এনকোডিং (Kotha Encoding)</option>
                 <option value="en-US">English (US)</option>
                 <option value="ar-SA">Arabic (Saudi Arabia)</option>
                 <option value="hi-IN">Hindi (India)</option>
@@ -14306,6 +14345,258 @@ if (textAreaLeftForToggle && textAreaRightForToggle) {
 // ====================================================================
 // START: FONT CONVERTER SCRIPT
 // ====================================================================
+
+// ====================================================================
+// START: KOTHA ENCODING MAPPINGS
+// ====================================================================
+const unicodeToKothaMap = {
+    "অ": "Ạ", "আ": "Ā", "ই": "Ī", "ঈ": "Ḯ", "উ": "Ū", "ঊ": "Ṵ", "ঋ": "Ṛ", "এ": "Ē", "ঐ": "Ḛ", "ও": "Ō", "ঔ": "Ṏ",
+    "ক": "ḳ", "খ": "Ḳ", "গ": "ḡ", "ঘ": "Ḡ", "ঙ": "ṅ", "চ": "ć", "ছ": "Ć", "জ": "ĵ", "ঝ": "Ĵ", "ঞ": "ñ",
+    "ট": "ṭ", "ঠ": "Ṭ", "ড": "ḍ", "ঢ": "Ḍ", "ণ": "ṇ", "ত": "ţ", "থ": "Ţ", "দ": "đ", "ধ": "Đ", "ন": "ń",
+    "প": "ṕ", "ফ": "ᶂ", "ব": "ḅ", "ভ": "ⱱ", "ম": "ṃ", "য": "ź", "র": "ŕ", "ল": "ĺ", "শ": "ś", "ষ": "Ś",
+    "স": "ş", "হ": "ĥ", "ড়": "ř", "ঢ়": "Ř", "য়": "ŷ", "ৎ": "ẗ", "ং": "ȵ", "ঃ": "ḧ", "ঁ": "ƈ", "ৰ": "ɹ", "ড়": "ř", "ঢ়": "Ř", "য়": "ŷ",
+    "র্বৃ": "ḅṛȑ", "ৱ": "ɹ", "ড়ে": "ēř", "ঢ়ে": "ēŘ", "য়ে": "ēŷ", "ড়ৈ": "œř", "ঢ়ৈ": "œŘ", "য়ৈ": "œŷ", "ড়ি": "īř", "ড়ো": "ēřā", "ঢ়ি": "īŘ", "য়ো": "ēŷā", "য়ি": "īŷ", "ড়ৌ": "ēřṏ", "ঢ়ো": "ēŘā", "ঢ়ৌ": "ēŘṏ", "য়ৌ": "ēŷṏ",
+    "!": "ǃ", "@": "ⓐ", "#": "♯", "$": "₮", "%": "⁒", "^": "Ɓ", "&": "ġ", "*": "∗", "(": "❨", ")": "❩",
+    "-": "˗", "_": "―", "=": "꞊", "+": "˖", "[": "⁅", "{": "❴", "]": "⁆", "}": "❵", "\\": "‥", "|": "․",
+    ";": ";", ":": "ː", "'": "′", "\"": "″", ",": "‚", "<": "˂", ".": "⸱", ">": "˃", "/": "∕", "?": "ʔ",
+    "`": "‵", "~": "‶",
+    "০": "⁰", "১": "¹", "২": "²", "৩": "³", "৪": "⁴", "৫": "⁵", "৬": "⁶", "৭": "⁷", "৮": "⁸", "৯": "⁹", "৳": "৳", "₹": "₹",
+    "া": "ā", "ি": "ī", "ী": "ḯ", "ু": "ū", "ূ": "ṵ", "ৃ": "ṛ",
+    "্র": "ȓ", "্য": "ÿ", "র্": "ȑ",
+    "ে": "ē", "ৈ": "œ", "ো": "ēā", "ৌ": "ēṏ", "ৗ": "ṏ",
+    "্": "ġ",
+    "।": "․", "॥": "‥", "‘": "‵", "’": "′", "“": "‶", "”": "″", "৷": "৷", "৥": "৥",
+    "ক্ক": "ǩ", "ক্ট": "ť", "ক্ত": "Ť", "ক্ব": "ḳɓ", "ক্র": "ķ", "ক্লি": "īḳľ", "ক্ল": "ḳľ", "ক্ষ": "Ķ", "ক্স": "ẍ", "খ্র": "Ḳȓ", "গ্দ": "Ď",
+    "গ্ধ": "Ð", "গ্ন": "ḡṉ", "গ্ম": "ḡṀ", "গ্র": "ḡŗ", "গ্ল": "ḡᶅ", "ঙ্ক": "ĸ", "ঙ্খ": "ᵰḲ", "ঙ্গ": "ğ", "ঙ্ঘ": "ᵰḠ", "চ্চ": "čć",
+    "চ্ছ": "čĆ", "“ছ": "‶Ć", "জ্জ": "ǰ", "জ্ঝ": "Ɉ", "জ্ঞ": "ǥ", "জ্ব": "ĵɓ", "জ্র": "ĵȓ", "ঞ্চ": "ċ", "ঞ্ছ": "ʂ", "ঞ্জ": "ɉ", "ন্ব": "ņƁ",
+    "ঞ্ঝ": "ǵ", "ট্ট": "ƫ", "ট্ব": "ṭɓ", "ট্ম": "ṭṀ", "ট্র": "ṭȓ", "ড্ড": "ď", "ড্র": "ḍȓ", "ঢ্র": "Ḍȓ", "ণ্ট": "ț", "ত্ব": "ţɓ",
+    "ণ্ঠ": "ṱ", "ণ্ড": "ḏ", "ণ্ণ": "ṇṉ", "ত্ত": "Ṱ", "ত্থ": "ŧ", "ত্ন": "ţṉ", "ত্ম": "ţṀ", "ত্র": "Ŧ", "দ্দ": "ḑ", "ঙ্ম": "ᵰṃ",
+    "দ্ধ": "Ḋ", "দ্ব": "ḓ", "দ্ভ": "ɖṾ", "দ্ম": "₥", "দ্র": "đȓ", "ধ্ব": "Đḇ", "ধ্ম": "ĐṀ", "ন্ত": "ņṪ", "ন্থ": "ņṯ", "ক্ম": "ṁ",
+    "ন্দ": "ŋđ", "ন্ধ": "Ɗ", "ন্ন": "ńṉ", "ন্ম": "ńṀ", "প্ট": "Ƭ", "প্ত": "Ț", "প্ন": "ṕṉ", "প্প": "ƥ", "প্র": "ṕŗ", "ক্ষ্ণ": "₭ɳ",
+    "প্ল": "ṕᶅ", "প্স": "Š", "ফ্র": "ᶂɍ", "ফ্ল": "ᶂľ", "ব্জ": "ȷ", "ব্দ": "Ḏ", "ব্ধ": "ƃ", "ব্ব": "ḅḇ", "ব্র": "ḅȓ", "গ্গ": "Ǥ",
+    "ব্ল": "ḅᶅ", "ভ্র": "ṿ", "ম্ন": "ḿṉ", "ম্ফ": "ᵮ", "ম্ব": "ḿƁ", "ম্ভ": "ḿṾ", "ম্ম": "ḿḾ", "ম্র": "ḿȓ", "ম্ল": "ḿᶅ", "থ্ব": "Ţɓ",
+    "ল্ক": "Ƙ", "ল্গ": "ģ", "ল্ট": "Ʈ", "ল্ড": "ḋ", "ল্প": "ƿ", "ল্ব": "ĺᵬ", "ল্ম": "ĺṀ", "ল্ল": "ĺᶅ", "শ্চ": "ç", "দ্দ্ব": "ḑɓ",
+    "শ্ন": "śṉ", "শ্ব": "śᵬ", "শ্ম": "śṀ", "শ্ল": "śᶅ", "ষ্ক": "ṩḱ", "ষ্ট": "ṥ", "ষ্ঠ": "ṡ", "ষ্ণ": "ṣ", "ষ্প": "ṩṖ", "ন্ত্ব": "ņṪɓ",
+    "ষ্ফ": "ș", "ষ্ম": "ṩḾ", "স্ক": "ꞩḱ", "স্খ": "ᶄ", "স্ট": "ṫ", "স্ত": "ꞩṪ", "স্থ": "ꞩṯ", "স্ন": "ꞩṉ", "স্প": "ꞩṖ", "স্রূ": "ꞩȓḒ",
+    "স্ফ": "ꞙ", "স্ব": "ꞩƁ", "স্ম": "ꞩḾ", "স্ল": "ꞩᶅ", "হ্ণ": "ĥɳ", "হ্ন": "ṋ", "হ্ম": "Ṃ", "হ্ল": "ĥľ", "হু": "ȟ", "ড়ু": "řƲ",
+    "হৃ": "ɦ", "গু": "ǧ", "শু": "š", "ক্ত্র": "Ťɍ", "ক্ন": "ḳɳ", "ক্ষ্ম": "ɱ", "ক্ষ্র": "₭ɍ", "গ্ব": "ḡġḅ", "য়ু": "ŷū",
+    "ঘ্ন": "Ḡṉ", "ঘ্র": "Ḡȓ", "ঙ্গু": "ğū", "জ্জ্ব": "ǰɓ", "ত্ত্ব": "Ṱɓ", "ত্রু": "Ŧư", "দ্রু": "đȓư", "ভ্রু": "ṿư", "শ্রু": "śŗư", "য়ূ": "ŷṵ",
+    "ম্প": "ḿṖ", "্র্য": "ȓ‍ÿ", "র‌্য": "ŕÿ", "ক্য": "ḳÿ", "ল্যু": "ĺūÿ", "ক্লু": "ḳľμ", "ত্র্য": "Ŧÿ", "স্থ্য": "ꞩṯÿ", "দ্য": "đÿ",
+    "ভ্য": "ⱱÿ", "ল্য": "ĺÿ", "দ্যু": "đūÿ", "ম্য": "ṃÿ", "ন্য": "ńÿ", "ণ্য": "ṇÿ", "কার্য": "ḳāźȑ", "র্ষ": "Śȑ", "র্য": "źȑ", "উদ্‌যা": "Ūđġ‌źā",
+    "ব্যু": "ḅūÿ", "হ্ব": "ĥḇ", "গ্নু": "ḡṉū", "র্ু": "μȑ", "র্ষূ": "Śṵȑ", "র্ষু": "Śūȑ", "–": "˗", "ড়ূ": "řṵ"
+};
+
+const kothaToUnicodeMap = {};
+Object.keys(unicodeToKothaMap).forEach(key => {
+    kothaToUnicodeMap[unicodeToKothaMap[key]] = key;
+});
+// ম্যানুয়ালি কিছু ওভাররাইড (C++ অনুযায়ী)
+kothaToUnicodeMap["ė"] = "ে";
+kothaToUnicodeMap["ɶ"] = "ৈ";
+kothaToUnicodeMap["ėā"] = "ো";
+kothaToUnicodeMap["ėṏ"] = "ৌ";
+
+const manualKothaReplacements = {
+    "Ēţē": "Ēēţ", "ēṃĐÿ": "ṃēĐÿ", "ćġć": "čć", "ÿū": "ūÿ", "ȑṛ": "ȑɼ", "ʀ": "˗", "˖ē": "˖ė", "˖œ": "˖ɶ", "āƈ": "ƈā", "ḯƈ": "ƈḯ",
+    "ṏƈ": "ƈṏ", "đÿū": "đūÿ", "‵ē": "‵ė", "‶ē": "‶ė", "˗ē": "˗ė", "❨ē": "❨ė", "‵œ": "‵ɶ", "‶œ": "‶ɶ", "˗œ": "˗ɶ", "❨œ": "ɶ",
+    "Ķū": "₭μ", "īīꞩṯţ": "īꞩṯīţ", "ṕμȑ": "ṕȑū", "ēē": "ē", "ėė": "ė", "ȑμ": "μȑ", "œœ": "œ", "ɶɶ": "ɶ", "ūū": "ū", "ṵṵ": "ṵ",
+    "ȑȑ": "ȑ", "ṛṛ": "ṛ", "ġġ": "ġ", "ȓȓ": "ȓ", "ṏṏ": "ṏ", "∕ē": "∕ė", "∕œ": "❨ɶ", "꞊ē": "꞊ė", "⁅ē": "⁅ė",
+    "⁅œ": "⁅ɶ", "❴ē": "❴ė", "❴œ": "❴ɶ", " ē": " ė", " œ": " ɶ", "ġ;": "ɿ", "ġ․": "‥", "ġṵ": "Ṵ", "ġṛ": "Ṛ", "ġē": "Ē",
+    "ġœ": "Ḛ", "ġń": "ṉ", "ġḅ": "ᵬ", "ġṃ": "Ṁ", "ġŌ": "Ō", "ġŌġź": "Ōÿ", "ġŌġŕ": "Ōȓ", "ġĺ": "ᶅ", "ġ‵": "ˆ", "ġṏ": "Ṏ",
+    "ġā": "Ā", "ġī": "Ī", "ġḯ": "Ḯ", "ġū": "Ū", "ġţ": "Ṫ", "❨Ạ❩ŕ": "❨Ạ❩ŕ", "ŢġŢ": "ŧ", "Ţġḅ": "Ţɓ", "Ţġź": "Ţÿ",
+    "Ţġŕ": "Ţȓ", "Ţȓ": "Ţȓ", "ţġŢ": "ŧ", "đġđ": "ḑ", "đġĐ": "Ḋ", "đġḅ": "ḓ", "đġⱱ": "ɖṾ", "đġṃ": "₥", "đġź": "đÿ",
+    "đġŕ": "đȓ", "đġḡ": "ƌḡ", "đġḠ": "ƌḠ", "đȓ": "đȓ", "đȓṵ": "đȓḒ", "đȓū": "đȓư", "ꞩṯṵ": "ꞩṯũ", "ꞩṯṛ": "ꞩṯɼ", "ꞩṯū": "ꞩṯμ",
+    "ꞩḱġŕ": "ꞩƙ", "ꞩḱġŕư": "ꞩƙμ", "ꞩḱġĺ": "ꞩḱľ", "ꞩḱṵ": "ꞩḱũ", "ꞩḱṛ": "ꞩḱɼ", "ꞩḱľū": "ꞩḱľμ", "ꞩḱȓ": "ꞩƙ", "ꞩḱū": "ꞩḱμ", "ꞩṪġḅ": "ꞩṪɓ",
+    "ꞩṪġŕ": "ꞩꞧ", "ꞩṪṵ": "ꞩṪũ", "ꞩṪṛ": "ꞩṪɼ", "ꞩṪȓ": "ꞩꞧ", "ꞩṪū": "ꞩⱦ", "ꞩƙṵ": "ꞩƙũ", "ꞩƙṛ": "ꞩƙɼ", "ꞩƙū": "ꞩƙμ", "ꞩṖġĺ": "ꞩṖᶅ",
+    "ƌḡġū": "đġǧ", "čćṵ": "čćũ", "čćṛ": "čćɼ", "čćū": "čćμ", "čĆġḅ": "čĆɓ", "čĆṵ": "čĆũ", "čĆṛ": "čĆɼ", "čĆȓ": "čĆɍ", "čĆū": "čĆμ",
+    "čñṵ": "čñũ", "čñṛ": "čñɼ", "čñū": "čñμ", "ŋđġḅ": "ŋḓ", "ŋđȓṵ": "ŋđȓḒ", "ŋđȓū": "ŋđȓư", "ŋṭṵ": "ŋṭũ", "ŋṭṛ": "ŋṭɼ", "ŋṭū": "ŋṭμ",
+    "ḿṾġŕ": "ḿṼ", "ḿṾȓ": "ḿṼ", "ḿṖġŕ": "ḿṖȓ", "ḿṖġĺ": "ḿṖᶅ", "ťṵ": "ťũ", "ťṛ": "ťɼ", "ťū": "ťμ", "Ðṵ": "Ðũ", "Ðṛ": "Ðɼ",
+    "Ðū": "Ðμ", "Ḋṵ": "Ḋũ", "Ḋṛ": "Ḋɼ", "Ḋū": "Ḋμ", "ṫṵ": "ṫũ", "ṫṛ": "ṫɼ", "ṫū": "ṫμ", "ṩḱṵ": "ṩḱũ", "ṩḱṛ": "ṩḱɼ",
+    "ṩḱȓ": "ṩƙ", "ṩḱū": "ṩḱμ", "ṩƙṵ": "ṩƙũ", "ṩƙṛ": "ṩƙṛ", "ṩƙū": "ṩƙμ", "ṩṖȓ": "ṩṖŗ", "ṩṖȓṵ": "ṩṖŗḒ", "ṩṖȓū": "ṩṖŗư", "ǩṵ": "ǩũ",
+    "ǩṛ": "ǩɼ", "ǩū": "ǩμ", "ķṵ": "ķũ", "ķṛ": "ķɼ", "ķū": "ķμ", "ᵰ₭ṵ": "ᵰ₭ũ", "ᵰ₭ṛ": "ᵰ₭ɼ", "ᵰ₭ū": "ᵰ₭μ", "ĸġŚ": "ᵰ₭",
+    "ĸṵ": "ĸũ", "ĸṛ": "ĸɼ", "ĸɍṵ": "ĸɍũ", "ĸɍṛ": "ĸɍɼ", "ĸɍū": "ĸɍμ", "ĸȓ": "ĸɍ", "ĸū": "ĸμ", "ǰġḅ": "ǰɓ", "Ťṵ": "Ťũ",
+    "Ťṛ": "Ťɼ", "Ťȓ": "Ťɍ", "Ťū": "Ťμ", "Đġḅ": "Đḇ", "Đġṃ": "ĐṀ", "Đġź": "Đÿ", "Ạġź": "Ạÿ", "Đġŕ": "Đȓ", "Ạġŕ": "Ạȓ",
+    "ǥṵ": "ǥũ", "Ɉṵ": "Ɉũ", "ƃṵ": "ƃũ", "ʂṵ": "ʂũ", "ṿṵ": "ṿḒ", "ċũ": "ċũ", "ǥṛ": "ǥɼ", "Ɉṛ": "Ɉɼ", "ƃṛ": "ƃɼ",
+    "ʂṛ": "ʂɼ", "ċɼ": "ċɼ", "Đȓ": "Đȓ", "Ạȓ": "Ạȓ", "Đȓṵ": "ĐȓḒ", "Đȓū": "Đȓư", "ƫṵ": "ƫũ", "ƫṛ": "ƫɼ", "ƫū": "ƫμ",
+    "Āġź": "Āÿ", "Āġŕ": "Āȓ", "Āȓ": "Āȓ", "ǥū": "ǥμ", "ċū": "ċμ", "ƃū": "ƃμ", "ʂū": "ʂμ", "ṿū": "ṿư", "Ɉμ": "Ɉμ",
+    "ńġŢ": "ņṯ", "ńġđ": "ŋđ", "ńġĐ": "Ɗ", "ńġń": "ńṉ", "ńġḅ": "ņƁ", "ńġṃ": "ńṀ", "ńġź": "ńÿ", "Īġź": "Īÿ", "ńġŕ": "ńȓ",
+    "Īġŕ": "Īȓ", "ńġş": "ŝ", "ńġṭ": "ŋṭ", "ńġṬ": "ʈ", "ńġḍ": "ɗ", "ńġţ": "ņṪ", "ńġţġŕ": "ņꞧ", "ńġţȓ": "ņꞧ", "ńȓ": "ńȓ",
+    "Īȓ": "Īȓ", "ṕġń": "ṕṉ", "ṕġṕ": "ƥ", "ṕġź": "ṕÿ", "Ḯġź": "Ḯÿ", "ṕġŕ": "ṕŗ", "Ḯġŕ": "Ḯȓ", "ṕġĺ": "ṕᶅ", "ṕġş": "Š",
+    "ṕġṭ": "Ƭ", "ṕġţ": "Ț", "ᵮṵ": "ᵮũ", "ďṵ": "ďũ", "ᵮṛ": "ᵮɼ", "ďṛ": "ďɼ", "ṕȓ": "ṕŗ", "Ḯȓ": "Ḯȓ", "ṕȓṵ": "ṕŗḒ",
+    "ṕȓū": "ṕŗư", "ṕŗṵ": "ṕŗḒ", "ṕŗū": "ṕŗư", "ᵮū": "ᵮμ", "ďū": "ďμ", "ᶂġź": "ᶂÿ", "ᶂġŕ": "ᶂɍ", "Ūġŕ": "Ūȓ", "ᶂġĺ": "ᶂľ",
+    "ᶂṵ": "ᶂũ", "çṵ": "çũ", "ḏṵ": "ḏũ", "ᶂṛ": "ᶂɼ", "çṛ": "çɼ", "ḏṛ": "ḏɼ", "ᶂɍṵ": "ᶂɍũ", "ᶂɍṛ": "ᶂɍɼ", "ᶂɍū": "ᶂɍμ",
+    "ᶂľṵ": "ᶂľũ", "ᶂľṛ": "ᶂľṛ", "ᶂľū": "ᶂľμ", "ᶂȓ": "ᶂɍ", "ᶂū": "ᶂμ", "çū": "çμ", "ḏū": "ḏμ", "ḅġđ": "Ḏ", "ḅġĐ": "ƃ",
+    "ḅġḅ": "ḅḇ", "Ṱġḅ": "Ṱɓ", "ḅġź": "ḅÿ", "ḅġŕ": "ḅȓ", "Ṵġŕ": "Ṵȓ", "ḅġĺ": "ḅᶅ", "ḅġĵ": "ȷ", "Ƙṵ": "Ƙũ", "ṱṵ": "ṱũ",
+    "țṵ": "țũ", "Ʈṵ": "Ʈũ", "Ṱṵ": "Ṱũ", "Ƙṛ": "Ƙɼ", "ṱṛ": "ṱɼ", "țṛ": "țɼ", "Ʈṛ": "Ʈɼ", "Ṱṛ": "Ṱɼ", "ḅȓ": "ḅȓ",
+    "ḅȓṵ": "ḅȓḒ", "ḅȓū": "ḅȓư", "Ƙū": "Ƙμ", "ṱū": "ṱμ", "țū": "țμ", "Ʈū": "Ʈμ", "Ṱū": "Ṱμ", "ⱱġź": "ⱱÿ", "Ṛġź": "Ṛÿ",
+    "ⱱġŕ": "ṿ", "Ṛġŕ": "Ṛȓ", "ⱱġĺ": "ⱱᶅ", "ⱱṵ": "ⱱũ", "ⱱṛ": "ⱱɼ", "ⱱȓ": "ṿ", "Ṛȓ": "Ṛȓ", "ⱱȓṵ": "ṿḒ", "ⱱȓū": "ṿư",
+    "ⱱū": "ⱱμ", "ṃġń": "ḿṉ", "ṃġṕ": "ḿṖ", "ṃġᶂ": "ᵮ", "ṃġḅ": "ḿƁ", "ṃġⱱ": "ḿṾ", "ṃġⱱġŕ": "ḿṼ", "ṃġⱱȓ": "ḿṼ", "ṃġṃ": "ḿḾ",
+    "ṃġź": "ṃÿ", "Ēġź": "Ēÿ", "ṃġŕ": "ḿȓ", "Ēġŕ": "Ŧ", "ṃġĺ": "ḿᶅ", "ṃȓ": "ḿȓ", "Ēȓ": "Ēȓ", "źġź": "źÿ", "Ḛġź": "Ḛÿ",
+    "źġŕ": "źȓ", "Ḛġŕ": "Ḛȓ", "źȓ": "źȓ", "Ḛȓ": "Ḛȓ", "ŕġġŌ": "Ōȑ", "ŕġŢ": "Ţȑ", "ŕġđ": "đȑ", "ŕġĐ": "Đȑ", "ŕġẠ": "Ạȑ",
+    "ŕġĀ": "Āȑ", "ŕġń": "ńȑ", "ŕġĪ": "Īȑ", "ŕġṕ": "ṕȑ", "ŕġḮ": "Ḯȑ", "ŕġᶂ": "ᶂȑ", "ŕġŪ": "Ūȑ", "ŕġḅ": "ḅȑ", "ŕġṴ": "Ṵȑ",
+    "ŕġⱱ": "ⱱȑ", "ŕġṚ": "Ṛȑ", "ŕġṃ": "ṃȑ", "ŕġĒ": "Ēȑ", "ŕġź": "źȑ", "ŕġḚ": "Ḛȑ", "ŕġŕ": "ŕȓ", "ŕġŌ": "Ōȑ", "Ōġŕ": "Ōȓ",
+    "ŕġĺ": "ĺȑ", "ŕġṎ": "Ṏȑ", "ŕġś": "śȑ", "ŕġḳ": "ḳȑ", "ŕġŚ": "Śȑ", "ŕġḲ": "Ḳȑ", "ŕġş": "şȑ", "ŕġḡ": "ḡȑ", "ŕġĥ": "ĥȑ",
+    "ŕġḠ": "Ḡȑ", "ŕġř": "řȑ", "ŕġṅ": "ṅȑ", "ŕġŘ": "Řȑ", "ŕġć": "ćȑ", "ŕġŷ": "ŷȑ", "ŕġĆ": "Ćȑ", "ŕġĵ": "ĵȑ", "ŕġĴ": "Ĵȑ",
+    "ŕġñ": "ñȑ", "ŕġṭ": "ṭȑ", "ŕġṬ": "Ṭȑ", "ŕġḍ": "ḍȑ", "ŕġḌ": "Ḍȑ", "ŕġṇ": "ṇȑ", "ŕġţ": "ţȑ", "ŕṵ": "ŕḒ", "ḟṵ": "ḟṵ",
+    "Ŧṵ": "ŦḒ", "ḟṛ": "ḟɼ", "ŕȓ": "ŕȓ", "Ōȓ": "Ōȓ", "ḟȓ": "ḟɍ", "ŕū": "ŕư", "ḟū": "ḟμ", "Ŧū": "Ŧư", "ĺġṕ": "ƿ",
+    "ĺġᶂ": "ḟ", "ĺġᶂġŕ": "ḟɍ", "ĺġᶂȓ": "ḟɍ", "ĺġḅ": "ĺᵬ", "ĺġṃ": "ĺṀ", "ĺġź": "ĺÿ", "Ṏġź": "Ṏÿ", "ĺġŕ": "ĺȓ", "ĺġĺ": "ĺᶅ",
+    "ĺġḳ": "Ƙ", "ĺġḡ": "ģ", "ĺġṭ": "Ʈ", "ĺġḍ": "ḋ", "ĺȓ": "ĺȓ", "Ṏȓ": "Ṏȓ", "śġń": "śṉ", "ḳġń": "ḳɳ", "śġḅ": "śᵬ",
+    "ḳġḅ": "ḳɓ", "śġṃ": "śṀ", "ḳġṃ": "ṁ", "śġź": "śÿ", "ḳġź": "ḳÿ", "śġŕ": "śŗ", "ḳġŕ": "ķ", "ḳġĺ": "ḳľ", "ḳġḳ": "ǩ",
+    "ḳġŚ": "₭", "ḳġş": "ẍ", "śġć": "ç", "śġĆ": "ĉ", "ḳġṭ": "ť", "ḳġţ": "Ť", "ḳġţȓ": "Ťɍ", "ḳṵ": "ḳũ", "ḳṛ": "ḳɼ",
+    "ḳľṵ": "ḳľũ", "ḳľṛ": "ḳľɼ", "ḳľū": "ḳľμ", "śȓ": "śŗ", "ḳȓ": "ķ", "śȓṵ": "śŗḒ", "ḳȓṵ": "ķṯ", "śȓū": "śŗư", "ḳȓū": "ķ",
+    "ḳɳṵ": "ḳɳũ", "ḳɳṛ": "ḳɳɼ", "ḳɳū": "ḳɳμ", "śŗṵ": "śŗḒ", "śŗū": "śŗư", "śū": "š", "ḳū": "ḳμ", "Śġṕ": "ṩṖ", "Śġᶂ": "ș",
+    "Śġṃ": "ṩḾ", "Śġź": "Śÿ", "Ḳġź": "Ḳÿ", "Śġŕ": "Śȓ", "Ḳġŕ": "Ḳȓ", "Śġḳ": "ṩḱ", "Śġṭ": "ṥ", "ŚġṬ": "ṡ", "Śġṇ": "ṣ",
+    "Śȓ": "Śȓ", "Ḳȓ": "Ḳȓ", "Ḳȓṵ": "ḲȓḒ", "Ḳȓū": "Ḳȓư", "şġŢ": "ꞩṯ", "ḡġđ": "Ď", "ḡġĐ": "Ð", "şġń": "ꞩṉ", "ḡġń": "ḡṉ",
+    "şġṕ": "ꞩṖ", "şġᶂ": "ꞙ", "şġḅ": "ꞩƁ", "ḡġḅ": "ḡᵬ", "şġṃ": "ꞩḾ", "ḡġṃ": "ḡṀ", "şġź": "şÿ", "ḡġź": "ḡÿ", "şġŕ": "ꞩȓ",
+    "ḡġŕ": "ḡŗ", "şġĺ": "ꞩᶅ", "ḡġĺ": "ḡᶅ", "şġḳ": "ꞩḱ", "şġḳġŕ": "ꞩƙ", "şġḳġŕū": "ꞩƙμ", "şġḳȓ": "ꞩƙ", "şġḳȓū": "ꞩƙμ", "şġḲ": "ᶄ",
+    "şġṭ": "ṫ", "şġţ": "ꞩṪ", "şȓ": "ꞩȓ", "ḡȓ": "ḡŗ", "ḡȓṵ": "ḡŗḒ", "ḡȓū": "ḡŗư", "ḡŗṵ": "ḡŗḒ", "ḡŗū": "ḡŗư", "ḡū": "ǧ",
+    "ĥġń": "ṋ", "Ḡġń": "Ḡṉ", "ĥġḅ": "ĥḇ", "ĥġḅ²": "ĥɓ", "ĥġṃ": "Ṃ", "ĥġź": "ĥÿ", "Ḡġź": "Ḡÿ", "ĥġŕ": "ĥɍ", "Ḡġŕ": "Ḡȓ",
+    "ĥġĺ": "ĥľ", "ĥġṇ": "ĥɳ", "ĉṵ": "ĉũ", "ĥṛ": "ɦ", "ĉṛ": "ĉɼ", "ĥȓ": "ĥɍ", "Ḡȓ": "Ḡȓ", "Ḡȓṵ": "ḠȓḒ", "Ḡȓū": "Ḡȓư",
+    "ĥū": "ȟ", "ĉū": "ĉμ", "ṅġṃ": "ᵰṃ", "řġź": "řÿ", "ṅġź": "ṅÿ", "řġŕ": "řȓ", "ṅġŕ": "ṅȓ", "ṅġḳ": "ĸ", "ṅġḲ": "ᵰḲ",
+    "řġḡ": "ʀḡ", "ṅġḡ": "ğ", "ṅġḠ": "ᵰḠ", "ṅṵ": "ṅũ", "ṥṵ": "ṥũ", "ṣṵ": "ṣũ", "ṡṵ": "ṡũ", "șṵ": "șũ", "ṅṛ": "ṅɼ",
+    "ṥṛ": "ṥɼ", "ṣṛ": "ṣɼ", "ṡṛ": "ṡɼ", "șṛ": "șɼ", "řȓ": "řȓ", "ṅȓ": "ṅȓ", "řū": "řƲ", "ṅū": "ṅμ", "ṥū": "ṥμ",
+    "ṣū": "ṣμ", "ṡū": "ṡμ", "șū": "șμ", "Řġź": "Řÿ", "ćġź": "ćÿ", "Řġŕ": "Řȓ", "ćġŕ": "ćȓ", "ćġć": "čć", "ćġĆ": "čĆ",
+    "ćġñ": "čñ", "ćṵ": "ćũ", "ćṛ": "ćɼ", "Řȓ": "Řȓ", "ćȓ": "ćȓ", "ćƈā": "ćāƈ", "ćū": "ćμ", "ŷġź": "ŷÿ", "Ćġź": "Ćÿ",
+    "ŷġŕ": "ŷȓ", "Ćġŕ": "Ćɍ", "Ćṵ": "Ćũ", "Ćṛ": "Ćɼ", "ŷȓ": "ŷȓ", "Ćȓ": "Ćɍ", "Ćū": "Ćμ", "ĵġḅ": "ĵɓ", "ĵġź": "ĵÿ",
+    "ĵġŕ": "ĵȓ", "ĵġĵ": "ǰ", "ĵġĴ": "Ɉ", "ĵġñ": "ǥ", "ĵȓ": "ĵȓ", "ẗȓ\t": "ẗȓ", "Ĵġź": "Ĵÿ", "Ĵġŕ": "Ĵȓ", "Ĵṵ": "Ĵũ",
+    "ņṯṵ": "ņṯũ", "ņṯṛ": "ņṯɼ", "ņṯū": "ņṯμ", "Ĵṛ": "Ĵɼ", "ȵȓ": "ȵȓ", "Ĵȓ": "Ĵȓ", "ņṪġŕ": "ņꞧ", "ņṪṵ": "ņṪũ", "ņṪṛ": "ņṪɼ",
+    "ņṪȓ": "ņꞧ", "ņṪū": "ņⱦ", "Țṵ": "Țũ", "Țṛ": "Țɼ", "Țū": "Țμ", "Ĵū": "Ĵμ", "ñġź": "ñÿ", "ñġŕ": "ñȓ", "ñġć": "ċ",
+    "ñġĆ": "ʂ", "ñġĵ": "ɉ", "ñġĴ": "ǵ", "ñṵ": "ñũ", "ñṛ": "ñɼ", "ḧȓ": "ḧȓ", "ñȓ": "ñȓ", "Ṃṵ": "Ṃṵ", "Ƭṵ": "Ƭũ",
+    "Ṃṛ": "Ṃṛ", "Ƭṛ": "Ƭɼ", "Ṃū": "Ṃμ", "Ƭū": "Ƭμ", "ñū": "ñμ", "ɖṾṵ": "ɖṾũ", "ɖṾṛ": "ɖṾɼ", "ɖṾȓ": "ɖṼ", "ɖṾū": "ɖṾμ",
+    "ɖṼṵ": "ɖṼḒ", "ɖṼū": "ɖṼư", "ṭġḅ": "ṭɓ", "ṭġṃ": "ṭṀ", "ṭġź": "ṭÿ", "ṭġŕ": "ṭȓ", "ṭġṭ": "ƫ", "ṭṵ": "ṭũ", "ʈṵ": "ʈũ",
+    "ꞙṵ": "ꞙũ", "ɗṵ": "ɗũ", "Ɗṵ": "Ɗũ", "ṭṛ": "ṭɼ", "ʈṛ": "ʈɼ", "ꞙṛ": "ꞙɼ", "ɗṛ": "ɗɼ", "Ɗṛ": "Ɗɼ", "ꞙɍṵ": "ꞙɍũ",
+    "Ɗɍṵ": "Ɗɍũ", "Ɗɍṛ": "Ɗɍɼ", "ꞙɍū": "ꞙɍμ", "Ɗɍū": "Ɗɍμ", "ṭȓ": "ṭȓ", "ꞙȓ": "ꞙɍ", "Ɗȓ": "Ɗɍ", "ƈṏ": "ṏƈ", "ƈḯ": "ḯƈ",
+    "ƈū": "ūƈ", "ṭū": "ṭμ", "ʈū": "ʈμ", "ꞙū": "ꞙμ", "ɗū": "ɗμ", "Ɗū": "Ɗμ", "Ṭġź": "Ṭÿ", "Ṭġŕ": "Ṭȓ", "Ṭṵ": "Ṭũ",
+    "Ṭṛ": "Ṭɼ", "Ṭȓ": "Ṭȓ", "Ṭū": "Ṭμ", "ḍġź": "ḍÿ", "ḍġŕ": "ḍȓ", "ḍġḍ": "ď", "ḍṵ": "ḍũ", "ḍṛ": "ḍɼ", "ḍȓ": "ḍȓ",
+    "ḍū": "ḍμ", "Ḍġź": "Ḍÿ", "Ḍġŕ": "Ḍȓ", "Ḍṵ": "Ḍũ", "Ḍṛ": "Ḍɼ", "Ḍȓ": "Ḍȓ", "Ḍū": "Ḍμ", "ṇġń": "ṇṉ", "₭ġń": "₭ɳ",
+    "ṇġḅ": "ṇᵬ", "₭ġṃ": "ɱ", "ṇġź": "ṇÿ", "ṇġŕ": "ṇȓ", "ṇġṭ": "ț", "ṇġṬ": "ṱ", "ṇġḍ": "ḏ", "₭ṵ": "₭ũ", "₭ṛ": "₭ɼ",
+    "ṇȓ": "ṇȓ", "₭ɳṵ": "₭ɳũ", "₭ɳṛ": "₭ɳɼ", "₭ɳū": "₭ɳμ", "₭ū": "₭μ", "ţġŢ": "ŧ", "ţġń": "ţṉ", "ţġḅ": "ţɓ", "ţġṃ": "ţṀ",
+    "ţġź": "ţÿ", "ţġŕ": "Ŧ", "ţġţ": "Ṱ", "ţṵ": "ţũ", "ţṛ": "ţɼ", "ţȓ": "Ŧ", "ţȓṵ": "ŦḒ", "ţȓū": "Ŧư", "ţū": "ţμ",
+    "․ē": "․ė", "‚ē": "‚ė", "⸱ē": "⸱ė", "˗ē": "˗ė", "ʔē": "ʔė", "ːē": "ːė", "꞊ē": "꞊ė", "․œ": "․ɶ", "ḳȑṵ": "ḳũȑ",
+    "‚œ": "‚ɶ", "ⱱÿṵ": "ⱱũÿ", "ⱱȑṵ": "ⱱũȑ", "⸱œ": "⸱ɶ", "˗œ": "˗ɶ", "ʔœ": "ʔɶ", "ːœ": "ːɶ", "꞊œ": "꞊ɶ", "īīḳľ": "īḳľī",
+    "ḅȑɼ": "ḅṛȑ", "ḅÿṵ": "ḅṵÿ", "ćȑṵ": "ćũȑ″", "ćȑū": "ćμȑ", "ḳȑū": "ḳμȑ", "ⱱȑū": "ⱱμȑ", "ḳū": "ḳμ", "āȑ": "ȑā", "ḯȑ": "ȑḯ",
+    "ṏȑ": "ȑṏ", "ꞩ′": "ꞩṯ", "″Ć": "čĆ",
+    "īīṥ": "īṥī", "ņ‵": "ņⱦ", "ᶂŗ": "ᶂɍ", "ⱱṯ": "ⱱũ", "ņ′": "ņṯ", "ꞩ‵": "ꞩⱦ", "″ć": "čć", "″ñ": "čñ", "ḅɍ": "ḅȓ", "ṃɼ": "ṃṛ", "ḅɼ": "ḅṛ", "ṭɍ": "ṭȓ", "śɍ": "śŗ", "ʼē": "ʼė", "Ūđÿāṕ": "Ūđġġźāṕ", "Ūđÿāīṕ": "Ūđġġźāīṕ", "Ūđÿāṕḯ": "Ūđġġźāṕḯ",
+    "ʼœ": "ʼɶ", "ṃṉ": "ḿṉ", "Ạƈā": "Āƈ", "ŕ‶": "ŕư", "ḡɍ": "ḡŗ", "ḳṪɓ": "Ťᵬ", "ꞩ˗": "ꞩṪ", "ṭȑū": "ṭμȑ", "ÿṵ": "ũÿ", "ȑÿū": "ūȑÿ", "ȑÿṵ": "ṵÿ", "ÿȑ": "ȑÿ", "ȑÿμ": "μȑÿ", "ȑÿũ": "ũȑÿ", "ȑμ": "μȑ", "ȑũ": "ũȑ", "ȑū": "ūȑ", "ȑṵ": "ṵȑ", "ćũȑ″": "ćũȑ", "ḡŗ‶": "ḡŗư", "ɿ": "ư", "―": "―",
+    "ńũ": "ńṵ", "čĆᵬ": "čĆɓ", "ź়": "ŷ", "źē়ā": "ēŷā", "źē়": "ēŷ", "ḍī়": "īř", "ŋđɍ": "ŋđȓ", "ⱱ′ţ": "ⱱũţ", "ⱱ′īṃ": "ⱱũīṃ", "ⱱ′ṃḯ": "ⱱũṃḯ", "ⱱ′ēṃ": "ⱱũēṃ", "ⱱ′ėṃ": "ⱱũēṃ", "ńμ": "ńū",
+    "Ŧ‶": "Ŧư", "Ţȓ‶": "Ţȓư", "Ḋḇ": "Ḋᵬ", "đȓ‶": "đȓư", "ņ˗": "ņṪ", "ņ˗ɓ": "ņṪᵬ", "ṕġŦ": "Țȓ", "ṕŗ‶": "ṕŗư", "ḅȓ‶": "ḅȓư", "ṿ‶": "ṿư", "śŗ‶": "śŗư", "ꞩȓ‶": "ꞩȓư", "ṕɍ": "ṕŗ", "ṫɍ": "ṫȓ", "ĥᵬ": "ĥḇ",
+    "ţÿμ": "ţμÿ", "īḲɍ": "īḲȓ", "đɍ": "đȓ", "ṕɼ": "ṕṛ", "ꞩḾɼ": "ꞩḾṛ", "Ḡɍ": "Ḡȓ", "źȑāḅ": "ŕÿāḅ", "źȑāṃ": "ŕÿāṃ", "źȑāēḅ": "ŕÿāēḅ", "źȑāēṃ": "ŕÿāēṃ"
+};
+
+const sortedUnicodeToKothaKeys = Object.keys(unicodeToKothaMap).sort((a, b) => b.length - a.length);
+const sortedKothaKeys = Object.keys(kothaToUnicodeMap).sort((a, b) => b.length - a.length);
+
+// ====================================================================
+// END: KOTHA ENCODING MAPPINGS
+// ====================================================================
+
+function processUnicodeToKotha(text) {
+    if (!text) return "";
+    let qText = text;
+
+    const cons = "[\\u0995-\\u09B9\\u09DC-\\u09DF]";
+    const hasanta = "\\u09CD";
+    const cluster = "(?:" + cons + "(?:" + hasanta + cons + ")*)";
+    const reph = "\\u09B0\\u09CD";
+    const phala = "(?:\\u09CD\\u09AF|\\u09CD\\u09B0)";
+    const preKars = "[\\u09BF\\u09C7\\u09C8]";
+
+    const oKarRegex = new RegExp("(" + cluster + ")\u09CB", "g");
+    const ouKarRegex = new RegExp("(" + cluster + ")\u09CC", "g");
+    const preKarRegex = new RegExp("(" + reph + ")?(" + cluster + ")(" + phala + ")?(" + preKars + ")", "g");
+
+    qText = qText.replace(oKarRegex, "$1\u09C7\u09BE");
+    qText = qText.replace(ouKarRegex, "$1\u09C7\u09D7");
+    qText = qText.replace(preKarRegex, "$4$1$2$3");
+
+    let kText = "";
+    let k = 0;
+    while (k < qText.length) {
+        let foundMatch = false;
+
+        if (k + 1 < qText.length && qText.substring(k, k + 2) === "\u09B0\u09CD") {
+            let baseCluster = "";
+            for (const key of sortedUnicodeToKothaKeys) {
+                if (qText.length - (k + 2) >= key.length && qText.substring(k + 2, k + 2 + key.length) === key) {
+                    baseCluster = key; break;
+                }
+            }
+            if (baseCluster !== "") {
+                kText += unicodeToKothaMap[baseCluster] + "ȑ";
+                k += 2 + baseCluster.length;
+                foundMatch = true;
+            }
+        }
+
+        if (!foundMatch) {
+            for (const key of sortedUnicodeToKothaKeys) {
+                if (qText.length - k >= key.length && qText.substring(k, k + key.length) === key) {
+                    kText += unicodeToKothaMap[key];
+                    k += key.length;
+                    foundMatch = true;
+                    break;
+                }
+            }
+        }
+        if (!foundMatch) { kText += qText[k]; k++; }
+    }
+
+    for (const wrong in manualKothaReplacements) {
+        const correct = manualKothaReplacements[wrong];
+        const regex = new RegExp(wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+        kText = kText.replace(regex, correct);
+    }
+
+    kText = kText.replace(/^ē/gm, "ė");
+    kText = kText.replace(/([\s\|\,\.\?\!\-\(])ē/g, "$1ė");
+    kText = kText.replace(/^œ/gm, "ɶ");
+    kText = kText.replace(/([\s\|\,\.\?\!\-\(])œ/g, "$1ɶ");
+
+    return kText;
+}
+
+function processKothaToUnicode(text) {
+    if (!text) return "";
+    let uText = "";
+    let i = 0;
+    while (i < text.length) {
+        let foundMatch = false;
+        for (const key of sortedKothaKeys) {
+            if (text.length - i >= key.length && text.substring(i, i + key.length) === key) {
+                uText += kothaToUnicodeMap[key];
+                i += key.length;
+                foundMatch = true;
+                break;
+            }
+        }
+        if (!foundMatch) { uText += text[i]; i++; }
+    }
+
+    const consStr = "\\u0995-\\u09B9\\u09DC-\\u09DF";
+    const hasantaStr = "\\u09CD";
+    const rephStr = "\\u09B0" + hasantaStr;
+    const vowelsStr = "[\\u09BE-\\u09C4\\u09C7-\\u09C8\\u09CB-\\u09CC\\u09D7]";
+    const zwnjStr = "\\u200C";
+    const clusterStr = "(?:[" + consStr + "](?:" + hasantaStr + zwnjStr + "?[" + consStr + "])*)";
+    const fullClusterStr = "(" + clusterStr + "(?:" + vowelsStr + ")?)";
+    const clusterPattStr = "(?:" + rephStr + ")?" + clusterStr;
+
+    uText = uText.replace(new RegExp(fullClusterStr + "(" + rephStr + ")", "g"), "$2$1");
+    uText = uText.replace(new RegExp("([\u09BF\u09C7\u09C8])(" + clusterPattStr + ")", "g"), "$2$1");
+    uText = uText.replace(/\u09C7\u09BE/g, "\u09CB");
+    uText = uText.replace(/\u09C7\u09D7/g, "\u09CC");
+
+    for (const wrong in manualUnicodeReplacements) {
+        const correct = manualUnicodeReplacements[wrong];
+        const regex = new RegExp(wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+        uText = uText.replace(regex, correct);
+    }
+    return uText;
+}
+
+// ====================================================================
+// START: BIJOY ENCODING MAPPINGS
+// ====================================================================
         // ইউনিকোড থেকে বিজয় রূপান্তরের জন্য ম্যাপিং
         const unicodeToBijoyMap = {
             // স্বরবর্ণ সেকশন
@@ -14589,13 +14880,29 @@ const sortedUnicodeKeys = Object.keys(unicodeToBijoyMap).sort((a, b) => b.length
         };
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	function convertLeftToRight() {
+function convertLeftToRight() {
+            const isKothaMode = document.getElementById('kotha-encoding-toggle').checked;
+            
+            if (isKothaMode) {
+                const textAreaLeft = document.getElementById('textAreaLeft');
+                const textAreaRight = document.getElementById('textAreaRight');
+                if(!textAreaLeft || !textAreaRight) return;
+                
+                let text = textAreaLeft.value;
+                textAreaRight.value = processUnicodeToKotha(text);
+                addState('textAreaRight');
+                
+                // +++ ফিক্স: কথা এনকোডিং ফন্ট (Kothamala) অ্যাপ্লাই করা +++
+                textAreaRight.style.fontFamily = "'Kothamala', sans-serif";
+                return;
+            }
+            
+            // --- যদি কথা এনকোডিং অফ থাকে, তবে আগের বিজয় আন্সি লজিক কাজ করবে ---
             const textAreaLeft = document.getElementById('textAreaLeft');
             const textAreaRight = document.getElementById('textAreaRight');
             let unicodeInput = textAreaLeft ? textAreaLeft.value : '';
 
-            // --- নরমালাইজেশন (Normalization) [নতুন যুক্ত করা হয়েছে] ---
-            // ইনপুট থেকে ডিকম্পোজড অক্ষরগুলো (যেমন: য়, ড়, ঢ়) সঠিক ইউনিকোড ক্যারেক্টারে রূপান্তর
+            // --- নরমালাইজেশন (Normalization) ---
             unicodeInput = unicodeInput
                 .replace(/য়/g, 'য়')
                 .replace(/ড়/g, 'ড়')
@@ -14616,8 +14923,6 @@ const sortedUnicodeKeys = Object.keys(unicodeToBijoyMap).sort((a, b) => b.length
             const unicodeRaPhala = '\u09CD\u09B0'; // ্র (হসন্ত + র)
 
             // --- প্রি-প্রসেসিং ধাপ ---
-
-            // ধাপ ১: ও-কার এবং ঔ-কারকে তাদের উপাদান অংশে বিভক্ত করুন
             const consonantOrConjunct = `(?:(?:[${bengaliConsonants}]${unicodeHasanta})+[${bengaliConsonants}]|[${bengaliConsonants}])`;
             const o_ou_kar_regex = new RegExp(`(${consonantOrConjunct})(${unicodeOkar}|${unicodeOukar})`, 'g');
             unicodeInput = unicodeInput.replace(o_ou_kar_regex, (match, base, vowelSign) => {
@@ -14626,23 +14931,19 @@ const sortedUnicodeKeys = Object.keys(unicodeToBijoyMap).sort((a, b) => b.length
                 return match;
             });
 
-            // ধাপ ২: বিজয় লেআউটের জন্য কার-চিহ্ন (ি, ে, ৈ) আগে আনুন
             const precedingVowelRegex = new RegExp(`(${unicodeRefChar})?(${consonantOrConjunct})((?:${unicodeJaPhala}|${unicodeRaPhala})?)(${unicodeIkar}|${unicodeEkar}|${unicodeOikar})`, 'g');
             unicodeInput = unicodeInput.replace(precedingVowelRegex, (match, reph, base, phala, vowel) => {
                 return vowel + (reph || '') + base + (phala || '');
             });
             
-            // ধাপ ৩: মূল কনভার্সন লুপ
             let bijoyOutput = '';
             let k = 0;
             while (k < unicodeInput.length) {
                 let foundMatch = false;
 
-                // রেফ ('র্') এর জন্য বিশেষ হ্যান্ডলিং (যাতে © চিহ্নটি সঠিক জায়গায় বসে)
                 if (unicodeInput.substring(k, k + 2) === unicodeRefChar) {
                     let baseCluster = '';
                     let clusterLen = 0;
-                    // রেফের পরে দীর্ঘতম যুক্তবর্ণটি খুঁজুন
                     for (const key of sortedUnicodeKeys) {
                         if (key.length > 0 && unicodeInput.substring(k + 2, k + 2 + key.length) === key) {
                             baseCluster = key;
@@ -14650,7 +14951,6 @@ const sortedUnicodeKeys = Object.keys(unicodeToBijoyMap).sort((a, b) => b.length
                             break;
                         }
                     }
-                    
                     if (clusterLen > 0) {
                         bijoyOutput += unicodeToBijoyMap[baseCluster] + '©';
                         k += 2 + clusterLen;
@@ -14658,7 +14958,6 @@ const sortedUnicodeKeys = Object.keys(unicodeToBijoyMap).sort((a, b) => b.length
                     }
                 }
 
-                // সাধারণ ম্যাপিং
                 if (!foundMatch) {
                     for (const key of sortedUnicodeKeys) {
                         if (key.length > 0 && unicodeInput.substring(k, k + key.length) === key) {
@@ -14670,47 +14969,55 @@ const sortedUnicodeKeys = Object.keys(unicodeToBijoyMap).sort((a, b) => b.length
                     }
                 }
 
-                // যদি কোনো ম্যাচ না পাওয়া যায়
                 if (!foundMatch) {
                     bijoyOutput += unicodeInput[k];
                     k++;
                 }
             }
 
-            // ধাপ ৪: ম্যানুয়াল আনসি রিপ্লেসমেন্ট প্রয়োগ
             for (const [wrong, correct] of Object.entries(manualAnsiReplacements)) {
-                if (wrong) { // খালি কী এড়িয়ে চলুন
+                if (wrong) { 
                     const regex = new RegExp(wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
                     bijoyOutput = bijoyOutput.replace(regex, correct);
                 }
             }
 
-            // ধাপ ৫: ব্যবহারকারীর অনুরোধ অনুযায়ী অতিরিক্ত রিপ্লেসমেন্ট (লাইনের শুরু এবং দাড়ির পর)
-            bijoyOutput = bijoyOutput.replace(/^‡/gm, '†'); // লাইনের শুরুতে
-            bijoyOutput = bijoyOutput.replace(/\|‡/g, '|†');   // দাড়ির পরে
-            bijoyOutput = bijoyOutput.replace(/^‰/gm, 'ˆ'); // লাইনের শুরুতে
-            bijoyOutput = bijoyOutput.replace(/\|‰/g, '|ˆ');   // দাড়ির পরে
+            bijoyOutput = bijoyOutput.replace(/^‡/gm, '†'); 
+            bijoyOutput = bijoyOutput.replace(/\|‡/g, '|†');   
+            bijoyOutput = bijoyOutput.replace(/^‰/gm, 'ˆ'); 
+            bijoyOutput = bijoyOutput.replace(/\|‰/g, '|ˆ');   
 
             if (textAreaRight) {
                 textAreaRight.value = bijoyOutput;
+                textAreaRight.style.fontFamily = "'SUTONNYMJ', sans-serif"; // +++ ফিক্স: আন্সি ফন্ট (SutonnyMJ) অ্যাপ্লাই করা +++
                 addState('textAreaRight');
             }
             
-            // স্বয়ংক্রিয়ভাবে ফিক্স ফাংশন কল করুন
             fixAnsiText(false);
         }
 
         function convertRightToLeft() {
+            const isKothaMode = document.getElementById('kotha-encoding-toggle').checked;
+            
+            if (isKothaMode) {
+                const textAreaLeft = document.getElementById('textAreaLeft');
+                const textAreaRight = document.getElementById('textAreaRight');
+                if(!textAreaLeft || !textAreaRight) return;
+                
+                let text = textAreaRight.value;
+                textAreaLeft.value = processKothaToUnicode(text);
+                addState('textAreaLeft');
+                return;
+            }
+
+            // --- যদি কথা এনকোডিং অফ থাকে, তবে আগের বিজয় আন্সি লজিক কাজ করবে ---
             const textAreaLeft = document.getElementById('textAreaLeft');
             const textAreaRight = document.getElementById('textAreaRight');
             let bijoyInput = textAreaRight ? textAreaRight.value : '';
 
-            // ধাপ ০: প্রথমে fixAnsiText ফাংশন কল করুন
-            // showAlert প্যারামিটার false পাঠানো হয়েছে যাতে কোনো পপ-আপ বার্তা না আসে।
             fixAnsiText(false); 
-            bijoyInput = textAreaRight ? textAreaRight.value : ''; // ফিক্সড টেক্সট পুনরায় লোড করুন
+            bijoyInput = textAreaRight ? textAreaRight.value : ''; 
 
-            // --- ধাপ ১: বিজয় থেকে ইউনিকোড ম্যাপিং ---
             let unicodeOutput = '';
             let i = 0;
             while (i < bijoyInput.length) {
@@ -14729,39 +15036,32 @@ const sortedUnicodeKeys = Object.keys(unicodeToBijoyMap).sort((a, b) => b.length
                 }
             }
 
-            // --- ধাপ ২: ইউনিকোড ডোমেইনে পুনঃক্রম এবং সংমিশ্রণ ---
-
-            // ধ্রুবকগুলি সংজ্ঞায়িত করুন
-            const unicodeIkar = '\u09BF'; // ি
-            const unicodeEkar = '\u09C7'; // ে
-            const unicodeOikar = '\u09C8'; // ৈ
+            const unicodeIkar = '\u09BF'; 
+            const unicodeEkar = '\u09C7'; 
+            const unicodeOikar = '\u09C8'; 
             const unicodeConsonants = '\\u0995-\\u09B9\\u09DC-\\u09DF';
             const unicodeHasanta = '\\u09CD';
             const unicodeRef = '\\u09B0' + unicodeHasanta;
 
-            // ধাপ ২.১: রেফ (র্) পুনঃক্রম করুন
-            const unicodeVowelSigns = '[\\u09BE-\\u09C4\\u09C7-\\u09C8\\u09CB-\\u09CC\\u09D7]'; // সকল কার-চিহ্ন
+            const unicodeVowelSigns = '[\\u09BE-\\u09C4\\u09C7-\\u09C8\\u09CB-\\u09CC\\u09D7]'; 
             const consonantCluster = `(?:[${unicodeConsonants}](?:${unicodeHasanta}[${unicodeConsonants}])*)`;
             const fullClusterWithVowel = `(${consonantCluster}(?:${unicodeVowelSigns})?)`;
             const robustRephReorder = new RegExp(`${fullClusterWithVowel}(${unicodeRef})`, 'g');
             unicodeOutput = unicodeOutput.replace(robustRephReorder, '$2$1');
 
-            // ধাপ ২.২: প্রি-সিডিং কার-চিহ্ন (ি, ে, ৈ) সঠিক স্থানে আনুন 
             const consonantClusterPattern = `(?:${unicodeRef})?(?:[${unicodeConsonants}](?:${unicodeHasanta}[${unicodeConsonants}])*)`;
             const reorderRegex = new RegExp(`([${unicodeIkar}${unicodeEkar}${unicodeOikar}])(${consonantClusterPattern})`, 'g');
             unicodeOutput = unicodeOutput.replace(reorderRegex, '$2$1');
 
-            // ধাপ ২.৩: ও-কার এবং ঔ-কার গঠন করুন
-            const unicodeAkar = '\u09BE'; // া
-            const unicodeOkar = '\u09CB'; // ো
+            const unicodeAkar = '\u09BE'; 
+            const unicodeOkar = '\u09CB'; 
             unicodeOutput = unicodeOutput.replace(new RegExp(`(${unicodeEkar})(${unicodeAkar})`, 'g'), unicodeOkar);
 
-            const unicodeOuKarPart2 = '\u09D7'; // ৗ
-            const unicodeOukar = '\u09CC'; // ৌ
+            const unicodeOuKarPart2 = '\u09D7'; 
+            const unicodeOukar = '\u09CC'; 
             unicodeOutput = unicodeOutput.replace(new RegExp(`(${unicodeEkar})(${unicodeOuKarPart2})`, 'g'), unicodeOukar);
 
 
-            // ধাপ ৩: ম্যানুয়াল ইউনিকোড রিপ্লেসমেন্ট প্রয়োগ (যদি প্রয়োজন হয়)
             for (const [wrong, correct] of Object.entries(manualUnicodeReplacements)) {
                 if (wrong) {
                     const regex = new RegExp(wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
@@ -16131,6 +16431,65 @@ try {
 // END: Load Converter Data from IndexedDB
 // ====================================================================
 
+// ==========================================
+    // START: Kotha Encoding Toggle Initialization
+    // ==========================================
+    const kothaEncodingToggle = document.getElementById('kotha-encoding-toggle');
+    const rightBoxTitle = document.getElementById('rightBoxTitle'); // ধাপ ২ এ আমরা এই আইডি দিয়েছি
+    const btnToBijoy = document.querySelector('.font-conversion-button[onclick="convertLeftToRight()"]');
+    const btnToUnicode = document.querySelector('.font-conversion-button[onclick="convertRightToLeft()"]');
+
+    if (kothaEncodingToggle) {
+        // ১. Local Storage থেকে সেভ করা অবস্থা লোড করুন
+        const isKothaSaved = localStorage.getItem('isKothaEncodingEnabled') === 'true';
+        kothaEncodingToggle.checked = isKothaSaved;
+
+        // ২. UI আপডেট করার ফাংশন
+        const updateKothaUI = (isChecked) => {
+            if (rightBoxTitle) {
+                rightBoxTitle.innerText = isChecked ? "কথা" : "বিজয়";
+            }
+            if (btnToBijoy) {
+                btnToBijoy.innerText = isChecked ? "ইউনিকোড থেকে কথা" : "ইউনিকোড থেকে বিজয়";
+            }
+            if (btnToUnicode) {
+                btnToUnicode.innerText = isChecked ? "কথা থেকে ইউনিকোড" : "বিজয় থেকে ইউনিকোড";
+            }
+            // +++ নতুন: ফাইল কনভার্টার বাটন আপডেট +++
+            const exportBijoyBtn = document.getElementById('exportBijoyBtn');
+            const importToBijoyBtn = document.getElementById('importToBijoyBtn');
+            
+            if (exportBijoyBtn) {
+                exportBijoyBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    ${isChecked ? 'কথা এক্সপোর্ট' : 'বিজয় এক্সপোর্ট'}
+                `;
+            }
+            if (importToBijoyBtn) {
+                importToBijoyBtn.innerText = isChecked ? "কথা টেক্সটবক্সে নিন" : "বিজয় টেক্সটবক্সে নিন";
+            }
+            // যদি লাইভ কনভার্ট অন থাকে, তবে সাথে সাথে কনভার্ট করে বক্স আপডেট করবে
+            const liveConvertToggle = document.getElementById('live-convert-toggle');
+            if (liveConvertToggle && liveConvertToggle.checked) {
+                convertLeftToRight();
+            }
+        };
+
+        // পেজ লোড হওয়ার সাথে সাথে UI আপডেট করুন
+        updateKothaUI(isKothaSaved);
+
+        // ৩. টগল চেঞ্জ ইভেন্ট
+        kothaEncodingToggle.addEventListener('change', () => {
+            const isChecked = kothaEncodingToggle.checked;
+            localStorage.setItem('isKothaEncodingEnabled', isChecked);
+            updateKothaUI(isChecked);
+            showCustomAlert(`কথা এনকোডিং: ${isChecked ? 'চালু' : 'বন্ধ'} করা হয়েছে।`);
+        });
+    }
+    // ==========================================
+    // END: Kotha Encoding Toggle Initialization
+    // ==========================================
+	
 // ====================================================================
 // START: CONST SECTION FOR TAB
 // ====================================================================	
@@ -31689,9 +32048,13 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
 
             let textToProcess = rawTranscript;
 
-            // ৩. বিজয় আন্সি কনভার্সন (যদি সিলেক্ট করা থাকে)
+const isKothaEncoding = (currentLayoutName === 'kotha_encoding');
+
+            // ৩. বিজয় আন্সি বা কথা এনকোডিং কনভার্সন (যদি সিলেক্ট করা থাকে)
             if (isBijoyAnsi) {
                 textToProcess = convertUnicodeToBijoyAnsiForVoice(textToProcess);
+            } else if (isKothaEncoding && typeof processUnicodeToKotha === 'function') {
+                textToProcess = processUnicodeToKotha(textToProcess);
             }
 
             // ৪. পিসিতে পাঠানোর লজিক
@@ -32806,6 +33169,9 @@ function updateLayoutUI(notify = false) {
             } else if (currentLayout === 'bijoy_ansi') {
                 indicator.className = "absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-blue-500 ring-2 ring-white transform translate-x-1/4 -translate-y-1/4";
                 layoutBtn.setAttribute('data-tooltip', `বিজয় আনসি ${shortcutHint}`);
+} else if (currentLayout === 'kotha_encoding') {
+                indicator.className = "absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-teal-500 ring-2 ring-white transform translate-x-1/4 -translate-y-1/4";
+                layoutBtn.setAttribute('data-tooltip', `কথা এনকোডিং ${shortcutHint}`);
             } else if (currentLayout === 'phonetic') {
                 indicator.className = "absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-purple-500 ring-2 ring-white transform translate-x-1/4 -translate-y-1/4";
                 layoutBtn.setAttribute('data-tooltip', `বাংলা ফনেটিক (Avro) ${shortcutHint}`);
@@ -32820,6 +33186,7 @@ function updateLayoutUI(notify = false) {
                 'english': 'English',
                 'bijoy_unicode': 'বাংলা ইউনিকোড',
                 'bijoy_ansi': 'বিজয় আনসি',
+				'kotha_encoding': 'কথা এনকোডিং',
                 'phonetic': 'বাংলা ফনেটিক (Avro)',
                 'arabic_phonetic': 'Arabic Phonetic',
                 'arabic_101': 'Arabic 101',
@@ -33408,6 +33775,51 @@ if (currentLayout === 'english' || currentLayout === 'custom_voice' || e.ctrlKey
             }
             target.dispatchEvent(new Event('input', { bubbles: true }));
         }
+		
+        else if (currentLayout === 'kotha_encoding') {
+            // কথা এনকোডিং মোডে টাইপিং লজিক
+            let unicodeChar = getBijoyChar(key);
+
+            if (key === '`') unicodeChar = '‘';
+            else if (key === '~') unicodeChar = '“';
+            else if (key === '\'' && (start === 0 || prevChar === ' ' || prevChar === '\n' || prevChar === '\t')) {
+                unicodeChar = '‘';
+            } else if (key === '"' && (start === 0 || prevChar === ' ' || prevChar === '\n' || prevChar === '\t')) {
+                unicodeChar = '“';
+            }
+
+            let charToInsert = (typeof unicodeToKothaMap !== 'undefined' && unicodeToKothaMap[unicodeChar]) ? unicodeToKothaMap[unicodeChar] : unicodeChar;
+
+            let tempValueBeforeCursor = value.substring(0, start) + charToInsert;
+            
+            // রিপ্লেসমেন্ট ম্যাপ
+            if (typeof manualKothaReplacements !== 'undefined') {
+                let bestMatch = null;
+                for (const pattern in manualKothaReplacements) {
+                    if (tempValueBeforeCursor.endsWith(pattern)) {
+                        if (!bestMatch || pattern.length > bestMatch.length) {
+                            bestMatch = pattern;
+                        }
+                    }
+                }
+                if (bestMatch) {
+                    const replacement = manualKothaReplacements[bestMatch];
+                    tempValueBeforeCursor = tempValueBeforeCursor.slice(0, -bestMatch.length) + replacement;
+                }
+            }
+
+            let finalValue = tempValueBeforeCursor + value.substring(end);
+            let newCursorPos = tempValueBeforeCursor.length;
+
+            if (target.isContentEditable) {
+                target.innerText = finalValue;
+                setContentEditableCursor(target, newCursorPos);
+            } else {
+                target.value = finalValue;
+                target.selectionStart = target.selectionEnd = newCursorPos;
+            }
+            target.dispatchEvent(new Event('input', { bubbles: true }));
+        }
 
     });
 
@@ -33613,43 +34025,20 @@ let currentFile = null;
     // --- Helper Functions ---
 
     // নতুন: JSZip ব্যবহার করে ভ্যালিড .docx তৈরি করার ফাংশন (আপডেট: লাইন স্পেসিং ফিক্স)
-    async function createSimpleDocx(text) {
+async function createSimpleDocx(text, fontName = 'SutonnyMJ') {
         const zip = new JSZip();
-        
-        // Escape XML characters
         const escapeXml = (unsafe) => {
             return unsafe.replace(/[<>&'"]/g, function (c) {
                 switch (c) {
-                    case '<': return '&lt;';
-                    case '>': return '&gt;';
-                    case '&': return '&amp;';
-                    case '\'': return '&apos;';
-                    case '"': return '&quot;';
+                    case '<': return '&lt;'; case '>': return '&gt;'; case '&': return '&amp;'; case '\'': return '&apos;'; case '"': return '&quot;';
                 }
             });
         };
 
-        // 1. [Content_Types].xml
-        zip.file("[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
-<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
-<Default Extension="xml" ContentType="application/xml"/>
-<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
-</Types>`);
+        zip.file("[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>`);
+        zip.file("_rels/.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`);
+        zip.folder("word/_rels").file("document.xml.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`);
 
-        // 2. _rels/.rels
-        zip.file("_rels/.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
-</Relationships>`);
-
-        // 3. word/_rels/document.xml.rels
-        zip.folder("word/_rels").file("document.xml.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`);
-
-        // 4. word/document.xml (The Content with Formatting)
-        // w:jc val="both" = Justify Alignment
-        // w:spacing w:after="0" = লাইনের মাঝে বাড়তি ফাকা জায়গা বন্ধ করা
         const paragraphs = text.split('\n').map(line => {
             return `<w:p>
                         <w:pPr>
@@ -33658,6 +34047,7 @@ let currentFile = null;
                         </w:pPr>
                         <w:r>
                             <w:rPr>
+                                <w:rFonts w:ascii="${fontName}" w:hAnsi="${fontName}" w:cs="${fontName}"/>
                                 <w:sz w:val="28"/>
                                 <w:szCs w:val="28"/>
                             </w:rPr>
@@ -33666,18 +34056,9 @@ let currentFile = null;
                     </w:p>`;
         }).join('');
 
-        const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-<w:body>${paragraphs}</w:body>
-</w:document>`;
-
+        const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">\n<w:body>${paragraphs}</w:body>\n</w:document>`;
         zip.file("word/document.xml", documentXml);
-
-        // Generate the blob
-        return await zip.generateAsync({
-            type: "blob",
-            mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        });
+        return await zip.generateAsync({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
     }
 
     // নতুন: DOCX থেকে HTML কনভার্টার (টেবিল সাপোর্ট সহ)
@@ -33742,18 +34123,21 @@ let currentFile = null;
 
 
     // টেক্সটবক্স থেকে এক্সপোর্ট (আপডেট করা হয়েছে: ১৪ ফন্ট ও জাস্টিফাই)
-    async function downloadTextboxContent(type) {
+async function downloadTextboxContent(type) {
         const textareaId = type === 'unicode' ? 'textAreaLeft' : 'textAreaRight';
         const content = document.getElementById(textareaId).value;
+        const isKothaMode = document.getElementById('kotha-encoding-toggle') ? document.getElementById('kotha-encoding-toggle').checked : false;
+        
+        // টগল অন থাকলে এবং ডানদিকের আউটপুট হলে 'Kothamala' ফন্ট হবে
+        const fontName = (type === 'bijoy' && isKothaMode) ? 'Kothamala' : 'SutonnyMJ';
         
         if (!content) {
             showCustomAlert('টেক্সটবক্স খালি! এক্সপোর্ট করার মতো কিছু নেই।');
             return;
         }
 
-        // ডিফল্ট ফরম্যাট 'doc' সেট করা হয়েছে, যদি ড্রপডাউন থেকে চেঞ্জ না করা হয়
         const format = selectedExportFormat;
-        const fileName = `bangla_toolbox_${type}_export.${format}`;
+        const fileName = `bangla_toolbox_${isKothaMode && type === 'bijoy' ? 'kotha' : type}_export.${format}`;
 
         if (format === 'txt') {
             const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
@@ -33761,9 +34145,8 @@ let currentFile = null;
             showCustomAlert('TXT ফাইল ডাউনলোড হয়েছে!');
         } 
         else if (format === 'docx') {
-            // নতুন: JSZip ব্যবহার করে ভ্যালিড .docx তৈরি (With formatting and no extra spacing)
             try {
-                const blob = await createSimpleDocx(content);
+                const blob = await createSimpleDocx(content, fontName); // ফন্ট পাস করা হচ্ছে
                 saveAs(blob, fileName);
                 showCustomAlert('DOCX ফাইল ডাউনলোড হয়েছে (Valid XML)!');
             } catch (e) {
@@ -33772,32 +34155,18 @@ let currentFile = null;
             }
         }
         else if (format === 'doc') {
-            // পুরাতন: HTML মেথড (এটি .doc এর জন্য ভালো কাজ করে)
-            // আপডেট: ফন্ট সাইজ ১৪ এবং জাস্টিফাই এলাইনমেন্ট নিশ্চিত করা হয়েছে
             const paragraphs = content.split('\n').map(line => {
                 if(line.trim() === '') return '<p>&nbsp;</p>';
-                return `<p style="text-align: justify; text-justify: inter-word; font-size: 14pt; margin-bottom: 0px; font-family: 'SutonnyMJ', 'Kalpurush', sans-serif;">${line}</p>`;
+                return `<p style="text-align: justify; text-justify: inter-word; font-size: 14pt; margin-bottom: 0px; font-family: '${fontName}', 'Kalpurush', sans-serif;">${line}</p>`;
             }).join('');
 
             const htmlContent = `
                 <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-                <head>
-                    <meta charset="utf-8">
-                    <title>Export</title>
-                    <style>
-                        body { font-family: 'SutonnyMJ', 'Kalpurush', sans-serif; font-size: 14pt; }
-                        p { margin: 0; padding: 0; text-align: justify; }
-                    </style>
-                </head>
-                <body>
-                    ${paragraphs}
-                </body>
-                </html>
+                <head><meta charset="utf-8"><title>Export</title>
+                <style>body { font-family: '${fontName}', 'Kalpurush', sans-serif; font-size: 14pt; } p { margin: 0; padding: 0; text-align: justify; }</style>
+                </head><body>${paragraphs}</body></html>
             `;
-            
-            const blob = new Blob(['\ufeff', htmlContent], {
-                type: 'application/msword'
-            });
+            const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
             saveAs(blob, fileName);
             showCustomAlert('DOC ফাইল ডাউনলোড হয়েছে (লিগ্যাসি সাপোর্ট)!');
         }
@@ -33882,6 +34251,7 @@ let currentFile = null;
     }
 
     // কনভার্সন এবং ডাউনলোড প্রসেস (আপডেট করা হয়েছে: ব্যবহারকারীর অনুরোধ অনুযায়ী লজিক)
+// কনভার্সন এবং ডাউনলোড প্রসেস
     async function processFile(targetType) {
         if (!currentFile) return;
         
@@ -33889,17 +34259,29 @@ let currentFile = null;
         exportUnicodeBtn.disabled = true;
         exportBijoyBtn.disabled = true;
 
+        const isKothaMode = document.getElementById('kotha-encoding-toggle') ? document.getElementById('kotha-encoding-toggle').checked : false;
+        const fontName = (targetType === 'bijoy' && isKothaMode) ? 'Kothamala' : 'SutonnyMJ';
+
         // ব্যবহারকারীর অনুরোধ অনুযায়ী কাস্টম কনভার্সন লজিক
         const performUserRequestedConversion = (text) => {
             if (!text) return '';
             
             if (targetType === 'unicode') {
                 // ফাইল সিলেক্ট থাকলে (ইউনিকোড এক্সপোর্ট): ইউনিকোড -> আন্সি -> ইউনিকোড
-                const ansiText = convertTextString(text, 'bijoy'); // Unicode to Bijoy
-                return convertTextString(ansiText, 'unicode');     // Bijoy to Unicode
+                if (isKothaMode) {
+                    const kothaText = processUnicodeToKotha(text);
+                    return processKothaToUnicode(kothaText);
+                } else {
+                    const ansiText = convertTextString(text, 'bijoy'); // Unicode to Bijoy
+                    return convertTextString(ansiText, 'unicode');     // Bijoy to Unicode
+                }
             } else {
-                // ফাইল সিলেক্ট থাকলে (আন্সি এক্সপোর্ট): ইউনিকোড -> আন্সি
-                return convertTextString(text, 'bijoy'); // Unicode to Bijoy
+                // ফাইল সিলেক্ট থাকলে (আন্সি/কথা এক্সপোর্ট): ইউনিকোড -> আন্সি/কথা
+                if (isKothaMode) {
+                    return processUnicodeToKotha(text);
+                } else {
+                    return convertTextString(text, 'bijoy'); // Unicode to Bijoy
+                }
             }
         };
 
@@ -33909,7 +34291,7 @@ let currentFile = null;
                  finalFormat = currentFileType === 'docx' ? 'docx' : 'doc';
             }
             
-            const outputFileName = `converted_${targetType}_${currentFile.name.split('.')[0]}.${finalFormat}`;
+            const outputFileName = `converted_${isKothaMode && targetType === 'bijoy' ? 'kotha' : targetType}_${currentFile.name.split('.')[0]}.${finalFormat}`;
 
             // Case 1: DOCX to DOC (Table Preserved)
             if (currentFileType === 'docx' && finalFormat === 'doc') {
@@ -33935,7 +34317,7 @@ let currentFile = null;
                         <meta charset="utf-8">
                         <title>Export</title>
                         <style>
-                            body { font-family: 'SutonnyMJ', 'Kalpurush', sans-serif; font-size: 14pt; }
+                            body { font-family: '${fontName}', 'Kalpurush', sans-serif; font-size: 14pt; }
                             p { margin: 0; padding: 0; text-align: justify; }
                             table { border-collapse: collapse; width: 100%; }
                             td { border: 1px solid black; padding: 5px; }
@@ -33959,7 +34341,7 @@ let currentFile = null;
                 const blob = new Blob([convertedText], { type: "text/plain;charset=utf-8" });
                 saveAs(blob, outputFileName);
             }
-// Case 3: DOCX to DOCX (100% Structure & Formatting Preserving incl. Headers/Footers/Footnotes)
+            // Case 3: DOCX to DOCX (100% Structure & Formatting Preserving incl. Headers/Footers/Footnotes)
             else if (currentFileType === 'docx' && finalFormat === 'docx') {
                 const arrayBuffer = await currentFile.arrayBuffer();
                 const zip = await JSZip.loadAsync(arrayBuffer);
@@ -33993,7 +34375,7 @@ let currentFile = null;
                             tNode.textContent = performUserRequestedConversion(originalText);
                             fileModified = true;
 
-                            // ২. যদি বিজয়ে কনভার্ট হয়, তবে ফন্ট SutonnyMJ করে দেওয়া
+                            // ২. যদি বিজয়ে কনভার্ট হয়, তবে ফন্ট SutonnyMJ/Kothamala করে দেওয়া
                             if (targetType === 'bijoy') {
                                 let rNode = tNode.parentNode; // <w:r> ট্যাগ খোঁজা
                                 if (rNode && rNode.nodeName === "w:r") {
@@ -34024,10 +34406,10 @@ let currentFile = null;
                                         rPrNode.appendChild(rFontsNode);
                                     }
 
-                                    // ফন্ট প্রপার্টি SutonnyMJ সেট করা এবং থিম ফন্ট রিমুভ করা
-                                    rFontsNode.setAttribute("w:ascii", "SutonnyMJ");
-                                    rFontsNode.setAttribute("w:hAnsi", "SutonnyMJ");
-                                    rFontsNode.setAttribute("w:cs", "SutonnyMJ");
+                                    // ফন্ট প্রপার্টি SutonnyMJ বা Kothamala সেট করা এবং থিম ফন্ট রিমুভ করা
+                                    rFontsNode.setAttribute("w:ascii", fontName);
+                                    rFontsNode.setAttribute("w:hAnsi", fontName);
+                                    rFontsNode.setAttribute("w:cs", fontName);
                                     rFontsNode.removeAttribute("w:asciiTheme");
                                     rFontsNode.removeAttribute("w:hAnsiTheme");
                                     rFontsNode.removeAttribute("w:cstheme");
@@ -34073,11 +34455,11 @@ let currentFile = null;
                  const convertedText = performUserRequestedConversion(rawText);
                  
                  if (finalFormat === 'docx') {
-                     const blob = await createSimpleDocx(convertedText);
+                     const blob = await createSimpleDocx(convertedText, fontName);
                      saveAs(blob, outputFileName);
                  } 
                  else if (finalFormat === 'doc') {
-                     const htmlContent = `<html><head><style>body { font-family: 'SutonnyMJ', 'Kalpurush', sans-serif; font-size: 14pt; } p { text-align: justify; margin: 0; padding: 0; }</style></head><body><pre style="font-family: 'SutonnyMJ', 'Kalpurush', sans-serif; white-space: pre-wrap;">${convertedText}</pre></body></html>`;
+                     const htmlContent = `<html><head><style>body { font-family: '${fontName}', 'Kalpurush', sans-serif; font-size: 14pt; } p { text-align: justify; margin: 0; padding: 0; }</style></head><body><pre style="font-family: '${fontName}', 'Kalpurush', sans-serif; white-space: pre-wrap;">${convertedText}</pre></body></html>`;
                      const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
                      saveAs(blob, outputFileName);
                  } 
@@ -34730,9 +35112,13 @@ liveRec.onresult = (e) => {
                     finalTranscript = window.processDateDayCommands(finalTranscript);
                 }
 
-                // ২. +++ নতুন: বিজয় আন্সি সিলেক্ট থাকলে আউটপুট কনভার্ট করা +++
-                if (liveMicLangCombo && liveMicLangCombo.value === 'bijoy_ansi' && window.globalUnicodeToBijoy) {
-                    finalTranscript = window.globalUnicodeToBijoy(finalTranscript);
+// ২. +++ নতুন: বিজয় আন্সি বা কথা এনকোডিং সিলেক্ট থাকলে আউটপুট কনভার্ট করা +++
+                if (liveMicLangCombo) {
+                    if (liveMicLangCombo.value === 'bijoy_ansi' && window.globalUnicodeToBijoy) {
+                        finalTranscript = window.globalUnicodeToBijoy(finalTranscript);
+                    } else if (liveMicLangCombo.value === 'kotha_encoding' && typeof processUnicodeToKotha === 'function') {
+                        finalTranscript = processUnicodeToKotha(finalTranscript);
+                    }
                 }
 
                 // ৩. পিসিতে পাঠানো বা টেক্সটবক্সে যুক্ত করা
@@ -34772,10 +35158,10 @@ liveMicBtn.addEventListener('click', () => {
             let selectedLang = liveMicLangCombo ? liveMicLangCombo.value : 'bn-BD';
             let actualApiLang = selectedLang;
 
-            // +++ যদি বিজয় আন্সি সিলেক্ট থাকে, API কে বাংলা শুনতে বাধ্য করা হবে +++
-            if (selectedLang === 'bijoy_ansi') {
+// +++ যদি বিজয় আন্সি বা কথা এনকোডিং সিলেক্ট থাকে, API কে বাংলা শুনতে বাধ্য করা হবে +++
+            if (selectedLang === 'bijoy_ansi' || selectedLang === 'kotha_encoding') {
                 actualApiLang = 'bn-BD';
-            } 
+            }
             else if (selectedLang === 'custom' && liveMicCustomCode) {
                 const cCode = liveMicCustomCode.value.trim();
                 const rx = /^[a-z]{2,3}-[A-Z]{2}$/;
