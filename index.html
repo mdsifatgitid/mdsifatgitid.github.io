@@ -8147,7 +8147,8 @@ body.sidebar-open #sidebarOverlay {
     color: transparent;
     -webkit-background-clip: text;
     background-clip: text;
-    animation: textShine 2.5s linear infinite;
+    /* infinite বাদ দেওয়া হয়েছে এবং ডিউরেশন ৪ সেকেন্ড করা হয়েছে */
+    animation: textShine 4s ease-out forwards;
 }
 
 .dark .slide-item.active-slide .slide-title {
@@ -12154,6 +12155,18 @@ body.sidebar-open #sidebarOverlay {
                 <span class="slider round"></span>
             </label>
         </div>	
+		
+		<!-- ফিচার স্লাইডার (ডেস্কটপ) টগল -->
+        <div class="setting-item" style="margin-top: 15px;">
+            <div class="setting-text">
+                <label for="featureSliderToggle" class="font-semibold text-gray-700 dark:text-gray-300">ফিচার স্লাইডার (ডেস্কটপ)</label>
+                <p class="text-sm text-gray-500 dark:text-gray-400">ডানপাশের ফিচার স্লাইডারটি চালু বা বন্ধ করুন।</p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="featureSliderToggle" checked>
+                <span class="slider round"></span>
+            </label>
+        </div>
 		
         <!-- ব্যাকগ্রাউন্ড এনিমেশন টগল -->
         <div class="setting-item" style="margin-top: 15px;">
@@ -30065,7 +30078,28 @@ function initializeMoreSettings() {
             showCustomAlert(`টাইটেল এনিমেশন: ${isEnabled ? 'চালু' : 'বন্ধ'} করা হয়েছে।`);
         });
     }
+// ৪.৫. ফিচার স্লাইডার টগল লজিক
+    const featureSliderToggle = document.getElementById('featureSliderToggle');
+    const featureSliderWrapper = document.getElementById('featureSliderWrapper');
 
+    if (featureSliderToggle) {
+        const isFeatureSliderEnabled = localStorage.getItem('featureSliderEnabled') !== 'false';
+        featureSliderToggle.checked = isFeatureSliderEnabled;
+
+        featureSliderToggle.addEventListener('change', () => {
+            const isEnabled = featureSliderToggle.checked;
+            localStorage.setItem('featureSliderEnabled', isEnabled);
+            
+            if (featureSliderWrapper) {
+                if (isEnabled) {
+                    featureSliderWrapper.style.setProperty('display', '', ''); // CSS এর কাছে নিয়ন্ত্রণ ফিরিয়ে দেওয়া
+                } else {
+                    featureSliderWrapper.style.setProperty('display', 'none', 'important'); // পুরোপুরি হাইড করা
+                }
+            }
+            showCustomAlert(`ফিচার স্লাইডার: ${isEnabled ? 'চালু' : 'বন্ধ'} করা হয়েছে।`);
+        });
+    }
     // ৫. নিউজ অ্যানিমেশন স্টাইল টগল লজিক
     const newsAnimationToggle = document.getElementById('newsAnimationToggle');
     if (newsAnimationToggle) {
@@ -33517,11 +33551,15 @@ if (e.ctrlKey && !e.altKey && !e.shiftKey) {
                 e.preventDefault();
                 setKeyboardLayout('phonetic', true);
                 return;
-            } else if (e.key === '5') {
+		} else if (e.key === '5') {
                 e.preventDefault();
                 setKeyboardLayout('arabic_phonetic', true);
                 return;
             } else if (e.key === '6') {
+                e.preventDefault();
+                setKeyboardLayout('kotha_encoding', true);
+                return;
+            } else if (e.key === '7') {
                 e.preventDefault();
                 setKeyboardLayout('arabic_101', true);
                 return;
@@ -35780,6 +35818,12 @@ function initializeRightSlider() {
     const nextBtn = document.getElementById('sliderNextBtn');
 
     if (!sliderWrapper || !sliderTrack) return;
+	
+	// সেটিংস চেক করে স্লাইডার অফ থাকলে লুকিয়ে ফেলা
+    const isFeatureSliderEnabled = localStorage.getItem('featureSliderEnabled') !== 'false';
+    if (!isFeatureSliderEnabled) {
+        sliderWrapper.style.setProperty('display', 'none', 'important');
+    }
 
     // আপনার স্লাইডারের ডেটা (ভিডিওর মতো করে কাস্টমাইজ করা)
     const slidesData = [
@@ -35800,6 +35844,66 @@ function initializeRightSlider() {
             iconBg: "bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400",
             title: "ওয়াইফাই ভয়েস টাইপিং",
             desc: 'কথা কীবোর্ড এর মাধ্যমে পিসিতে কোনো মাইক্রোফোন ছাড়াই মোবাইল দিয়ে স্ক্যান করে <strong class="text-orange-500">বাংলা, ইংরেজি, আরবিসহ</strong> পৃথিবীর যেকোনো ভাষায় নিখুঁত টাইপ করুন!'
+        },
+		        {
+            icon: "🅰️",
+            iconBg: "bg-pink-100 text-pink-600 dark:bg-pink-900/50 dark:text-pink-400",
+            title: "নতুন 'কথা এনকোডিং'",
+            desc: '"Kothamala" ফন্টের মাধ্যমে ইউনিকোড, আন্সি ও ইংরেজি সব এক ফন্টেই লেখা সম্ভব! ফন্ট পরিবর্তনের ঝামেলা শেষ।'
+        },
+        {
+            icon: "🤖",
+            iconBg: "bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400",
+            title: "Kotha AI Hub",
+            desc: 'কীবোর্ডেই রয়েছে <strong class="text-orange-500">AI এর শক্তি!</strong> বানান শুদ্ধিকরণ, গ্রামার কারেকশন, OCR এবং বিল্ট-ইন এআই অ্যাসিস্ট্যান্ট।'
+        },
+        {
+            icon: "🎙️",
+            iconBg: "bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400",
+            title: "ওয়াইফাই ভয়েস টাইপিং",
+            desc: 'পিসিতে কোনো মাইক্রোফোন ছাড়াই মোবাইল দিয়ে স্ক্যান করে বাংলা, ইংরেজি, আরবিসহ পৃথিবীর যেকোনো ভাষায় নিখুঁত টাইপ করুন!'
+        },
+        {
+            icon: "📚",
+            iconBg: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/50 dark:text-yellow-400",
+            title: "৯ লক্ষ+ শব্দের ডিকশনারি",
+            desc: 'বিশাল ডিকশনারির সাহায্যে স্মার্ট অটো-সাজেশন! টাইপ করার সাথে সাথেই নির্ভুল সাজেশন যা টাইপিং স্পিড বহুগুণ বাড়িয়ে দেবে।'
+        },
+        {
+            icon: "📋",
+            iconBg: "bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400",
+            title: "অ্যাডভান্সড প্রো ক্লিপবোর্ড",
+            desc: 'টেক্সট হিস্ট্রির পাশাপাশি এখন কপি করা ছবিও (Screenshot/Image) কীবোর্ডের ক্লিপবোর্ডে সেভ থাকবে।'
+        },
+        {
+            icon: "🔄",
+            iconBg: "bg-teal-100 text-teal-600 dark:bg-teal-900/50 dark:text-teal-400",
+            title: "লাইভ কনভার্টার",
+            desc: 'ইউনিকোড ↔ বিজয় কনভার্ট এবং MS Word-এ "কস্‌মেটিক্‌স" লেখার সময় আন্সি ফন্ট ভেঙে যাওয়ার বাগ ফিক্স!'
+        },
+        {
+            icon: "📂",
+            iconBg: "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400",
+            title: "ফাইল ট্রান্সফার",
+            desc: 'কোনো ক্যাবল বা ইন্টারনেট ছাড়াই পিসি থেকে মোবাইলে Drag and Drop এর মাধ্যমে দ্রুত ফাইল আদান-প্রদান করুন।'
+        },
+        {
+            icon: "✅",
+            iconBg: "bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-400",
+            title: "লাইভ স্পেল চেকার",
+            desc: 'ভুল শব্দ লিখে দুইবার সমান (==) চাপলে সঠিক আউটপুট আসবে। যেমন: "শ্রেণী==" টাইপ করলে আউটপুট আসবে "শ্রেণি"।'
+        },
+        {
+            icon: "📅",
+            iconBg: "bg-orange-100 text-orange-600 dark:bg-orange-900/50 dark:text-orange-400",
+            title: "সরাসরি ইমোজি ও তারিখ",
+            desc: '"আজ==" বা "love==" লিখলেই অটোমেটিক আজকের তারিখ, বার বা ইমোজি সরাসরি আপনার টেক্সটে টাইপ হয়ে যাবে!'
+        },
+        {
+            icon: "🎯",
+            iconBg: "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/50 dark:text-cyan-400",
+            title: "কার্সরের নিচেই সাজেশন",
+            desc: 'Chrome, Edge, VS Code বা মেসেঞ্জারে সাজেশন বার এখন থেকে ঠিক আপনার কার্সরের নিচেই শো করবে!'
         }
     ];
 
@@ -35831,10 +35935,11 @@ function initializeRightSlider() {
     }
 
 // স্লাইড পরিবর্তন করার ফাংশন (এনিমেশন ট্রিগার সহ)
+// স্লাইড পরিবর্তন করার ফাংশন (এনিমেশন ট্রিগার সহ)
     function goToSlide(index) {
         currentSlideIndex = index;
         
-        // Circular Logic (শেষে গেলে প্রথমে, প্রথমে গেলে শেষে)
+        // Circular Logic
         if (currentSlideIndex < 0) currentSlideIndex = slidesData.length - 1;
         if (currentSlideIndex >= slidesData.length) currentSlideIndex = 0;
 
@@ -35847,10 +35952,12 @@ function initializeRightSlider() {
             dot.classList.toggle('active', i === currentSlideIndex);
         });
 
-        // +++ নতুন: প্রতিটি স্লাইডে এনিমেশন রি-ট্রিগার করার জন্য active-slide ক্লাস যুক্ত ও রিমুভ করা +++
+        // +++ রি-ট্রিগার লজিক (যাতে একবার প্লে হওয়া এনিমেশন আবার শুরু হয়) +++
         const slides = sliderTrack.querySelectorAll('.slide-item');
         slides.forEach((slide, i) => {
             if (i === currentSlideIndex) {
+                slide.classList.remove('active-slide');
+                void slide.offsetWidth; // Force Reflow (এনিমেশন রিসেট করার ট্রিক)
                 slide.classList.add('active-slide');
             } else {
                 slide.classList.remove('active-slide');
@@ -35896,10 +36003,13 @@ function initializeRightSlider() {
     });
 
     // অটো স্লাইড ফাংশন (প্রতি ৫ সেকেন্ডে)
+// অটো স্লাইড ফাংশন
     function startAutoSlide() {
+        // নতুন টাইমার শুরুর আগে আগের টাইমার ক্লিয়ার করা (যাতে ডাবল স্পিডে না চলে)
+        clearInterval(autoSlideInterval); 
         autoSlideInterval = setInterval(() => {
             goToSlide(currentSlideIndex + 1);
-        }, 5000); // ৫০০০ মিলিসেকেন্ড = ৫ সেকেন্ড
+        }, 5000);
     }
 
     function resetAutoSlide() {
@@ -35907,11 +36017,16 @@ function initializeRightSlider() {
         startAutoSlide();
     }
 
-    // হোভার করলে স্লাইডার থেমে যাবে, মাউস সরালে আবার চলবে
-    sliderWrapper.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
-    sliderWrapper.addEventListener('mouseleave', startAutoSlide);
+    // হোভার করলে স্লাইডার থেমে যাবে (Pause)
+    sliderWrapper.addEventListener('mouseenter', () => {
+        clearInterval(autoSlideInterval);
+    });
 
-    // ইনিশিয়ালাইজেশন
+    // মাউস সরিয়ে নিলে আবার স্লাইড শুরু হবে (Resume)
+    sliderWrapper.addEventListener('mouseleave', () => {
+        startAutoSlide();
+    });
+
     renderSlides();
     startAutoSlide();
 }
