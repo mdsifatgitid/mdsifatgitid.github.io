@@ -9350,24 +9350,27 @@ body.sidebar-open #sidebarOverlay {
 
     <!-- টগল বাটনস (সবসময় মাঝখানে থাকবে) -->
     <div class="flex items-center gap-6">
-        <!-- লাইভ কনভার্টার টগল বাটন -->
+
+        <!-- কথা এনকোডিং টগল বাটন -->
+        <div class="flex items-center gap-2 has-tooltip" data-tooltip="কথা এনকোডিং চালু থাকলে Kothamala ফন্ট ব্যবহার করতে হবে। বন্ধ থাকলে Sutonnymj ফন্ট ব্যবহার করতে হবে।">
+            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">বিজয় এনকোডিং</span>
+			<label class="switch">
+                <input type="checkbox" id="kotha-encoding-toggle">
+                <span class="slider round"></span>
+            </label>
+            <span class="text-sm font-bold text-green-600 dark:text-green-400" style="font-family: 'Kothamala', sans-serif;">কথা এনকোডিং</span>
+        </div>
+		
+		        <!-- লাইভ কনভার্টার টগল বাটন -->
         <div id="converter-options" class="flex items-center gap-3">
-            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">ম্যানুয়াল কনভার্ট</span>
+         <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">ম্যানুয়াল কনভার্ট</span>
             <label class="switch">
                 <input type="checkbox" id="live-convert-toggle">
                 <span class="slider round"></span>
             </label>
             <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">লাইভ কনভার্ট</span>
         </div>
-
-        <!-- কথা এনকোডিং টগল বাটন -->
-        <div class="flex items-center gap-2 has-tooltip" data-tooltip="কথা এনকোডিংয়ের ক্ষেত্রে Kothamala ফন্ট ব্যবহার করতে হবে">
-            <label class="switch">
-                <input type="checkbox" id="kotha-encoding-toggle">
-                <span class="slider round"></span>
-            </label>
-            <span class="text-sm font-bold text-green-600 dark:text-green-400" style="font-family: 'Kothamala', sans-serif;">কথা এনকোডিং</span>
-        </div>
+		
     </div>
 </div>
         <div class="font-converter-sections-wrapper">
