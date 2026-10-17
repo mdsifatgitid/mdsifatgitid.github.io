@@ -7818,8 +7818,6 @@ body.sidebar-open #sidebarOverlay {
 
 /* START: Unicode Textbox Word Counter */
 #unicodeCounterStats {
-    position: absolute;
-    left: 0;
     display: flex;
     gap: 10px;
     white-space: nowrap; /* লেখা যাতে ভেঙে নিচে না যায় */
@@ -7829,10 +7827,9 @@ body.sidebar-open #sidebarOverlay {
     display: inline;
     margin: 0;
 }
-/* মোবাইল ডিভাইসে যাতে ওভারল্যাপ না হয় তার জন্য সামান্য অ্যাডজাস্টমেন্ট */
 @media (max-width: 640px) {
     #unicodeCounterStats {
-        display: none; /* খুব ছোট স্ক্রিনে হাইড রাখা ভালো অথবা ছোট ফন্ট ব্যবহার */
+        display: none; /* খুব ছোট স্ক্রিনে হাইড রাখা ভালো */
     }
 }
 /* END: Unicode Textbox Word Counter */
@@ -9326,42 +9323,45 @@ body.sidebar-open #sidebarOverlay {
     #kotha-encoding-toggle:focus + .slider { box-shadow: 0 0 1px #10b981 !important; }
 </style>
 
-<div class="relative flex justify-center items-center">
-    <!-- START: Unicode Textbox Word Counter (বামে থাকবে) -->
-    <div id="unicodeCounterStats" class="hidden">
-        <div class="flex items-center gap-1">
-            <h4 class="text-gray-500 dark:text-gray-400">শব্দ:</h4>
-            <p id="unicodeCharCount" class="font-bold text-indigo-600 dark:text-indigo-400">০</p>
-        </div>
-        <div class="flex items-center gap-1">
-            <h4 class="text-gray-500 dark:text-gray-400">বাক্য:</h4>
-            <p id="unicodeSentenceCount" class="font-bold text-indigo-600 dark:text-indigo-400">০</p>
-        </div>
-        <div class="flex items-center gap-1">
-            <h4 class="text-gray-500 dark:text-gray-400">অনুচ্ছেদ:</h4>
-            <p id="unicodeParagraphCount" class="font-bold text-indigo-600 dark:text-indigo-400">০</p>
-        </div>
-        <div class="flex items-center gap-1">
-            <h4 class="text-gray-500 dark:text-gray-400">অক্ষর:</h4>
-            <p id="unicodeWordCount" class="font-bold text-indigo-600 dark:text-indigo-400">০</p>
+<!-- লাইভ টগল কনভার্টার অপশনস এবং কনভার্টার ওয়ার্ড কাউন্টার কন্টেইনার -->
+<div class="flex justify-between items-center w-full">
+    
+    <!-- ১. বাম পাশ: ওয়ার্ড কাউন্টার -->
+    <div class="flex-1 flex justify-start">
+        <div id="unicodeCounterStats" class="hidden">
+            <div class="flex items-center gap-1">
+                <h4 class="text-gray-500 dark:text-gray-400">শব্দ:</h4>
+                <p id="unicodeCharCount" class="font-bold text-indigo-600 dark:text-indigo-400">০</p>
+            </div>
+            <div class="flex items-center gap-1">
+                <h4 class="text-gray-500 dark:text-gray-400">বাক্য:</h4>
+                <p id="unicodeSentenceCount" class="font-bold text-indigo-600 dark:text-indigo-400">০</p>
+            </div>
+            <div class="flex items-center gap-1">
+                <h4 class="text-gray-500 dark:text-gray-400">অনুচ্ছেদ:</h4>
+                <p id="unicodeParagraphCount" class="font-bold text-indigo-600 dark:text-indigo-400">০</p>
+            </div>
+            <div class="flex items-center gap-1">
+                <h4 class="text-gray-500 dark:text-gray-400">অক্ষর:</h4>
+                <p id="unicodeWordCount" class="font-bold text-indigo-600 dark:text-indigo-400">০</p>
+            </div>
         </div>
     </div>
-    <!-- END: Unicode Textbox Word Counter -->
 
-    <!-- টগল বাটনস (সবসময় মাঝখানে থাকবে) -->
-    <div class="flex items-center gap-6">
+    <!-- ২. মাঝখান: টগল বাটনস (সবসময় ঠিক মাঝখানে থাকবে) -->
+    <div class="flex-shrink-0 flex items-center gap-6">
 
         <!-- কথা এনকোডিং টগল বাটন -->
         <div class="flex items-center gap-2 has-tooltip" data-tooltip="কথা এনকোডিং চালু থাকলে Kothamala ফন্ট ব্যবহার করতে হবে। বন্ধ থাকলে Sutonnymj ফন্ট ব্যবহার করতে হবে।">
             <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">বিজয় এনকোডিং</span>
-			<label class="switch">
+            <label class="switch">
                 <input type="checkbox" id="kotha-encoding-toggle">
                 <span class="slider round"></span>
             </label>
             <span class="text-sm font-bold text-green-600 dark:text-green-400" style="font-family: 'Kothamala', sans-serif;">কথা এনকোডিং</span>
         </div>
-		
-		        <!-- লাইভ কনভার্টার টগল বাটন -->
+        
+        <!-- লাইভ কনভার্টার টগল বাটন -->
         <div id="converter-options" class="flex items-center gap-3">
          <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">ম্যানুয়াল কনভার্ট</span>
             <label class="switch">
@@ -9370,8 +9370,11 @@ body.sidebar-open #sidebarOverlay {
             </label>
             <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">লাইভ কনভার্ট</span>
         </div>
-		
+        
     </div>
+
+    <!-- ৩. ডান পাশ: ফাঁকা জায়গা (যাতে টগল ঠিক মাঝে ব্যালেন্স হয়ে থাকে) -->
+    <div class="flex-1"></div>
 </div>
         <div class="font-converter-sections-wrapper">
             <!-- বাম টেক্সটএরিয়া -->
