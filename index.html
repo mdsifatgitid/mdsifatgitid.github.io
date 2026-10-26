@@ -32133,7 +32133,7 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     };
 
 // +++ হেল্পার ফাংশন: ইউনিকোড থেকে বিজয় আন্সি কনভার্সন (ভয়েসের জন্য) +++
-    function convertUnicodeToBijoyAnsiForVoice(unicodeInput) {
+    function converpZEAWYtiB6bJ16NuLbGCc6CZ6jJdKfb63(unicodeInput) {
         if (!unicodeInput) return '';
         unicodeInput = unicodeInput.replace(/য়/g, 'য়').replace(/ড়/g, 'ড়').replace(/ঢ়/g, 'ঢ়');
         const bengaliConsonants = 'কখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহড়ঢ়য়';
@@ -32245,7 +32245,7 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     };
 
     // +++ হেল্পার ফাংশন: ইউনিকোড থেকে বিজয় আন্সি কনভার্সন (ভয়েসের জন্য) +++
-    function convertUnicodeToBijoyAnsiForVoice(unicodeInput) {
+    function converpZEAWYtiB6bJ16NuLbGCc6CZ6jJdKfb63(unicodeInput) {
         if (!unicodeInput) return '';
         unicodeInput = unicodeInput.replace(/য়/g, 'য়').replace(/ড়/g, 'ড়').replace(/ঢ়/g, 'ঢ়');
         const bengaliConsonants = 'কখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহড়ঢ়য়';
@@ -32346,7 +32346,7 @@ const isKothaEncoding = (currentLayoutName === 'kotha_encoding');
 
             // ৩. বিজয় আন্সি বা কথা এনকোডিং কনভার্সন (যদি সিলেক্ট করা থাকে)
             if (isBijoyAnsi) {
-                textToProcess = convertUnicodeToBijoyAnsiForVoice(textToProcess);
+                textToProcess = converpZEAWYtiB6bJ16NuLbGCc6CZ6jJdKfb63(textToProcess);
             } else if (isKothaEncoding && typeof processUnicodeToKotha === 'function') {
                 textToProcess = processUnicodeToKotha(textToProcess);
             }
@@ -34561,7 +34561,7 @@ async function downloadTextboxContent(type) {
         const fontName = (targetType === 'bijoy' && isKothaMode) ? 'Kothamala' : 'SutonnyMJ';
 
         // ব্যবহারকারীর অনুরোধ অনুযায়ী কাস্টম কনভার্সন লজিক
-        const performUserRequestedConversion = (text) => {
+        const perpZEAWYtiB6bJ16NuLbGCc6CZ6jJdKfb63 = (text) => {
             if (!text) return '';
             
             if (targetType === 'unicode') {
@@ -34604,7 +34604,7 @@ async function downloadTextboxContent(type) {
                 let node;
                 while(node = walk.nextNode()) {
                     // লজিক প্রয়োগ
-                    node.nodeValue = performUserRequestedConversion(node.nodeValue);
+                    node.nodeValue = perpZEAWYtiB6bJ16NuLbGCc6CZ6jJdKfb63(node.nodeValue);
                 }
                 
                 htmlContentBody = tempDiv.innerHTML;
@@ -34635,7 +34635,7 @@ async function downloadTextboxContent(type) {
             else if (finalFormat === 'txt') {
                 const text = await extractTextFromFile(currentFile, currentFileType);
                 // লজিক প্রয়োগ
-                const convertedText = performUserRequestedConversion(text);
+                const convertedText = perpZEAWYtiB6bJ16NuLbGCc6CZ6jJdKfb63(text);
                 const blob = new Blob([convertedText], { type: "text/plain;charset=utf-8" });
                 saveAs(blob, outputFileName);
             }
@@ -34670,7 +34670,7 @@ async function downloadTextboxContent(type) {
                         
                         if (originalText.trim()) {
                             // ১. টেক্সট কনভার্ট করা
-                            tNode.textContent = performUserRequestedConversion(originalText);
+                            tNode.textContent = perpZEAWYtiB6bJ16NuLbGCc6CZ6jJdKfb63(originalText);
                             fileModified = true;
 
                             // ২. যদি বিজয়ে কনভার্ট হয়, তবে ফন্ট SutonnyMJ/Kothamala করে দেওয়া
@@ -34739,7 +34739,7 @@ async function downloadTextboxContent(type) {
                         const cell = worksheet[cellAddress];
                         if (cell.v && typeof cell.v === 'string') {
                             // লজিক প্রয়োগ
-                            cell.v = performUserRequestedConversion(cell.v);
+                            cell.v = perpZEAWYtiB6bJ16NuLbGCc6CZ6jJdKfb63(cell.v);
                         }
                     }
                 });
@@ -34750,7 +34750,7 @@ async function downloadTextboxContent(type) {
             else {
                  const rawText = await extractTextFromFile(currentFile, currentFileType);
                  // লজিক প্রয়োগ
-                 const convertedText = performUserRequestedConversion(rawText);
+                 const convertedText = perpZEAWYtiB6bJ16NuLbGCc6CZ6jJdKfb63(rawText);
                  
                  if (finalFormat === 'docx') {
                      const blob = await createSimpleDocx(convertedText, fontName);
@@ -35887,18 +35887,7 @@ function initializeRightSlider() {
             title: "নতুন 'কথা এনকোডিং'",
             desc: '"Kothamala" ফন্টের মাধ্যমে ইউনিকোড, আন্সি ও ইংরেজি সব এক ফন্টেই লেখা সম্ভব! ফন্ট পরিবর্তনের ঝামেলা শেষ।'
         },
-        {
-            icon: "🤖",
-            iconBg: "bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400",
-            title: "Kotha AI Hub",
-            desc: 'কীবোর্ডেই রয়েছে <strong class="text-orange-500">AI এর শক্তি!</strong> বানান শুদ্ধিকরণ, গ্রামার কারেকশন, OCR এবং বিল্ট-ইন এআই অ্যাসিস্ট্যান্ট।'
-        },
-        {
-            icon: "🎙️",
-            iconBg: "bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400",
-            title: "ওয়াইফাই ভয়েস টাইপিং",
-            desc: 'পিসিতে কোনো মাইক্রোফোন ছাড়াই মোবাইল দিয়ে স্ক্যান করে বাংলা, ইংরেজি, আরবিসহ পৃথিবীর যেকোনো ভাষায় নিখুঁত টাইপ করুন!'
-        },
+
         {
             icon: "📚",
             iconBg: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/50 dark:text-yellow-400",
