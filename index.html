@@ -8171,6 +8171,252 @@ body.sidebar-open #sidebarOverlay {
 /* END: Slide Content Animations */
 /* ======================================================== */
 
+/* ======================================================== */
+/* START: PC Voice Client Remote Controls & Touchpad Styles */
+/* ======================================================== */
+.pcv-controls-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+.dark .pcv-controls-card {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+.pcv-controls-title {
+    font-size: 13px;
+    font-weight: bold;
+    color: #64748b;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.dark .pcv-controls-title {
+    color: #9ca3af;
+}
+.pcv-nav-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+.pcv-dpad-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+.pcv-dpad-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+.pcv-btn-nav {
+    width: 58px;
+    height: 44px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background-color: #f8fafc;
+    color: #1e293b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: pan-y;
+    transition: transform 0.1s ease, background-color 0.15s;
+}
+.dark .pcv-btn-nav {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #f3f4f6;
+}
+.pcv-btn-nav:active:not(:disabled) {
+    background-color: #e2e8f0;
+    transform: scale(0.95);
+}
+.dark .pcv-btn-nav:active:not(:disabled) {
+    background-color: #4b5563;
+}
+.pcv-btn-nav:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+.pcv-btn-nav-edge {
+    flex-direction: column;
+    font-size: 14px;
+    line-height: 1.1;
+    font-weight: bold;
+}
+.pcv-btn-nav-edge span {
+    font-size: 10px;
+    color: #64748b;
+}
+.dark .pcv-btn-nav-edge span {
+    color: #9ca3af;
+}
+.pcv-btn-enter-key {
+    width: 64px;
+    height: 96px;
+    font-size: 22px;
+    font-weight: bold;
+    border-radius: 10px;
+    border: none;
+    background-color: #10b981;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    box-shadow: 0 2px 5px rgba(16, 185, 129, 0.28);
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: pan-y;
+}
+.pcv-btn-enter-key:active:not(:disabled) {
+    background-color: #059669;
+    transform: scale(0.95);
+}
+.pcv-btn-enter-key:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+.pcv-holdable-btn {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: pan-y;
+}
+.pcv-touchpad-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    align-items: stretch;
+}
+.pcv-touchpad-area {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    height: 190px;
+    background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+}
+.dark .pcv-touchpad-area {
+    background: linear-gradient(145deg, #1e293b, #0f172a);
+    border-color: #475569;
+}
+.pcv-touchpad-area.rclick-flash {
+    background: #dbeafe !important;
+    border-color: #3b82f6 !important;
+}
+.dark .pcv-touchpad-area.rclick-flash {
+    background: #1e3a8a !important;
+    border-color: #60a5fa !important;
+}
+.pcv-touchpad-area.dragging {
+    background: #ecfdf5 !important;
+    border-color: #10b981 !important;
+}
+.dark .pcv-touchpad-area.dragging {
+    background: #064e3b !important;
+    border-color: #34d399 !important;
+}
+.pcv-touchpad-area.disabled {
+    opacity: 0.45;
+    pointer-events: none;
+}
+.pcv-touchpad-hint {
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: bold;
+    pointer-events: none;
+}
+.pcv-wheel-strip {
+    width: 54px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.pcv-btn-wheel {
+    flex: 1;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    background-color: #f8fafc;
+    color: #334155;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: pan-y;
+}
+.dark .pcv-btn-wheel {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #f3f4f6;
+}
+.pcv-btn-wheel:active:not(:disabled) {
+    background-color: #e2e8f0;
+    transform: scale(0.95);
+}
+.dark .pcv-btn-wheel:active:not(:disabled) {
+    background-color: #4b5563;
+}
+.pcv-btn-wheel:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+.pcv-btn-mod {
+    background-color: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+}
+.dark .pcv-btn-mod {
+    background-color: #374151;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+.pcv-btn-mod.active {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+    border-color: #1d4ed8 !important;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+}
+.pcv-btn-drag.active {
+    background-color: #10b981 !important;
+    box-shadow: 0 0 0 2px #059669;
+}
+/* ======================================================== */
+/* END: PC Voice Client Remote Controls & Touchpad Styles */
+/* ======================================================== */
+
 <!-- এখান থেকে ওপরে নতুন ট্যাবের সি এস এস কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
     </style>
 </head>
@@ -13087,10 +13333,10 @@ body.sidebar-open #sidebarOverlay {
         <!-- +++ ভাষার ড্রপডাউন এবং কাস্টম ইনপুট +++ -->
         <div class="flex flex-col sm:flex-row items-center justify-center gap-2 mb-6 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
             <label class="font-bold text-gray-700 dark:text-gray-300">ভাষা নির্বাচন করুন:</label>
-<select id="liveMicLangCombo" class="p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-500 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+            <select id="liveMicLangCombo" class="p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-500 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
                 <option value="bn-BD" selected>বাংলা (Bangla)</option>
                 <option value="bijoy_ansi">বিজয় আন্সি (Bijoy Ansi)</option>
-				<option value="kotha_encoding">কথা এনকোডিং (Kotha Encoding)</option>
+                <option value="kotha_encoding">কথা এনকোডিং (Kotha Encoding)</option>
                 <option value="en-US">English (US)</option>
                 <option value="ar-SA">Arabic (Saudi Arabia)</option>
                 <option value="hi-IN">Hindi (India)</option>
@@ -13128,6 +13374,73 @@ body.sidebar-open #sidebarOverlay {
 
         <button id="pcVoiceSendBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg mb-4 transition-transform transform hover:scale-[1.02]">পিসিতে পাঠান (Send to PC)</button>
 
+        <!-- +++ নতুন: পিসি কার্সর, এডিটিং ও মাউস টাচপ্যাড কন্ট্রোলস +++ -->
+        <div id="pcvRemoteControlsCard" class="pcv-controls-card mb-4">
+            <div class="pcv-controls-title">পিসি কার্সর ও এডিটিং কন্ট্রোল</div>
+
+            <!-- D-Pad + Enter -->
+            <div class="pcv-nav-wrapper">
+                <div class="pcv-dpad-box">
+                    <div class="pcv-dpad-row">
+                        <button id="pcvBtnHome" class="pcv-btn-nav pcv-btn-nav-edge" title="লাইনের শুরুতে" disabled>⇤<span>শুরু</span></button>
+                        <button id="pcvBtnUp" class="pcv-btn-nav" title="উপরে" disabled>⬆️</button>
+                        <button id="pcvBtnEnd" class="pcv-btn-nav pcv-btn-nav-edge" title="লাইনের শেষে" disabled>⇥<span>শেষ</span></button>
+                    </div>
+                    <div class="pcv-dpad-row">
+                        <button id="pcvBtnLeft" class="pcv-btn-nav" title="বামে" disabled>⬅️</button>
+                        <button id="pcvBtnDown" class="pcv-btn-nav" title="নিচে" disabled>⬇️</button>
+                        <button id="pcvBtnRight" class="pcv-btn-nav" title="ডানে" disabled>➡️</button>
+                    </div>
+                </div>
+                <button id="pcvBtnEnter" class="pcv-btn-enter-key" title="এন্টার (Enter)" disabled>⏎<span style="font-size:11px;">Enter</span></button>
+            </div>
+
+            <!-- Clear All & Backspace -->
+            <div class="flex gap-2 mt-3">
+                <button id="pcvBtnClearAll" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-3 rounded-lg shadow text-sm disabled:opacity-45 disabled:cursor-not-allowed transition-colors" disabled>🗑️ সব মুছুন (PC)</button>
+                <button id="pcvBtnBackspace" class="pcv-holdable-btn flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 px-3 rounded-lg shadow text-sm disabled:opacity-45 disabled:cursor-not-allowed transition-colors" disabled>⌫ ব্যাকস্পেস (PC)</button>
+            </div>
+
+            <!-- Select All, Copy, Paste -->
+            <div class="flex gap-2 mt-2">
+                <button id="pcvBtnSelectAll" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-2 rounded-lg text-xs sm:text-sm disabled:opacity-45 disabled:cursor-not-allowed transition-colors" disabled>☑️ সিলেক্ট অল</button>
+                <button id="pcvBtnCopy" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-2 rounded-lg text-xs sm:text-sm disabled:opacity-45 disabled:cursor-not-allowed transition-colors" disabled>📋 কপি</button>
+                <button id="pcvBtnPaste" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-2 rounded-lg text-xs sm:text-sm disabled:opacity-45 disabled:cursor-not-allowed transition-colors" disabled>📥 পেস্ট</button>
+            </div>
+
+            <!-- PC Undo & Redo -->
+            <div class="flex gap-2 mt-2">
+                <button id="pcvBtnUndo" class="flex-1 bg-slate-500 hover:bg-slate-600 text-white font-bold py-2 px-2 rounded-lg text-xs sm:text-sm disabled:opacity-45 disabled:cursor-not-allowed transition-colors" disabled>↶ আন্ডু (PC)</button>
+                <button id="pcvBtnRedo" class="flex-1 bg-slate-500 hover:bg-slate-600 text-white font-bold py-2 px-2 rounded-lg text-xs sm:text-sm disabled:opacity-45 disabled:cursor-not-allowed transition-colors" disabled>↷ রিডু (PC)</button>
+            </div>
+
+            <!-- Mouse Touchpad -->
+            <div class="pcv-controls-title mt-4 mb-1">মাউস টাচপ্যাড (ট্যাপ = ক্লিক, ডাবল-ট্যাপ+হোল্ড = ড্র্যাগ-সিলেক্ট)</div>
+            <div class="pcv-touchpad-row">
+                <div id="pcvTouchpadArea" class="pcv-touchpad-area disabled">
+                    <span id="pcvTouchpadHint" class="pcv-touchpad-hint">🖱️ Touchpad (কানেক্ট করুন)</span>
+                </div>
+                <div class="pcv-wheel-strip">
+                    <button id="pcvBtnWheelUp" class="pcv-btn-wheel" title="হুইল আপ (Scroll Up)" disabled>🔼<span style="font-size:10px;opacity:0.7;">Up</span></button>
+                    <button id="pcvBtnWheelDown" class="pcv-btn-wheel" title="হুইল ডাউন (Scroll Down)" disabled>🔽<span style="font-size:10px;opacity:0.7;">Down</span></button>
+                </div>
+            </div>
+
+            <!-- Left, Drag Lock, Right Click -->
+            <div class="flex gap-2 mt-2">
+                <button id="pcvBtnLeftClick" class="flex-1 bg-slate-700 hover:bg-slate-800 text-white font-bold py-2.5 px-2 rounded-lg text-xs sm:text-sm disabled:opacity-45 disabled:cursor-not-allowed transition-colors" disabled>🖱️ লেফট</button>
+                <button id="pcvBtnDragLock" class="pcv-btn-drag flex-1 bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 px-2 rounded-lg text-xs sm:text-sm disabled:opacity-45 disabled:cursor-not-allowed transition-colors" disabled>✋ ড্র্যাগ / সিলেক্ট</button>
+                <button id="pcvBtnRightClick" class="flex-1 bg-slate-700 hover:bg-slate-800 text-white font-bold py-2.5 px-2 rounded-lg text-xs sm:text-sm disabled:opacity-45 disabled:cursor-not-allowed transition-colors" disabled>🖱️ রাইট</button>
+            </div>
+
+            <!-- Modifier Keys (Ctrl, Alt, Win) -->
+            <div class="flex gap-2 mt-2">
+                <button id="pcvBtnModCtrl" class="pcv-btn-mod flex-1 font-bold py-2 px-2 rounded-lg text-xs sm:text-sm disabled:opacity-45 disabled:cursor-not-allowed transition-colors" disabled>Ctrl</button>
+                <button id="pcvBtnModAlt" class="pcv-btn-mod flex-1 font-bold py-2 px-2 rounded-lg text-xs sm:text-sm disabled:opacity-45 disabled:cursor-not-allowed transition-colors" disabled>Alt</button>
+                <button id="pcvBtnModWin" class="pcv-btn-mod flex-1 font-bold py-2 px-2 rounded-lg text-xs sm:text-sm disabled:opacity-45 disabled:cursor-not-allowed transition-colors" disabled>⊞ Win</button>
+            </div>
+        </div>
+
         <!-- Mixed Content Warning -->
         <div id="pcVoiceWarningBox" class="hidden bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4 text-left rounded-lg shadow-sm">
             <p class="text-red-700 dark:text-red-400 font-bold mb-1 flex items-center gap-1">
@@ -13144,9 +13457,6 @@ body.sidebar-open #sidebarOverlay {
     </div>
 </div>
 <!-- END: PC Voice Client Content -->
-
-
-
 
 
 <!-- এখান থেকে ওপরে নতুন ট্যাবের HTML Content কোড লিখতে হবে বা বসাতে হয় বা বসাতে হবে -->
@@ -35160,47 +35470,118 @@ function initializeCanvasTools() {
 // ========================================================
 
 // ====================================================================
-// START: PC VOICE CLIENT SCRIPT
+// START: PC VOICE CLIENT SCRIPT (Updated with Cursor, Edit & Touchpad)
 // ====================================================================
+let isPcVoiceClientInitialized = false;
+
 function initializePcVoiceClient() {
+    if (isPcVoiceClientInitialized) return;
+    isPcVoiceClientInitialized = true;
+
     const ipInput = document.getElementById('pcVoiceIpInput');
     const connectBtn = document.getElementById('pcVoiceConnectBtn');
     const disconnectBtn = document.getElementById('pcVoiceDisconnectBtn');
     const textBox = document.getElementById('pcVoiceTextBox');
     const autoSendCheck = document.getElementById('pcVoiceAutoSend');
     const warningBox = document.getElementById('pcVoiceWarningBox');
-    
+
     const liveMicLangCombo = document.getElementById('liveMicLangCombo');
     const liveMicCustomCode = document.getElementById('liveMicCustomCode');
     const liveMicBtn = document.getElementById('liveMicBtn');
     const liveMicStatus = document.getElementById('liveMicStatus');
-    
+
     const btnSend = document.getElementById('pcVoiceSendBtn');
     const btnUndo = document.getElementById('pcVoiceUndoBtn');
     const btnRedo = document.getElementById('pcVoiceRedoBtn');
     const btnClear = document.getElementById('pcVoiceClearBtn');
 
-    let isDisconnected = true;
-    window.isPcVoiceConnected = false; // +++ গ্লোবাল স্ট্যাটাস +++
+    // Remote Cursor, Edit & Mouse Elements
+    const pcvControlIds = [
+        'pcvBtnHome', 'pcvBtnUp', 'pcvBtnEnd', 'pcvBtnLeft', 'pcvBtnDown', 'pcvBtnRight', 'pcvBtnEnter',
+        'pcvBtnClearAll', 'pcvBtnBackspace', 'pcvBtnSelectAll', 'pcvBtnCopy', 'pcvBtnPaste',
+        'pcvBtnUndo', 'pcvBtnRedo', 'pcvBtnWheelUp', 'pcvBtnWheelDown',
+        'pcvBtnLeftClick', 'pcvBtnDragLock', 'pcvBtnRightClick',
+        'pcvBtnModCtrl', 'pcvBtnModAlt', 'pcvBtnModWin'
+    ];
+    const touchpad = document.getElementById('pcvTouchpadArea');
+    const touchpadHint = document.getElementById('pcvTouchpadHint');
+    const btnDragLock = document.getElementById('pcvBtnDragLock');
 
-    // +++ গ্লোবাল সেন্ড ফাংশন (যাতে যেকোনো জায়গা থেকে পিসিতে ডাটা পাঠানো যায়) +++
+    let isDisconnected = true;
+    window.isPcVoiceConnected = false;
+    let ws = null;
+    const modState = { CTRL: false, ALT: false, WIN: false };
+
+    function getCleanIp() {
+        if (!ipInput) return '';
+        return ipInput.value.trim().replace(/^https?:\/\//, '').split(':')[0];
+    }
+
+    function getBaseHttpUrl() {
+        const ip = getCleanIp();
+        return ip ? `http://${ip}:5050` : null;
+    }
+
+    function setPcControlsEnabled(enabled) {
+        pcvControlIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.disabled = !enabled;
+        });
+        if (touchpad) {
+            if (enabled) {
+                touchpad.classList.remove('disabled');
+                if (touchpadHint) touchpadHint.innerText = '🖱️ Touchpad';
+            } else {
+                touchpad.classList.add('disabled');
+                if (touchpadHint) touchpadHint.innerText = '🖱️ Touchpad (কানেক্ট করুন)';
+            }
+        }
+    }
+
+    function resetModifierButtons() {
+        const modMap = { CTRL: 'pcvBtnModCtrl', ALT: 'pcvBtnModAlt', WIN: 'pcvBtnModWin' };
+        Object.keys(modState).forEach(mod => {
+            modState[mod] = false;
+            const btn = document.getElementById(modMap[mod]);
+            if (btn) btn.classList.remove('active');
+        });
+    }
+
+    function handlePcRejected() {
+        if (isDisconnected) return;
+        isDisconnected = true;
+        window.isPcVoiceConnected = false;
+        stopHoldKey(true);
+        cancelTouchpad();
+        resetModifierButtons();
+        if (ws) { try { ws.close(); } catch(e) {} ws = null; }
+        setPcControlsEnabled(false);
+
+        if (connectBtn) {
+            connectBtn.className = "bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2 min-w-[110px]";
+            connectBtn.innerHTML = 'কানেক্ট';
+        }
+        if (disconnectBtn) disconnectBtn.classList.add('hidden');
+        showCustomAlert("পিসি থেকে সংযোগ বিচ্ছিন্ন করা হয়েছে।");
+    }
+
+    // +++ গ্লোবাল সেন্ড ফাংশন +++
     window.sendVoiceDataToPC = function(text) {
-        let ip = ipInput.value.trim().replace(/^https?:\/\//, '').split(':')[0];
-        if (!ip) return;
-        fetch(`http://${ip}:5050/type`, { 
-            method: 'POST', 
-            mode: 'no-cors',
+        const baseUrl = getBaseHttpUrl();
+        if (!baseUrl) return;
+        fetch(`${baseUrl}/type`, {
+            method: 'POST',
             headers: { 'Content-Type': 'text/plain' },
-            body: text 
+            body: text
+        }).then(res => {
+            if (res.status === 403) handlePcRejected();
         }).catch(err => console.error("Global PC Send Error:", err));
     };
 
-    // লোকাল স্টোরেজ থেকে আইপি লোড
     if (ipInput && !ipInput.value) {
         ipInput.value = localStorage.getItem('lastPcVoiceIp') || '';
     }
 
-    // ড্রপডাউন এবং কাস্টম ইনপুট লজিক (লোকাল স্টোরেজসহ)
     if (liveMicLangCombo) {
         const savedLang = localStorage.getItem('lastVoiceLang') || 'bn-BD';
         const savedCustom = localStorage.getItem('lastCustomCode') || '';
@@ -35213,42 +35594,49 @@ function initializePcVoiceClient() {
                 break;
             }
         }
-        
         if (!isCustomSaved && savedLang === 'custom') {
             liveMicLangCombo.value = 'custom';
-            if(liveMicCustomCode) {
+            if (liveMicCustomCode) {
                 liveMicCustomCode.value = savedCustom;
                 liveMicCustomCode.classList.remove('hidden');
             }
         }
-
         liveMicLangCombo.addEventListener('change', (e) => {
             const val = e.target.value;
             localStorage.setItem('lastVoiceLang', val);
-            if (val === 'custom') {
-                if(liveMicCustomCode) liveMicCustomCode.classList.remove('hidden');
-            } else {
-                if(liveMicCustomCode) liveMicCustomCode.classList.add('hidden');
-            }
+            if (liveMicCustomCode) liveMicCustomCode.classList.toggle('hidden', val !== 'custom');
         });
-
-        if(liveMicCustomCode) {
+        if (liveMicCustomCode) {
             liveMicCustomCode.addEventListener('input', (e) => {
                 localStorage.setItem('lastCustomCode', e.target.value.trim());
             });
         }
     }
 
-    // কানেক্ট বাটন লজিক
+    // --- 60 FPS WebSocket মাউস কানেকশন ---
+    function connectMouseWS() {
+        if (isDisconnected) return;
+        const ip = getCleanIp();
+        if (!ip) return;
+        if (ws) { try { ws.close(); } catch(e) {} ws = null; }
+        try {
+            ws = new WebSocket(`ws://${ip}:5050/ws`);
+            ws.onclose = () => {
+                ws = null;
+                if (!isDisconnected) setTimeout(connectMouseWS, 1500);
+            };
+            ws.onerror = () => {};
+        } catch(err) { ws = null; }
+    }
+
+    // কানেক্ট ও ডিসকানেক্ট বাটন লজিক
     if (connectBtn) {
         connectBtn.addEventListener('click', async () => {
-            let ip = ipInput.value.trim();
+            const ip = getCleanIp();
             if (!ip) {
                 showCustomAlert('অনুগ্রহ করে পিসির আইপি এড্রেস দিন।');
                 return;
             }
-
-            ip = ip.replace(/^https?:\/\//, '').split(':')[0];
             localStorage.setItem('lastPcVoiceIp', ip);
             const baseUrl = `http://${ip}:5050`;
 
@@ -35256,26 +35644,27 @@ function initializePcVoiceClient() {
             connectBtn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> অপেক্ষা করুন...`;
             connectBtn.className = "bg-indigo-400 text-white font-bold py-2 px-4 rounded-lg shadow flex items-center justify-center gap-2 min-w-[110px]";
 
-// ১০ সেকেন্ডের টাইমআউট কন্ট্রোলার
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 10000);
 
             try {
-                const res = await fetch(`${baseUrl}/type`, { 
-                    method: 'POST', 
+                const res = await fetch(`${baseUrl}/type`, {
+                    method: 'POST',
                     body: ' ',
-                    signal: controller.signal // টাইমআউট সিগন্যাল যুক্ত করা হলো
+                    signal: controller.signal
                 });
-                
-                clearTimeout(timeoutId); // সফল হলে টাইমার ক্লিয়ার
+                clearTimeout(timeoutId);
 
                 if (res.ok || res.status === 200) {
                     isDisconnected = false;
-                    window.isPcVoiceConnected = true; // +++ গ্লোবাল স্ট্যাটাস আপডেট +++
+                    window.isPcVoiceConnected = true;
                     connectBtn.className = "bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-1 min-w-[110px]";
                     connectBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg> কানেক্টেড`;
-                    if(warningBox) warningBox.classList.add('hidden');
-                    if(disconnectBtn) disconnectBtn.classList.remove('hidden');
+                    if (warningBox) warningBox.classList.add('hidden');
+                    if (disconnectBtn) disconnectBtn.classList.remove('hidden');
+
+                    setPcControlsEnabled(true);
+                    connectMouseWS();
                     showCustomAlert('পিসির সাথে সফলভাবে কানেক্ট হয়েছে!');
                 } else if (res.status === 403) {
                     throw new Error('Rejected by PC user');
@@ -35283,18 +35672,19 @@ function initializePcVoiceClient() {
                     throw new Error('Connection failed');
                 }
             } catch (err) {
-                clearTimeout(timeoutId); // এরর হলেও টাইমার ক্লিয়ার
+                clearTimeout(timeoutId);
                 console.error("Connection Error:", err);
                 connectBtn.className = "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-1 min-w-[110px]";
                 connectBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg> ব্যর্থ`;
-                
+                setPcControlsEnabled(false);
+
                 if (err.name === 'AbortError') {
-                    if(warningBox) warningBox.classList.remove('hidden');
+                    if (warningBox) warningBox.classList.remove('hidden');
                     showCustomAlert('কানেকশন টাইমআউট! পিসি রেসপন্স করেনি (১০ সেকেন্ড)। আইপি ঠিক আছে কিনা চেক করুন।');
                 } else if (err.message === 'Rejected by PC user') {
                     showCustomAlert('পিসি থেকে কানেকশন রিকোয়েস্ট বাতিল করা হয়েছে!');
                 } else {
-                    if(warningBox) warningBox.classList.remove('hidden');
+                    if (warningBox) warningBox.classList.remove('hidden');
                     showCustomAlert('কানেক্ট করা যায়নি! নিচের ওয়ার্নিং বক্সটি পড়ুন।');
                 }
             } finally {
@@ -35304,14 +35694,25 @@ function initializePcVoiceClient() {
 
         if (disconnectBtn) {
             disconnectBtn.addEventListener('click', () => {
-                let ip = ipInput.value.trim().replace(/^https?:\/\//, '').split(':')[0];
-                const baseUrl = `http://${ip}:5050`;
+                const baseUrl = getBaseHttpUrl();
+                stopHoldKey(true);
+                cancelTouchpad();
 
-		fetch(`${baseUrl}/disconnect`, { method: 'POST', mode: 'no-cors' }).catch(e => console.log(e));
-                
+                // মডিফায়ার কী আটকে থাকলে রিলিজ করে দিন
+                Object.keys(modState).forEach(mod => {
+                    if (modState[mod]) sendMouseCmd(mod + '_UP');
+                });
+                resetModifierButtons();
+
+                if (ws) { try { ws.close(); } catch(e) {} ws = null; }
+                if (baseUrl) {
+                    fetch(`${baseUrl}/disconnect`, { method: 'POST', mode: 'no-cors' }).catch(e => console.log(e));
+                }
+
                 isDisconnected = true;
                 window.isPcVoiceConnected = false;
-				
+                setPcControlsEnabled(false);
+
                 connectBtn.className = "bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2 min-w-[110px]";
                 connectBtn.innerHTML = 'কানেক্ট';
                 disconnectBtn.classList.add('hidden');
@@ -35320,10 +35721,11 @@ function initializePcVoiceClient() {
         }
 
         ipInput.addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') connectBtn.click();
+            if (e.key === 'Enter') connectBtn.click();
         });
     }
 
+    // --- টেক্সটবক্স ও অটো সেন্ড লজিক ---
     let history = [''];
     let historyIndex = 0;
     let typingTimer;
@@ -35346,45 +35748,391 @@ function initializePcVoiceClient() {
     if (textBox) {
         textBox.addEventListener('input', () => {
             saveState();
-            if (autoSendCheck && autoSendCheck.checked) {
+            if (autoSendCheck && autoSendCheck.checked && !isDisconnected) {
                 clearTimeout(typingTimer);
                 typingTimer = setTimeout(autoSendToPC, doneTypingInterval);
             }
         });
     }
 
-    function getServerUrl() {
-        let ip = ipInput.value.trim();
-        if (!ip) return null;
-        ip = ip.replace(/^https?:\/\//, '').split(':')[0];
-        return `http://${ip}:5050/type`;
-    }
-
-    function autoSendToPC() {
-        const text = textBox.value.trim();
-        if(text) sendDataToPCFetch(text, true);
-    }
+function autoSendToPC() {
+    if (isDisconnected) return;
+    const text = textBox.value.replace(" (Sent ✓)", "").replace(/^[ \t]+|[ \t]+$/g, '');
+    if (text) sendDataToPCFetch(text, true);
+}
 
     function sendDataToPCFetch(text, isAuto) {
-        const url = getServerUrl();
-        if (!url) {
+        const baseUrl = getBaseHttpUrl();
+        if (!baseUrl) {
             showCustomAlert('অনুগ্রহ করে পিসির আইপি দিন।');
             return;
         }
-
-        fetch(url, { 
-            method: 'POST', 
-            mode: 'no-cors',
+        fetch(`${baseUrl}/type`, {
+            method: 'POST',
             headers: { 'Content-Type': 'text/plain' },
-            body: text 
-        }).then(() => {
-            textBox.value = '';
-            saveState();
+            body: text
+        }).then(res => {
+            if (res.status === 403) {
+                handlePcRejected();
+            } else {
+                textBox.value = '';
+                saveState();
+            }
         }).catch(err => {
             console.error(err);
-            if(!isAuto) showCustomAlert('পিসিতে পাঠানো যায়নি! কানেকশন চেক করুন।');
+            if (!isAuto) showCustomAlert('পিসিতে পাঠানো যায়নি! কানেকশন চেক করুন।');
         });
     }
+
+    // --- মাউস কমান্ড ও ফ্লাশ লজিক ---
+    let accumX = 0, accumY = 0;
+    let isMouseSending = false;
+    let rafPending = false;
+
+    function sendMouseCmd(cmd) {
+        if (isDisconnected) return;
+        if (ws && ws.readyState === 1) {
+            ws.send(cmd);
+            return;
+        }
+        const baseUrl = getBaseHttpUrl();
+        if (!baseUrl) return;
+        fetch(`${baseUrl}/mouse`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: cmd
+        }).then(res => {
+            if (res.status === 403) handlePcRejected();
+        }).catch(err => console.error(err));
+    }
+
+    function flushMouseMove() {
+        if (isDisconnected) return;
+        const dx = Math.round(accumX);
+        const dy = Math.round(accumY);
+        if (dx === 0 && dy === 0) return;
+
+        if (ws && ws.readyState === 1) {
+            accumX -= dx;
+            accumY -= dy;
+            ws.send(`M:${dx},${dy}`);
+            return;
+        }
+        if (isMouseSending) return;
+        const baseUrl = getBaseHttpUrl();
+        if (!baseUrl) return;
+
+        accumX -= dx;
+        accumY -= dy;
+        isMouseSending = true;
+
+        fetch(`${baseUrl}/mouse`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: `M:${dx},${dy}`
+        }).then(res => {
+            if (res.status === 403) handlePcRejected();
+        }).catch(err => console.error(err)).finally(() => {
+            isMouseSending = false;
+            if (Math.round(accumX) !== 0 || Math.round(accumY) !== 0) {
+                flushMouseMove();
+            }
+        });
+    }
+
+    function scheduleMoveFlush() {
+        if (!rafPending) {
+            rafPending = true;
+            requestAnimationFrame(() => {
+                rafPending = false;
+                flushMouseMove();
+            });
+        }
+    }
+
+    // --- পিসি কী ও হোল্ড-টু-রিপিট লজিক ---
+    let holdStartTimer = null, holdDelayTimer = null, holdRepeatTimer = null;
+    let holdKeyName = null, holdTriggered = false;
+    let holdStartX = 0, holdStartY = 0;
+
+    function sendPcKey(keyName) {
+        if (isDisconnected) return;
+        if (keyName === 'WU' || keyName === 'WD') {
+            sendMouseCmd(keyName);
+            return;
+        }
+        if (keyName === 'CLEAR_ALL' && !confirm("আপনি কি সব লেখা মুছে ফেলতে চান?")) return;
+        if (keyName === 'SELECT_ALL' && !confirm("আপনি কি পিসির সবকিছু সিলেক্ট অল (Select All) করতে চান?")) return;
+        if (keyName === 'COPY' && !confirm("আপনি কি পিসির সিলেক্ট করা অংশ কপি (Copy) করতে চান?")) return;
+        if (keyName === 'PASTE' && !confirm("আপনি কি পিসিতে পেস্ট (Paste) করতে চান?")) return;
+
+        const baseUrl = getBaseHttpUrl();
+        if (!baseUrl) return;
+        fetch(`${baseUrl}/key`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: keyName
+        }).then(res => {
+            if (res.status === 403) handlePcRejected();
+        }).catch(err => console.error(err));
+    }
+
+    function stopHoldKey(cancelOnly) {
+        if (holdStartTimer) { clearTimeout(holdStartTimer); holdStartTimer = null; }
+        if (holdDelayTimer) { clearTimeout(holdDelayTimer); holdDelayTimer = null; }
+        if (holdRepeatTimer) { clearInterval(holdRepeatTimer); holdRepeatTimer = null; }
+        if (!cancelOnly && holdKeyName && !holdTriggered) {
+            sendPcKey(holdKeyName);
+        }
+        holdKeyName = null;
+        holdTriggered = false;
+    }
+
+    function startHoldKey(keyName, e) {
+        if (isDisconnected) return;
+        stopHoldKey(true);
+        holdKeyName = keyName;
+        holdTriggered = false;
+        holdStartX = e ? e.clientX : 0;
+        holdStartY = e ? e.clientY : 0;
+
+        holdStartTimer = setTimeout(() => {
+            holdStartTimer = null;
+            if (isDisconnected || !holdKeyName) return;
+            holdTriggered = true;
+            sendPcKey(holdKeyName);
+        }, 90);
+
+        holdDelayTimer = setTimeout(() => {
+            holdRepeatTimer = setInterval(() => {
+                if (isDisconnected || !holdKeyName) { stopHoldKey(true); return; }
+                sendPcKey(holdKeyName);
+            }, 75);
+        }, 400);
+    }
+
+    window.addEventListener('pointermove', (e) => {
+        if (!holdKeyName || holdTriggered) return;
+        if (Math.hypot(e.clientX - holdStartX, e.clientY - holdStartY) > 10) {
+            stopHoldKey(true);
+        }
+    });
+    window.addEventListener('pointerup', () => stopHoldKey(false));
+    window.addEventListener('pointercancel', () => stopHoldKey(true));
+    window.addEventListener('blur', () => stopHoldKey(true));
+
+    // হোল্ডেবল বাটন বাইন্ডিং (Arrows, Enter, Backspace, Wheel Up/Down)
+    const holdableButtonMap = {
+        pcvBtnUp: 'UP', pcvBtnDown: 'DOWN', pcvBtnLeft: 'LEFT', pcvBtnRight: 'RIGHT',
+        pcvBtnEnter: 'ENTER', pcvBtnBackspace: 'BACKSPACE',
+        pcvBtnWheelUp: 'WU', pcvBtnWheelDown: 'WD'
+    };
+    Object.entries(holdableButtonMap).forEach(([id, cmd]) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('pointerdown', (e) => startHoldKey(cmd, e));
+            el.addEventListener('pointerleave', () => stopHoldKey(true));
+            el.addEventListener('contextmenu', (e) => e.preventDefault());
+        }
+    });
+
+    // সিঙ্গেল ক্লিক বাটন বাইন্ডিং
+    const clickButtonMap = {
+        pcvBtnHome: 'HOME', pcvBtnEnd: 'END', pcvBtnClearAll: 'CLEAR_ALL',
+        pcvBtnSelectAll: 'SELECT_ALL', pcvBtnCopy: 'COPY', pcvBtnPaste: 'PASTE',
+        pcvBtnUndo: 'UNDO', pcvBtnRedo: 'REDO'
+    };
+    Object.entries(clickButtonMap).forEach(([id, cmd]) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('click', () => sendPcKey(cmd));
+    });
+
+    // --- টাচপ্যাড ও ড্র্যাগ-লক লজিক ---
+    let padActive = false, activePtrId = null;
+    let padLastX = 0, padLastY = 0, padStartX = 0, padStartY = 0;
+    let padMoved = false, padRightClicked = false, padDownTime = 0;
+    let padHoldTimer = null, pendingTapTimer = null;
+    let lastTapEndTime = 0, isTapDragging = false, isDragLocked = false;
+
+    function setDragVisual(active, label) {
+        if (!touchpad || !touchpadHint) return;
+        if (active) {
+            touchpad.classList.add('dragging');
+            touchpadHint.innerText = label;
+        } else {
+            touchpad.classList.remove('dragging');
+            touchpadHint.innerText = isDisconnected ? '🖱️ Touchpad (কানেক্ট করুন)' : '🖱️ Touchpad';
+        }
+    }
+
+    function toggleDragLock() {
+        if (isDisconnected) return;
+        if (pendingTapTimer) { clearTimeout(pendingTapTimer); pendingTapTimer = null; }
+        isDragLocked = !isDragLocked;
+        if (isDragLocked) {
+            sendMouseCmd('LD');
+            if (btnDragLock) {
+                btnDragLock.classList.add('active');
+                btnDragLock.innerText = '🔓 ড্র্যাগ ছাড়ুন';
+            }
+            setDragVisual(true, '✋ ড্র্যাগ লক চালু — সোয়াপ করুন');
+        } else {
+            flushMouseMove();
+            sendMouseCmd('LU');
+            if (btnDragLock) {
+                btnDragLock.classList.remove('active');
+                btnDragLock.innerText = '✋ ড্র্যাগ / সিলেক্ট';
+            }
+            setDragVisual(false);
+        }
+    }
+
+    function cancelTouchpad() {
+        if (padHoldTimer) { clearTimeout(padHoldTimer); padHoldTimer = null; }
+        if (pendingTapTimer) { clearTimeout(pendingTapTimer); pendingTapTimer = null; }
+        if (isTapDragging || isDragLocked) {
+            isTapDragging = false;
+            isDragLocked = false;
+            if (btnDragLock) {
+                btnDragLock.classList.remove('active');
+                btnDragLock.innerText = '✋ ড্র্যাগ / সিলেক্ট';
+            }
+            setDragVisual(false);
+            flushMouseMove();
+            sendMouseCmd('LU');
+        }
+        padActive = false;
+        activePtrId = null;
+    }
+
+    if (touchpad) {
+        touchpad.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        touchpad.addEventListener('pointerdown', (e) => {
+            if (isDisconnected) return;
+            e.preventDefault();
+            if (padHoldTimer) { clearTimeout(padHoldTimer); padHoldTimer = null; }
+
+            const now = Date.now();
+            padActive = true;
+            activePtrId = e.pointerId;
+            padLastX = padStartX = e.clientX;
+            padLastY = padStartY = e.clientY;
+            padMoved = false;
+            padRightClicked = false;
+            padDownTime = now;
+
+            try { touchpad.setPointerCapture(e.pointerId); } catch(err) {}
+            if (isDragLocked) return;
+
+            if (pendingTapTimer || (now - lastTapEndTime < 350)) {
+                if (pendingTapTimer) { clearTimeout(pendingTapTimer); pendingTapTimer = null; }
+                isTapDragging = true;
+                lastTapEndTime = 0;
+                sendMouseCmd('LD');
+                setDragVisual(true, '✋ ড্র্যাগ / সিলেক্ট চলছে...');
+            } else {
+                padHoldTimer = setTimeout(() => {
+                    if (padActive && !padMoved && !isTapDragging && !isDisconnected) {
+                        padRightClicked = true;
+                        sendMouseCmd('RC');
+                        touchpad.classList.add('rclick-flash');
+                        setTimeout(() => touchpad.classList.remove('rclick-flash'), 180);
+                    }
+                }, 500);
+            }
+        });
+
+        touchpad.addEventListener('pointermove', (e) => {
+            if (!padActive || e.pointerId !== activePtrId || isDisconnected) return;
+            const dx = e.clientX - padLastX;
+            const dy = e.clientY - padLastY;
+            padLastX = e.clientX;
+            padLastY = e.clientY;
+
+            if (!padMoved && Math.hypot(e.clientX - padStartX, e.clientY - padStartY) > 10) {
+                padMoved = true;
+                if (padHoldTimer) { clearTimeout(padHoldTimer); padHoldTimer = null; }
+            }
+            if (padMoved || isTapDragging || isDragLocked) {
+                const mag = Math.hypot(dx, dy);
+                const gain = 1.45 + Math.min(mag * 0.08, 1.8);
+                accumX += dx * gain;
+                accumY += dy * gain;
+                scheduleMoveFlush();
+            }
+        });
+
+        const endPointer = (e) => {
+            if (!padActive || e.pointerId !== activePtrId) return;
+            if (padHoldTimer) { clearTimeout(padHoldTimer); padHoldTimer = null; }
+
+            const now = Date.now();
+            padActive = false;
+            activePtrId = null;
+
+            if (isDragLocked) {
+                if (e.type === 'pointerup' && !padMoved && (now - padDownTime < 280)) {
+                    toggleDragLock();
+                }
+                return;
+            }
+
+            if (isTapDragging) {
+                isTapDragging = false;
+                setDragVisual(false);
+                flushMouseMove();
+                sendMouseCmd('LU');
+                if (e.type === 'pointerup' && !padMoved && (now - padDownTime < 260)) {
+                    sendMouseCmd('LC');
+                }
+                return;
+            }
+
+            if (e.type === 'pointerup' && !padMoved && !padRightClicked && (now - padDownTime < 350)) {
+                lastTapEndTime = now;
+                pendingTapTimer = setTimeout(() => {
+                    pendingTapTimer = null;
+                    sendMouseCmd('LC');
+                }, 220);
+            }
+        };
+
+        touchpad.addEventListener('pointerup', endPointer);
+        touchpad.addEventListener('pointercancel', endPointer);
+    }
+
+    // মাউস ও মডিফায়ার বাটন ইভেন্টস
+    const btnLeftClick = document.getElementById('pcvBtnLeftClick');
+    const btnRightClick = document.getElementById('pcvBtnRightClick');
+    if (btnLeftClick) {
+        btnLeftClick.addEventListener('click', () => {
+            if (isDisconnected) return;
+            if (isDragLocked) toggleDragLock();
+            else sendMouseCmd('LC');
+        });
+    }
+    if (btnDragLock) btnDragLock.addEventListener('click', toggleDragLock);
+    if (btnRightClick) btnRightClick.addEventListener('click', () => sendMouseCmd('RC'));
+
+    const toggleModKey = (mod, btnId) => {
+        if (isDisconnected) return;
+        modState[mod] = !modState[mod];
+        const btn = document.getElementById(btnId);
+        if (modState[mod]) {
+            if (btn) btn.classList.add('active');
+            sendMouseCmd(mod + '_DOWN');
+        } else {
+            if (btn) btn.classList.remove('active');
+            sendMouseCmd(mod + '_UP');
+        }
+    };
+    const btnModCtrl = document.getElementById('pcvBtnModCtrl');
+    const btnModAlt = document.getElementById('pcvBtnModAlt');
+    const btnModWin = document.getElementById('pcvBtnModWin');
+    if (btnModCtrl) btnModCtrl.addEventListener('click', () => toggleModKey('CTRL', 'pcvBtnModCtrl'));
+    if (btnModAlt) btnModAlt.addEventListener('click', () => toggleModKey('ALT', 'pcvBtnModAlt'));
+    if (btnModWin) btnModWin.addEventListener('click', () => toggleModKey('WIN', 'pcvBtnModWin'));
 
     // ==========================================
     // লাইভ মাইক্রোফোন লজিক (Updated: Single Breath)
@@ -35393,30 +36141,26 @@ function initializePcVoiceClient() {
 
     if (liveMicBtn && SpeechRec) {
         liveRec = new SpeechRec();
-        
-        // +++ কথা থামালেই অটোমেটিক বন্ধ হয়ে যাবে (No loop) +++
-        liveRec.continuous = false; 
-        liveRec.interimResults = false; // শুধু ফাইনাল রেজাল্টটাই দেখাবে, যাতে রিপিট না হয়
-        
+        liveRec.continuous = false;
+        liveRec.interimResults = false;
+
         liveRec.onstart = () => {
             liveMicBtn.classList.replace('bg-red-500', 'bg-green-500');
             liveMicBtn.classList.replace('hover:bg-red-600', 'hover:bg-green-600');
             liveMicBtn.classList.add('animate-pulse');
-            if(liveMicStatus) liveMicStatus.innerHTML = "<span class='text-green-500'>🔴 শুনছি... (কথা থামালেই পিসিতে যাবে)</span>";
-            if(liveMicLangCombo) liveMicLangCombo.disabled = true; 
-            if(liveMicCustomCode) liveMicCustomCode.disabled = true;
+            if (liveMicStatus) liveMicStatus.innerHTML = "<span class='text-green-500'>🔴 শুনছি... (কথা থামালেই পিসিতে যাবে)</span>";
+            if (liveMicLangCombo) liveMicLangCombo.disabled = true;
+            if (liveMicCustomCode) liveMicCustomCode.disabled = true;
         };
 
-liveRec.onresult = (e) => {
+        liveRec.onresult = (e) => {
             let finalTranscript = e.results[0][0].transcript.trim();
 
             if (finalTranscript) {
-                // ১. তারিখ ও বারের স্পেশাল কমান্ড চেক (বাংলা ও ইংরেজি উভয়)
                 if (window.processDateDayCommands) {
                     finalTranscript = window.processDateDayCommands(finalTranscript);
                 }
 
-// ২. +++ নতুন: বিজয় আন্সি বা কথা এনকোডিং সিলেক্ট থাকলে আউটপুট কনভার্ট করা +++
                 if (liveMicLangCombo) {
                     if (liveMicLangCombo.value === 'bijoy_ansi' && window.globalUnicodeToBijoy) {
                         finalTranscript = window.globalUnicodeToBijoy(finalTranscript);
@@ -35425,12 +36169,11 @@ liveRec.onresult = (e) => {
                     }
                 }
 
-                // ৩. পিসিতে পাঠানো বা টেক্সটবক্সে যুক্ত করা
                 if (!isDisconnected && autoSendCheck && autoSendCheck.checked) {
                     sendDataToPCFetch(finalTranscript, true);
-                    if(textBox) textBox.value += (textBox.value ? ' ' : '') + finalTranscript + " (Sent ✓)";
+                    if (textBox) textBox.value += (textBox.value ? ' ' : '') + finalTranscript + " (Sent ✓)";
                 } else {
-                    if(textBox) textBox.value += (textBox.value ? ' ' : '') + finalTranscript;
+                    if (textBox) textBox.value += (textBox.value ? ' ' : '') + finalTranscript;
                 }
                 saveState();
             }
@@ -35438,22 +36181,21 @@ liveRec.onresult = (e) => {
 
         liveRec.onerror = (e) => {
             console.error(e.error);
-            if(e.error === 'not-allowed') {
+            if (e.error === 'not-allowed') {
                 showCustomAlert('মাইক্রোফোনের পারমিশন নেই! ব্রাউজারের সেটিং চেক করুন।');
             }
         };
 
         liveRec.onend = () => {
-            // কথা থামালে বা রেজাল্ট পাওয়ার পর অটোমেটিক লাল বাটনে ফিরে আসবে
             liveMicBtn.classList.replace('bg-green-500', 'bg-red-500');
             liveMicBtn.classList.replace('hover:bg-green-600', 'hover:bg-red-600');
             liveMicBtn.classList.remove('animate-pulse');
-            if(liveMicStatus) liveMicStatus.innerHTML = "মাইক আইকনে ক্লিক করে কথা বলা শুরু করুন...";
-            if(liveMicLangCombo) liveMicLangCombo.disabled = false;
-            if(liveMicCustomCode) liveMicCustomCode.disabled = false;
+            if (liveMicStatus) liveMicStatus.innerHTML = "মাইক আইকনে ক্লিক করে কথা বলা শুরু করুন...";
+            if (liveMicLangCombo) liveMicLangCombo.disabled = false;
+            if (liveMicCustomCode) liveMicCustomCode.disabled = false;
         };
 
-liveMicBtn.addEventListener('click', () => {
+        liveMicBtn.addEventListener('click', () => {
             if (!SpeechRec) {
                 showCustomAlert("আপনার ব্রাউজারটি ওয়েব ভয়েস সাপোর্ট করে না। অন্য ব্রাউজার ব্যবহার করুন।");
                 return;
@@ -35462,11 +36204,9 @@ liveMicBtn.addEventListener('click', () => {
             let selectedLang = liveMicLangCombo ? liveMicLangCombo.value : 'bn-BD';
             let actualApiLang = selectedLang;
 
-// +++ যদি বিজয় আন্সি বা কথা এনকোডিং সিলেক্ট থাকে, API কে বাংলা শুনতে বাধ্য করা হবে +++
             if (selectedLang === 'bijoy_ansi' || selectedLang === 'kotha_encoding') {
                 actualApiLang = 'bn-BD';
-            }
-            else if (selectedLang === 'custom' && liveMicCustomCode) {
+            } else if (selectedLang === 'custom' && liveMicCustomCode) {
                 const cCode = liveMicCustomCode.value.trim();
                 const rx = /^[a-z]{2,3}-[A-Z]{2}$/;
                 if (rx.test(cCode)) {
@@ -35478,7 +36218,7 @@ liveMicBtn.addEventListener('click', () => {
                     liveMicCustomCode.classList.add('hidden');
                 }
             }
-            
+
             liveRec.lang = actualApiLang;
             try { liveRec.start(); } catch(err) {}
         });
@@ -35486,9 +36226,9 @@ liveMicBtn.addEventListener('click', () => {
 
     if (btnSend) {
         btnSend.onclick = () => {
-            if(textBox) {
-                const text = textBox.value.replace(" (Sent ✓)", "").trim();
-                if(text) sendDataToPCFetch(text, false);
+            if (textBox) {
+                const text = textBox.value.replace(" (Sent ✓)", "").replace(/^[ \t]+|[ \t]+$/g, '');
+                if (text) sendDataToPCFetch(text, false);
             }
         };
     }
