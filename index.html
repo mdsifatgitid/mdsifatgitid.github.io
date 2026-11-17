@@ -36115,10 +36115,10 @@ initializeRightSlider();
 
     // Firebase ফাংশনগুলো ইম্পোর্ট (setDoc যুক্ত করা হয়েছে)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { 
+import { 
         getFirestore, doc, runTransaction, onSnapshot, 
         collection, addDoc, deleteDoc, query, orderBy, 
-        serverTimestamp, getDocs, where, writeBatch, setDoc 
+        serverTimestamp, getDocs, where, writeBatch, setDoc, getDocFromServer 
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
@@ -36141,79 +36141,126 @@ initializeRightSlider();
         }
     }
 
+let serverTimeOffset = 0;
+    let latestCounterData = null;
+    let isCountingVisit = false;
+
+    function getServerNowMs() {
+        return Date.now() + serverTimeOffset;
+    }
+
+    // সার্ভার টাইমস্ট্যাম্পকে GMT+6 (বাংলাদেশ সময়) অনুযায়ী ফরম্যাট করার ফাংশন
+    function getGmt6DateInfo(ms = getServerNowMs()) {
+        const gmt6 = new Date(ms + (6 * 60 * 60 * 1000));
+        const year = gmt6.getUTCFullYear();
+        const month = gmt6.getUTCMonth(); // 0-11
+        const day = gmt6.getUTCDate();
+
+        const todayString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const thisMonthString = `${year}-${String(month + 1).padStart(2, '0')}`;
+        const thisYearString = `${year}`;
+
+        const lastMonthDate = new Date(Date.UTC(year, month - 1, 1));
+        const lastMonthString = `${lastMonthDate.getUTCFullYear()}-${String(lastMonthDate.getUTCMonth() + 1).padStart(2, '0')}`;
+        const lastYearString = `${year - 1}`;
+
+        return { todayString, thisMonthString, thisYearString, lastMonthString, lastYearString };
+    }
+
+    // ফায়ারবেস সার্ভার থেকে সঠিক সময় সিঙ্ক করার ফাংশন
+    async function syncServerTime() {
+        if (!auth.currentUser) return;
+        try {
+            const presenceRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "presence", auth.currentUser.uid);
+            await setDoc(presenceRef, { uid: auth.currentUser.uid, last_active: serverTimestamp() }, { merge: true });
+            const serverSnap = await getDocFromServer(presenceRef);
+            const serverTs = serverSnap.data()?.last_active;
+            if (serverTs && typeof serverTs.toMillis === 'function') {
+                serverTimeOffset = serverTs.toMillis() - Date.now();
+            }
+        } catch (e) {
+            console.warn("Server time sync failed, using local fallback:", e);
+        }
+    }
+
+    function renderGlobalCounterUI(data) {
+        if (!data) return;
+        const { todayString, thisMonthString, thisYearString, lastMonthString, lastYearString } = getGmt6DateInfo();
+
+        const allTodayVisitsEl = document.getElementById('all-today-visits');
+        const allTotalVisitsEl = document.getElementById('all-total-visits');
+        const thisMonthVisitsEl = document.getElementById('this-month-visits');
+        const lastMonthVisitsEl = document.getElementById('last-month-visits');
+        const thisYearVisitsEl = document.getElementById('this-year-visits');
+        const lastYearVisitsEl = document.getElementById('last-year-visits');
+
+        if (allTotalVisitsEl) allTotalVisitsEl.textContent = (data.totalVisits || 0).toLocaleString('bn-BD');
+        if (allTodayVisitsEl) allTodayVisitsEl.textContent = ((data.dailyVisits || {})[todayString] || 0).toLocaleString('bn-BD');
+
+        const monthlyData = data.monthlyVisits || {};
+        const yearlyData = data.yearlyVisits || {};
+        if (thisMonthVisitsEl) thisMonthVisitsEl.textContent = (monthlyData[thisMonthString] || 0).toLocaleString('bn-BD');
+        if (lastMonthVisitsEl) lastMonthVisitsEl.textContent = (monthlyData[lastMonthString] || 0).toLocaleString('bn-BD');
+        if (thisYearVisitsEl) thisYearVisitsEl.textContent = (yearlyData[thisYearString] || 0).toLocaleString('bn-BD');
+        if (lastYearVisitsEl) lastYearVisitsEl.textContent = (yearlyData[lastYearString] || 0).toLocaleString('bn-BD');
+    }
+
+    async function checkAndIncrementDailyVisit() {
+        const { todayString, thisMonthString, thisYearString } = getGmt6DateInfo();
+        if (isCountingVisit || sessionStorage.getItem('globalVisitCountedDate') === todayString) return;
+
+        isCountingVisit = true;
+        const counterDocRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "global_visitor_stats", "counts");
+        try {
+            await runTransaction(db, async (transaction) => {
+                const counterDoc = await transaction.get(counterDocRef);
+                if (!counterDoc.exists()) {
+                    transaction.set(counterDocRef, { 
+                        totalVisits: 1, 
+                        dailyVisits: { [todayString]: 1 },
+                        monthlyVisits: { [thisMonthString]: 1 },
+                        yearlyVisits: { [thisYearString]: 1 }
+                    });
+                } else {
+                    const data = counterDoc.data();
+                    const newTotalVisits = (data.totalVisits || 0) + 1;
+                    const newDailyCount = ((data.dailyVisits || {})[todayString] || 0) + 1;
+                    const newMonthlyCount = ((data.monthlyVisits || {})[thisMonthString] || 0) + 1;
+                    const newYearlyCount = ((data.yearlyVisits || {})[thisYearString] || 0) + 1;
+                    
+                    transaction.update(counterDocRef, {
+                        totalVisits: newTotalVisits,
+                        [`dailyVisits.${todayString}`]: newDailyCount,
+                        [`monthlyVisits.${thisMonthString}`]: newMonthlyCount,
+                        [`yearlyVisits.${thisYearString}`]: newYearlyCount
+                    });
+                }
+            });
+            sessionStorage.setItem('globalVisitCountedDate', todayString);
+            if (latestCounterData) renderGlobalCounterUI(latestCounterData);
+        } catch (e) {
+            console.error("Counter Transaction failed: ", e);
+        } finally {
+            isCountingVisit = false;
+        }
+    }
+
 // ১. গ্লোবাল ভিজিটর কাউন্টার ফাংশন
     async function initializeGlobalCounter() {
         try {
             await ensureAuth();
-            
-            const now = new Date();
-            const todayString = now.toISOString().split('T')[0]; // YYYY-MM-DD
-            const thisMonthString = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`; // YYYY-MM
-            const thisYearString = `${now.getFullYear()}`; // YYYY
+            await syncServerTime();
 
             const counterDocRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "global_visitor_stats", "counts");
 
-            const incrementCounts = async () => {
-                 try {
-                    await runTransaction(db, async (transaction) => {
-                        const counterDoc = await transaction.get(counterDocRef);
-                        if (!counterDoc.exists()) {
-                            transaction.set(counterDocRef, { 
-                                totalVisits: 1, 
-                                dailyVisits: { [todayString]: 1 },
-                                monthlyVisits: { [thisMonthString]: 1 },
-                                yearlyVisits: { [thisYearString]: 1 }
-                            });
-                        } else {
-                            const data = counterDoc.data();
-                            const newTotalVisits = (data.totalVisits || 0) + 1;
-                            const newDailyCount = ((data.dailyVisits || {})[todayString] || 0) + 1;
-                            const newMonthlyCount = ((data.monthlyVisits || {})[thisMonthString] || 0) + 1;
-                            const newYearlyCount = ((data.yearlyVisits || {})[thisYearString] || 0) + 1;
-                            
-                            transaction.update(counterDocRef, {
-                                totalVisits: newTotalVisits,
-                                [`dailyVisits.${todayString}`]: newDailyCount,
-                                [`monthlyVisits.${thisMonthString}`]: newMonthlyCount,
-                                [`yearlyVisits.${thisYearString}`]: newYearlyCount
-                            });
-                        }
-                    });
-                } catch (e) { console.error("Counter Transaction failed: ", e); }
-            };
-
             onSnapshot(counterDocRef, (doc) => {
-                const allTodayVisitsEl = document.getElementById('all-today-visits');
-                const allTotalVisitsEl = document.getElementById('all-total-visits');
-                const thisMonthVisitsEl = document.getElementById('this-month-visits');
-                const lastMonthVisitsEl = document.getElementById('last-month-visits');
-                const thisYearVisitsEl = document.getElementById('this-year-visits');
-                const lastYearVisitsEl = document.getElementById('last-year-visits');
-
                 if (doc.exists()) {
-                    const data = doc.data();
-                    if (allTotalVisitsEl) allTotalVisitsEl.textContent = (data.totalVisits || 0).toLocaleString('bn-BD');
-                    if (allTodayVisitsEl) allTodayVisitsEl.textContent = ((data.dailyVisits || {})[todayString] || 0).toLocaleString('bn-BD');
-
-                    const monthlyData = data.monthlyVisits || {};
-                    const yearlyData = data.yearlyVisits || {};
-                    if (thisMonthVisitsEl) thisMonthVisitsEl.textContent = (monthlyData[thisMonthString] || 0).toLocaleString('bn-BD');
-                    
-                    const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-                    const lastMonthString = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth() + 1).padStart(2, '0')}`;
-                    if (lastMonthVisitsEl) lastMonthVisitsEl.textContent = (monthlyData[lastMonthString] || 0).toLocaleString('bn-BD');
-                    
-                    if (thisYearVisitsEl) thisYearVisitsEl.textContent = (yearlyData[thisYearString] || 0).toLocaleString('bn-BD');
-                    
-                    const lastYearString = `${now.getFullYear() - 1}`;
-                    if (lastYearVisitsEl) lastYearVisitsEl.textContent = (yearlyData[lastYearString] || 0).toLocaleString('bn-BD');
+                    latestCounterData = doc.data();
+                    renderGlobalCounterUI(latestCounterData);
                 }
             }, (error) => console.error("Counter Listener Error:", error));
 
-            if (!sessionStorage.getItem('globalVisitCounted')) {
-                await incrementCounts();
-                sessionStorage.setItem('globalVisitCounted', 'true');
-            }
+            await checkAndIncrementDailyVisit();
         } catch (error) { console.error("Global Counter Init Failed:", error); }
     }
 
@@ -36300,15 +36347,35 @@ async function initializePublicComments() {
         };
     }
 
-    if (auth.currentUser) {
-        const presenceRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "presence", auth.currentUser.uid);
-        const updatePresence = async () => { try { await setDoc(presenceRef, { uid: auth.currentUser.uid, last_active: Date.now() }, { merge: true }); } catch (e) { console.error("Presence update failed", e); } };
+if (auth.currentUser) {
+        const myUid = auth.currentUser.uid;
+        const presenceRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "presence", myUid);
+        const updatePresence = async () => {
+            try {
+                await setDoc(presenceRef, { uid: myUid, last_active: serverTimestamp() }, { merge: true });
+                await checkAndIncrementDailyVisit();
+            } catch (e) { console.error("Presence update failed", e); }
+        };
         updatePresence();
         setInterval(updatePresence, 60000);
         const presenceCollRef = collection(db, "artifacts", "banglatoolbox.github.io", "public", "data", "presence");
         onSnapshot(presenceCollRef, (snapshot) => {
-            const now = Date.now();
-            const activeCount = snapshot.docs.filter(doc => (now - doc.data().last_active < 120000)).length;
+            snapshot.docs.forEach(d => {
+                if (d.id === myUid && !d.metadata.hasPendingWrites) {
+                    const ts = d.data()?.last_active;
+                    if (ts && typeof ts.toMillis === 'function') {
+                        serverTimeOffset = ts.toMillis() - Date.now();
+                    }
+                }
+            });
+            const serverNow = getServerNowMs();
+            const activeCount = snapshot.docs.filter(d => {
+                if (d.id === myUid) return true;
+                const ts = d.data({ serverTimestamps: 'estimate' })?.last_active;
+                const lastActiveMs = (ts && typeof ts.toMillis === 'function') ? ts.toMillis() : (typeof ts === 'number' ? ts : 0);
+                const diff = serverNow - lastActiveMs;
+                return diff >= -60000 && diff < 120000;
+            }).length;
             if(activeCountEl) {
                 activeCountEl.innerHTML = `<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span>একটিভ: ${activeCount.toLocaleString('bn-BD')}`;
             }
