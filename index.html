@@ -36858,7 +36858,7 @@ initializeRightSlider();
 import { 
         getFirestore, doc, runTransaction, onSnapshot, 
         collection, addDoc, deleteDoc, query, orderBy, 
-        serverTimestamp, getDocs, where, writeBatch, setDoc, getDocFromServer 
+        serverTimestamp, getDocs, where, writeBatch, setDoc, getDocFromServer, increment 
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
@@ -36945,41 +36945,24 @@ let serverTimeOffset = 0;
         if (lastYearVisitsEl) lastYearVisitsEl.textContent = (yearlyData[lastYearString] || 0).toLocaleString('bn-BD');
     }
 
-    async function checkAndIncrementDailyVisit() {
+async function checkAndIncrementDailyVisit() {
         const { todayString, thisMonthString, thisYearString } = getGmt6DateInfo();
         if (isCountingVisit || sessionStorage.getItem('globalVisitCountedDate') === todayString) return;
 
         isCountingVisit = true;
         const counterDocRef = doc(db, "artifacts", "banglatoolbox.github.io", "public", "data", "global_visitor_stats", "counts");
         try {
-            await runTransaction(db, async (transaction) => {
-                const counterDoc = await transaction.get(counterDocRef);
-                if (!counterDoc.exists()) {
-                    transaction.set(counterDocRef, { 
-                        totalVisits: 1, 
-                        dailyVisits: { [todayString]: 1 },
-                        monthlyVisits: { [thisMonthString]: 1 },
-                        yearlyVisits: { [thisYearString]: 1 }
-                    });
-                } else {
-                    const data = counterDoc.data();
-                    const newTotalVisits = (data.totalVisits || 0) + 1;
-                    const newDailyCount = ((data.dailyVisits || {})[todayString] || 0) + 1;
-                    const newMonthlyCount = ((data.monthlyVisits || {})[thisMonthString] || 0) + 1;
-                    const newYearlyCount = ((data.yearlyVisits || {})[thisYearString] || 0) + 1;
-                    
-                    transaction.update(counterDocRef, {
-                        totalVisits: newTotalVisits,
-                        [`dailyVisits.${todayString}`]: newDailyCount,
-                        [`monthlyVisits.${thisMonthString}`]: newMonthlyCount,
-                        [`yearlyVisits.${thisYearString}`]: newYearlyCount
-                    });
-                }
-            });
+            await setDoc(counterDocRef, {
+                totalVisits: increment(1),
+                dailyVisits: { [todayString]: increment(1) },
+                monthlyVisits: { [thisMonthString]: increment(1) },
+                yearlyVisits: { [thisYearString]: increment(1) }
+            }, { merge: true });
+
             sessionStorage.setItem('globalVisitCountedDate', todayString);
             if (latestCounterData) renderGlobalCounterUI(latestCounterData);
         } catch (e) {
-            console.error("Counter Transaction failed: ", e);
+            console.error("Counter Update failed:", e.code, e.message);
         } finally {
             isCountingVisit = false;
         }
